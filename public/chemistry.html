@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Molecular Geometry</title>
+  <style>
+    :root {
+      --cyan:   rgb(100, 130, 210);
+      --purple: rgb(80, 105, 185);
+      --bg:     #07070f;
+      --card:   rgba(255,255,255,0.03);
+      --border: rgba(255,255,255,0.08);
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: #fff; }
+    body { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+
+    /* CSS dot grid behind transparent 3D canvas */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(255,255,255,var(--dot-alpha,0.12)) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    #app { position: relative; width: 100%; height: 100%; }
+
+    /* transparent canvas so dots show through */
+    #canvas-wrap { position: absolute; inset: 0; z-index: 1; }
+    #canvas-wrap canvas { display: block; width: 100% !important; height: 100% !important; background: transparent; }
+
+    /* header */
+    #header {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+      padding: 20px 28px;
+      display: flex; align-items: center; gap: 20px;
+      background: linear-gradient(to bottom, rgba(7,7,15,0.92) 0%, transparent 100%);
+    }
+    #title {
+      color: var(--cyan); font-size: 10px; letter-spacing: 4px;
+      text-transform: uppercase; font-weight: 700; white-space: nowrap;
+    }
+    #search-row { display: flex; gap: 8px; flex: 1; max-width: 400px; }
+
+    #molecule-input {
+      flex: 1; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 14px; color: #fff;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      outline: none; transition: border-color 0.2s;
+    }
+    #molecule-input::placeholder { color: rgba(255,255,255,0.2); }
+    #molecule-input:focus { border-color: rgba(100,130,210,0.5); }
+
+    #build-btn {
+      background: rgba(100,130,210,0.1);
+      border: 1px solid rgba(100,130,210,0.3); border-radius: 8px;
+      color: var(--cyan); padding: 8px 18px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; letter-spacing: 1px; white-space: nowrap;
+    }
+    #build-btn:hover { background: rgba(100,130,210,0.2); border-color: rgba(100,130,210,0.5); }
+
+    /* error toast */
+    #error {
+      position: absolute; top: 72px; left: 50%; transform: translateX(-50%);
+      z-index: 20; padding: 8px 20px; border-radius: 8px;
+      background: rgba(255,60,60,0.1); border: 1px solid rgba(255,60,60,0.3);
+      color: rgba(255,120,120,0.9); font-size: 11px; letter-spacing: 0.5px;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+    }
+    #error.show { opacity: 1; }
+
+    /* loading */
+    #loading {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      z-index: 20; text-align: center; color: rgba(255,255,255,0.25);
+      font-size: 10px; letter-spacing: 4px;
+    }
+
+    /* shared panel base */
+    .panel {
+      background: rgba(7,7,15,0.82); backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 14px; padding: 14px 20px;
+    }
+
+    /* bottom-left info */
+    #info { position: absolute; bottom: 24px; left: 28px; z-index: 10; }
+    .info-row { display: flex; gap: 24px; flex-wrap: wrap; }
+    .info-item { display: flex; flex-direction: column; gap: 3px; }
+    .lbl { color: rgba(255,255,255,0.22); font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase; }
+    .val { color: #fff; font-size: 14px; font-weight: 700; min-width: 60px; }
+    .val.accent { color: var(--cyan); }
+
+    /* right-side panel slot */
+    #right-panel { position: absolute; top: 72px; right: 28px; z-index: 10; min-width: 150px; display: flex; flex-direction: column; gap: 12px; }
+
+    /* legend */
+    .leg-title { color: rgba(255,255,255,0.22); font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 10px; }
+    .leg-row { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; font-size: 11px; color: rgba(255,255,255,0.45); }
+    .leg-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+
+    /* atom detail panel */
+    #atom-panel {
+      display: none; flex-direction: column; gap: 0;
+      width: 270px; max-height: calc(100vh - 220px); overflow-y: auto;
+      background: rgba(7,7,15,0.92); backdrop-filter: blur(24px);
+      border: 1px solid var(--border); border-radius: 16px;
+    }
+    #atom-panel.show { display: flex; }
+    #atom-panel::-webkit-scrollbar { width: 4px; }
+    #atom-panel::-webkit-scrollbar-track { background: transparent; }
+    #atom-panel::-webkit-scrollbar-thumb { background: rgba(100,130,210,0.25); border-radius: 2px; }
+
+    .ap-header {
+      padding: 18px 18px 14px;
+      display: flex; align-items: flex-start; gap: 14px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .ap-close {
+      position: absolute; top: 14px; right: 14px;
+      background: none; border: none; color: rgba(255,255,255,0.25);
+      font-size: 14px; cursor: pointer; font-family: inherit; line-height: 1;
+      transition: color 0.15s;
+    }
+    .ap-close:hover { color: #fff; }
+    .ap-symbol {
+      font-size: 44px; font-weight: 700; color: var(--cyan);
+      line-height: 1; letter-spacing: -1px; min-width: 60px; text-align: center;
+    }
+    .ap-z { font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 1px; text-align: center; margin-top: 2px; }
+    .ap-name-block { display: flex; flex-direction: column; gap: 3px; padding-top: 8px; }
+    .ap-el-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .ap-cat { font-size: 9px; color: rgba(255,255,255,0.28); letter-spacing: 2px; text-transform: uppercase; }
+    .ap-mass { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+    .ap-section { padding: 12px 18px; border-bottom: 1px solid var(--border); }
+    .ap-section:last-child { border-bottom: none; }
+    .ap-sec-title {
+      color: rgba(255,255,255,0.18); font-size: 7.5px; letter-spacing: 3px;
+      text-transform: uppercase; margin-bottom: 9px;
+    }
+    .ap-kv { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .ap-kv:last-child { margin-bottom: 0; }
+    .ap-k { color: rgba(255,255,255,0.32); font-size: 10px; }
+    .ap-v { font-size: 11px; font-weight: 600; color: #fff; }
+    .ap-v.pos { color: #ff6666; }
+    .ap-v.neg { color: #6699ff; }
+    .ap-v.zero { color: rgba(255,255,255,0.4); }
+    .ap-v.cyan { color: var(--cyan); }
+
+    .ap-bond-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 8px; border-radius: 8px; margin-bottom: 4px;
+      background: rgba(255,255,255,0.025);
+    }
+    .ap-bond-row:last-child { margin-bottom: 0; }
+    .ap-bdot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .ap-bel { font-size: 11px; font-weight: 600; color: #fff; min-width: 18px; }
+    .ap-btype { color: rgba(255,255,255,0.28); font-size: 10px; flex: 1; }
+    .ap-blen { color: rgba(255,255,255,0.4); font-size: 9px; }
+
+    .ap-angle-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 3px 0; font-size: 10px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .ap-angle-row:last-child { border-bottom: none; }
+    .ap-angle-atoms { color: rgba(255,255,255,0.4); }
+    .ap-angle-val { color: var(--cyan); font-weight: 600; }
+
+    /* click hint */
+    #click-hint {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      z-index: 10; color: rgba(255,255,255,0.10); font-size: 9px; letter-spacing: 2px;
+      text-transform: uppercase; pointer-events: none;
+    }
+    /* settings panel */
+    #settings-btn, #help-btn {
+      position: absolute; bottom: 24px; z-index: 10;
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: rgba(255,255,255,0.35); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    #settings-btn { right: 28px; font-size: 17px; }
+    #help-btn     { right: 72px; font-size: 15px; font-weight: 600; font-family: var(--font); }
+    #settings-btn:hover, #help-btn:hover { background: rgba(100,130,210,0.12); color: var(--cyan); border-color: rgba(100,130,210,0.3); }
+    #settings-panel, #help-panel {
+      display: none; position: absolute; bottom: 68px; z-index: 15;
+    }
+    #settings-panel { right: 28px; width: 210px; }
+    #help-panel     { right: 72px; width: 240px; }
+    #settings-panel.show, #help-panel.show { display: block; }
+    .help-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 9px; }
+    .help-key  { font-size: 9px; letter-spacing: 0.5px; color: var(--cyan); background: rgba(100,130,210,0.12); border: 1px solid rgba(100,130,210,0.25); border-radius: 5px; padding: 2px 6px; white-space: nowrap; flex-shrink: 0; }
+    .help-desc { color: rgba(255,255,255,0.55); font-size: 10px; }
+    .help-divider { border-top: 1px solid var(--border); margin: 10px 0; }
+    .help-hint { color: rgba(255,255,255,0.35); font-size: 9.5px; line-height: 1.6; }
+    .help-hint em { color: rgba(255,255,255,0.6); font-style: normal; }
+    .s-title { color: rgba(255,255,255,0.22); font-size: 8px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px; }
+    .s-section { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .s-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .s-lbl { color: rgba(255,255,255,0.35); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+    .s-row { display: flex; justify-content: space-between; align-items: center; }
+    .bg-swatches { display: flex; gap: 7px; }
+    .bg-swatch {
+      width: 26px; height: 26px; border-radius: 7px; cursor: pointer;
+      border: 2px solid transparent; transition: border-color 0.15s, transform 0.1s;
+    }
+    .bg-swatch:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.3); }
+    .bg-swatch.active { border-color: var(--cyan); }
+    .tog { position: relative; display: inline-flex; width: 34px; height: 18px; cursor: pointer; align-items: center; }
+    .tog input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .tog-track { width: 34px; height: 18px; border-radius: 9px; background: rgba(255,255,255,0.1); transition: background 0.2s; flex-shrink: 0; }
+    .tog-thumb { position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.45); transition: all 0.2s; pointer-events: none; }
+    .tog input:checked ~ .tog-track { background: rgba(100,130,210,0.5); }
+    .tog input:checked ~ .tog-thumb { left: 19px; background: var(--cyan); }
+    .s-range {
+      width: 100%; margin-top: 7px; -webkit-appearance: none; appearance: none;
+      height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1); outline: none; cursor: pointer;
+    }
+    .s-range::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--cyan); cursor: pointer; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    window.addEventListener('error', e => {
+      const el = document.getElementById('loading')
+      if (el) el.textContent = 'Error: ' + (e.message || e.type)
+    })
+    window.addEventListener('unhandledrejection', e => {
+      const el = document.getElementById('loading')
+      if (el) el.textContent = 'Error: ' + (e.reason?.message || e.reason || 'unknown')
+    })
+  </script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three":         "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+      "three/webgpu":  "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.webgpu.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+<div id="app">
+
+  <div id="header">
+    <span id="title">Molecular Geometry</span>
+    <div id="search-row">
+      <input id="molecule-input" type="text" placeholder="Try H2O, Na2SO4, caffeine, aspirin" autocomplete="off" spellcheck="false">
+      <button id="build-btn">BUILD →</button>
+    </div>
+  </div>
+
+  <div id="error"></div>
+  <div id="loading">INITIALISING</div>
+  <div id="click-hint">CLICK AN ATOM FOR DETAILS</div>
+
+  <div id="canvas-wrap"></div>
+
+  <div id="info">
+    <div class="panel">
+      <div class="info-row">
+        <div class="info-item"><span class="lbl">Molecule</span><span class="val accent" id="v-mol">—</span></div>
+        <div class="info-item"><span class="lbl">Geometry</span><span class="val" id="v-geo">—</span></div>
+        <div class="info-item"><span class="lbl">Bond Angle</span><span class="val" id="v-ang">—</span></div>
+        <div class="info-item"><span class="lbl">Bonds</span><span class="val" id="v-bnd">—</span></div>
+        <div class="info-item"><span class="lbl">Atoms</span><span class="val" id="v-atm">—</span></div>
+        <div class="info-item"><span class="lbl">MW</span><span class="val" id="v-mw">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="right-panel">
+    <div class="panel" id="leg-panel" style="min-width:140px"></div>
+    <div id="atom-panel">
+      <div class="ap-header">
+        <div>
+          <div class="ap-symbol" id="ap-sym">—</div>
+          <div class="ap-z" id="ap-z">Z = —</div>
+        </div>
+        <div class="ap-name-block">
+          <div class="ap-el-name" id="ap-name">—</div>
+          <div class="ap-cat" id="ap-cat">—</div>
+          <div class="ap-mass" id="ap-mass">—</div>
+        </div>
+        <button class="ap-close" id="ap-close">✕</button>
+      </div>
+      <div id="ap-content"></div>
+    </div>
+  </div>
+
+  <button id="settings-btn" title="Settings">&#x2699;</button>
+
+  <div id="settings-panel" class="panel">
+    <div class="s-title">Settings</div>
+    <div class="s-section">
+      <div class="s-lbl">Background</div>
+      <div class="bg-swatches">
+        <button class="bg-swatch active" data-bg="#07070f" style="background:linear-gradient(145deg,#28285a,#07070f)" title="Dark Navy"></button>
+        <button class="bg-swatch" data-bg="#000000" style="background:linear-gradient(145deg,#383838,#000000)" title="Black"></button>
+        <button class="bg-swatch" data-bg="#050a1c" style="background:linear-gradient(145deg,#143080,#050a1c)" title="Midnight Blue"></button>
+        <button class="bg-swatch" data-bg="#0d0420" style="background:linear-gradient(145deg,#3d1068,#0d0420)" title="Deep Purple"></button>
+        <button class="bg-swatch" data-bg="#080f08" style="background:linear-gradient(145deg,#153815,#080f08)" title="Dark Forest"></button>
+      </div>
+    </div>
+    <div class="s-section">
+      <div class="s-row">
+        <span class="s-lbl" style="margin:0">Dot Grid</span>
+        <label class="tog"><input type="checkbox" id="tog-dots" checked><div class="tog-track"></div><div class="tog-thumb"></div></label>
+      </div>
+    </div>
+    <div class="s-section">
+      <div class="s-row">
+        <span class="s-lbl" style="margin:0">Auto-rotate</span>
+        <label class="tog"><input type="checkbox" id="tog-rotate"><div class="tog-track"></div><div class="tog-thumb"></div></label>
+      </div>
+    </div>
+    <div class="s-section">
+      <div class="s-lbl">Rotation Speed</div>
+      <input type="range" class="s-range" id="rng-speed" min="1" max="51" value="26">
+    </div>
+  </div>
+
+  <button id="help-btn" title="Controls">?</button>
+
+  <div id="help-panel" class="panel">
+    <div class="s-title">Controls</div>
+    <div class="help-row"><span class="help-key">Drag</span><span class="help-desc">Orbit / rotate</span></div>
+    <div class="help-row"><span class="help-key">Scroll</span><span class="help-desc">Zoom in &amp; out</span></div>
+    <div class="help-row"><span class="help-key">Right-drag</span><span class="help-desc">Pan</span></div>
+    <div class="help-row"><span class="help-key">Click atom</span><span class="help-desc">Show atom info</span></div>
+    <div class="help-row"><span class="help-key">R</span><span class="help-desc">Reset view</span></div>
+    <div class="help-divider"></div>
+    <div class="s-lbl" style="margin-bottom:6px">Load a molecule</div>
+    <div class="help-hint">Type a name <em>water</em>, <em>caffeine</em>, <em>aspirin</em> — or a formula like <em>H&#x2082;O</em>, <em>Na&#x2082;SO&#x2084;</em> — then press Enter.</div>
+  </div>
+
+</div>
+<script type="module">
+import * as THREE from 'three/webgpu';
+const { color, float, normalWorld, positionWorld, cameraPosition, Fn } = THREE;
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// Element database
+// Atomic number → symbol (index = Z)
+const ELEMENTS = [
+  null,
+  'H' ,'He','Li','Be','B' ,'C' ,'N' ,'O' ,'F' ,'Ne',
+  'Na','Mg','Al','Si','P' ,'S' ,'Cl','Ar','K' ,'Ca',
+  'Sc','Ti','V' ,'Cr','Mn','Fe','Co','Ni','Cu','Zn',
+  'Ga','Ge','As','Se','Br','Kr','Rb','Sr','Y' ,'Zr',
+  'Nb','Mo','Tc','Ru','Rh','Pd','Ag','Cd','In','Sn',
+  'Sb','Te','I' ,'Xe','Cs','Ba','La','Ce','Pr','Nd',
+  'Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb',
+  'Lu','Hf','Ta','W' ,'Re','Os','Ir','Pt','Au','Hg',
+  'Tl','Pb','Bi','Po','At','Rn',
+]
+
+// atomic data 
+const EDATA_DEFAULT = { name:'Unknown', z:0, mass:0, en:null, cat:'Unknown', valence:4, color:0x8080a0, radius:0.34 }
+const EDATA = {
+  H:  { name:'Hydrogen',   z:1,  mass:1.008,   en:2.20, cat:'Nonmetal',    valence:1, color:0xd0d0e4, radius:0.20 },
+  He: { name:'Helium',     z:2,  mass:4.003,   en:null, cat:'Noble Gas',   valence:0, color:0xa8d8ea, radius:0.16 },
+  Li: { name:'Lithium',    z:3,  mass:6.941,   en:0.98, cat:'Alkali Metal',valence:1, color:0xdc143c, radius:0.46 },
+  Be: { name:'Beryllium',  z:4,  mass:9.012,   en:1.57, cat:'Alkaline',    valence:2, color:0x9acd32, radius:0.38 },
+  B:  { name:'Boron',      z:5,  mass:10.811,  en:2.04, cat:'Metalloid',   valence:3, color:0xffb5c5, radius:0.34 },
+  C:  { name:'Carbon',     z:6,  mass:12.011,  en:2.55, cat:'Nonmetal',    valence:4, color:0x505060, radius:0.32 },
+  N:  { name:'Nitrogen',   z:7,  mass:14.007,  en:3.04, cat:'Nonmetal',    valence:5, color:0x3355ff, radius:0.30 },
+  O:  { name:'Oxygen',     z:8,  mass:15.999,  en:3.44, cat:'Nonmetal',    valence:6, color:0xff2828, radius:0.28 },
+  F:  { name:'Fluorine',   z:9,  mass:18.998,  en:3.98, cat:'Halogen',     valence:7, color:0x44ee44, radius:0.26 },
+  Ne: { name:'Neon',       z:10, mass:20.180,  en:null, cat:'Noble Gas',   valence:8, color:0x88c8e8, radius:0.22 },
+  Na: { name:'Sodium',     z:11, mass:22.990,  en:0.93, cat:'Alkali Metal',valence:1, color:0xab5cf2, radius:0.50 },
+  Mg: { name:'Magnesium',  z:12, mass:24.305,  en:1.31, cat:'Alkaline',    valence:2, color:0x8aff00, radius:0.44 },
+  Al: { name:'Aluminum',   z:13, mass:26.982,  en:1.61, cat:'Metal',       valence:3, color:0xbfa6a6, radius:0.42 },
+  Si: { name:'Silicon',    z:14, mass:28.086,  en:1.90, cat:'Metalloid',   valence:4, color:0x8090a0, radius:0.38 },
+  P:  { name:'Phosphorus', z:15, mass:30.974,  en:2.19, cat:'Nonmetal',    valence:5, color:0xff8800, radius:0.36 },
+  S:  { name:'Sulfur',     z:16, mass:32.065,  en:2.58, cat:'Nonmetal',    valence:6, color:0xffcc00, radius:0.36 },
+  Cl: { name:'Chlorine',   z:17, mass:35.453,  en:3.16, cat:'Halogen',     valence:7, color:0x00cc00, radius:0.38 },
+  Ar: { name:'Argon',      z:18, mass:39.948,  en:null, cat:'Noble Gas',   valence:8, color:0x70c8e0, radius:0.32 },
+  K:  { name:'Potassium',  z:19, mass:39.098,  en:0.82, cat:'Alkali Metal',valence:1, color:0x8f40d4, radius:0.56 },
+  Ca: { name:'Calcium',    z:20, mass:40.078,  en:1.00, cat:'Alkaline',    valence:2, color:0x3dff00, radius:0.50 },
+  Sc: { name:'Scandium',   z:21, mass:44.956,  en:1.36, cat:'Transition',  valence:3, color:0xe0e0e0, radius:0.36 },
+  Ti: { name:'Titanium',   z:22, mass:47.867,  en:1.54, cat:'Transition',  valence:4, color:0xb0b0c0, radius:0.36 },
+  V:  { name:'Vanadium',   z:23, mass:50.942,  en:1.63, cat:'Transition',  valence:5, color:0xa8a8b0, radius:0.36 },
+  Cr: { name:'Chromium',   z:24, mass:51.996,  en:1.66, cat:'Transition',  valence:6, color:0x8099c8, radius:0.36 },
+  Mn: { name:'Manganese',  z:25, mass:54.938,  en:1.55, cat:'Transition',  valence:7, color:0x9c3b9c, radius:0.36 },
+  Fe: { name:'Iron',       z:26, mass:55.845,  en:1.83, cat:'Transition',  valence:2, color:0xe06633, radius:0.38 },
+  Co: { name:'Cobalt',     z:27, mass:58.933,  en:1.88, cat:'Transition',  valence:2, color:0xf090a0, radius:0.36 },
+  Ni: { name:'Nickel',     z:28, mass:58.693,  en:1.91, cat:'Transition',  valence:2, color:0x50d050, radius:0.34 },
+  Cu: { name:'Copper',     z:29, mass:63.546,  en:1.90, cat:'Transition',  valence:2, color:0xc88533, radius:0.36 },
+  Zn: { name:'Zinc',       z:30, mass:65.38,   en:1.65, cat:'Transition',  valence:2, color:0x7d80b0, radius:0.36 },
+  Ga: { name:'Gallium',    z:31, mass:69.723,  en:1.81, cat:'Metal',       valence:3, color:0xc28f8f, radius:0.42 },
+  Ge: { name:'Germanium',  z:32, mass:72.630,  en:2.01, cat:'Metalloid',   valence:4, color:0x668f8f, radius:0.38 },
+  As: { name:'Arsenic',    z:33, mass:74.922,  en:2.18, cat:'Metalloid',   valence:5, color:0x74d050, radius:0.36 },
+  Se: { name:'Selenium',   z:34, mass:78.971,  en:2.55, cat:'Nonmetal',    valence:6, color:0xffa100, radius:0.38 },
+  Br: { name:'Bromine',    z:35, mass:79.904,  en:2.96, cat:'Halogen',     valence:7, color:0xa02020, radius:0.42 },
+  Kr: { name:'Krypton',    z:36, mass:83.798,  en:3.00, cat:'Noble Gas',   valence:8, color:0x5cb8d1, radius:0.38 },
+  Rb: { name:'Rubidium',   z:37, mass:85.468,  en:0.82, cat:'Alkali Metal',valence:1, color:0x9932cc, radius:0.58 },
+  Sr: { name:'Strontium',  z:38, mass:87.62,   en:0.95, cat:'Alkaline',    valence:2, color:0x00ff00, radius:0.52 },
+  Y:  { name:'Yttrium',    z:39, mass:88.906,  en:1.22, cat:'Transition',  valence:3, color:0x94ffff, radius:0.38 },
+  Zr: { name:'Zirconium',  z:40, mass:91.224,  en:1.33, cat:'Transition',  valence:4, color:0x94e0e0, radius:0.38 },
+  Nb: { name:'Niobium',    z:41, mass:92.906,  en:1.60, cat:'Transition',  valence:5, color:0x73c2c9, radius:0.38 },
+  Mo: { name:'Molybdenum', z:42, mass:95.95,   en:2.16, cat:'Transition',  valence:6, color:0x54b5b5, radius:0.38 },
+  Ru: { name:'Ruthenium',  z:44, mass:101.07,  en:2.20, cat:'Transition',  valence:3, color:0x248f8f, radius:0.38 },
+  Rh: { name:'Rhodium',    z:45, mass:102.906, en:2.28, cat:'Transition',  valence:3, color:0x0a7d8c, radius:0.38 },
+  Pd: { name:'Palladium',  z:46, mass:106.42,  en:2.20, cat:'Transition',  valence:2, color:0x006985, radius:0.38 },
+  Ag: { name:'Silver',     z:47, mass:107.868, en:1.93, cat:'Transition',  valence:1, color:0xc0c0c0, radius:0.42 },
+  Cd: { name:'Cadmium',    z:48, mass:112.414, en:1.69, cat:'Transition',  valence:2, color:0xffd98f, radius:0.40 },
+  In: { name:'Indium',     z:49, mass:114.818, en:1.78, cat:'Metal',       valence:3, color:0xa67573, radius:0.44 },
+  Sn: { name:'Tin',        z:50, mass:118.710, en:1.96, cat:'Metal',       valence:4, color:0x668080, radius:0.46 },
+  Sb: { name:'Antimony',   z:51, mass:121.760, en:2.05, cat:'Metalloid',   valence:5, color:0x9e63b5, radius:0.44 },
+  Te: { name:'Tellurium',  z:52, mass:127.60,  en:2.10, cat:'Metalloid',   valence:6, color:0xd47a00, radius:0.44 },
+  I:  { name:'Iodine',     z:53, mass:126.904, en:2.66, cat:'Halogen',     valence:7, color:0x940094, radius:0.50 },
+  Xe: { name:'Xenon',      z:54, mass:131.293, en:2.60, cat:'Noble Gas',   valence:8, color:0x429eb0, radius:0.44 },
+  Cs: { name:'Cesium',     z:55, mass:132.905, en:0.79, cat:'Alkali Metal',valence:1, color:0x57178f, radius:0.60 },
+  Ba: { name:'Barium',     z:56, mass:137.327, en:0.89, cat:'Alkaline',    valence:2, color:0x00c900, radius:0.54 },
+  La: { name:'Lanthanum',  z:57, mass:138.905, en:1.10, cat:'Lanthanide',  valence:3, color:0x70d4ff, radius:0.40 },
+  Pt: { name:'Platinum',   z:78, mass:195.084, en:2.28, cat:'Transition',  valence:4, color:0xd0d0e0, radius:0.40 },
+  Au: { name:'Gold',       z:79, mass:196.967, en:2.54, cat:'Transition',  valence:3, color:0xffd123, radius:0.42 },
+  Hg: { name:'Mercury',    z:80, mass:200.592, en:2.00, cat:'Transition',  valence:2, color:0xb8b8d0, radius:0.42 },
+  Tl: { name:'Thallium',   z:81, mass:204.383, en:1.62, cat:'Metal',       valence:3, color:0xa6544d, radius:0.46 },
+  Pb: { name:'Lead',       z:82, mass:207.2,   en:2.33, cat:'Metal',       valence:4, color:0x575961, radius:0.46 },
+  Bi: { name:'Bismuth',    z:83, mass:208.980, en:2.02, cat:'Metal',       valence:5, color:0x9e4fb5, radius:0.44 },
+}
+function ed(el)       { return EDATA[el] ?? EDATA_DEFAULT }
+function elColor(el)  { return ed(el).color }
+function elRadius(el) { return ed(el).radius }
+function hexStr(n)    { return '#' + n.toString(16).padStart(6,'0') }
+
+// Ionic compound support
+const METALS = new Set([
+  'Li','Na','K','Rb','Cs',
+  'Be','Mg','Ca','Sr','Ba',
+  'Al','Ga','In','Tl','Sn','Pb','Bi',
+  'Fe','Co','Ni','Cu','Zn','Ag','Au','Hg','Cd','Mn','Cr','V','Ti','Sc',
+  'Pd','Pt','Y','Zr','Nb','Mo','La',
+])
+
+// Polyatomic ions: element composition → common name + 3D geometry
+const POLYION_DB = [
+  { els:{Cr:2,O:7}, name:'dichromate',   center:'Cr', ligand:'O', n:4, shape:'tet',  L:1.64 },
+  { els:{S:2, O:3}, name:'thiosulfate',  center:'S',  ligand:'O', n:3, shape:'trig', L:1.48 },
+  { els:{Mn:1,O:4}, name:'permanganate', center:'Mn', ligand:'O', n:4, shape:'tet',  L:1.63 },
+  { els:{Cr:1,O:4}, name:'chromate',     center:'Cr', ligand:'O', n:4, shape:'tet',  L:1.64 },
+  { els:{Si:1,O:4}, name:'silicate',     center:'Si', ligand:'O', n:4, shape:'tet',  L:1.62 },
+  { els:{Cl:1,O:4}, name:'perchlorate',  center:'Cl', ligand:'O', n:4, shape:'tet',  L:1.46 },
+  { els:{P:1, O:4}, name:'phosphate',    center:'P',  ligand:'O', n:4, shape:'tet',  L:1.54 },
+  { els:{S:1, O:4}, name:'sulfate',      center:'S',  ligand:'O', n:4, shape:'tet',  L:1.49 },
+  { els:{Cl:1,O:3}, name:'chlorate',     center:'Cl', ligand:'O', n:3, shape:'pyr',  L:1.49 },
+  { els:{P:1, O:3}, name:'phosphite',    center:'P',  ligand:'O', n:3, shape:'pyr',  L:1.57 },
+  { els:{S:1, O:3}, name:'sulfite',      center:'S',  ligand:'O', n:3, shape:'pyr',  L:1.50 },
+  { els:{N:1, O:3}, name:'nitrate',      center:'N',  ligand:'O', n:3, shape:'trig', L:1.24 },
+  { els:{C:1, O:3}, name:'carbonate',    center:'C',  ligand:'O', n:3, shape:'trig', L:1.29 },
+  { els:{Cl:1,O:2}, name:'chlorite',     center:'Cl', ligand:'O', n:2, shape:'bent', L:1.64 },
+  { els:{N:1, O:2}, name:'nitrite',      center:'N',  ligand:'O', n:2, shape:'bent', L:1.20 },
+  { els:{Cl:1,O:1}, name:'hypochlorite', center:'Cl', ligand:'O', n:1, shape:'lin',  L:1.69 },
+  { els:{N:1, H:4}, name:'ammonium',     center:'N',  ligand:'H', n:4, shape:'tet',  L:1.02 },
+  { els:{O:1, H:1}, name:'hydroxide',    center:'O',  ligand:'H', n:1, shape:'lin',  L:0.97 },
+  { els:{C:1, N:1}, name:'cyanide',      center:'C',  ligand:'N', n:1, shape:'lin',  L:1.16 },
+]
+
+const ANION_NAMES = {
+  F:'fluoride', Cl:'chloride', Br:'bromide', I:'iodide',
+  O:'oxide',    S:'sulfide',   N:'nitride',  P:'phosphide',
+  H:'hydride',  Se:'selenide', Te:'telluride',
+}
+
+// Handles any casing: "Na2SO4", "na2so4", "NA2SO4" all parse correctly
+function parseFormula(raw) {
+  const atoms = []
+  let i = 0
+  while (i < raw.length) {
+    if (!/[a-zA-Z]/.test(raw[i])) { i++; continue }
+    let el = raw[i].toUpperCase()
+    i++
+    // Try two-letter symbol and validate against EDATA before committing
+    if (i < raw.length && /[a-zA-Z]/.test(raw[i])) {
+      const two = el + raw[i].toLowerCase()
+      if (EDATA[two]) { el = two; i++ }
+    }
+    let num = ''
+    while (i < raw.length && /\d/.test(raw[i])) { num += raw[i]; i++ }
+    if (EDATA[el]) atoms.push({ el, n: parseInt(num || '1') })
+  }
+  return atoms
+}
+
+function elCountsOf(atoms) {
+  const c = {}
+  atoms.forEach(a => { c[a.el] = (c[a.el]||0) + a.n })
+  return c
+}
+
+function matchPolyion(counts) {
+  for (const ion of POLYION_DB) {
+    const ks = Object.keys(ion.els)
+    if (ks.length !== Object.keys(counts).length) continue
+    if (ks.every(k => counts[k] === ion.els[k])) return ion
+  }
+  return null
+}
+
+function ionLigandPositions(shape, n, L) {
+  const D = Math.PI / 180
+  if (n === 1) return [{x:L, y:0, z:0}]
+  if (n === 2 && shape === 'lin')  return [{x:L,y:0,z:0},{x:-L,y:0,z:0}]
+  if (n === 2 && shape === 'bent') {
+    const a = 52.5 * D
+    return [{x:L*Math.cos(a),y:-L*Math.sin(a),z:0},{x:-L*Math.cos(a),y:-L*Math.sin(a),z:0}]
+  }
+  if (n === 3 && shape === 'trig')
+    return [0,120,240].map(a => ({x:L*Math.cos(a*D), y:0, z:L*Math.sin(a*D)}))
+  if (n === 3 && shape === 'pyr') {
+    const th = 68*D, r = L*Math.sin(th), y = -L*Math.cos(th)
+    return [0,120,240].map(a => ({x:r*Math.cos(a*D), y, z:r*Math.sin(a*D)}))
+  }
+  if (n === 4) {
+    const s = L / Math.sqrt(3)
+    return [{x:s,y:s,z:s},{x:s,y:-s,z:-s},{x:-s,y:s,z:-s},{x:-s,y:-s,z:s}]
+  }
+  return Array.from({length:n}, (_,i) => ({x:L*Math.cos(i*2*Math.PI/n),y:0,z:L*Math.sin(i*2*Math.PI/n)}))
+}
+
+// Returns "Sodium Sulfate" for Na2SO4, null if not recognisably ionic
+function nameIonicCompound(parsedAtoms) {
+  const metalAtoms    = parsedAtoms.filter(a => METALS.has(a.el))
+  const nonMetalAtoms = parsedAtoms.filter(a => !METALS.has(a.el))
+  if (!metalAtoms.length) return null
+  const anionCounts = elCountsOf(nonMetalAtoms)
+  const polyion     = matchPolyion(anionCounts)
+  const cationStr   = ed(metalAtoms[0].el).name
+  let anionStr
+  if (polyion) {
+    anionStr = polyion.name.charAt(0).toUpperCase() + polyion.name.slice(1)
+  } else if (Object.keys(anionCounts).length === 1) {
+    const el = Object.keys(anionCounts)[0]
+    const n  = ANION_NAMES[el]
+    if (!n) return null
+    anionStr = n.charAt(0).toUpperCase() + n.slice(1)
+  } else {
+    return null
+  }
+  return `${cationStr} ${anionStr}`
+}
+
+// Synthetic 3D formula-unit structure for ionic compounds when PubChem has no 3D
+function buildIonicMol(parsedAtoms, ionicName) {
+  const metalAtoms    = parsedAtoms.filter(a => METALS.has(a.el))
+  const nonMetalAtoms = parsedAtoms.filter(a => !METALS.has(a.el))
+  const polyion       = matchPolyion(elCountsOf(nonMetalAtoms))
+  const atoms = [], bonds = []
+  let   nid   = 1
+
+  if (polyion) {
+    const cId = nid++
+    atoms.push({id:cId, el:polyion.center, x:0, y:0, z:0})
+    ionLigandPositions(polyion.shape, polyion.n, polyion.L).forEach(p => {
+      const lId = nid++
+      atoms.push({id:lId, el:polyion.ligand, x:p.x, y:p.y, z:p.z})
+      bonds.push({a:cId, b:lId, order:1})
+    })
+  } else {
+    // Simple anions in a row
+    const anList = nonMetalAtoms.flatMap(a => Array.from({length:a.n}, () => a.el))
+    anList.forEach((el, i) => atoms.push({id:nid++, el, x:(i-(anList.length-1)/2)*1.6, y:0, z:0}))
+  }
+
+  // Cation ions arranged in a ring around the anion group, offset in y for depth
+  const catList = metalAtoms.flatMap(a => Array.from({length:a.n}, () => a.el))
+  catList.forEach((el, i) => {
+    const a = (i / catList.length) * 2 * Math.PI
+    atoms.push({id:nid++, el, x:3.0*Math.cos(a), y:3.0*0.4*Math.sin(a), z:3.0*Math.sin(a)})
+  })
+
+  const formula = parsedAtoms.map(({el,n}) => el+(n>1?n:'')).join('')
+  const mw      = parsedAtoms.reduce((s,{el,n}) => s+(ed(el).mass||0)*n, 0)
+  return {formula:ionicName??formula, mw, atoms, bonds, ionic:true}
+}
+
+// PubChem fetch
+// Only entries where fastformula returns an ambiguous/wrong CID
+const FORMULA_NAME = {
+  'H2CO3':'carbonic acid',
+  'HCL':'hydrochloric acid',  'HBR':'hydrobromic acid',  'HI':'hydroiodic acid',
+  'PCL3':'phosphorus trichloride', 'PCL5':'phosphorus pentachloride',
+  'CCL4':'carbon tetrachloride',   'CH2CL2':'dichloromethane',
+  'SF6':'sulfur hexafluoride',     'N2H4':'hydrazine',
+}
+
+const molCache   = {}
+let   _fetchCtrl = null
+
+function parsePubChemData(data, fallbackName) {
+  const cmp  = data.PC_Compounds?.[0]
+  if (!cmp) throw new Error('no compound')
+  const conf = cmp.coords?.[0]?.conformers?.[0]
+  if (!conf) throw new Error('no 3D')
+
+  const aids    = cmp.atoms.aid
+  const atomEls = cmp.atoms.element.map(n => ELEMENTS[n] ?? 'X')
+  const atoms   = aids.map((id, i) => ({
+    id, el: atomEls[i],
+    x: conf.x[i], y: conf.y[i], z: conf.z?.[i] ?? 0,
+  }))
+  const bonds = []
+  if (cmp.bonds) {
+    for (let i = 0; i < cmp.bonds.aid1.length; i++)
+      bonds.push({a:cmp.bonds.aid1[i], b:cmp.bonds.aid2[i], order:cmp.bonds.order?.[i]??1})
+  }
+  const formula = cmp.props?.find(p => p.urn?.label === 'Molecular Formula')?.value?.sval ?? fallbackName
+  const mw      = atoms.reduce((s, a) => s + (ed(a.el).mass||0), 0)
+  return {formula, mw, atoms, bonds}
+}
+
+async function fetchRecord(base, fallbackName, signal) {
+  // Try 3D conformer first; fall back to 2D layout (z=0) if unavailable
+  let res = await fetch(base + '?record_type=3d', {signal})
+  if (res.ok) {
+    try { return parsePubChemData(await res.json(), fallbackName) } catch(_) {}
+  }
+  res = await fetch(base, {signal})
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return parsePubChemData(await res.json(), fallbackName)
+}
+
+async function fetchByName(name, signal) {
+  return fetchRecord(
+    `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/record/JSON`,
+    name, signal
+  )
+}
+
+async function fetchByFormula(formula, signal) {
+  const cidRes = await fetch(
+    `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/fastformula/${encodeURIComponent(formula)}/cids/JSON`,
+    {signal}
+  )
+  if (!cidRes.ok) throw new Error(`formula ${cidRes.status}`)
+  const cids = (await cidRes.json()).IdentifierList?.CID
+  if (!cids?.length) throw new Error('no CIDs')
+  return fetchRecord(
+    `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cids[0]}/record/JSON`,
+    formula, signal
+  )
+}
+
+async function fetchMolecule(input) {
+  if (_fetchCtrl) _fetchCtrl.abort()
+  _fetchCtrl = new AbortController()
+  const {signal} = _fetchCtrl
+
+  const key    = input.trim().toLowerCase()
+  if (molCache[key]) return molCache[key]
+
+  const upper  = input.trim().toUpperCase()
+  const mapped = FORMULA_NAME[upper] ?? null
+  const save   = m => { molCache[key] = m; return m }
+  const notAbort = e => e.name !== 'AbortError'
+
+  // 1. Mapped name for formulas with non-obvious or ambiguous IUPAC representation
+  if (mapped) {
+    try { return save(await fetchByName(mapped, signal)) } catch(e) { if (!notAbort(e)) throw e }
+  }
+  // 2. Input as-is - handles IUPAC names, common names ("aspirin", "glucose")
+  try { return save(await fetchByName(input.trim(), signal)) } catch(e) { if (!notAbort(e)) throw e }
+  // 3. fastformula → CID → 3D — most reliable path for molecular formulas
+  try { return save(await fetchByFormula(upper, signal)) } catch(e) { if (!notAbort(e)) throw e }
+
+  // 4. Ionic compound - get common name from formula try PubChem then other stuff
+  const parsedAtoms = parseFormula(input.trim())
+  if (parsedAtoms.length) {
+    const ionicName = nameIonicCompound(parsedAtoms)
+    if (ionicName) {
+      try {
+        const m = await fetchByName(ionicName, signal)
+        return save({...m, formula:ionicName, ionic:true})
+      } catch(e) { if (!notAbort(e)) throw e }
+      // last resort pls work
+      return save(buildIonicMol(parsedAtoms, ionicName))
+    }
+  }
+
+  throw new Error(`"${input}" not found — try the full name or a formula like "Na2SO4"`)
+}
+
+// Geometry analysis
+const GEO_BY_NC = { 2:'Linear', 3:'Trigonal Planar', 4:'Tetrahedral', 5:'Trigonal Bipyramidal', 6:'Octahedral' }
+
+function analyzeGeometry(atoms, bonds) {
+  if (atoms.length === 2) return {geoName:'Diatomic'}
+
+  const bc = {}
+  atoms.forEach(a => { bc[a.id] = 0 })
+  bonds.forEach(b => { bc[b.a]=(bc[b.a]||0)+1; bc[b.b]=(bc[b.b]||0)+1 })
+
+  // Named geometry only for single-center molecules
+  const nonTerminalHeavy = atoms.filter(a => a.el !== 'H' && bc[a.id] >= 2)
+  if (nonTerminalHeavy.length !== 1) return {geoName:'—'}
+
+  const central   = nonTerminalHeavy[0]
+  const myBonds   = bonds.filter(b => b.a===central.id || b.b===central.id)
+  const neighbors = myBonds.map(b => b.a===central.id ? b.b : b.a)
+                           .map(id => atoms.find(a => a.id===id)).filter(Boolean)
+
+  const V         = ed(central.el).valence ?? 4
+  const bondSum   = myBonds.reduce((s,b) => s+(b.order??1), 0)
+  const lonePairs = Math.max(0, Math.floor((V - bondSum) / 2))
+
+  let geoName = GEO_BY_NC[neighbors.length] ?? `${neighbors.length} bonds`
+  if (neighbors.length === 3 && lonePairs === 1) geoName = 'Trigonal Pyramidal'
+  if (neighbors.length === 2 && lonePairs >= 1)  geoName = 'Bent'
+
+  // Compute bond angle from 3D positions
+  let bondAngle = null
+  if (neighbors.length >= 2) {
+    const cx = central.x, cy = central.y, cz = central.z
+    const angles = []
+    for (let i = 0; i < neighbors.length; i++) {
+      for (let j = i+1; j < neighbors.length; j++) {
+        const ax=neighbors[i].x-cx, ay=neighbors[i].y-cy, az=neighbors[i].z-cz
+        const bx=neighbors[j].x-cx, by=neighbors[j].y-cy, bz=neighbors[j].z-cz
+        const dot = ax*bx+ay*by+az*bz
+        const mag = Math.sqrt((ax*ax+ay*ay+az*az)*(bx*bx+by*by+bz*bz))
+        if (mag > 0) angles.push(Math.acos(Math.max(-1,Math.min(1,dot/mag)))*180/Math.PI)
+      }
+    }
+    if (angles.length) {
+      const avg = angles.reduce((a,b)=>a+b,0)/angles.length
+      const dev = Math.max(...angles.map(a=>Math.abs(a-avg)))
+      if (dev < 8) bondAngle = avg.toFixed(1) + '°'
+    }
+  }
+  return {geoName, bondAngle}
+}
+
+// atom details
+function atomDetailInfo(atom, allAtoms, bonds) {
+  const V         = ed(atom.el).valence ?? 4
+  const myBonds   = bonds.filter(b => b.a===atom.id || b.b===atom.id)
+  const bondSum   = myBonds.reduce((s,b) => s+(b.order??1), 0)
+  const lonePairs = Math.max(0, Math.floor((V - bondSum) / 2))
+  const formalCharge = V - lonePairs*2 - bondSum
+  const domains      = myBonds.length + lonePairs
+  const hyb          = {1:'s',2:'sp',3:'sp²',4:'sp³',5:'sp³d',6:'sp³d²'}[domains] ?? '—'
+
+  const neighborBonds = myBonds.map(b => {
+    const nId = b.a===atom.id ? b.b : b.a
+    const n   = allAtoms.find(a => a.id===nId)
+    if (!n) return null
+    const d = Math.sqrt((atom.x-n.x)**2+(atom.y-n.y)**2+(atom.z-n.z)**2)
+    return {
+      el: n.el, order: b.order,
+      orderSym:   b.order===2 ? '═' : b.order===3 ? '≡' : '─',
+      orderLabel: b.order===2 ? 'double' : b.order===3 ? 'triple' : 'single',
+      len: d.toFixed(2),
+    }
+  }).filter(Boolean)
+
+  const c  = new THREE.Vector3(atom.x, atom.y, atom.z)
+  const nb = myBonds.map(b => {
+    const nId = b.a===atom.id ? b.b : b.a
+    return allAtoms.find(a => a.id===nId)
+  }).filter(Boolean)
+
+  const angles = []
+  for (let i = 0; i < nb.length; i++) {
+    for (let j = i+1; j < nb.length; j++) {
+      const v1 = new THREE.Vector3(nb[i].x,nb[i].y,nb[i].z).sub(c).normalize()
+      const v2 = new THREE.Vector3(nb[j].x,nb[j].y,nb[j].z).sub(c).normalize()
+      const deg = Math.round(Math.acos(Math.max(-1,Math.min(1,v1.dot(v2))))*180/Math.PI)
+      angles.push({a:nb[i].el, b:nb[j].el, deg})
+    }
+  }
+
+  return {lonePairs, formalCharge, hyb, neighborBonds, angles, bondSum}
+}
+
+// Three.js / WebGPU setup
+const wrap   = document.getElementById('canvas-wrap')
+const scene  = new THREE.Scene()
+scene.background = null
+
+const camera = new THREE.PerspectiveCamera(45, wrap.clientWidth/wrap.clientHeight, 0.1, 100)
+camera.position.set(0, 1.5, 8)
+
+const loadEl = document.getElementById('loading')
+function log(msg) { loadEl.textContent = msg }
+
+async function createRenderer() {
+  const make = forceWebGL => {
+    const r = new THREE.WebGPURenderer({antialias:true, alpha:true, forceWebGL})
+    r.setPixelRatio(window.devicePixelRatio)
+    r.setSize(wrap.clientWidth, wrap.clientHeight)
+    r.setClearColor(0x000000, 0)
+    return r
+  }
+  if (navigator.gpu) {
+    const adapter = await navigator.gpu.requestAdapter().catch(() => null)
+    if (adapter) {
+      try {
+        log('INIT WEBGPU...')
+        const r = make(false); wrap.appendChild(r.domElement); await r.init(); return r
+      } catch(e) { wrap.innerHTML = '' }
+    }
+  }
+  log('INIT WEBGL2...')
+  const r = make(true); wrap.appendChild(r.domElement); await r.init(); return r
+}
+
+const renderer = await createRenderer()
+loadEl.style.display = 'none'
+
+const controls = new OrbitControls(camera, renderer.domElement)
+controls.enableDamping   = true
+controls.dampingFactor   = 0.07
+controls.autoRotate      = false
+controls.autoRotateSpeed = 1.2
+controls.minDistance     = 1.5
+controls.maxDistance     = 30
+
+scene.add(new THREE.HemisphereLight(0x9fb2ff, 0x121225, 1.8))
+const keyLight  = new THREE.DirectionalLight(0x9fb2ff, 1.0);  keyLight.position.set(4, 5, 6);   scene.add(keyLight)
+const fillLight = new THREE.DirectionalLight(0xffffff, 0.45); fillLight.position.set(-5,-2, 4); scene.add(fillLight)
+const rimLight  = new THREE.DirectionalLight(0x6482d2, 0.8);  rimLight.position.set(-4, 4,-6);  scene.add(rimLight)
+
+// TSL fresnel rim glow
+const fresnel = Fn(() => {
+  const v = cameraPosition.sub(positionWorld).normalize()
+  return float(1.0).sub(normalWorld.dot(v).saturate()).pow(float(3.0))
+})
+
+const _matCache = {}
+function atomMat(hex) {
+  if (_matCache[hex]) return _matCache[hex]
+  const mat = new THREE.MeshPhysicalNodeMaterial()
+  mat.colorNode              = color(new THREE.Color(hex))
+  mat.transparent            = false
+  mat.opacityNode            = float(1.0)
+  mat.roughnessNode          = float(1.0)
+  mat.metalnessNode          = float(0.08)
+  mat.clearcoatNode          = float(0.4)
+  mat.clearcoatRoughnessNode = float(1.0)
+  mat.emissiveNode           = color(0x6482d2).mul(fresnel()).mul(float(0.28))
+  _matCache[hex] = mat
+  return mat
+}
+
+const _selMat = (() => {
+  const mat = new THREE.MeshPhysicalNodeMaterial()
+  mat.colorNode              = color(0xc8d4ff)
+  mat.transparent            = false
+  mat.opacityNode            = float(1.0)
+  mat.roughnessNode          = float(1.0)
+  mat.metalnessNode          = float(0.08)
+  mat.clearcoatNode          = float(0.5)
+  mat.clearcoatRoughnessNode = float(1.0)
+  mat.emissiveNode           = color(0x5577dd).mul(float(0.4))
+  return mat
+})()
+
+const _bondMat = (() => {
+  const mat = new THREE.MeshStandardNodeMaterial()
+  mat.colorNode     = color(0x26326f)
+  mat.roughnessNode = float(0.75)
+  mat.metalnessNode = float(0.0)
+  mat.emissiveNode  = color(0x3040a0).mul(float(0.12))
+  return mat
+})()
+
+// Molecule scene
+const molGroup = new THREE.Group()
+scene.add(molGroup)
+
+function clearMol() {
+  molGroup.traverse(o => { if (o.geometry) o.geometry.dispose() })
+  molGroup.clear()
+}
+
+function addAtom(pos, el, atomId) {
+  // 48×32 sphere segments — smooth enough to look good without overdrawing
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(elRadius(el), 48, 32), atomMat(elColor(el)))
+  mesh.position.copy(pos)
+  mesh.userData.atomId = atomId
+  mesh.userData.el     = el
+  molGroup.add(mesh)
+  return mesh
+}
+
+function addBond(pA, pB, order = 1) {
+  const dir  = new THREE.Vector3().subVectors(pB, pA)
+  const len  = dir.length()
+  if (len < 0.01) return
+  const norm = dir.clone().normalize()
+  const mid  = new THREE.Vector3().lerpVectors(pA, pB, 0.5)
+  const q    = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), norm)
+
+  if (order === 1) {
+    // 0.07 = bond radius in scene units
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,len,12), _bondMat)
+    m.position.copy(mid); m.quaternion.copy(q); molGroup.add(m)
+  } else {
+    const up   = Math.abs(norm.y) < 0.85 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0)
+    const perp = new THREE.Vector3().crossVectors(norm, up).normalize()
+    // double: ±0.09 offset; triple: -0.12 / 0 / +0.12
+    const offs = order === 2 ? [-0.09, 0.09] : [-0.12, 0, 0.12]
+    const r    = order === 2 ? 0.05 : 0.04
+    offs.forEach(d => {
+      const m = new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,10), _bondMat)
+      m.position.copy(mid).addScaledVector(perp, d); m.quaternion.copy(q); molGroup.add(m)
+    })
+  }
+}
+
+let currentMol   = null
+let atomMeshes   = []
+let selectedMesh = null
+const SCALE      = 1.3  // Å → scene units
+
+function renderMol(mol) {
+  clearMol()
+  atomMeshes   = []
+  selectedMesh = null
+  currentMol   = mol
+  hideAtomPanel()
+  controls.target.set(0, 0, 0)
+
+  let cx=0, cy=0, cz=0
+  mol.atoms.forEach(a => { cx+=a.x; cy+=a.y; cz+=a.z })
+  cx/=mol.atoms.length; cy/=mol.atoms.length; cz/=mol.atoms.length
+
+  let maxR = 0
+  mol.atoms.forEach(a => {
+    const dx=(a.x-cx)*SCALE, dy=(a.y-cy)*SCALE, dz=(a.z-cz)*SCALE
+    maxR = Math.max(maxR, Math.sqrt(dx*dx+dy*dy+dz*dz))
+  })
+  const fovRad = camera.fov * Math.PI / 180
+  _fitDist = Math.max(3.5, Math.min(22, (maxR + 0.9) / Math.sin(fovRad/2) * 1.1))
+  _zoomTarget = _fitDist
+
+  const posMap = {}
+  mol.atoms.forEach(a => {
+    const p = new THREE.Vector3((a.x-cx)*SCALE, (a.y-cy)*SCALE, (a.z-cz)*SCALE)
+    posMap[a.id] = p
+    atomMeshes.push(addAtom(p, a.el, a.id))
+  })
+  mol.bonds.forEach(b => addBond(posMap[b.a], posMap[b.b], b.order))
+
+  const geoResult = mol.ionic ? {geoName:'Ionic Compound', bondAngle:null} : analyzeGeometry(mol.atoms, mol.bonds)
+  const geoName   = geoResult.geoName
+  const mw        = mol.mw > 0 ? mol.mw.toFixed(2) + ' u' : '—'
+
+  document.getElementById('v-mol').textContent = mol.formula
+  document.getElementById('v-geo').textContent = geoName
+  document.getElementById('v-bnd').textContent = mol.bonds.length
+  document.getElementById('v-atm').textContent = mol.atoms.length
+  document.getElementById('v-mw').textContent  = mw
+
+  document.getElementById('v-ang').textContent = geoResult.bondAngle ?? '—'
+
+  const unique = [...new Set(mol.atoms.map(a => a.el))]
+  document.getElementById('leg-panel').innerHTML =
+    `<div class="leg-title">ATOMS</div>` +
+    unique.map(el =>
+      `<div class="leg-row"><div class="leg-dot" style="background:${hexStr(elColor(el))}"></div>` +
+      `<span>${el} — ${ed(el).name}</span></div>`
+    ).join('')
+
+}
+
+// Atom detail panel
+const atomPanel = document.getElementById('atom-panel')
+const legPanel  = document.getElementById('leg-panel')
+
+function showAtomPanel(atom) {
+  const info  = atomDetailInfo(atom, currentMol.atoms, currentMol.bonds)
+  const einfo = ed(atom.el)
+  const hexc  = hexStr(elColor(atom.el))
+
+  document.getElementById('ap-sym').textContent  = atom.el
+  document.getElementById('ap-sym').style.color  = hexc
+  document.getElementById('ap-z').textContent    = `Z = ${einfo.z}`
+  document.getElementById('ap-name').textContent = einfo.name
+  document.getElementById('ap-cat').textContent  = einfo.cat
+  document.getElementById('ap-mass').textContent = `${einfo.mass} u`
+
+  const fc    = info.formalCharge
+  const fcCls = fc > 0 ? 'pos' : fc < 0 ? 'neg' : 'zero'
+  const fcTxt = fc > 0 ? `+${fc}` : `${fc}`
+
+  let html = `<div class="ap-section">
+    <div class="ap-sec-title">Identity</div>
+    <div class="ap-kv"><span class="ap-k">Electronegativity</span><span class="ap-v">${einfo.en ?? '—'}</span></div>
+    <div class="ap-kv"><span class="ap-k">Valence electrons</span><span class="ap-v">${einfo.valence}</span></div>
+    <div class="ap-kv"><span class="ap-k">Hybridization</span><span class="ap-v cyan">${info.hyb}</span></div>
+  </div>`
+
+  if (info.neighborBonds.length) {
+    html += `<div class="ap-section"><div class="ap-sec-title">Bonds (${info.neighborBonds.length})</div>`
+    info.neighborBonds.forEach(b => {
+      html += `<div class="ap-bond-row">
+        <div class="ap-bdot" style="background:${hexStr(elColor(b.el))}"></div>
+        <span class="ap-bel">${b.el}</span>
+        <span class="ap-btype">${b.orderSym} ${b.orderLabel}</span>
+        <span class="ap-blen">${b.len} Å</span>
+      </div>`
+    })
+    html += `</div>`
+  }
+
+  if (info.angles.length) {
+    html += `<div class="ap-section"><div class="ap-sec-title">Bond Angles</div>`
+    info.angles.forEach(a => {
+      html += `<div class="ap-angle-row">
+        <span class="ap-angle-atoms">${a.a} — ${atom.el} — ${a.b}</span>
+        <span class="ap-angle-val">${a.deg}°</span>
+      </div>`
+    })
+    html += `</div>`
+  }
+
+  html += `<div class="ap-section">
+    <div class="ap-sec-title">Electron Structure</div>
+    <div class="ap-kv"><span class="ap-k">Lone pairs</span><span class="ap-v">${info.lonePairs}</span></div>
+    <div class="ap-kv"><span class="ap-k">Lone pair e⁻</span><span class="ap-v">${info.lonePairs*2}</span></div>
+    <div class="ap-kv"><span class="ap-k">Formal charge</span><span class="ap-v ${fcCls}">${fcTxt} <span style="color:rgba(255,255,255,0.28);font-size:9px;font-weight:400">(approx)</span></span></div>
+    <div class="ap-kv"><span class="ap-k">Bond order sum</span><span class="ap-v">${info.bondSum}</span></div>
+  </div>`
+
+  document.getElementById('ap-content').innerHTML = html
+  legPanel.style.display = 'none'
+  atomPanel.classList.add('show')
+}
+
+function hideAtomPanel() {
+  atomPanel.classList.remove('show')
+  legPanel.style.display = ''
+  if (selectedMesh) {
+    selectedMesh.material = atomMat(elColor(selectedMesh.userData.el))
+    selectedMesh = null
+  }
+}
+
+document.getElementById('ap-close').addEventListener('click', hideAtomPanel)
+
+// Raycaster
+const raycaster = new THREE.Raycaster()
+const mouse     = new THREE.Vector2()
+
+let _downX = 0, _downY = 0
+let _autoRotateEnabled = false
+let _rotateResumeTimer = null
+let _isWheeling = false, _wheelClear = null
+
+renderer.domElement.addEventListener('pointerdown', e => { _downX = e.clientX; _downY = e.clientY })
+
+renderer.domElement.addEventListener('wheel', () => {
+  _isWheeling = true
+  clearTimeout(_wheelClear)
+  _wheelClear = setTimeout(() => { _isWheeling = false }, 150)
+}, { passive: true })
+
+controls.addEventListener('start', () => {
+  if (_isWheeling) return
+  clearTimeout(_rotateResumeTimer)
+  controls.autoRotate = false
+})
+controls.addEventListener('end', () => {
+  if (!_autoRotateEnabled) return
+  clearTimeout(_rotateResumeTimer)
+  _rotateResumeTimer = setTimeout(() => { controls.autoRotate = true }, 700)
+})
+
+renderer.domElement.addEventListener('click', e => {
+  if (!currentMol) return
+  if (Math.hypot(e.clientX - _downX, e.clientY - _downY) > 5) return
+  const rect = renderer.domElement.getBoundingClientRect()
+  mouse.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1
+  mouse.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1
+  raycaster.setFromCamera(mouse, camera)
+  const hits = raycaster.intersectObjects(atomMeshes)
+  if (!hits.length) {
+    if (selectedMesh) { selectedMesh.material = atomMat(elColor(selectedMesh.userData.el)); selectedMesh = null; hideAtomPanel() }
+    return
+  }
+  const mesh = hits[0].object
+  if (mesh === selectedMesh) {
+    mesh.material = atomMat(elColor(mesh.userData.el)); selectedMesh = null; hideAtomPanel(); return
+  }
+  if (selectedMesh) selectedMesh.material = atomMat(elColor(selectedMesh.userData.el))
+  selectedMesh  = mesh
+  mesh.material = _selMat
+  const atom    = currentMol.atoms.find(a => a.id === mesh.userData.atomId)
+  if (atom) showAtomPanel(atom)
+})
+
+// Build
+const inputEl = document.getElementById('molecule-input')
+const errEl   = document.getElementById('error')
+let errTimer
+
+function showErr(msg) {
+  errEl.textContent = msg; errEl.classList.add('show')
+  clearTimeout(errTimer)
+  errTimer = setTimeout(() => errEl.classList.remove('show'), 5000)
+}
+
+async function buildMol(query) {
+  if (!query.trim()) return
+  loadEl.textContent = `LOADING ${query.toUpperCase()}...`
+  loadEl.style.display = 'block'
+  try {
+    const mol = await fetchMolecule(query)
+    loadEl.style.display = 'none'
+    renderMol(mol)
+  } catch(e) {
+    loadEl.style.display = 'none'
+    if (e.name !== 'AbortError') showErr(e.message ?? 'Failed to load')
+  }
+}
+
+document.getElementById('build-btn').addEventListener('click', () => buildMol(inputEl.value))
+inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') buildMol(inputEl.value) })
+controls.addEventListener('start', () => { controls.autoRotate = false })
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') hideAtomPanel()
+  if ((e.key === 'r' || e.key === 'R') && !e.target.matches('input')) {
+    controls.target.set(0, 0, 0)
+    const initDir = new THREE.Vector3(0, 1.5, 8).normalize()
+    camera.position.copy(initDir).multiplyScalar(_fitDist)
+    controls.update()
+  }
+})
+
+let _zoomTarget = null
+let _fitDist = 8
+
+renderer.setAnimationLoop(() => {
+  if (_zoomTarget !== null) {
+    const offset = camera.position.clone().sub(controls.target)
+    const cur    = offset.length()
+    const next   = cur + (_zoomTarget - cur) * 0.1
+    camera.position.copy(controls.target).addScaledVector(offset.normalize(), next)
+    if (Math.abs(next - _zoomTarget) < 0.04) _zoomTarget = null
+  }
+  controls.update()
+  renderer.render(scene, camera)
+})
+
+window.addEventListener('resize', () => {
+  camera.aspect = wrap.clientWidth / wrap.clientHeight
+  camera.updateProjectionMatrix()
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight)
+})
+
+// Settings
+;(()=>{
+  // settings
+  const sBtn   = document.getElementById('settings-btn')
+  const sPanel = document.getElementById('settings-panel')
+  const hBtn   = document.getElementById('help-btn')
+  const hPanel = document.getElementById('help-panel')
+
+  function closeAll() { sPanel.classList.remove('show'); hPanel.classList.remove('show') }
+
+  sBtn.addEventListener('click', e => { e.stopPropagation(); hPanel.classList.remove('show'); sPanel.classList.toggle('show') })
+  hBtn.addEventListener('click', e => { e.stopPropagation(); sPanel.classList.remove('show'); hPanel.classList.toggle('show') })
+  document.addEventListener('click', e => {
+    if (!sPanel.contains(e.target) && e.target !== sBtn) sPanel.classList.remove('show')
+    if (!hPanel.contains(e.target) && e.target !== hBtn) hPanel.classList.remove('show')
+  })
+
+  document.querySelectorAll('.bg-swatch').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.bg-swatch').forEach(x => x.classList.remove('active'))
+      b.classList.add('active')
+      document.documentElement.style.setProperty('--bg', b.dataset.bg)
+    })
+  })
+
+  document.getElementById('tog-dots').addEventListener('change', e => {
+    document.documentElement.style.setProperty('--dot-alpha', e.target.checked ? '0.12' : '0')
+  })
+
+  document.getElementById('tog-rotate').addEventListener('change', e => {
+    _autoRotateEnabled = e.target.checked
+    controls.autoRotate = e.target.checked
+    if (!e.target.checked) clearTimeout(_rotateResumeTimer)
+  })
+
+  document.getElementById('rng-speed').addEventListener('input', e => {
+    controls.autoRotateSpeed = e.target.value / 10
+  })
+})()
+
+buildMol('caffeine')
+</script>
+</body>
+</html>
