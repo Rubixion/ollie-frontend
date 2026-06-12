@@ -208,7 +208,7 @@ function HelpFaqTab() {
           />
         ))}
       </div>
-      <div className="mt-10 p-5 rounded-2xl bg-white/[0.02] border border-white/8">
+      <div className="mt-10 p-5 rounded-2xl bg-white/[0.02] border border-white/8 flex flex-col gap-4">
         <p className="text-white/35 text-sm">
           Still have a question?{" "}
           <Link href="/contact" className="text-white/60 hover:text-white underline underline-offset-2 transition-colors">
@@ -216,6 +216,21 @@ function HelpFaqTab() {
           </Link>
           {" "}and we&apos;ll get back to you within 48 hours.
         </p>
+        <div className="border-t border-white/5 pt-4 flex flex-wrap gap-x-5 gap-y-2">
+          <p className="text-white/20 text-xs w-full mb-1">Legal</p>
+          <Link
+            href="/terms"
+            className="text-white/35 text-xs hover:text-white/60 underline underline-offset-2 transition-colors"
+          >
+            Terms of Service
+          </Link>
+          <Link
+            href="/privacy"
+            className="text-white/35 text-xs hover:text-white/60 underline underline-offset-2 transition-colors"
+          >
+            Privacy Policy
+          </Link>
+        </div>
       </div>
     </div>
   )

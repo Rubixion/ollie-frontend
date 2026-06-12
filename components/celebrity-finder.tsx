@@ -159,14 +159,11 @@ export function CelebrityFinder() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <span className="inline-block text-xs font-semibold tracking-widest text-(--ollie-cyan) uppercase mb-3">
-            Core Feature
-          </span>
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">
-            Find Your Celebrity Match
+            Which celebrity do you look like?
           </h1>
-          <p className="mt-4 text-white/50 max-w-xl mx-auto">
-            Drop your photo. See which celebrity you resemble.
+          <p className="mt-4 text-white/45 max-w-xl mx-auto">
+            Drop your photo below. Ollie ranks celebrities by how closely your face matches theirs.
           </p>
         </motion.div>
 
@@ -245,12 +242,12 @@ export function CelebrityFinder() {
               {loading ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  Searching...
+                  Running your face through the network...
                 </>
               ) : (
                 <>
                   <Search size={16} />
-                  Search
+                  Find my match
                 </>
               )}
             </button>
@@ -271,8 +268,10 @@ export function CelebrityFinder() {
                     <User size={32} className="text-white/20" />
                   </div>
                   <div>
-                    <p className="text-white/30 font-medium">Results will appear here</p>
-                    <p className="text-white/15 text-sm mt-1">Upload a photo and hit Search</p>
+                    <p className="text-white/40 font-medium">Your top 5 matches will appear here</p>
+                    <p className="text-white/20 text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
+                      Each result is a celebrity ranked by how closely your facial structure matches theirs
+                    </p>
                   </div>
                 </div>
               )}
@@ -281,7 +280,7 @@ export function CelebrityFinder() {
               {loading && (
                 <div className="h-full flex flex-col items-center justify-center gap-4 py-16">
                   <Loader2 size={36} className="text-(--ollie-cyan) animate-spin" />
-                  <p className="text-white/40 text-sm">Scanning faces...</p>
+                  <p className="text-white/40 text-sm">Comparing your face across 9,131 celebrities...</p>
                 </div>
               )}
 

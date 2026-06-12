@@ -35,7 +35,7 @@ const defaultEntries: ChangelogEntry[] = [
   },
   {
     date: "Feb 2026",
-    title: "v1.5 - Gaming Components",
+    title: "v1.4 - Gaming Components",
     description:
       "Health bars, mana bars, leaderboards, game over screens, and victory animations.",
   },

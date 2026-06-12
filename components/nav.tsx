@@ -8,10 +8,8 @@ import { usePathname } from "next/navigation"
 import { useAuth } from "@/components/auth-provider"
 
 const links = [
-  { label: "Celebrity Twins", href: "/match" },
-  { label: "Face Search", href: "/search" },
-  { label: "How It Works", href: "/ai" },
-  { label: "Feedback", href: "/feedback" },
+  { label: "Match", href: "/match" },
+  { label: "Projects", href: "/projects" },
   { label: "About", href: "/about" },
 ]
 
