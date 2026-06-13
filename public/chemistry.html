@@ -171,6 +171,30 @@
     .ap-angle-atoms { color: rgba(255,255,255,0.4); }
     .ap-angle-val { color: var(--cyan); font-weight: 600; }
 
+    /* tab bar */
+    #ap-tabs {
+      display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 2;
+      background: rgba(7,7,15,0.97); backdrop-filter: blur(12px);
+    }
+    .ap-tab {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5px; font-weight: 700; letter-spacing: 0.5px;
+      padding: 4px 8px; border-radius: 6px; cursor: pointer;
+      border: 1px solid transparent;
+      color: rgba(255,255,255,0.3);
+      background: transparent;
+      transition: all 0.15s;
+    }
+    .ap-tab:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); }
+    .ap-tab.active {
+      color: var(--cyan); background: rgba(100,130,210,0.12);
+      border-color: rgba(100,130,210,0.3);
+    }
+    .ap-tab-panel { display: none; }
+    .ap-tab-panel.active { display: block; }
+
     /* click hint */
     #click-hint {
       position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -294,6 +318,7 @@
         </div>
         <button class="ap-close" id="ap-close">✕</button>
       </div>
+      <div id="ap-tabs"></div>
       <div id="ap-content"></div>
     </div>
   </div>
@@ -431,6 +456,91 @@ const EDATA = {
   Pb: { name:'Lead',       z:82, mass:207.2,   en:2.33, cat:'Metal',       valence:4, color:0x575961, radius:0.46 },
   Bi: { name:'Bismuth',    z:83, mass:208.980, en:2.02, cat:'Metal',       valence:5, color:0x9e4fb5, radius:0.44 },
 }
+// Extended periodic table data: group, period, block, electron config, common oxidation states, IMFs
+const PTABLE = {
+  H:  { group:1,  period:1, block:'s', config:'1s¹',                                        ox:[-1,1],   imf:['London dispersion','Hydrogen bonding (in HX)'] },
+  He: { group:18, period:1, block:'s', config:'1s²',                                        ox:[0],      imf:['London dispersion'] },
+  Li: { group:1,  period:2, block:'s', config:'[He] 2s¹',                                   ox:[1],      imf:['Metallic'] },
+  Be: { group:2,  period:2, block:'s', config:'[He] 2s²',                                   ox:[2],      imf:['Metallic'] },
+  B:  { group:13, period:2, block:'p', config:'[He] 2s² 2p¹',                               ox:[3],      imf:['London dispersion'] },
+  C:  { group:14, period:2, block:'p', config:'[He] 2s² 2p²',                               ox:[-4,2,4], imf:['London dispersion'] },
+  N:  { group:15, period:2, block:'p', config:'[He] 2s² 2p³',                               ox:[-3,3,5], imf:['London dispersion','Dipole–dipole','Hydrogen bonding'] },
+  O:  { group:16, period:2, block:'p', config:'[He] 2s² 2p⁴',                               ox:[-2],     imf:['London dispersion','Dipole–dipole','Hydrogen bonding'] },
+  F:  { group:17, period:2, block:'p', config:'[He] 2s² 2p⁵',                               ox:[-1],     imf:['London dispersion','Dipole–dipole','Hydrogen bonding'] },
+  Ne: { group:18, period:2, block:'p', config:'[He] 2s² 2p⁶',                               ox:[0],      imf:['London dispersion'] },
+  Na: { group:1,  period:3, block:'s', config:'[Ne] 3s¹',                                   ox:[1],      imf:['Metallic'] },
+  Mg: { group:2,  period:3, block:'s', config:'[Ne] 3s²',                                   ox:[2],      imf:['Metallic'] },
+  Al: { group:13, period:3, block:'p', config:'[Ne] 3s² 3p¹',                               ox:[3],      imf:['Metallic'] },
+  Si: { group:14, period:3, block:'p', config:'[Ne] 3s² 3p²',                               ox:[-4,4],   imf:['London dispersion'] },
+  P:  { group:15, period:3, block:'p', config:'[Ne] 3s² 3p³',                               ox:[-3,3,5], imf:['London dispersion','Dipole–dipole'] },
+  S:  { group:16, period:3, block:'p', config:'[Ne] 3s² 3p⁴',                               ox:[-2,4,6], imf:['London dispersion','Dipole–dipole'] },
+  Cl: { group:17, period:3, block:'p', config:'[Ne] 3s² 3p⁵',                               ox:[-1,1,3,5,7], imf:['London dispersion','Dipole–dipole'] },
+  Ar: { group:18, period:3, block:'p', config:'[Ne] 3s² 3p⁶',                               ox:[0],      imf:['London dispersion'] },
+  K:  { group:1,  period:4, block:'s', config:'[Ar] 4s¹',                                   ox:[1],      imf:['Metallic'] },
+  Ca: { group:2,  period:4, block:'s', config:'[Ar] 4s²',                                   ox:[2],      imf:['Metallic'] },
+  Sc: { group:3,  period:4, block:'d', config:'[Ar] 3d¹ 4s²',                               ox:[3],      imf:['Metallic'] },
+  Ti: { group:4,  period:4, block:'d', config:'[Ar] 3d² 4s²',                               ox:[2,3,4],  imf:['Metallic'] },
+  V:  { group:5,  period:4, block:'d', config:'[Ar] 3d³ 4s²',                               ox:[2,3,4,5],imf:['Metallic'] },
+  Cr: { group:6,  period:4, block:'d', config:'[Ar] 3d⁵ 4s¹',                               ox:[2,3,6],  imf:['Metallic'] },
+  Mn: { group:7,  period:4, block:'d', config:'[Ar] 3d⁵ 4s²',                               ox:[2,4,7],  imf:['Metallic'] },
+  Fe: { group:8,  period:4, block:'d', config:'[Ar] 3d⁶ 4s²',                               ox:[2,3],    imf:['Metallic'] },
+  Co: { group:9,  period:4, block:'d', config:'[Ar] 3d⁷ 4s²',                               ox:[2,3],    imf:['Metallic'] },
+  Ni: { group:10, period:4, block:'d', config:'[Ar] 3d⁸ 4s²',                               ox:[2],      imf:['Metallic'] },
+  Cu: { group:11, period:4, block:'d', config:'[Ar] 3d¹⁰ 4s¹',                              ox:[1,2],    imf:['Metallic'] },
+  Zn: { group:12, period:4, block:'d', config:'[Ar] 3d¹⁰ 4s²',                              ox:[2],      imf:['Metallic'] },
+  Ga: { group:13, period:4, block:'p', config:'[Ar] 3d¹⁰ 4s² 4p¹',                          ox:[3],      imf:['Metallic'] },
+  Ge: { group:14, period:4, block:'p', config:'[Ar] 3d¹⁰ 4s² 4p²',                          ox:[2,4],    imf:['London dispersion'] },
+  As: { group:15, period:4, block:'p', config:'[Ar] 3d¹⁰ 4s² 4p³',                          ox:[-3,3,5], imf:['London dispersion','Dipole–dipole'] },
+  Se: { group:16, period:4, block:'p', config:'[Ar] 3d¹⁰ 4s² 4p⁴',                          ox:[-2,4,6], imf:['London dispersion','Dipole–dipole'] },
+  Br: { group:17, period:4, block:'p', config:'[Ar] 3d¹⁰ 4s² 4p⁵',                          ox:[-1,1,3,5], imf:['London dispersion','Dipole–dipole'] },
+  Kr: { group:18, period:4, block:'p', config:'[Ar] 3d¹⁰ 4s² 4p⁶',                          ox:[0],      imf:['London dispersion'] },
+  Rb: { group:1,  period:5, block:'s', config:'[Kr] 5s¹',                                   ox:[1],      imf:['Metallic'] },
+  Sr: { group:2,  period:5, block:'s', config:'[Kr] 5s²',                                   ox:[2],      imf:['Metallic'] },
+  Y:  { group:3,  period:5, block:'d', config:'[Kr] 4d¹ 5s²',                               ox:[3],      imf:['Metallic'] },
+  Zr: { group:4,  period:5, block:'d', config:'[Kr] 4d² 5s²',                               ox:[4],      imf:['Metallic'] },
+  Nb: { group:5,  period:5, block:'d', config:'[Kr] 4d⁴ 5s¹',                               ox:[3,5],    imf:['Metallic'] },
+  Mo: { group:6,  period:5, block:'d', config:'[Kr] 4d⁵ 5s¹',                               ox:[4,6],    imf:['Metallic'] },
+  Ru: { group:8,  period:5, block:'d', config:'[Kr] 4d⁷ 5s¹',                               ox:[2,3,4],  imf:['Metallic'] },
+  Rh: { group:9,  period:5, block:'d', config:'[Kr] 4d⁸ 5s¹',                               ox:[1,3],    imf:['Metallic'] },
+  Pd: { group:10, period:5, block:'d', config:'[Kr] 4d¹⁰',                                  ox:[2,4],    imf:['Metallic'] },
+  Ag: { group:11, period:5, block:'d', config:'[Kr] 4d¹⁰ 5s¹',                              ox:[1],      imf:['Metallic'] },
+  Cd: { group:12, period:5, block:'d', config:'[Kr] 4d¹⁰ 5s²',                              ox:[2],      imf:['Metallic'] },
+  In: { group:13, period:5, block:'p', config:'[Kr] 4d¹⁰ 5s² 5p¹',                          ox:[3],      imf:['Metallic'] },
+  Sn: { group:14, period:5, block:'p', config:'[Kr] 4d¹⁰ 5s² 5p²',                          ox:[2,4],    imf:['Metallic'] },
+  Sb: { group:15, period:5, block:'p', config:'[Kr] 4d¹⁰ 5s² 5p³',                          ox:[-3,3,5], imf:['London dispersion','Dipole–dipole'] },
+  Te: { group:16, period:5, block:'p', config:'[Kr] 4d¹⁰ 5s² 5p⁴',                          ox:[-2,4,6], imf:['London dispersion','Dipole–dipole'] },
+  I:  { group:17, period:5, block:'p', config:'[Kr] 4d¹⁰ 5s² 5p⁵',                          ox:[-1,1,3,5,7], imf:['London dispersion','Dipole–dipole'] },
+  Xe: { group:18, period:5, block:'p', config:'[Kr] 4d¹⁰ 5s² 5p⁶',                          ox:[0],      imf:['London dispersion'] },
+  Cs: { group:1,  period:6, block:'s', config:'[Xe] 6s¹',                                   ox:[1],      imf:['Metallic'] },
+  Ba: { group:2,  period:6, block:'s', config:'[Xe] 6s²',                                   ox:[2],      imf:['Metallic'] },
+  La: { group:3,  period:6, block:'f', config:'[Xe] 5d¹ 6s²',                               ox:[3],      imf:['Metallic'] },
+  Pt: { group:10, period:6, block:'d', config:'[Xe] 4f¹⁴ 5d⁹ 6s¹',                          ox:[2,4],    imf:['Metallic'] },
+  Au: { group:11, period:6, block:'d', config:'[Xe] 4f¹⁴ 5d¹⁰ 6s¹',                         ox:[1,3],    imf:['Metallic'] },
+  Hg: { group:12, period:6, block:'d', config:'[Xe] 4f¹⁴ 5d¹⁰ 6s²',                         ox:[1,2],    imf:['London dispersion'] },
+  Tl: { group:13, period:6, block:'p', config:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹',                     ox:[1,3],    imf:['Metallic'] },
+  Pb: { group:14, period:6, block:'p', config:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²',                     ox:[2,4],    imf:['Metallic'] },
+  Bi: { group:15, period:6, block:'p', config:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³',                     ox:[3,5],    imf:['Metallic'] },
+}
+
+// VSEPR table keyed by "bondingPairs-lonePairs"
+// electron geometry | molecular geometry | AXE | ideal angle
+const VSEPR_TABLE = {
+  '1-0': { eGeo:'Linear',         mGeo:'Linear',              axe:'AX',    angle:'180°' },
+  '2-0': { eGeo:'Linear',         mGeo:'Linear',              axe:'AX₂',   angle:'180°' },
+  '2-1': { eGeo:'Trigonal planar',mGeo:'Bent',                axe:'AX₂E',  angle:'<120°' },
+  '2-2': { eGeo:'Tetrahedral',    mGeo:'Bent',                axe:'AX₂E₂', angle:'<109.5°' },
+  '2-3': { eGeo:'Trigonal bipyramidal',mGeo:'Linear',         axe:'AX₂E₃', angle:'180°' },
+  '3-0': { eGeo:'Trigonal planar',mGeo:'Trigonal planar',     axe:'AX₃',   angle:'120°' },
+  '3-1': { eGeo:'Tetrahedral',    mGeo:'Trigonal pyramidal',  axe:'AX₃E',  angle:'<109.5°' },
+  '3-2': { eGeo:'Trigonal bipyramidal',mGeo:'T-shaped',       axe:'AX₃E₂', angle:'<90°' },
+  '4-0': { eGeo:'Tetrahedral',    mGeo:'Tetrahedral',         axe:'AX₄',   angle:'109.5°' },
+  '4-1': { eGeo:'Trigonal bipyramidal',mGeo:'See-saw',        axe:'AX₄E',  angle:'<120°' },
+  '4-2': { eGeo:'Octahedral',     mGeo:'Square planar',       axe:'AX₄E₂', angle:'90°' },
+  '5-0': { eGeo:'Trigonal bipyramidal',mGeo:'Trigonal bipyramidal',axe:'AX₅', angle:'90°/120°' },
+  '5-1': { eGeo:'Octahedral',     mGeo:'Square pyramidal',    axe:'AX₅E',  angle:'<90°' },
+  '6-0': { eGeo:'Octahedral',     mGeo:'Octahedral',          axe:'AX₆',   angle:'90°' },
+}
+
 function ed(el)       { return EDATA[el] ?? EDATA_DEFAULT }
 function elColor(el)  { return ed(el).color }
 function elRadius(el) { return ed(el).radius }
@@ -980,10 +1090,203 @@ function renderMol(mol) {
 const atomPanel = document.getElementById('atom-panel')
 const legPanel  = document.getElementById('leg-panel')
 
+const AP_TABS = [
+  { id:'identity',  label:'Identity' },
+  { id:'estruc',    label:'e⁻ Struct' },
+  { id:'bonding',   label:'Bonding' },
+  { id:'vsepr',     label:'VSEPR' },
+  { id:'lewis',     label:'Lewis' },
+  { id:'props',     label:'Props' },
+  { id:'organic',   label:'Organic' },
+]
+
+let _apActiveTab = 'identity'
+
+function kv(k, v, cls='') {
+  return `<div class="ap-kv"><span class="ap-k">${k}</span><span class="ap-v ${cls}">${v}</span></div>`
+}
+
+function buildTabContent(tabId, atom, info, einfo, pt) {
+  const fc    = info.formalCharge
+  const fcCls = fc > 0 ? 'pos' : fc < 0 ? 'neg' : 'zero'
+  const fcTxt = fc > 0 ? `+${fc}` : `${fc}`
+  const bp    = info.neighborBonds.length
+  const lp    = info.lonePairs
+  const sn    = bp + lp
+  const vsepr = VSEPR_TABLE[`${bp}-${lp}`] ?? null
+
+  if (tabId === 'identity') {
+    const oxList = pt?.ox?.map(o => o > 0 ? `+${o}` : `${o}`).join(', ') ?? '—'
+    return `<div class="ap-section">
+      <div class="ap-sec-title">Identity</div>
+      ${kv('Atomic number',   einfo.z)}
+      ${kv('Atomic mass',     einfo.mass + ' u')}
+      ${kv('Group',           pt?.group ?? '—')}
+      ${kv('Period',          pt?.period ?? '—')}
+      ${kv('Block',           pt?.block ?? '—')}
+      ${kv('Oxidation states',oxList)}
+    </div>`
+  }
+
+  if (tabId === 'estruc') {
+    return `<div class="ap-section">
+      <div class="ap-sec-title">Electronic Structure</div>
+      ${kv('Electron config',  pt?.config ?? '—')}
+      ${kv('Valence electrons',einfo.valence)}
+      ${kv('Electronegativity',einfo.en ?? '—')}
+    </div>`
+  }
+
+  if (tabId === 'bonding') {
+    let sigmas = 0, pis = 0
+    info.neighborBonds.forEach(b => {
+      sigmas += 1
+      if (b.order >= 2) pis += (b.order - 1)
+    })
+    let bondRows = ''
+    if (info.neighborBonds.length) {
+      info.neighborBonds.forEach(b => {
+        bondRows += `<div class="ap-bond-row">
+          <div class="ap-bdot" style="background:${hexStr(elColor(b.el))}"></div>
+          <span class="ap-bel">${b.el}</span>
+          <span class="ap-btype">${b.orderSym} ${b.orderLabel}</span>
+          <span class="ap-blen">${b.len} Å</span>
+        </div>`
+      })
+    } else {
+      bondRows = `<div style="color:rgba(255,255,255,0.2);font-size:10px;padding:4px 0">No bonds</div>`
+    }
+    return `<div class="ap-section">
+      <div class="ap-sec-title">Bonding</div>
+      ${kv('Hybridization',  info.hyb, 'cyan')}
+      ${kv('Sigma bonds',    sigmas)}
+      ${kv('Pi bonds',       pis)}
+      ${kv('Bond order sum', info.bondSum)}
+    </div>
+    <div class="ap-section">
+      <div class="ap-sec-title">Neighbours (${info.neighborBonds.length})</div>
+      ${bondRows}
+    </div>`
+  }
+
+  if (tabId === 'vsepr') {
+    let angleRows = ''
+    if (info.angles.length) {
+      info.angles.forEach(a => {
+        angleRows += `<div class="ap-angle-row">
+          <span class="ap-angle-atoms">${a.a} — ${atom.el} — ${a.b}</span>
+          <span class="ap-angle-val">${a.deg}°</span>
+        </div>`
+      })
+    } else {
+      angleRows = `<div style="color:rgba(255,255,255,0.2);font-size:10px;padding:4px 0">No angles</div>`
+    }
+    return `<div class="ap-section">
+      <div class="ap-sec-title">VSEPR</div>
+      ${kv('Steric number',     sn || '—')}
+      ${kv('Electron geometry', vsepr?.eGeo ?? '—')}
+      ${kv('Molecular geometry',vsepr?.mGeo ?? '—')}
+      ${kv('AXE notation',      vsepr?.axe  ?? '—')}
+      ${kv('Ideal bond angle',  vsepr?.angle ?? '—')}
+    </div>
+    <div class="ap-section">
+      <div class="ap-sec-title">Observed Angles</div>
+      ${angleRows}
+    </div>`
+  }
+
+  if (tabId === 'lewis') {
+    const resonance = (atom.el === 'O' || atom.el === 'N' || atom.el === 'S') &&
+      info.neighborBonds.some(b => b.order > 1) ? 'Possible' : 'None'
+    return `<div class="ap-section">
+      <div class="ap-sec-title">Lewis Structure</div>
+      ${kv('Lone pairs',          lp)}
+      ${kv('Lone pair e⁻',        lp * 2)}
+      ${kv('Formal charge', fcTxt + ' <span style="color:rgba(255,255,255,0.28);font-size:9px;font-weight:400">(approx)</span>', fcCls)}
+      ${kv('Resonance structures',resonance)}
+    </div>`
+  }
+
+  if (tabId === 'props') {
+    const imfs = pt?.imf?.join(', ') ?? '—'
+    const polar = einfo.en !== null
+      ? (einfo.en > 2.0 ? 'Polar tendency' : 'Nonpolar tendency')
+      : '—'
+    const dipole = info.neighborBonds.some(b => {
+      const ne = ed(b.el).en; return ne !== null && einfo.en !== null && Math.abs(einfo.en - ne) >= 0.5
+    }) ? 'Likely nonzero' : 'Likely ~0'
+    return `<div class="ap-section">
+      <div class="ap-sec-title">Properties</div>
+      ${kv('Polarity',           polar)}
+      ${kv('Dipole moment',      dipole)}
+      ${kv('Intermolecular forces', imfs)}
+    </div>`
+  }
+
+  if (tabId === 'organic') {
+    const isC = atom.el === 'C'
+    const isN = atom.el === 'N'
+    const isO = atom.el === 'O'
+    const isS = atom.el === 'S'
+    const isHalogen = ['F','Cl','Br','I'].includes(atom.el)
+    const hasDouble = info.neighborBonds.some(b => b.order === 2)
+    const hasTriple = info.neighborBonds.some(b => b.order === 3)
+    const neighbElems = info.neighborBonds.map(b => b.el)
+
+    let fgs = []
+    if (isC) {
+      if (hasTriple && neighbElems.includes('N')) fgs.push('Nitrile (C≡N)')
+      else if (hasTriple) fgs.push('Alkyne (C≡C)')
+      else if (hasDouble && neighbElems.includes('O') && neighbElems.includes('O')) fgs.push('Carboxylate / Ester')
+      else if (hasDouble && neighbElems.includes('O') && neighbElems.includes('N')) fgs.push('Amide (C=O + N)')
+      else if (hasDouble && neighbElems.includes('O')) fgs.push('Carbonyl (C=O)')
+      else if (hasDouble && neighbElems.includes('C')) fgs.push('Alkene (C=C)')
+      else if (neighbElems.includes('O') && lp === 0) fgs.push('Ether / Alcohol C')
+      else if (neighbElems.includes('N')) fgs.push('Amine C')
+      else if (neighbElems.includes('Cl') || neighbElems.includes('Br') || neighbElems.includes('F') || neighbElems.includes('I')) fgs.push('Alkyl halide C')
+      else fgs.push('Alkane (sp³ C)')
+    }
+    if (isO) {
+      if (hasDouble) fgs.push('Carbonyl O (C=O)')
+      else if (lp === 2 && neighbElems.includes('H')) fgs.push('Alcohol / Carboxylic OH')
+      else fgs.push('Ether O')
+    }
+    if (isN) {
+      if (hasDouble && neighbElems.includes('C')) fgs.push('Imine (C=N)')
+      else if (hasTriple) fgs.push('Nitrile N (C≡N)')
+      else fgs.push('Amine N')
+    }
+    if (isS) fgs.push('Thiol / Sulfide S')
+    if (isHalogen) fgs.push('Halide substituent')
+    if (!fgs.length) fgs.push('—')
+
+    const chiral = isC && bp === 4 &&
+      new Set(neighbElems).size === 4 ? 'Possible (4 different groups)' : 'Not at this atom'
+    const aromatic = isC && hasDouble && bp === 3 && lp === 0 ? 'Possible (sp² C)' : 'No'
+
+    return `<div class="ap-section">
+      <div class="ap-sec-title">Organic</div>
+      ${kv('Functional groups',  fgs.join(', '))}
+      ${kv('Chiral center',      chiral)}
+      ${kv('Aromaticity',        aromatic)}
+    </div>`
+  }
+
+  return ''
+}
+
+function renderTabBar() {
+  const tabsEl = document.getElementById('ap-tabs')
+  tabsEl.innerHTML = AP_TABS.map(t =>
+    `<button class="ap-tab${_apActiveTab === t.id ? ' active' : ''}" data-tab="${t.id}">${t.label}</button>`
+  ).join('')
+}
+
 function showAtomPanel(atom) {
   const info  = atomDetailInfo(atom, currentMol.atoms, currentMol.bonds)
   const einfo = ed(atom.el)
   const hexc  = hexStr(elColor(atom.el))
+  const pt    = PTABLE[atom.el] ?? null
 
   document.getElementById('ap-sym').textContent  = atom.el
   document.getElementById('ap-sym').style.color  = hexc
@@ -992,53 +1295,24 @@ function showAtomPanel(atom) {
   document.getElementById('ap-cat').textContent  = einfo.cat
   document.getElementById('ap-mass').textContent = `${einfo.mass} u`
 
-  const fc    = info.formalCharge
-  const fcCls = fc > 0 ? 'pos' : fc < 0 ? 'neg' : 'zero'
-  const fcTxt = fc > 0 ? `+${fc}` : `${fc}`
+  _currentAtomRenderState = { atom, info, einfo, pt }
+  renderTabBar()
+  document.getElementById('ap-content').innerHTML = buildTabContent(_apActiveTab, atom, info, einfo, pt)
 
-  let html = `<div class="ap-section">
-    <div class="ap-sec-title">Identity</div>
-    <div class="ap-kv"><span class="ap-k">Electronegativity</span><span class="ap-v">${einfo.en ?? '—'}</span></div>
-    <div class="ap-kv"><span class="ap-k">Valence electrons</span><span class="ap-v">${einfo.valence}</span></div>
-    <div class="ap-kv"><span class="ap-k">Hybridization</span><span class="ap-v cyan">${info.hyb}</span></div>
-  </div>`
-
-  if (info.neighborBonds.length) {
-    html += `<div class="ap-section"><div class="ap-sec-title">Bonds (${info.neighborBonds.length})</div>`
-    info.neighborBonds.forEach(b => {
-      html += `<div class="ap-bond-row">
-        <div class="ap-bdot" style="background:${hexStr(elColor(b.el))}"></div>
-        <span class="ap-bel">${b.el}</span>
-        <span class="ap-btype">${b.orderSym} ${b.orderLabel}</span>
-        <span class="ap-blen">${b.len} Å</span>
-      </div>`
-    })
-    html += `</div>`
-  }
-
-  if (info.angles.length) {
-    html += `<div class="ap-section"><div class="ap-sec-title">Bond Angles</div>`
-    info.angles.forEach(a => {
-      html += `<div class="ap-angle-row">
-        <span class="ap-angle-atoms">${a.a} — ${atom.el} — ${a.b}</span>
-        <span class="ap-angle-val">${a.deg}°</span>
-      </div>`
-    })
-    html += `</div>`
-  }
-
-  html += `<div class="ap-section">
-    <div class="ap-sec-title">Electron Structure</div>
-    <div class="ap-kv"><span class="ap-k">Lone pairs</span><span class="ap-v">${info.lonePairs}</span></div>
-    <div class="ap-kv"><span class="ap-k">Lone pair e⁻</span><span class="ap-v">${info.lonePairs*2}</span></div>
-    <div class="ap-kv"><span class="ap-k">Formal charge</span><span class="ap-v ${fcCls}">${fcTxt} <span style="color:rgba(255,255,255,0.28);font-size:9px;font-weight:400">(approx)</span></span></div>
-    <div class="ap-kv"><span class="ap-k">Bond order sum</span><span class="ap-v">${info.bondSum}</span></div>
-  </div>`
-
-  document.getElementById('ap-content').innerHTML = html
   legPanel.style.display = 'none'
   atomPanel.classList.add('show')
 }
+
+// Persistent tab click handler — state stored in _currentAtomRenderState
+let _currentAtomRenderState = null
+document.getElementById('ap-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.ap-tab')
+  if (!btn || !_currentAtomRenderState) return
+  _apActiveTab = btn.dataset.tab
+  const { atom, info, einfo, pt } = _currentAtomRenderState
+  renderTabBar()
+  document.getElementById('ap-content').innerHTML = buildTabContent(_apActiveTab, atom, info, einfo, pt)
+})
 
 function hideAtomPanel() {
   atomPanel.classList.remove('show')
