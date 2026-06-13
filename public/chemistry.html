@@ -86,15 +86,50 @@
       border: 1px solid var(--border); border-radius: 14px; padding: 14px 20px;
     }
 
-    /* bottom-left info */
-    #info { position: absolute; bottom: 24px; left: 28px; z-index: 10; }
-    .info-row { display: flex; gap: 24px; flex-wrap: wrap; }
-    .info-item { display: flex; flex-direction: column; gap: 3px; }
-    .lbl { color: rgba(255,255,255,0.22); font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase; }
-    .val { color: #fff; font-size: 14px; font-weight: 700; min-width: 60px; }
-    .val.accent { color: var(--cyan); }
+    /* bottom drawer — full-width, always visible */
+    #bottom-drawer {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+      display: flex; height: 216px;
+      background: rgba(7,7,15,0.90); backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border);
+    }
+    #bd-compound {
+      flex: 1; padding: 18px 26px;
+      border-right: 1px solid rgba(255,255,255,0.05);
+      display: flex; flex-direction: column; justify-content: center; gap: 14px;
+      overflow: hidden; min-width: 0;
+    }
+    #bd-atom-col {
+      width: 312px; flex-shrink: 0;
+      position: relative; overflow: hidden;
+    }
+    #bd-atom-empty {
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; color: rgba(255,255,255,0.07);
+      font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase;
+      pointer-events: none;
+    }
 
-    /* right-side panel slot */
+    /* compound rows */
+    .bd-stats-row { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-end; }
+    .info-item { display: flex; flex-direction: column; gap: 3px; }
+    .lbl { color: rgba(255,255,255,0.22); font-size: 8px; letter-spacing: 2.5px; text-transform: uppercase; }
+    .val { color: #fff; font-size: 13px; font-weight: 700; min-width: 50px; }
+    .val.accent { color: var(--cyan); }
+    .bd-chem-row { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+    .bd-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 11px; border-radius: 20px; font-size: 8.5px; font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase; flex-shrink: 0;
+    }
+    .bd-badge.polar    { background: rgba(255,170,0,0.10);  border: 1px solid rgba(255,170,0,0.22);  color: #ffaa00; }
+    .bd-badge.nonpolar { background: rgba(80,200,120,0.09); border: 1px solid rgba(80,200,120,0.20); color: #55cc80; }
+    .bd-badge.ionic    { background: rgba(160,100,255,0.10);border: 1px solid rgba(160,100,255,0.22);color: #b07cf8; }
+    .bd-chem-item { display: flex; flex-direction: column; gap: 2px; }
+    .bd-chem-lbl { color: rgba(255,255,255,0.18); font-size: 7.5px; letter-spacing: 2px; text-transform: uppercase; }
+    .bd-chem-val { color: rgba(255,255,255,0.65); font-size: 10px; font-weight: 600; }
+
+    /* right-side legend (top-right) */
     #right-panel { position: absolute; top: 72px; right: 28px; z-index: 10; min-width: 150px; display: flex; flex-direction: column; gap: 12px; }
 
     /* legend */
@@ -102,108 +137,90 @@
     .leg-row { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; font-size: 11px; color: rgba(255,255,255,0.45); }
     .leg-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
 
-    /* atom detail panel */
+    /* atom detail panel — lives in right column of drawer */
     #atom-panel {
       display: none; flex-direction: column; gap: 0;
-      width: 270px; max-height: calc(100vh - 220px); overflow-y: auto;
-      background: rgba(7,7,15,0.92); backdrop-filter: blur(24px);
-      border: 1px solid var(--border); border-radius: 16px;
+      width: 100%; height: 100%; overflow-y: auto;
+      background: transparent;
     }
     #atom-panel.show { display: flex; }
-    #atom-panel::-webkit-scrollbar { width: 4px; }
+    #atom-panel::-webkit-scrollbar { width: 3px; }
     #atom-panel::-webkit-scrollbar-track { background: transparent; }
-    #atom-panel::-webkit-scrollbar-thumb { background: rgba(100,130,210,0.25); border-radius: 2px; }
+    #atom-panel::-webkit-scrollbar-thumb { background: rgba(100,130,210,0.2); border-radius: 2px; }
 
+    /* compact atom header */
     .ap-header {
-      padding: 18px 18px 14px;
-      display: flex; align-items: flex-start; gap: 14px;
+      padding: 10px 14px 8px;
+      display: flex; align-items: center; gap: 10px;
       border-bottom: 1px solid var(--border);
-      position: relative;
+      position: relative; flex-shrink: 0;
     }
     .ap-close {
-      position: absolute; top: 14px; right: 14px;
-      background: none; border: none; color: rgba(255,255,255,0.25);
-      font-size: 14px; cursor: pointer; font-family: inherit; line-height: 1;
+      position: absolute; top: 9px; right: 10px;
+      background: none; border: none; color: rgba(255,255,255,0.2);
+      font-size: 12px; cursor: pointer; font-family: inherit; line-height: 1;
       transition: color 0.15s;
     }
     .ap-close:hover { color: #fff; }
     .ap-symbol {
-      font-size: 44px; font-weight: 700; color: var(--cyan);
-      line-height: 1; letter-spacing: -1px; min-width: 60px; text-align: center;
+      font-size: 30px; font-weight: 700; color: var(--cyan);
+      line-height: 1; letter-spacing: -1px; min-width: 40px; text-align: center;
     }
-    .ap-z { font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 1px; text-align: center; margin-top: 2px; }
-    .ap-name-block { display: flex; flex-direction: column; gap: 3px; padding-top: 8px; }
-    .ap-el-name { font-size: 13px; font-weight: 600; color: #fff; }
-    .ap-cat { font-size: 9px; color: rgba(255,255,255,0.28); letter-spacing: 2px; text-transform: uppercase; }
-    .ap-mass { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+    .ap-z { font-size: 8px; color: rgba(255,255,255,0.18); letter-spacing: 1px; text-align: center; margin-top: 1px; }
+    .ap-name-block { display: flex; flex-direction: column; gap: 2px; padding-top: 2px; }
+    .ap-el-name { font-size: 12px; font-weight: 600; color: #fff; }
+    .ap-cat { font-size: 7.5px; color: rgba(255,255,255,0.28); letter-spacing: 2px; text-transform: uppercase; }
+    .ap-mass { font-size: 9px; color: rgba(255,255,255,0.30); }
 
-    .ap-section { padding: 12px 18px; border-bottom: 1px solid var(--border); }
-    .ap-section:last-child { border-bottom: none; }
-    .ap-sec-title {
-      color: rgba(255,255,255,0.18); font-size: 7.5px; letter-spacing: 3px;
-      text-transform: uppercase; margin-bottom: 9px;
+    /* collapsible sections */
+    .ap-col { border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ap-col:last-child { border-bottom: none; }
+    .ap-col-hd {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 14px; cursor: pointer; user-select: none;
+      color: rgba(255,255,255,0.26); font-size: 7.5px; letter-spacing: 2.5px; text-transform: uppercase;
+      transition: color 0.15s;
     }
-    .ap-kv { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .ap-col-hd:hover { color: rgba(255,255,255,0.55); }
+    .ap-col.open .ap-col-hd { color: rgba(255,255,255,0.50); }
+    .ap-chevron { font-size: 9px; transition: transform 0.18s; display: inline-block; opacity: 0.6; }
+    .ap-col.open .ap-chevron { transform: rotate(180deg); }
+    .ap-col-body { display: none; padding: 0 14px 8px; }
+    .ap-col.open .ap-col-body { display: block; }
+
+    .ap-kv { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
     .ap-kv:last-child { margin-bottom: 0; }
-    .ap-k { color: rgba(255,255,255,0.32); font-size: 10px; }
-    .ap-v { font-size: 11px; font-weight: 600; color: #fff; }
+    .ap-k { color: rgba(255,255,255,0.30); font-size: 9.5px; flex-shrink: 0; }
+    .ap-v { font-size: 10px; font-weight: 600; color: #fff; text-align: right; }
     .ap-v.pos { color: #ff6666; }
     .ap-v.neg { color: #6699ff; }
     .ap-v.zero { color: rgba(255,255,255,0.4); }
     .ap-v.cyan { color: var(--cyan); }
 
     .ap-bond-row {
-      display: flex; align-items: center; gap: 8px;
-      padding: 5px 8px; border-radius: 8px; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 7px;
+      padding: 4px 7px; border-radius: 7px; margin-bottom: 3px;
       background: rgba(255,255,255,0.025);
     }
     .ap-bond-row:last-child { margin-bottom: 0; }
-    .ap-bdot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-    .ap-bel { font-size: 11px; font-weight: 600; color: #fff; min-width: 18px; }
-    .ap-btype { color: rgba(255,255,255,0.28); font-size: 10px; flex: 1; }
-    .ap-blen { color: rgba(255,255,255,0.4); font-size: 9px; }
+    .ap-bdot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+    .ap-bel { font-size: 10px; font-weight: 600; color: #fff; min-width: 16px; }
+    .ap-btype { color: rgba(255,255,255,0.28); font-size: 9px; flex: 1; }
+    .ap-blen { color: rgba(255,255,255,0.38); font-size: 8.5px; }
 
     .ap-angle-row {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 3px 0; font-size: 10px; border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 3px 0; font-size: 9.5px; border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .ap-angle-row:last-child { border-bottom: none; }
-    .ap-angle-atoms { color: rgba(255,255,255,0.4); }
+    .ap-angle-atoms { color: rgba(255,255,255,0.38); }
     .ap-angle-val { color: var(--cyan); font-weight: 600; }
 
-    /* tab bar */
-    #ap-tabs {
-      display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 2;
-      background: rgba(7,7,15,0.97); backdrop-filter: blur(12px);
-    }
-    .ap-tab {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 8.5px; font-weight: 700; letter-spacing: 0.5px;
-      padding: 4px 8px; border-radius: 6px; cursor: pointer;
-      border: 1px solid transparent;
-      color: rgba(255,255,255,0.3);
-      background: transparent;
-      transition: all 0.15s;
-    }
-    .ap-tab:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); }
-    .ap-tab.active {
-      color: var(--cyan); background: rgba(100,130,210,0.12);
-      border-color: rgba(100,130,210,0.3);
-    }
-    .ap-tab-panel { display: none; }
-    .ap-tab-panel.active { display: block; }
-
-    /* click hint */
-    #click-hint {
-      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-      z-index: 10; color: rgba(255,255,255,0.10); font-size: 9px; letter-spacing: 2px;
-      text-transform: uppercase; pointer-events: none;
-    }
+    /* click hint — hidden; the drawer empty state handles this */
+    #click-hint { display: none; }
     /* settings panel */
     #settings-btn, #help-btn {
-      position: absolute; bottom: 24px; z-index: 10;
+      position: absolute; bottom: 224px; z-index: 10;
       width: 36px; height: 36px; border-radius: 10px;
       background: rgba(255,255,255,0.04); border: 1px solid var(--border);
       color: rgba(255,255,255,0.35); cursor: pointer;
@@ -214,7 +231,7 @@
     #help-btn     { right: 72px; font-size: 15px; font-weight: 600; font-family: var(--font); }
     #settings-btn:hover, #help-btn:hover { background: rgba(100,130,210,0.12); color: var(--cyan); border-color: rgba(100,130,210,0.3); }
     #settings-panel, #help-panel {
-      display: none; position: absolute; bottom: 68px; z-index: 15;
+      display: none; position: absolute; bottom: 268px; z-index: 15;
     }
     #settings-panel { right: 28px; width: 210px; }
     #help-panel     { right: 72px; width: 240px; }
@@ -290,9 +307,13 @@
 
   <div id="canvas-wrap"></div>
 
-  <div id="info">
-    <div class="panel">
-      <div class="info-row">
+  <div id="right-panel">
+    <div class="panel" id="leg-panel" style="min-width:140px"></div>
+  </div>
+
+  <div id="bottom-drawer">
+    <div id="bd-compound">
+      <div class="bd-stats-row">
         <div class="info-item"><span class="lbl">Molecule</span><span class="val accent" id="v-mol">—</span></div>
         <div class="info-item"><span class="lbl">Geometry</span><span class="val" id="v-geo">—</span></div>
         <div class="info-item"><span class="lbl">Bond Angle</span><span class="val" id="v-ang">—</span></div>
@@ -300,26 +321,27 @@
         <div class="info-item"><span class="lbl">Atoms</span><span class="val" id="v-atm">—</span></div>
         <div class="info-item"><span class="lbl">MW</span><span class="val" id="v-mw">—</span></div>
       </div>
-    </div>
-  </div>
-
-  <div id="right-panel">
-    <div class="panel" id="leg-panel" style="min-width:140px"></div>
-    <div id="atom-panel">
-      <div class="ap-header">
-        <div>
-          <div class="ap-symbol" id="ap-sym">—</div>
-          <div class="ap-z" id="ap-z">Z = —</div>
-        </div>
-        <div class="ap-name-block">
-          <div class="ap-el-name" id="ap-name">—</div>
-          <div class="ap-cat" id="ap-cat">—</div>
-          <div class="ap-mass" id="ap-mass">—</div>
-        </div>
-        <button class="ap-close" id="ap-close">✕</button>
+      <div class="bd-chem-row" id="bd-chem-row">
+        <span style="color:rgba(255,255,255,0.09);font-size:8.5px;letter-spacing:2px;text-transform:uppercase">Load a molecule to see chemistry data</span>
       </div>
-      <div id="ap-tabs"></div>
-      <div id="ap-content"></div>
+    </div>
+    <div id="bd-atom-col">
+      <div id="atom-panel">
+        <div class="ap-header">
+          <div>
+            <div class="ap-symbol" id="ap-sym">—</div>
+            <div class="ap-z" id="ap-z">Z = —</div>
+          </div>
+          <div class="ap-name-block">
+            <div class="ap-el-name" id="ap-name">—</div>
+            <div class="ap-cat" id="ap-cat">—</div>
+            <div class="ap-mass" id="ap-mass">—</div>
+          </div>
+          <button class="ap-close" id="ap-close">✕</button>
+        </div>
+        <div id="ap-content"></div>
+      </div>
+      <div id="bd-atom-empty">Click an atom</div>
     </div>
   </div>
 
@@ -986,6 +1008,34 @@ const _bondMat = (() => {
   return mat
 })()
 
+const _piBondMat = (() => {
+  const mat = new THREE.MeshStandardNodeMaterial()
+  mat.colorNode     = color(0x5a2860)
+  mat.roughnessNode = float(0.70)
+  mat.metalnessNode = float(0.0)
+  mat.emissiveNode  = color(0x9040a8).mul(float(0.20))
+  return mat
+})()
+
+const _haloMat = new THREE.MeshBasicMaterial({
+  color: 0x7090e0, transparent: true, opacity: 0.18,
+  side: THREE.DoubleSide, depthWrite: false,
+})
+
+function addLonePairHalo(pos, atomRadius, lonePairs) {
+  const R = (atomRadius + 0.13) * SCALE
+  const rotations = lonePairs === 1 ? [[0,0,0]] :
+                    lonePairs === 2 ? [[0,0,0],[Math.PI/2,0,0]] :
+                    [[0,0,0],[Math.PI*0.6,0,0],[0,Math.PI*0.6,0]]
+  rotations.forEach(([rx,ry,rz]) => {
+    const geo  = new THREE.TorusGeometry(R, 0.022, 8, 40)
+    const mesh = new THREE.Mesh(geo, _haloMat)
+    mesh.position.copy(pos)
+    mesh.rotation.set(rx, ry, rz)
+    molGroup.add(mesh)
+  })
+}
+
 // Molecule scene
 const molGroup = new THREE.Group()
 scene.add(molGroup)
@@ -1014,17 +1064,17 @@ function addBond(pA, pB, order = 1) {
   const q    = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), norm)
 
   if (order === 1) {
-    // 0.07 = bond radius in scene units
     const m = new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,len,12), _bondMat)
     m.position.copy(mid); m.quaternion.copy(q); molGroup.add(m)
   } else {
     const up   = Math.abs(norm.y) < 0.85 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0)
     const perp = new THREE.Vector3().crossVectors(norm, up).normalize()
-    // double: ±0.09 offset; triple: -0.12 / 0 / +0.12
+    // σ = first strand, π = subsequent (different color to distinguish bond type)
     const offs = order === 2 ? [-0.09, 0.09] : [-0.12, 0, 0.12]
     const r    = order === 2 ? 0.05 : 0.04
-    offs.forEach(d => {
-      const m = new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,10), _bondMat)
+    offs.forEach((d, i) => {
+      const mat = i === 0 ? _bondMat : _piBondMat
+      const m = new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,10), mat)
       m.position.copy(mid).addScaledVector(perp, d); m.quaternion.copy(q); molGroup.add(m)
     })
   }
@@ -1064,6 +1114,15 @@ function renderMol(mol) {
   })
   mol.bonds.forEach(b => addBond(posMap[b.a], posMap[b.b], b.order))
 
+  // Lone pair halos
+  mol.atoms.forEach(a => {
+    const V        = ed(a.el).valence ?? 4
+    const myBonds  = mol.bonds.filter(b => b.a===a.id || b.b===a.id)
+    const bondSum  = myBonds.reduce((s,b) => s+(b.order??1), 0)
+    const lp       = Math.max(0, Math.floor((V - bondSum) / 2))
+    if (lp > 0 && posMap[a.id]) addLonePairHalo(posMap[a.id], elRadius(a.el), lp)
+  })
+
   const geoResult = mol.ionic ? {geoName:'Ionic Compound', bondAngle:null} : analyzeGeometry(mol.atoms, mol.bonds)
   const geoName   = geoResult.geoName
   const mw        = mol.mw > 0 ? mol.mw.toFixed(2) + ' u' : '—'
@@ -1073,7 +1132,6 @@ function renderMol(mol) {
   document.getElementById('v-bnd').textContent = mol.bonds.length
   document.getElementById('v-atm').textContent = mol.atoms.length
   document.getElementById('v-mw').textContent  = mw
-
   document.getElementById('v-ang').textContent = geoResult.bondAngle ?? '—'
 
   const unique = [...new Set(mol.atoms.map(a => a.el))]
@@ -1084,29 +1142,211 @@ function renderMol(mol) {
       `<span>${el} — ${ed(el).name}</span></div>`
     ).join('')
 
+  const polarity = computeMolPolarity(mol, geoName)
+  const imf      = computeDominantIMF(mol)
+  const bondType = computeBondType(mol)
+  document.getElementById('bd-chem-row').innerHTML =
+    `<span class="bd-badge ${polarity.cls}" title="${polarity.reason}">${polarity.label}</span>` +
+    `<div class="bd-chem-item"><span class="bd-chem-lbl">Bond Type</span><span class="bd-chem-val">${bondType}</span></div>` +
+    `<div class="bd-chem-item"><span class="bd-chem-lbl">Dominant IMF</span><span class="bd-chem-val">${imf}</span></div>`
+}
+
+// Compound chemistry helpers
+function computeBondType(mol) {
+  if (mol.ionic) return 'Ionic'
+  if (!mol.bonds.length) return '—'
+  let maxDEN = 0
+  mol.bonds.forEach(b => {
+    const a = mol.atoms.find(x => x.id===b.a)?.el, bEl = mol.atoms.find(x => x.id===b.b)?.el
+    const enA = ed(a).en, enB = ed(bEl).en
+    if (enA !== null && enB !== null) maxDEN = Math.max(maxDEN, Math.abs(enA - enB))
+  })
+  if (maxDEN >= 1.7) return 'Ionic / Polar Cov.'
+  if (maxDEN >= 0.5) return 'Polar Covalent'
+  return 'Nonpolar Covalent'
+}
+
+function computeDominantIMF(mol) {
+  if (mol.ionic) return 'Ion–ion'
+  const elems = [...new Set(mol.atoms.map(a => a.el))]
+  const hasH  = elems.includes('H')
+  if (hasH && elems.some(e => ['N','O','F'].includes(e))) return 'Hydrogen bonding'
+  const hasPolar = mol.bonds.some(b => {
+    const a = mol.atoms.find(x => x.id===b.a)?.el, bEl = mol.atoms.find(x => x.id===b.b)?.el
+    const enA = ed(a).en, enB = ed(bEl).en
+    return enA !== null && enB !== null && Math.abs(enA - enB) >= 0.5
+  })
+  return hasPolar ? 'Dipole–dipole' : 'London dispersion'
+}
+
+function computeMolPolarity(mol, geoName) {
+  if (mol.ionic) return { label:'Ionic', cls:'ionic', reason:'Ionic compound' }
+  const elems = [...new Set(mol.atoms.map(a => a.el))]
+  if (elems.length === 1) return { label:'Nonpolar', cls:'nonpolar', reason:'Homonuclear' }
+  const central = mol.atoms.find(a =>
+    mol.bonds.filter(b => b.a===a.id||b.b===a.id).length >= 2 && a.el !== 'H'
+  )
+  if (central) {
+    const ligandEls = mol.bonds
+      .filter(b => b.a===central.id||b.b===central.id)
+      .map(b => mol.atoms.find(a => a.id===(b.a===central.id?b.b:b.a))?.el)
+    if (ligandEls.length && new Set(ligandEls).size === 1 &&
+        ['Linear','Trigonal Planar','Tetrahedral','Trigonal Bipyramidal','Octahedral'].includes(geoName)) {
+      return { label:'Nonpolar', cls:'nonpolar', reason:geoName + ' + same ligands' }
+    }
+  }
+  const hasPolar = mol.bonds.some(b => {
+    const a = mol.atoms.find(x => x.id===b.a)?.el, bEl = mol.atoms.find(x => x.id===b.b)?.el
+    const enA = ed(a).en, enB = ed(bEl).en
+    return enA !== null && enB !== null && Math.abs(enA - enB) >= 0.4
+  })
+  if (!hasPolar) return { label:'Nonpolar', cls:'nonpolar', reason:'No polar bonds' }
+  return { label:'Polar', cls:'polar', reason:geoName + ' geometry' }
 }
 
 // Atom detail panel
 const atomPanel = document.getElementById('atom-panel')
 const legPanel  = document.getElementById('leg-panel')
 
-const AP_TABS = [
-  { id:'identity',  label:'Identity' },
-  { id:'estruc',    label:'e⁻ Struct' },
-  { id:'bonding',   label:'Bonding' },
-  { id:'vsepr',     label:'VSEPR' },
-  { id:'lewis',     label:'Lewis' },
-  { id:'props',     label:'Props' },
-  { id:'organic',   label:'Organic' },
-]
-
-let _apActiveTab = 'identity'
-
 function kv(k, v, cls='') {
   return `<div class="ap-kv"><span class="ap-k">${k}</span><span class="ap-v ${cls}">${v}</span></div>`
 }
 
-function buildTabContent(tabId, atom, info, einfo, pt) {
+function colSection(title, content, open = false) {
+  return `<div class="ap-col ${open?'open':''}">
+    <div class="ap-col-hd"><span>${title}</span><span class="ap-chevron">▾</span></div>
+    <div class="ap-col-body">${content}</div>
+  </div>`
+}
+
+function showAtomPanel(atom) {
+  const info  = atomDetailInfo(atom, currentMol.atoms, currentMol.bonds)
+  const einfo = ed(atom.el)
+  const pt    = PTABLE[atom.el] ?? null
+  const hexc  = hexStr(elColor(atom.el))
+
+  document.getElementById('ap-sym').textContent  = atom.el
+  document.getElementById('ap-sym').style.color  = hexc
+  document.getElementById('ap-z').textContent    = `Z = ${einfo.z}`
+  document.getElementById('ap-name').textContent = einfo.name
+  document.getElementById('ap-cat').textContent  = einfo.cat
+  document.getElementById('ap-mass').textContent = `${einfo.mass} u`
+
+  const fc    = info.formalCharge
+  const fcCls = fc > 0 ? 'pos' : fc < 0 ? 'neg' : 'zero'
+  const fcTxt = fc > 0 ? `+${fc}` : `${fc}`
+  const bp    = info.neighborBonds.length
+  const lp    = info.lonePairs
+  const sn    = bp + lp
+  const vsepr = VSEPR_TABLE[`${bp}-${lp}`] ?? null
+  const oxList = pt?.ox?.map(o => o > 0 ? `+${o}` : `${o}`).join(', ') ?? '—'
+
+  let sigmas = 0, pis = 0
+  info.neighborBonds.forEach(b => { sigmas++; if (b.order >= 2) pis += b.order - 1 })
+
+  const bondRows = info.neighborBonds.length
+    ? info.neighborBonds.map(b =>
+        `<div class="ap-bond-row">
+          <div class="ap-bdot" style="background:${hexStr(elColor(b.el))}"></div>
+          <span class="ap-bel">${b.el}</span>
+          <span class="ap-btype">${b.orderSym} ${b.orderLabel}</span>
+          <span class="ap-blen">${b.len} Å</span>
+        </div>`).join('')
+    : `<div style="color:rgba(255,255,255,0.2);font-size:9px;padding:3px 0">No bonds</div>`
+
+  const angleRows = info.angles.length
+    ? info.angles.map(a =>
+        `<div class="ap-angle-row">
+          <span class="ap-angle-atoms">${a.a} — ${atom.el} — ${a.b}</span>
+          <span class="ap-angle-val">${a.deg}°</span>
+        </div>`).join('')
+    : `<div style="color:rgba(255,255,255,0.2);font-size:9px;padding:3px 0">No angles</div>`
+
+  // Organic analysis
+  const isC = atom.el === 'C', isN = atom.el === 'N', isO = atom.el === 'O'
+  const isS = atom.el === 'S', isHal = ['F','Cl','Br','I'].includes(atom.el)
+  const hasDouble = info.neighborBonds.some(b => b.order === 2)
+  const hasTriple = info.neighborBonds.some(b => b.order === 3)
+  const nbEl = info.neighborBonds.map(b => b.el)
+  let fgs = []
+  if (isC) {
+    if (hasTriple && nbEl.includes('N'))                        fgs.push('Nitrile (C≡N)')
+    else if (hasTriple)                                        fgs.push('Alkyne (C≡C)')
+    else if (hasDouble && nbEl.includes('O') && nbEl.includes('N')) fgs.push('Amide')
+    else if (hasDouble && nbEl.filter(e=>e==='O').length >= 2) fgs.push('Carboxylate / Ester')
+    else if (hasDouble && nbEl.includes('O'))                  fgs.push('Carbonyl (C=O)')
+    else if (hasDouble)                                        fgs.push('Alkene (C=C)')
+    else if (nbEl.includes('O'))                               fgs.push('Ether / Alcohol C')
+    else if (nbEl.includes('N'))                               fgs.push('Amine C')
+    else if (nbEl.some(e=>['F','Cl','Br','I'].includes(e)))    fgs.push('Alkyl halide C')
+    else                                                       fgs.push('Alkane (sp³ C)')
+  }
+  if (isO) fgs.push(hasDouble ? 'Carbonyl O' : nbEl.includes('H') ? 'Hydroxyl' : 'Ether O')
+  if (isN) fgs.push(hasTriple ? 'Nitrile N' : hasDouble ? 'Imine' : 'Amine N')
+  if (isS) fgs.push('Thiol / Sulfide S')
+  if (isHal) fgs.push('Halide')
+  if (!fgs.length) fgs.push('—')
+
+  const polar   = einfo.en !== null ? (einfo.en > 2.0 ? 'Polar tendency' : 'Nonpolar tendency') : '—'
+  const dipole  = info.neighborBonds.some(b => { const ne = ed(b.el).en; return ne !== null && einfo.en !== null && Math.abs(einfo.en - ne) >= 0.5 }) ? 'Likely nonzero' : 'Likely ~0'
+  const imfs    = pt?.imf?.join(', ') ?? '—'
+  const resonance = (atom.el === 'O' || atom.el === 'N' || atom.el === 'S') && info.neighborBonds.some(b => b.order > 1) ? 'Possible' : 'None'
+  const chiral  = isC && bp === 4 && new Set(nbEl).size === 4 ? 'Possible' : 'Not at this atom'
+  const aromatic = isC && hasDouble && bp === 3 && lp === 0 ? 'Possible (sp²)' : 'No'
+
+  document.getElementById('ap-content').innerHTML = [
+    colSection('Identity',
+      kv('Atomic number', einfo.z) +
+      kv('Atomic mass',   einfo.mass + ' u') +
+      kv('Group',   pt?.group  ?? '—') +
+      kv('Period',  pt?.period ?? '—') +
+      kv('Block',   pt?.block  ?? '—') +
+      kv('Oxidation states', oxList),
+    true),
+    colSection('Electronic Structure',
+      kv('Electron config',  pt?.config ?? '—') +
+      kv('Valence electrons',einfo.valence) +
+      kv('Electronegativity',einfo.en ?? '—'),
+    true),
+    colSection('Bonding',
+      kv('Hybridization',  info.hyb, 'cyan') +
+      kv('Sigma bonds',    sigmas) +
+      kv('Pi bonds',       pis) +
+      kv('Bond order sum', info.bondSum) +
+      `<div style="margin-top:6px">${bondRows}</div>`),
+    colSection('VSEPR',
+      kv('Steric number',     sn || '—') +
+      kv('Electron geometry', vsepr?.eGeo ?? '—') +
+      kv('Molecular geometry',vsepr?.mGeo ?? '—') +
+      kv('AXE notation',      vsepr?.axe  ?? '—') +
+      kv('Ideal bond angle',  vsepr?.angle ?? '—') +
+      `<div style="margin-top:6px">${angleRows}</div>`),
+    colSection('Lewis Structure',
+      kv('Lone pairs',   lp) +
+      kv('Lone pair e⁻', lp * 2) +
+      kv('Formal charge', fcTxt + '<span style="color:rgba(255,255,255,0.25);font-size:8px;font-weight:400"> (approx)</span>', fcCls) +
+      kv('Resonance',    resonance)),
+    colSection('Properties',
+      kv('Polarity',      polar) +
+      kv('Dipole moment', dipole) +
+      kv('IMF',           imfs)),
+    colSection('Organic',
+      kv('Functional groups', fgs.join(', ')) +
+      kv('Chiral center',     chiral) +
+      kv('Aromaticity',       aromatic)),
+  ].join('')
+
+  document.getElementById('bd-atom-empty').style.display = 'none'
+  atomPanel.classList.add('show')
+}
+
+// Delegated collapsible toggle
+document.getElementById('ap-content').addEventListener('click', e => {
+  const hd = e.target.closest('.ap-col-hd')
+  if (hd) hd.closest('.ap-col').classList.toggle('open')
+})
+
+function _DEAD_buildTabContent(tabId, atom, info, einfo, pt) { // unreferenced, kept for reference
   const fc    = info.formalCharge
   const fcCls = fc > 0 ? 'pos' : fc < 0 ? 'neg' : 'zero'
   const fcTxt = fc > 0 ? `+${fc}` : `${fc}`
@@ -1275,48 +1515,9 @@ function buildTabContent(tabId, atom, info, einfo, pt) {
   return ''
 }
 
-function renderTabBar() {
-  const tabsEl = document.getElementById('ap-tabs')
-  tabsEl.innerHTML = AP_TABS.map(t =>
-    `<button class="ap-tab${_apActiveTab === t.id ? ' active' : ''}" data-tab="${t.id}">${t.label}</button>`
-  ).join('')
-}
-
-function showAtomPanel(atom) {
-  const info  = atomDetailInfo(atom, currentMol.atoms, currentMol.bonds)
-  const einfo = ed(atom.el)
-  const hexc  = hexStr(elColor(atom.el))
-  const pt    = PTABLE[atom.el] ?? null
-
-  document.getElementById('ap-sym').textContent  = atom.el
-  document.getElementById('ap-sym').style.color  = hexc
-  document.getElementById('ap-z').textContent    = `Z = ${einfo.z}`
-  document.getElementById('ap-name').textContent = einfo.name
-  document.getElementById('ap-cat').textContent  = einfo.cat
-  document.getElementById('ap-mass').textContent = `${einfo.mass} u`
-
-  _currentAtomRenderState = { atom, info, einfo, pt }
-  renderTabBar()
-  document.getElementById('ap-content').innerHTML = buildTabContent(_apActiveTab, atom, info, einfo, pt)
-
-  legPanel.style.display = 'none'
-  atomPanel.classList.add('show')
-}
-
-// Persistent tab click handler — state stored in _currentAtomRenderState
-let _currentAtomRenderState = null
-document.getElementById('ap-tabs').addEventListener('click', e => {
-  const btn = e.target.closest('.ap-tab')
-  if (!btn || !_currentAtomRenderState) return
-  _apActiveTab = btn.dataset.tab
-  const { atom, info, einfo, pt } = _currentAtomRenderState
-  renderTabBar()
-  document.getElementById('ap-content').innerHTML = buildTabContent(_apActiveTab, atom, info, einfo, pt)
-})
-
 function hideAtomPanel() {
   atomPanel.classList.remove('show')
-  legPanel.style.display = ''
+  document.getElementById('bd-atom-empty').style.display = ''
   if (selectedMesh) {
     selectedMesh.material = atomMat(elColor(selectedMesh.userData.el))
     selectedMesh = null
