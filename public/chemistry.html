@@ -793,8 +793,14 @@ async function fetchMolecule(input) {
   const notAbort   = e => e.name !== 'AbortError'
   const parsedAtoms = parseFormula(input.trim())
   const ionicName   = parsedAtoms.length ? nameIonicCompound(parsedAtoms) : null
-  // Tag any PubChem result as ionic if the formula contains a metal cation
-  const tagIonic    = m => ionicName ? {...m, formula: ionicName, ionic: true} : m
+  // Only tag as ionic if the parsed formula elements all appear in the returned molecule,
+  // preventing false positives when the input is a name like "water" (which parses as Rb+Te).
+  const tagIonic = mol => {
+    if (!ionicName) return mol
+    const molEls = new Set(mol.atoms.map(a => a.el))
+    if (!parsedAtoms.every(pa => molEls.has(pa.el))) return mol
+    return {...mol, formula: ionicName, ionic: true}
+  }
 
   // 1. Mapped name for formulas with non-obvious or ambiguous IUPAC representation
   if (mapped) {
@@ -1002,58 +1008,91 @@ const _bondMat = (() => {
 })()
 
 
-const _lpMat = new THREE.MeshBasicMaterial({ color: 0x99ddff })
+const _lpMat = new THREE.MeshBasicMaterial({ color: 0x3a7090 })
 
-// Compute VSEPR-correct lone pair directions given the actual bond directions
+// Canonical ideal unit-vector positions for n VSEPR electron domains
+function _idealDomains(n) {
+  const V = THREE.Vector3, S2 = Math.SQRT2, S23 = Math.sqrt(2 / 3)
+  switch (n) {
+    case 1: return [new V(0,1,0)]
+    case 2: return [new V(0,1,0), new V(0,-1,0)]
+    case 3: return [0,1,2].map(i => { const a = i*2*Math.PI/3; return new V(Math.cos(a),0,Math.sin(a)) })
+    case 4: return [new V(0,1,0), new V(2*S2/3,-1/3,0), new V(-S2/3,-1/3,S23), new V(-S2/3,-1/3,-S23)]
+    case 5: return [[0,1,2].map(i=>{ const a=i*2*Math.PI/3; return new V(Math.cos(a),0,Math.sin(a)) }),
+                   new V(0,1,0), new V(0,-1,0)].flat()
+    case 6: return [new V(1,0,0),new V(-1,0,0),new V(0,1,0),new V(0,-1,0),new V(0,0,1),new V(0,0,-1)]
+    default: return Array.from({length:n},(_,i)=>{ const a=i*2*Math.PI/n; return new V(Math.cos(a),0,Math.sin(a)) })
+  }
+}
+
+// Place lone pairs at the unoccupied VSEPR positions by aligning ideal geometry to actual bonds
 function _lonePairDirs(bondDirs, lonePairs) {
-  if (!bondDirs.length) {
-    const fb = [new THREE.Vector3(0,1,0),new THREE.Vector3(0,-1,0),
-                new THREE.Vector3(1,0,0),new THREE.Vector3(-1,0,0)]
+  const nbds = bondDirs.map(d => d.clone().normalize())
+  if (!nbds.length) {
+    const fb = [new THREE.Vector3(0,1,0), new THREE.Vector3(0,-1,0),
+                new THREE.Vector3(1,0,0), new THREE.Vector3(-1,0,0),
+                new THREE.Vector3(0,0,1), new THREE.Vector3(0,0,-1)]
     return fb.slice(0, lonePairs)
   }
-  const nbds = bondDirs.map(d => d.clone().normalize())
-  const sum  = new THREE.Vector3()
-  nbds.forEach(d => sum.add(d))
-  // Primary LP zone = opposite the bond centroid
-  const mainLP = sum.length() > 0.01 ? sum.clone().negate().normalize() : new THREE.Vector3(0,1,0)
-  if (lonePairs === 1) return [mainLP]
 
-  // Build a perpendicular basis around mainLP
-  let perp = new THREE.Vector3()
-  if (nbds.length >= 2) perp.crossVectors(nbds[0], nbds[1])
-  if (perp.length() < 0.01) {
-    const tmp = Math.abs(mainLP.y) < 0.9 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(1,0,0)
-    perp.crossVectors(mainLP, tmp)
+  // Single LP is always exactly opposite the bond centroid (exact for all regular geometries
+  // because all domain vectors sum to zero: b1+b2+...+bn + LP = 0)
+  if (lonePairs === 1) {
+    const sum = new THREE.Vector3()
+    for (const v of nbds) sum.add(v)
+    if (sum.length() > 0.01) return [sum.negate().normalize()]
   }
-  perp.normalize()
-  const fwd = new THREE.Vector3().crossVectors(mainLP, perp).normalize()
 
-  // Cone angle from mainLP: ~60° for 2 LP (tetrahedral spread), ~70° for 3 LP (equatorial spread)
-  // fwd is in the molecular plane, perp is perpendicular to it — spread along fwd so LPs stay
-  // in the molecular plane and are visible from the front rather than going into/out of screen.
-  const cone = lonePairs === 2 ? (60 * Math.PI / 180) : (70 * Math.PI / 180)
-  return Array.from({length: lonePairs}, (_, i) => {
-    const phi = (2 * Math.PI / lonePairs) * i
-    return new THREE.Vector3()
-      .copy(mainLP).multiplyScalar(Math.cos(cone))
-      .addScaledVector(fwd,  Math.cos(phi) * Math.sin(cone))
-      .addScaledVector(perp, Math.sin(phi) * Math.sin(cone))
-      .normalize()
-  })
+  const total = nbds.length + lonePairs
+  const ideal = _idealDomains(total)
+
+  // Rotate ideal[0] onto the first actual bond direction
+  const q0 = new THREE.Quaternion().setFromUnitVectors(ideal[0].clone().normalize(), nbds[0])
+  let rotated = ideal.map(p => p.clone().applyQuaternion(q0))
+
+  // Spin around nbds[0] so the closest remaining rotated position aligns with nbds[1]
+  if (nbds.length >= 2) {
+    const axis    = nbds[0]
+    const perpOf  = v => v.clone().sub(axis.clone().multiplyScalar(v.dot(axis)))
+    let best = -1, bestDot = -Infinity
+    for (let i = 1; i < rotated.length; i++) {
+      const dot = nbds[1].dot(rotated[i])
+      if (dot > bestDot) { bestDot = dot; best = i }
+    }
+    if (best >= 0) {
+      const from = perpOf(rotated[best]), to = perpOf(nbds[1])
+      if (from.length() > 0.01 && to.length() > 0.01) {
+        const q1 = new THREE.Quaternion().setFromUnitVectors(from.normalize(), to.normalize())
+        rotated = rotated.map(p => p.clone().applyQuaternion(q1))
+      }
+    }
+  }
+
+  // Greedily assign each bond to its closest ideal slot
+  const used = new Set()
+  for (const bd of nbds) {
+    let best = -1, bestDot = -Infinity
+    for (let i = 0; i < rotated.length; i++) {
+      if (used.has(i)) continue
+      const dot = bd.dot(rotated[i])
+      if (dot > bestDot) { bestDot = dot; best = i }
+    }
+    if (best >= 0) used.add(best)
+  }
+
+  return rotated.filter((_, i) => !used.has(i))
 }
 
 function addLonePairElectrons(pos, atomRadius, lonePairs, bondDirs) {
   const lpDirs = _lonePairDirs(bondDirs ?? [], lonePairs)
-  const orbitR = atomRadius * SCALE + 0.38
-  const eR     = 0.062
-  const sep    = 0.17
+  const orbitR = atomRadius * SCALE + 0.18
+  const eR     = 0.058
+  const sep    = 0.15
   lpDirs.forEach(dir => {
-    // Use Z as reference so the dot-pair spreads within the XY (molecular) plane,
-    // making both dots visible from the default front view.
     const side = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 0, 1))
     if (side.length() < 0.01) side.crossVectors(dir, new THREE.Vector3(1, 0, 0))
     side.normalize()
-    const ctr  = pos.clone().addScaledVector(dir, orbitR)
+    const ctr = pos.clone().addScaledVector(dir, orbitR)
     for (const s of [-1, 1]) {
       const mesh = new THREE.Mesh(new THREE.SphereGeometry(eR, 8, 6), _lpMat)
       mesh.position.copy(ctr).addScaledVector(side, s * sep * 0.5)
@@ -1299,49 +1338,49 @@ function showAtomPanel(atom) {
   if (triples) parts.push(`${triples} triple`)
   const bondSummary = parts.join(', ') || '—'
 
-  // Bond rows: type, ΔEN, length
+  // Bond rows: type and length only (ΔEN lives in Bond Polarity section)
   const bondRows = info.neighborBonds.length
-    ? info.neighborBonds.map(b => {
-        const en2 = ed(b.el).en
-        const den = (einfo.en !== null && en2 !== null) ? Math.abs(einfo.en - en2).toFixed(2) : '—'
-        return `<div class="ap-bond-row">
+    ? info.neighborBonds.map(b =>
+        `<div class="ap-bond-row">
           <div class="ap-bdot" style="background:${hexStr(elColor(b.el))}"></div>
           <span class="ap-bel">${b.el}</span>
-          <span class="ap-btype">${b.orderSym} ${b.orderLabel} · ΔEN ${den}</span>
+          <span class="ap-btype">${b.orderSym} ${b.orderLabel}</span>
           <span class="ap-blen">${b.len} Å</span>
         </div>`
-      }).join('')
+      ).join('')
     : `<div style="color:rgba(255,255,255,0.2);font-size:9px;padding:3px 0">No bonds</div>`
 
-  // Bond polarity rows: classify each bond and show δ⁻ direction
+  // Bond polarity: any ΔEN > 0 is polar; ΔEN ≥ 1.7 is ionic
   const polarityRows = info.neighborBonds.length
     ? info.neighborBonds.map(b => {
         const en2 = ed(b.el).en
         const den = (einfo.en !== null && en2 !== null) ? Math.abs(einfo.en - en2) : null
         let pCls, pLabel, direction = ''
-        if (den === null)      { pCls = 'zero'; pLabel = 'Unknown' }
-        else if (den < 0.4)    { pCls = 'zero'; pLabel = 'Nonpolar covalent' }
-        else if (den < 1.7)    { pCls = 'pos';  pLabel = 'Polar covalent' }
-        else                   { pCls = 'cyan'; pLabel = 'Ionic' }
-        if (den !== null && den >= 0.4) {
+        if (den === null)   { pCls = 'zero'; pLabel = 'Unknown' }
+        else if (den === 0) { pCls = 'zero'; pLabel = 'Nonpolar covalent' }
+        else if (den < 1.7) { pCls = 'pos';  pLabel = 'Polar covalent' }
+        else                { pCls = 'cyan'; pLabel = 'Ionic' }
+        if (den !== null && den > 0) {
           const neg = (einfo.en ?? 0) > (en2 ?? 0) ? atom.el : b.el
           direction = ` · δ⁻ on ${neg}`
         }
+        const denStr = den !== null ? den.toFixed(2) : '—'
         return `<div class="ap-kv">
-          <span class="ap-k">${atom.el}–${b.el}</span>
+          <span class="ap-k">${atom.el}–${b.el} &nbsp;ΔEN ${denStr}</span>
           <span class="ap-v ${pCls}">${pLabel}${direction}</span>
         </div>`
       }).join('')
     : `<div style="color:rgba(255,255,255,0.2);font-size:9px;padding:3px 0">No bonds</div>`
 
-  // Observed angles
+  // Observed angles with a labelled header
   const angleRows = info.angles.length
-    ? info.angles.map(a =>
+    ? `<div style="color:rgba(255,255,255,0.22);font-size:7.5px;letter-spacing:2px;text-transform:uppercase;margin:8px 0 4px">Observed angles</div>` +
+      info.angles.map(a =>
         `<div class="ap-angle-row">
           <span class="ap-angle-atoms">${a.a} — ${atom.el} — ${a.b}</span>
           <span class="ap-angle-val">${a.deg}°</span>
         </div>`).join('')
-    : `<div style="color:rgba(255,255,255,0.2);font-size:9px;padding:3px 0">No angles</div>`
+    : ''
 
   document.getElementById('ap-content').innerHTML = [
     colSection('Lone Pairs & Charge',
@@ -1358,7 +1397,7 @@ function showAtomPanel(atom) {
     colSection('Local Geometry',
       kv('Shape',       vsepr?.mGeo  ?? '—') +
       kv('Ideal angle', vsepr?.angle ?? '—') +
-      `<div style="margin-top:6px">${angleRows}</div>`),
+      angleRows),
   ].join('')
 
   document.getElementById('right-panel').classList.add('expanded')
