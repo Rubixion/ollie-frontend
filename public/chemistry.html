@@ -888,15 +888,32 @@ function atomDetailInfo(atom, allAtoms, bonds) {
   const domains      = myBonds.length + lonePairs
   const hyb          = {1:'s',2:'sp',3:'sp²',4:'sp³',5:'sp³d',6:'sp³d²'}[domains] ?? '—'
 
+  const COORD_DONORS = new Set(['N','O','P','S','As','Se','Te','F','Cl','Br','I'])
+
   const neighborBonds = myBonds.map(b => {
     const nId = b.a===atom.id ? b.b : b.a
     const n   = allAtoms.find(a => a.id===nId)
     if (!n) return null
     const d = Math.sqrt((atom.x-n.x)**2+(atom.y-n.y)**2+(atom.z-n.z)**2)
+
+    // Neighbor formal charge
+    const nV       = ed(n.el).valence ?? 4
+    const nBondSum = bonds.filter(bx => bx.a===n.id || bx.b===n.id).reduce((s,bx) => s+(bx.order??1), 0)
+    const nFC      = typeof n.charge === 'number' ? n.charge : nV - Math.max(0, Math.floor((nV - nBondSum) / 2)) * 2 - nBondSum
+
+    // Coordinate (dative) bond: only single bonds; donor has FC > 0 and is a lone-pair element
+    let coordBond = null
+    if ((b.order ?? 1) === 1) {
+      if (formalCharge > 0 && COORD_DONORS.has(atom.el) && nFC <= 0) coordBond = 'donor'
+      else if (nFC > 0 && COORD_DONORS.has(n.el) && formalCharge <= 0)  coordBond = 'acceptor'
+    }
+
+    const orderSym   = b.order===2 ? '═' : b.order===3 ? '≡' : coordBond === 'donor' ? '→' : coordBond === 'acceptor' ? '←' : '─'
+    const orderLabel = b.order===2 ? 'double' : b.order===3 ? 'triple' : coordBond ? 'dative' : 'single'
+
     return {
       el: n.el, order: b.order,
-      orderSym:   b.order===2 ? '═' : b.order===3 ? '≡' : '─',
-      orderLabel: b.order===2 ? 'double' : b.order===3 ? 'triple' : 'single',
+      orderSym, orderLabel, coordBond,
       len: d.toFixed(2),
     }
   }).filter(Boolean)
@@ -1329,16 +1346,18 @@ function showAtomPanel(atom) {
   const vsepr = VSEPR_TABLE[`${bp}-${lp}`] ?? null
 
   // Bond counts with σ/π breakdown
-  let singles = 0, doubles = 0, triples = 0
+  let singles = 0, doubles = 0, triples = 0, datives = 0
   info.neighborBonds.forEach(b => {
     if (b.order === 3) triples++
     else if (b.order === 2) doubles++
+    else if (b.coordBond) datives++
     else singles++
   })
-  const sigmas = singles + doubles + triples
+  const sigmas = singles + datives + doubles + triples
   const pis    = doubles + triples * 2
   const parts  = []
   if (singles) parts.push(`${singles} single`)
+  if (datives) parts.push(`${datives} dative`)
   if (doubles) parts.push(`${doubles} double`)
   if (triples) parts.push(`${triples} triple`)
   const bondSummary = parts.join(', ') || '—'
@@ -1349,7 +1368,7 @@ function showAtomPanel(atom) {
         `<div class="ap-bond-row">
           <div class="ap-bdot" style="background:${hexStr(elColor(b.el))}"></div>
           <span class="ap-bel">${b.el}</span>
-          <span class="ap-btype">${b.orderSym} ${b.orderLabel}</span>
+          <span class="ap-btype" style="${b.coordBond ? 'color:rgba(100,160,220,0.85)' : ''}">${b.orderSym} ${b.orderLabel}</span>
           <span class="ap-blen">${b.len} Å</span>
         </div>`
       ).join('')
