@@ -733,9 +733,14 @@ function parsePubChemData(data, fallbackName) {
 
   const aids    = cmp.atoms.aid
   const atomEls = cmp.atoms.element.map(n => ELEMENTS[n] ?? 'X')
+  const chargeMap = {}
+  if (cmp.atoms.charge) {
+    cmp.atoms.charge.forEach(c => { chargeMap[c.aid] = c.value })
+  }
   const atoms   = aids.map((id, i) => ({
     id, el: atomEls[i],
     x: conf.x[i], y: conf.y[i], z: conf.z?.[i] ?? 0,
+    charge: chargeMap[id] ?? 0,
   }))
   const bonds = []
   if (cmp.bonds) {
@@ -875,11 +880,11 @@ function analyzeGeometry(atoms, bonds) {
 
 // atom details
 function atomDetailInfo(atom, allAtoms, bonds) {
-  const V         = ed(atom.el).valence ?? 4
-  const myBonds   = bonds.filter(b => b.a===atom.id || b.b===atom.id)
-  const bondSum   = myBonds.reduce((s,b) => s+(b.order??1), 0)
-  const lonePairs = Math.max(0, Math.floor((V - bondSum) / 2))
-  const formalCharge = V - lonePairs*2 - bondSum
+  const V            = ed(atom.el).valence ?? 4
+  const myBonds      = bonds.filter(b => b.a===atom.id || b.b===atom.id)
+  const bondSum      = myBonds.reduce((s,b) => s+(b.order??1), 0)
+  const formalCharge = typeof atom.charge === 'number' ? atom.charge : V - Math.max(0, Math.floor((V - bondSum) / 2)) * 2 - bondSum
+  const lonePairs    = Math.max(0, Math.round((V - formalCharge - bondSum) / 2))
   const domains      = myBonds.length + lonePairs
   const hyb          = {1:'s',2:'sp',3:'sp²',4:'sp³',5:'sp³d',6:'sp³d²'}[domains] ?? '—'
 
