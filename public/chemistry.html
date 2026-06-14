@@ -1391,7 +1391,7 @@ function showAtomPanel(atom) {
     colSection('Lone Pairs & Charge',
       kv('Lone pairs',    lp) +
       kv('Lone pair e⁻',  lp * 2) +
-      kv('Formal charge', fcTxt + '<span style="color:rgba(255,255,255,0.25);font-size:8px;font-weight:400"> (approx)</span>', fcCls),
+      kv('Formal charge', fcTxt, fcCls),
     true),
     colSection('Bonds',
       kv('Bond count', bondSummary) +
