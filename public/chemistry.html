@@ -543,11 +543,11 @@ const PTABLE = {
 const VSEPR_TABLE = {
   '1-0': { eGeo:'Linear',         mGeo:'Linear',              axe:'AX',    angle:'180°' },
   '2-0': { eGeo:'Linear',         mGeo:'Linear',              axe:'AX₂',   angle:'180°' },
-  '2-1': { eGeo:'Trigonal planar',mGeo:'Bent',                axe:'AX₂E',  angle:'<120°' },
-  '2-2': { eGeo:'Tetrahedral',    mGeo:'Bent',                axe:'AX₂E₂', angle:'<109.5°' },
+  '2-1': { eGeo:'Trigonal planar',mGeo:'Bent',                axe:'AX₂E',  angle:'~115°' },
+  '2-2': { eGeo:'Tetrahedral',    mGeo:'Bent',                axe:'AX₂E₂', angle:'~104.5°' },
   '2-3': { eGeo:'Trigonal bipyramidal',mGeo:'Linear',         axe:'AX₂E₃', angle:'180°' },
   '3-0': { eGeo:'Trigonal planar',mGeo:'Trigonal planar',     axe:'AX₃',   angle:'120°' },
-  '3-1': { eGeo:'Tetrahedral',    mGeo:'Trigonal pyramidal',  axe:'AX₃E',  angle:'107°' },
+  '3-1': { eGeo:'Tetrahedral',    mGeo:'Trigonal pyramidal',  axe:'AX₃E',  angle:'~107°' },
   '3-2': { eGeo:'Trigonal bipyramidal',mGeo:'T-shaped',       axe:'AX₃E₂', angle:'<90°' },
   '4-0': { eGeo:'Tetrahedral',    mGeo:'Tetrahedral',         axe:'AX₄',   angle:'109.5°' },
   '4-1': { eGeo:'Trigonal bipyramidal',mGeo:'See-saw',        axe:'AX₄E',  angle:'<120°' },
@@ -1179,21 +1179,21 @@ function renderMol(mol) {
   })
   mol.bonds.forEach(b => addBond(posMap[b.a], posMap[b.b], b.order))
 
-  // Lone pair electrons — placed at VSEPR-correct positions
-  mol.atoms.forEach(a => {
-    const V       = ed(a.el).valence ?? 4
-    const myBonds = mol.bonds.filter(b => b.a===a.id || b.b===a.id)
-    const bondSum = myBonds.reduce((s,b) => s+(b.order??1), 0)
-    const lp      = Math.max(0, Math.floor((V - bondSum) / 2))
-    if (lp > 0 && posMap[a.id]) {
-      const aPos     = posMap[a.id]
-      const bondDirs = myBonds.map(b => {
-        const npos = posMap[b.a === a.id ? b.b : b.a]
-        return npos ? new THREE.Vector3().subVectors(npos, aPos).normalize() : null
-      }).filter(Boolean)
-      addLonePairElectrons(aPos, elRadius(a.el), lp, bondDirs)
-    }
-  })
+  // Lone pair electrons — temporarily disabled for a cleaner view.
+  // mol.atoms.forEach(a => {
+  //   const V       = ed(a.el).valence ?? 4
+  //   const myBonds = mol.bonds.filter(b => b.a===a.id || b.b===a.id)
+  //   const bondSum = myBonds.reduce((s,b) => s+(b.order??1), 0)
+  //   const lp      = Math.max(0, Math.floor((V - bondSum) / 2))
+  //   if (lp > 0 && posMap[a.id]) {
+  //     const aPos     = posMap[a.id]
+  //     const bondDirs = myBonds.map(b => {
+  //       const npos = posMap[b.a === a.id ? b.b : b.a]
+  //       return npos ? new THREE.Vector3().subVectors(npos, aPos).normalize() : null
+  //     }).filter(Boolean)
+  //     addLonePairElectrons(aPos, elRadius(a.el), lp, bondDirs)
+  //   }
+  // })
 
   const geoResult = mol.ionic ? {geoName:'Ionic Compound', bondAngle:null} : analyzeGeometry(mol.atoms, mol.bonds)
   const geoName   = geoResult.geoName
