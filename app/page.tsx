@@ -11,6 +11,7 @@ import { Footer } from "@/components/footer"
 import { DottedSurface } from "@/components/ui/dotted-surface"
 import { ParticleTextEffect } from "@/components/effects/particle-text"
 import { useAuth } from "@/components/auth-provider"
+import { FlaskConical } from "lucide-react"
 
 function Divider() {
   return <div className="border-t border-white/5 max-w-6xl mx-auto" />
@@ -34,6 +35,16 @@ export default function Page() {
       {/* ── HERO ─────────────────────────────────────── */}
       <section className="relative min-h-[100dvh] flex flex-col pt-20 pb-10 px-6">
         <h1 className="sr-only">Ollie — Find Your Celebrity Lookalike with AI Face Matching</h1>
+
+        <div className="flex justify-center mb-2">
+          <Link
+            href="/chemistry"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/8 text-white/50 hover:text-white/80 hover:border-white/20 text-xs font-medium transition-all"
+          >
+            <FlaskConical size={12} className="text-(--ollie-cyan)" aria-hidden="true" />
+            Coming soon: Chemistry — try the preview
+          </Link>
+        </div>
 
         {/* Main content — centered in remaining space */}
         <div className="flex-1 flex flex-col items-center justify-center text-center">
