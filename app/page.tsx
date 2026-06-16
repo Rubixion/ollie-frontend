@@ -12,6 +12,7 @@ import { DottedSurface } from "@/components/ui/dotted-surface"
 import { ParticleTextEffect } from "@/components/effects/particle-text"
 import { useAuth } from "@/components/auth-provider"
 import { FlaskConical } from "lucide-react"
+import { COMING_SOON } from "@/lib/site-config"
 
 function Divider() {
   return <div className="border-t border-white/5 max-w-6xl mx-auto" />
@@ -24,8 +25,37 @@ const EXAMPLE_MATCHES = [
   { name: "Tom Holland", pct: 68, label: "Surprising match", note: "Eye spacing and cheekbone structure" },
 ]
 
+function ComingSoon() {
+  return (
+    <main className="relative bg-transparent overflow-hidden min-h-[100dvh] flex flex-col">
+      <DottedSurface />
+      <Nav />
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-6 pt-20">
+        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/40 text-[11px] font-semibold uppercase tracking-widest mb-6">
+          Coming Soon
+        </span>
+        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-4">OLLIE</h1>
+        <p className="text-white/50 text-base md:text-lg max-w-md mb-10">
+          Face matching is still in the oven. Check back soon.
+        </p>
+        <Link
+          href="/chemistry"
+          className="group inline-flex items-center gap-2 px-8 py-4 rounded-full bg-(--ollie-cyan) text-black font-bold text-sm hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-(--ollie-glow)"
+        >
+          <FlaskConical size={16} aria-hidden="true" />
+          While you wait, try the Chemical Calculator
+          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+        </Link>
+      </div>
+      <Footer />
+    </main>
+  )
+}
+
 export default function Page() {
   const { user, openModal } = useAuth()
+
+  if (COMING_SOON) return <ComingSoon />
 
   return (
     <main className="relative bg-transparent overflow-hidden">
@@ -35,16 +65,6 @@ export default function Page() {
       {/* ── HERO ─────────────────────────────────────── */}
       <section className="relative min-h-[100dvh] flex flex-col pt-20 pb-10 px-6">
         <h1 className="sr-only">Ollie — Find Your Celebrity Lookalike with AI Face Matching</h1>
-
-        <div className="flex justify-center mb-2">
-          <Link
-            href="/chemistry"
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/8 text-white/50 hover:text-white/80 hover:border-white/20 text-xs font-medium transition-all"
-          >
-            <FlaskConical size={12} className="text-(--ollie-cyan)" aria-hidden="true" />
-            Coming soon: Chemistry — try the preview
-          </Link>
-        </div>
 
         {/* Main content — centered in remaining space */}
         <div className="flex-1 flex flex-col items-center justify-center text-center">

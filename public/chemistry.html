@@ -250,22 +250,23 @@
     .s-row { display: flex; justify-content: space-between; align-items: center; }
     .bg-swatches { display: flex; gap: 7px; }
     .bg-swatch {
+      box-sizing: border-box; appearance: none; padding: 0; display: block;
       width: 26px; height: 26px; border-radius: 7px; cursor: pointer;
       border: 2px solid transparent; transition: border-color 0.15s, transform 0.1s;
     }
     .bg-swatch:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.3); }
     .bg-swatch.active { border-color: var(--cyan); }
-    .bg-custom {
-      width: 26px; height: 26px; border-radius: 50%; cursor: pointer; padding: 0;
+    .bg-custom-wrap {
+      position: relative; width: 26px; height: 26px; border-radius: 7px; cursor: pointer;
       border: 2px solid transparent; transition: border-color 0.15s, transform 0.1s;
-      background: conic-gradient(red,yellow,lime,cyan,blue,magenta,red); appearance: none;
+      background: conic-gradient(red,yellow,lime,cyan,blue,magenta,red);
       overflow: hidden;
     }
-    .bg-custom::-webkit-color-swatch-wrapper { padding: 0; border-radius: 50%; }
-    .bg-custom::-webkit-color-swatch { border-radius: 50%; border: none; }
-    .bg-custom::-moz-color-swatch { border-radius: 50%; border: none; }
-    .bg-custom:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.3); }
-    .bg-custom.active { border-color: var(--cyan); }
+    .bg-custom-wrap:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.3); }
+    .bg-custom-wrap.active { border-color: var(--cyan); }
+    .bg-custom {
+      position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; padding: 0; border: none;
+    }
     .tog { position: relative; display: inline-flex; width: 34px; height: 18px; cursor: pointer; align-items: center; }
     .tog input { opacity: 0; width: 0; height: 0; position: absolute; }
     .tog-track { width: 34px; height: 18px; border-radius: 9px; background: rgba(255,255,255,0.1); transition: background 0.2s; flex-shrink: 0; }
@@ -362,7 +363,9 @@
         <button class="bg-swatch" data-bg="#050a1c" style="background:linear-gradient(145deg,#143080,#050a1c)" title="Midnight Blue"></button>
         <button class="bg-swatch" data-bg="#0d0420" style="background:linear-gradient(145deg,#3d1068,#0d0420)" title="Deep Purple"></button>
         <button class="bg-swatch" data-bg="#080f08" style="background:linear-gradient(145deg,#153815,#080f08)" title="Dark Forest"></button>
-        <input type="color" class="bg-custom" id="bg-custom-picker" value="#07070f" title="Custom color">
+        <div class="bg-custom-wrap" id="bg-custom-wrap" title="Custom color">
+          <input type="color" class="bg-custom" id="bg-custom-picker" value="#07070f">
+        </div>
       </div>
     </div>
     <div class="s-section">
@@ -1754,11 +1757,12 @@ window.addEventListener('resize', () => {
   })
 
   const customPicker = document.getElementById('bg-custom-picker')
+  const customWrap   = document.getElementById('bg-custom-wrap')
 
   document.querySelectorAll('.bg-swatch').forEach(b => {
     b.addEventListener('click', () => {
       document.querySelectorAll('.bg-swatch').forEach(x => x.classList.remove('active'))
-      customPicker.classList.remove('active')
+      customWrap.classList.remove('active')
       b.classList.add('active')
       document.documentElement.style.setProperty('--bg', b.dataset.bg)
     })
@@ -1766,7 +1770,7 @@ window.addEventListener('resize', () => {
 
   customPicker.addEventListener('input', () => {
     document.querySelectorAll('.bg-swatch').forEach(x => x.classList.remove('active'))
-    customPicker.classList.add('active')
+    customWrap.classList.add('active')
     document.documentElement.style.setProperty('--bg', customPicker.value)
   })
 
