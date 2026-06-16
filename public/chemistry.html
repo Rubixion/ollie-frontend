@@ -1833,10 +1833,31 @@ window.addEventListener('resize', () => {
     if (!brPanel.contains(e.target) && e.target !== brBtn) brPanel.classList.remove('show')
   })
 
-  document.getElementById('bugreport-send').addEventListener('click', () => {
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xjgdzbpv'
+
+  const brSend = document.getElementById('bugreport-send')
+  brSend.addEventListener('click', async () => {
     const mol = document.getElementById('v-mol').textContent
-    const body = `${brText.value}\n\n---\nMolecule: ${mol}\nURL: ${location.href}\nUA: ${navigator.userAgent}`
-    location.href = `mailto:liam.bradley314@gmail.com?subject=${encodeURIComponent('Chemistry Calculator Bug Report')}&body=${encodeURIComponent(body)}`
+    brSend.textContent = 'Sending…'
+    brSend.disabled = true
+    try {
+      await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          message: brText.value,
+          molecule: mol,
+          url: location.href,
+          userAgent: navigator.userAgent,
+        }),
+      })
+      brSend.textContent = 'Sent ✓'
+      brText.value = ''
+      setTimeout(() => { brPanel.classList.remove('show'); brSend.textContent = 'Send'; brSend.disabled = false }, 1200)
+    } catch {
+      brSend.textContent = 'Failed — try again'
+      brSend.disabled = false
+    }
   })
 })()
 
