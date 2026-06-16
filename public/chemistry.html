@@ -259,7 +259,9 @@
       width: 26px; height: 26px; border-radius: 50%; cursor: pointer; padding: 0;
       border: 2px solid transparent; transition: border-color 0.15s, transform 0.1s;
       background: conic-gradient(red,yellow,lime,cyan,blue,magenta,red); appearance: none;
+      overflow: hidden;
     }
+    .bg-custom::-webkit-color-swatch-wrapper { padding: 0; border-radius: 50%; }
     .bg-custom::-webkit-color-swatch { border-radius: 50%; border: none; }
     .bg-custom::-moz-color-swatch { border-radius: 50%; border: none; }
     .bg-custom:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.3); }
