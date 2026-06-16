@@ -27,22 +27,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const onSuccessRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    // ponytail: if NEXT_PUBLIC_SUPABASE_* wasn't inlined at build time, supabase.auth
+    // throws synchronously here — degrade to logged-out instead of crashing the whole tree
+    try {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setUser(session?.user ?? null)
+        setLoading(false)
+      })
+
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null)
+        if (session?.user && isModalOpenRef.current) {
+          isModalOpenRef.current = false
+          setIsModalOpen(false)
+          onSuccessRef.current?.()
+          onSuccessRef.current = null
+        }
+      })
+
+      return () => subscription.unsubscribe()
+    } catch (err) {
+      console.error("Supabase auth unavailable:", err)
       setLoading(false)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user && isModalOpenRef.current) {
-        isModalOpenRef.current = false
-        setIsModalOpen(false)
-        onSuccessRef.current?.()
-        onSuccessRef.current = null
-      }
-    })
-
-    return () => subscription.unsubscribe()
+    }
   }, [])
 
   const signIn = async (email: string, password: string): Promise<string | null> => {
