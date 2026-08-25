@@ -22,13 +22,13 @@ class Particle {
     this.pos.x += this.vel.x; this.pos.y += this.vel.y
     this.acc.x = 0; this.acc.y = 0
   }
-  draw(ctx: CanvasRenderingContext2D, drawAsPoints: boolean) {
+  draw(ctx: CanvasRenderingContext2D, drawAsPoints: boolean, dotSize = 2) {
     if (this.colorWeight < 1.0) this.colorWeight = Math.min(this.colorWeight + this.colorBlendRate, 1.0)
     const r = Math.round(this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight)
     const g = Math.round(this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight)
     const b = Math.round(this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight)
     ctx.fillStyle = `rgb(${r},${g},${b})`
-    if (drawAsPoints) { ctx.fillRect(this.pos.x, this.pos.y, 2, 2) }
+    if (drawAsPoints) { ctx.fillRect(this.pos.x, this.pos.y, dotSize, dotSize) }
     else { ctx.beginPath(); ctx.arc(this.pos.x, this.pos.y, this.particleSize / 2, 0, Math.PI * 2); ctx.fill() }
   }
   kill(width: number, height: number) {
@@ -47,12 +47,22 @@ class Particle {
 
 interface ParticleTextEffectProps { words?: string[] }
 
+// Canvas resolution and shape per breakpoint. Mobile gets a much taller box, so the
+// word is not squeezed into a 6:1 letterbox that renders only a few pixels tall.
+const MOBILE_BREAKPOINT = 640
+function canvasDims(cssWidth: number) {
+  return cssWidth < MOBILE_BREAKPOINT
+    ? { width: 1200, height: 620 }
+    : { width: 2000, height: 300 }
+}
+
 export function ParticleTextEffect({ words = ["OLLIE"] }: ParticleTextEffectProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animRef = useRef<number | undefined>(undefined)
   const particlesRef = useRef<Particle[]>([])
   const frameCountRef = useRef(0)
   const wordIndexRef = useRef(0)
+  const dotSizeRef = useRef(2)
   const mouseRef = useRef({ x: 0, y: 0, isPressed: false, isRightClick: false })
   const pixelSteps = 6
 
@@ -61,7 +71,15 @@ export function ParticleTextEffect({ words = ["OLLIE"] }: ParticleTextEffectProp
     offscreen.width = canvas.width; offscreen.height = canvas.height
     const offCtx = offscreen.getContext("2d")!
     offCtx.fillStyle = "white"
-    offCtx.font = `bold ${Math.floor(canvas.height * 0.52)}px Arial`
+    // Start from a height-based size, then shrink until the word fits the canvas width.
+    let fontSize = Math.floor(canvas.height * 0.52)
+    offCtx.font = `bold ${fontSize}px Arial`
+    const maxTextWidth = canvas.width * 0.88
+    const measured = offCtx.measureText(word).width
+    if (measured > maxTextWidth) {
+      fontSize = Math.max(12, Math.floor(fontSize * (maxTextWidth / measured)))
+      offCtx.font = `bold ${fontSize}px Arial`
+    }
     offCtx.textAlign = "center"; offCtx.textBaseline = "middle"
     offCtx.fillText(word, canvas.width / 2, canvas.height / 2)
     const imageData = offCtx.getImageData(0, 0, canvas.width, canvas.height); const pixels = imageData.data
@@ -83,8 +101,8 @@ export function ParticleTextEffect({ words = ["OLLIE"] }: ParticleTextEffectProp
           const len = Math.sqrt(dir.x * dir.x + dir.y * dir.y)
           if (len > 0) { dir.x = (dir.x / len) * mag; dir.y = (dir.y / len) * mag }
           particle.pos = { x: canvas.width / 2 + dir.x, y: canvas.height / 2 + dir.y }
-          particle.maxSpeed = Math.random() * 6 + 4; particle.maxForce = particle.maxSpeed * 0.05
-          particle.particleSize = Math.random() * 6 + 6; particle.colorBlendRate = Math.random() * 0.0275 + 0.0025
+          particle.maxSpeed = Math.random() * 3.4 + 2.4; particle.maxForce = particle.maxSpeed * 0.05
+          particle.particleSize = Math.random() * 6 + 6; particle.colorBlendRate = Math.random() * 0.018 + 0.002
           particles.push(particle)
         }
         particle.startColor = { r: particle.startColor.r + (particle.targetColor.r - particle.startColor.r) * particle.colorWeight, g: particle.startColor.g + (particle.targetColor.g - particle.startColor.g) * particle.colorWeight, b: particle.startColor.b + (particle.targetColor.b - particle.startColor.b) * particle.colorWeight }
@@ -96,25 +114,44 @@ export function ParticleTextEffect({ words = ["OLLIE"] }: ParticleTextEffectProp
 
   useEffect(() => {
     const canvas = canvasRef.current; if (!canvas) return
-    canvas.width = 2000; canvas.height = 300
+
+    const applySize = () => {
+      const cssWidth = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth
+      const { width, height } = canvasDims(cssWidth)
+      // Keep drawn dots at roughly 1 CSS pixel however far the canvas is downscaled.
+      dotSizeRef.current = Math.max(2, Math.round(width / Math.max(cssWidth, 1)))
+      if (canvas.width === width && canvas.height === height) return false
+      canvas.width = width; canvas.height = height
+      return true
+    }
+
+    applySize()
     nextWord(words[0], canvas)
+
     const animate = () => {
       const ctx = canvas.getContext("2d")!; const particles = particlesRef.current
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i]; p.move(); p.draw(ctx, true)
+        const p = particles[i]; p.move(); p.draw(ctx, true, dotSizeRef.current)
         if (p.isKilled && (p.pos.x < 0 || p.pos.x > canvas.width || p.pos.y < 0 || p.pos.y > canvas.height)) particles.splice(i, 1)
       }
       frameCountRef.current++
-      if (frameCountRef.current % 240 === 0) { wordIndexRef.current = (wordIndexRef.current + 1) % words.length; nextWord(words[wordIndexRef.current], canvas) }
+      if (frameCountRef.current % 380 === 0) { wordIndexRef.current = (wordIndexRef.current + 1) % words.length; nextWord(words[wordIndexRef.current], canvas) }
       animRef.current = requestAnimationFrame(animate)
     }
     animate()
+
+    const onResize = () => { if (applySize()) nextWord(words[wordIndexRef.current], canvas) }
+    window.addEventListener("resize", onResize)
     const onDown = (e: MouseEvent) => { mouseRef.current.isPressed = true; mouseRef.current.isRightClick = e.button === 2; const r = canvas.getBoundingClientRect(); mouseRef.current.x = e.clientX - r.left; mouseRef.current.y = e.clientY - r.top }
     const onUp = () => { mouseRef.current.isPressed = false; mouseRef.current.isRightClick = false }
     const onMove = (e: MouseEvent) => { const r = canvas.getBoundingClientRect(); mouseRef.current.x = e.clientX - r.left; mouseRef.current.y = e.clientY - r.top }
     canvas.addEventListener("mousedown", onDown); canvas.addEventListener("mouseup", onUp); canvas.addEventListener("mousemove", onMove); canvas.addEventListener("contextmenu", e => e.preventDefault())
-    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); canvas.removeEventListener("mousedown", onDown); canvas.removeEventListener("mouseup", onUp); canvas.removeEventListener("mousemove", onMove) }
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current)
+      window.removeEventListener("resize", onResize)
+      canvas.removeEventListener("mousedown", onDown); canvas.removeEventListener("mouseup", onUp); canvas.removeEventListener("mousemove", onMove)
+    }
   }, [words])
 
   return <canvas ref={canvasRef} style={{ width: "100%", height: "auto", display: "block" }} />
