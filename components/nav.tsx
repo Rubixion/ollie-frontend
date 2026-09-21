@@ -6,8 +6,9 @@ import { Menu, X, User, LogOut } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/components/auth-provider"
+import { MATCH_ONLY } from "@/lib/site-config"
 
-const links = [
+const links = MATCH_ONLY ? [] : [
   { label: "Match", href: "/match" },
   { label: "Projects", href: "/projects" },
   { label: "About", href: "/about" },

@@ -7,6 +7,9 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "vars": {
+    "INFERENCE_URL": "https://rubixion--ollie-lookalike-web.modal.run"
+  },
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
