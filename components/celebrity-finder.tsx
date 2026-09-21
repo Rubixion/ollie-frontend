@@ -1,11 +1,12 @@
 ﻿"use client"
 
 import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
-import { motion } from "framer-motion"
-import { Upload, X, Search, Loader2, AlertCircle, User } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
+import { Upload, X, Search, Loader2, AlertCircle, User, ChevronDown } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { MATCH_ONLY } from "@/lib/site-config"
+import { MatchInfo } from "@/components/match-info"
 
 
 interface Match {
@@ -22,8 +23,80 @@ interface SearchResponse {
   remaining: number | null // searches left on this account; null = unlimited
 }
 
-// Tab order; any other mode the server sends is ignored
-const MODES = ["CNN Only (best image)"]
+// Server mode key -> dropdown label. First entry is the default. Any other mode the server sends is
+// ignored, and an older server that only sends the first one just hides the dropdown.
+const MODE_LABELS: Record<string, string> = {
+  "CNN Only (best image)": "CNN with tweaks",
+  "CNN Only (best image, no tweaks)": "CNN only",
+}
+const MODE_HINTS: Record<string, string> = {
+  "CNN Only (best image)": "Filters out implausible skin tones",
+  "CNN Only (best image, no tweaks)": "Raw model, no filtering",
+}
+const MODES = Object.keys(MODE_LABELS)
+
+// Custom dropdown (a native <select> pops up in OS colours that clash with the dark theme)
+function ModeMenu({ modes, value, onChange }: { modes: string[]; value: string; onChange: (m: string) => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false) }
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false)
+    document.addEventListener("mousedown", onDown)
+    window.addEventListener("keydown", onKey)
+    return () => {
+      document.removeEventListener("mousedown", onDown)
+      window.removeEventListener("keydown", onKey)
+    }
+  }, [open])
+
+  return (
+    <div ref={ref} className="relative self-start">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className="-ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs transition-colors hover:bg-white/5"
+      >
+        <span className="text-white/30">Mode</span>
+        <span className="font-semibold text-(--ollie-cyan)">{MODE_LABELS[value] ?? value}</span>
+        <ChevronDown size={12} className={`text-white/40 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            role="listbox"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute left-0 top-full z-20 mt-1 min-w-56 rounded-xl border border-white/10 bg-black/90 p-1 shadow-xl shadow-black/50 backdrop-blur-md"
+          >
+            {modes.map((m) => (
+              <li key={m} role="option" aria-selected={m === value}>
+                <button
+                  type="button"
+                  onClick={() => { onChange(m); setOpen(false) }}
+                  className={`w-full rounded-lg px-3 py-2 text-left transition-colors ${
+                    m === value ? "bg-(--ollie-cyan)/10" : "hover:bg-white/5"
+                  }`}
+                >
+                  <span className={`block text-xs font-semibold ${m === value ? "text-(--ollie-cyan)" : "text-white/80"}`}>
+                    {MODE_LABELS[m] ?? m}
+                  </span>
+                  {MODE_HINTS[m] && <span className="block text-[11px] text-white/35">{MODE_HINTS[m]}</span>}
+                </button>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 // Raw server scores are compressed (a same-person photo tops out ~62%, unrelated faces sit ~40%).
 // Linear stretch of [RAW_LO, RAW_HI] -> [OUT_LO, 99]; ranking is unchanged. Tune the three constants.
@@ -146,7 +219,7 @@ export function CelebrityFinder() {
         setError("No matches found. Try a different photo.")
       } else {
         setResults(parsed)
-        setActiveMode(modes[0])
+        setActiveMode((cur) => (parsed[cur] ? cur : modes[0])) // keep the chosen mode across searches
         setFaceFound(Boolean((json as SearchResponse).face_found))
         setRemaining((json as SearchResponse).remaining ?? null)
       }
@@ -324,21 +397,7 @@ export function CelebrityFinder() {
                     </div>
                   )}
                   {Object.keys(results).length > 1 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {Object.keys(results).map((m) => (
-                        <button
-                          key={m}
-                          onClick={() => setActiveMode(m)}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors
-                            ${m === activeMode
-                              ? "bg-(--ollie-cyan)/15 text-(--ollie-cyan) border-(--ollie-cyan)/30"
-                              : "bg-white/[0.03] text-white/40 border-white/5 hover:text-white/70"
-                            }`}
-                        >
-                          {m}
-                        </button>
-                      ))}
-                    </div>
+                    <ModeMenu modes={Object.keys(results)} value={activeMode} onChange={setActiveMode} />
                   )}
                   <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
                     Top {matches.length} Matches
@@ -399,6 +458,8 @@ export function CelebrityFinder() {
           </motion.div>
         </div>
       </div>
+
+      <MatchInfo />
 
       {/* Full-size viewer */}
       {zoom?.image && (
