@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     if (!quota.ok) {
       if (quota.reason === "user_limit") {
         return NextResponse.json(
-          { error: `You've used all ${USER_LIMIT} of your free searches.`, code: "user_limit" },
+          { error: `You've used all ${USER_LIMIT} of your searches.`, code: "user_limit" },
           { status: 429 }
         )
       }

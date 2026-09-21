@@ -174,6 +174,9 @@ export function CelebrityFinder() {
           <p className="mt-4 text-white/45 max-w-xl mx-auto">
             Drop your photo below. Ollie ranks soccer players by how closely your face matches theirs.
           </p>
+          <p className="mt-2 text-white/30 text-sm max-w-xl mx-auto">
+            Works best with male faces
+          </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 items-start">
@@ -262,7 +265,7 @@ export function CelebrityFinder() {
             {remaining !== null && (
               <p className="text-center text-xs text-white/30">
                 {remaining === 0
-                  ? "You've used all your free searches."
+                  ? "You've used all your searches."
                   : `${remaining} free search${remaining === 1 ? "" : "es"} left`}
               </p>
             )}
