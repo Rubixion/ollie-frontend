@@ -23,7 +23,7 @@ interface SearchResponse {
 }
 
 // Tab order; any other mode the server sends is ignored
-const MODES = ["CNN Only", "CNN Only (best image)", "CNN + Features", "CNN + Features (best image)"]
+const MODES = ["CNN Only", "CNN Only (best image)"]
 
 function parseResponse(data: SearchResponse): Record<string, Match[]> {
   const out: Record<string, Match[]> = {}
