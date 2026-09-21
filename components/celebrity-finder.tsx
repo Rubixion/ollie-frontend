@@ -165,6 +165,19 @@ export function CelebrityFinder() {
     reader.readAsDataURL(file)
   }, [])
 
+  // Ctrl+V anywhere on the page: screenshots and copied images arrive as files on the clipboard
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const file = Array.from(e.clipboardData?.files ?? []).find((f) => f.type.startsWith("image/"))
+      if (file) {
+        e.preventDefault()
+        loadFile(file)
+      }
+    }
+    window.addEventListener("paste", onPaste)
+    return () => window.removeEventListener("paste", onPaste)
+  }, [loadFile])
+
   const onDrop = useCallback(
     (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault()
@@ -246,11 +259,11 @@ export function CelebrityFinder() {
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">
             Which soccer player do you look like?
           </h1>
-          <p className="mt-4 text-white/45 max-w-xl mx-auto">
-            Drop your photo below. Ollie ranks soccer players by how closely your face matches theirs.
+          <p className="mt-4 text-white/45 text-balance">
+            Upload your photo below. Ollie ranks soccer players by how similar their face is to yours.
           </p>
-          <p className="mt-2 text-white/30 text-sm max-w-xl mx-auto">
-            Works best with male faces
+          <p className="mt-2 text-white/30 text-sm text-balance">
+            Works best with male faces in good lighting. Poor lighting makes it difficult for the AI to determine skin tone and analyze features.
           </p>
         </motion.div>
 
@@ -300,7 +313,7 @@ export function CelebrityFinder() {
                   </div>
                   <div className="text-center">
                     <p className="text-white/70 font-medium">Drag &amp; drop your photo</p>
-                    <p className="text-white/30 text-sm mt-1">or click to browse</p>
+                    <p className="text-white/30 text-sm mt-1">click to browse, or paste with Ctrl+V</p>
                   </div>
                   <span className="text-white/20 text-xs">JPG, PNG, WEBP</span>
                 </div>

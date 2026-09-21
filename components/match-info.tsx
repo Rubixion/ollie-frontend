@@ -5,19 +5,19 @@ import { AnimatePresence, motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 
 const SUMMARY = [
-  "A facial-recognition convolutional neural network trained from scratch on a local GPU over ~10 days, reaching 98.5% accuracy on the LFW (labeled faces in the wild) benchmark.",
-  "Built on ~16,000 web-scraped photos of ~2,200 soccer players. Your face is compared against every one of them.",
-  "Now being extended to full celebrity look-alike search and a tool to find yourself online.",
+  "A facial-recognition convolutional neural network (CNN) trained from scratch on a local GPU over ~10 days, reaching 98.5% accuracy on the Labeled Faces in the Wild (LFW) benchmark.",
+  "Built on ~16,000 web-scraped photos of ~2,200 soccer players. Your face is compared against every photo and sorted by similarity.",
+  "The same model is being extended to full celebrity look-alike search as well as a tool to find yourself online.",
 ]
 
 const DETAILS: { title: string; body: string }[] = [
   {
     title: "The model",
-    body: "A 20-layer SphereFace-style convolutional network, written and trained from scratch in PyTorch (no pretrained weights). It reads detects a face in an image using InsightFace and outputs a 512-number fingerprint. Photos of similar looking people have closer fingerprints, while different people have more distant fingerprints.",
+    body: "A 20-layer SphereFace CNN written and trained from scratch in PyTorch (no pretrained weights). It detects a face in an image using InsightFace and outputs a 512-number fingerprint. Photos of similar looking people have closer fingerprints, while different people have more distant fingerprints.",
   },
   {
     title: "How it was trained",
-    body: "Ollie was trained on the MS1MV2 database (5.8 million photos of 85,742 identities), on a single local RTX 4060 Ti over ~10 days. It uses the CosFace loss function, which rewards the model for keeping photos of the same person close together and pushing different people well apart, so it learns to tell faces apart. It scores 98.5% on the standard LFW test, and every LFW identity was removed from the training data first, so the model never saw the test images during training.",
+    body: "Ollie was trained on the MS1MV2 database which contains around 5.8 million photos of 85,742 people. It was trained locally on an NVIDIA RTX 4060 Ti which took around 10 days for the newest model. It uses the CosFace loss function, which rewards the model for keeping photos of the same person close together and pushing different people far apart, so it learns to tell faces apart. It scored 98.5% on the LFW benchmark, with all the test images removed from the training set so the model never saw them during training.",
   },
   {
     title: "The player database",
