@@ -4,6 +4,7 @@ import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
 import { BGPattern } from "@/components/bg-pattern"
 import { CelebrityFinder } from "@/components/celebrity-finder"
+import { MATCH_ONLY } from "@/lib/site-config"
 
 export const metadata = {
   title: "Celebrity Match - Ollie",
@@ -17,7 +18,7 @@ export default function FindPage() {
       <Nav />
 
       {/* Tips — shown before the finder so users see them first */}
-      <div className="pt-28 max-w-4xl mx-auto px-6 pb-6">
+      <div className={`pt-28 max-w-4xl mx-auto px-6 pb-6 ${MATCH_ONLY ? "hidden" : ""}`}>
         <div className="flex flex-col sm:flex-row gap-4">
           {[
             {

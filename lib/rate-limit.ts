@@ -10,5 +10,11 @@ export function checkRateLimit(key: string, limit: number, windowMs: number): bo
 }
 
 export function getIp(req: Request): string {
-  return req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown"
+  // cf-connecting-ip is set by Cloudflare and can't be forged by the client;
+  // x-forwarded-for can (its first entry is whatever the client sent), so it's only the local-dev fallback.
+  return (
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    "unknown"
+  )
 }

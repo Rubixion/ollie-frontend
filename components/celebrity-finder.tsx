@@ -1,10 +1,11 @@
 ﻿"use client"
 
-import { useState, useRef, useCallback, DragEvent, ChangeEvent } from "react"
+import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
 import { motion } from "framer-motion"
 import { Upload, X, Search, Loader2, AlertCircle, User } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
+import { MATCH_ONLY } from "@/lib/site-config"
 
 
 interface Match {
@@ -13,60 +14,48 @@ interface Match {
   image?: string
 }
 
-function parseGradioResponse(data: unknown): Match[] {
-  if (!data || typeof data !== "object") return []
-  const d = data as Record<string, unknown>
+// What the inference server (server.py on Hugging Face) returns from POST /search
+interface SearchResponse {
+  face_found: boolean
+  modes: Record<string, { name: string; score: number }[]>
+  thumbs: Record<string, string>
+  remaining: number | null // searches left on this account; null = unlimited
+}
 
-  // data[0] is the gallery result
-  const raw = Array.isArray(d.data) ? d.data[0] : null
-  if (!raw) return []
+// Tab order; any other mode the server sends is ignored
+const MODES = ["CNN Only", "CNN Only (best image)", "CNN + Features", "CNN + Features (best image)"]
 
-  // If it's an array of {image, caption} pairs (Gradio gallery format)
-  if (Array.isArray(raw)) {
-    return raw.slice(0, 5).map((item: unknown, i: number) => {
-      if (item && typeof item === "object") {
-        const obj = item as Record<string, unknown>
-        const caption = typeof obj.caption === "string" ? obj.caption : `Match ${i + 1}`
-        const imgData = obj.image ?? obj.url ?? null
-        const imageStr = typeof imgData === "string" ? imgData : (imgData && typeof imgData === "object" ? (imgData as Record<string, unknown>).url as string : undefined)
-
-        // Parse similarity from caption like "Tom Hanks (87.3%)" or "87.3% - Tom Hanks"
-        const pctMatch = caption.match(/(\d+\.?\d*)%/)
-        const similarity = pctMatch ? parseFloat(pctMatch[1]) : Math.max(95 - i * 8, 40)
-
-        // Parse name
-        const nameMatch = caption.match(/^(.+?)\s*[\(\-]/)
-        const name = nameMatch ? nameMatch[1].trim() : caption.replace(/[\d.%\(\)\-]/g, "").trim() || `Match ${i + 1}`
-
-        return { name, similarity, image: imageStr }
-      }
-      return { name: `Match ${i + 1}`, similarity: Math.max(90 - i * 10, 30) }
-    })
+function parseResponse(data: SearchResponse): Record<string, Match[]> {
+  const out: Record<string, Match[]> = {}
+  for (const mode of MODES) {
+    const rows = data.modes?.[mode]
+    if (rows?.length) {
+      out[mode] = rows.map((r) => ({ name: r.name, similarity: r.score, image: data.thumbs?.[r.name] }))
+    }
   }
-
-  // If it's a string (text output)
-  if (typeof raw === "string") {
-    const lines = raw.split("\n").filter(Boolean).slice(0, 5)
-    return lines.map((line, i) => {
-      const pctMatch = line.match(/(\d+\.?\d*)%/)
-      const similarity = pctMatch ? parseFloat(pctMatch[1]) : Math.max(90 - i * 10, 30)
-      const name = line.replace(/[\d.%\(\)\-:]/g, "").trim() || `Match ${i + 1}`
-      return { name, similarity }
-    })
-  }
-
-  return []
+  return out
 }
 
 export function CelebrityFinder() {
   const { user, openModal } = useAuth()
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const mode = "CNN + Features"
   const [loading, setLoading] = useState(false)
-  const [matches, setMatches] = useState<Match[] | null>(null)
+  const [results, setResults] = useState<Record<string, Match[]> | null>(null)
+  const [activeMode, setActiveMode] = useState(MODES[0])
+  const [faceFound, setFaceFound] = useState(true)
+  const [remaining, setRemaining] = useState<number | null>(null)
+  const matches = results ? results[activeMode] ?? [] : null
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [zoom, setZoom] = useState<Match | null>(null)
+
+  useEffect(() => {
+    if (!zoom) return
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setZoom(null)
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [zoom])
 
   const loadFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -75,9 +64,25 @@ export function CelebrityFinder() {
     }
     const reader = new FileReader()
     reader.onload = (e) => {
-      setImageDataUrl(e.target?.result as string)
-      setMatches(null)
-      setError(null)
+      // Phone photos are 3-10 MB but the matcher only needs ~1280px, and the API rejects big uploads: shrink first.
+      const img = new window.Image()
+      img.onload = () => {
+        const scale = Math.min(1, 1280 / Math.max(img.width, img.height))
+        const canvas = document.createElement("canvas")
+        canvas.width = Math.round(img.width * scale)
+        canvas.height = Math.round(img.height * scale)
+        const ctx = canvas.getContext("2d")
+        if (ctx) {
+          ctx.fillStyle = "#fff" // PNGs with transparency would turn black as JPEG
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        }
+        setImageDataUrl(canvas.toDataURL("image/jpeg", 0.9))
+        setResults(null)
+        setError(null)
+      }
+      img.onerror = () => setError("Couldn't read that image. Try a JPG or PNG.")
+      img.src = e.target?.result as string
     }
     reader.readAsDataURL(file)
   }, [])
@@ -99,7 +104,7 @@ export function CelebrityFinder() {
 
   const clearImage = () => {
     setImageDataUrl(null)
-    setMatches(null)
+    setResults(null)
     setError(null)
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
@@ -112,7 +117,7 @@ export function CelebrityFinder() {
     }
     setLoading(true)
     setError(null)
-    setMatches(null)
+    setResults(null)
 
     try {
       const { data: { session } } = await supabase.auth.getSession()
@@ -124,7 +129,7 @@ export function CelebrityFinder() {
           "Content-Type": "application/json",
           ...(token ? { "Authorization": `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ image: imageDataUrl, mode }),
+        body: JSON.stringify({ image: imageDataUrl }),
       })
 
       const json = await res.json()
@@ -133,11 +138,15 @@ export function CelebrityFinder() {
         throw new Error(json.error || "Search failed")
       }
 
-      const parsed = parseGradioResponse(json)
-      if (parsed.length === 0) {
-        setError("No matches found. Try a different photo or mode.")
+      const parsed = parseResponse(json as SearchResponse)
+      const modes = Object.keys(parsed)
+      if (modes.length === 0) {
+        setError("No matches found. Try a different photo.")
       } else {
-        setMatches(parsed)
+        setResults(parsed)
+        setActiveMode(modes[0])
+        setFaceFound(Boolean((json as SearchResponse).face_found))
+        setRemaining((json as SearchResponse).remaining ?? null)
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unknown error"
@@ -149,7 +158,7 @@ export function CelebrityFinder() {
 
 
   return (
-    <section id="finder" className="py-24 md:py-32 px-6 border-t border-white/5">
+    <section id="finder" className={`px-6 ${MATCH_ONLY ? "pt-28 pb-24" : "py-24 md:py-32 border-t border-white/5"}`}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -160,10 +169,10 @@ export function CelebrityFinder() {
           className="mb-12 text-center"
         >
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">
-            Which celebrity do you look like?
+            Which soccer player do you look like?
           </h1>
           <p className="mt-4 text-white/45 max-w-xl mx-auto">
-            Drop your photo below. Ollie ranks celebrities by how closely your face matches theirs.
+            Drop your photo below. Ollie ranks soccer players by how closely your face matches theirs.
           </p>
         </motion.div>
 
@@ -191,13 +200,12 @@ export function CelebrityFinder() {
               style={{ minHeight: 280 }}
             >
               {imageDataUrl ? (
-                <div className="relative w-full h-full">
+                <div className="relative flex items-center justify-center p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={imageDataUrl}
                     alt="Uploaded preview"
-                    className="w-full rounded-2xl object-cover"
-                    style={{ maxHeight: 380, objectFit: "cover" }}
+                    className="max-w-full max-h-[380px] rounded-xl object-contain"
                   />
                   <button
                     onClick={(e) => { e.stopPropagation(); clearImage() }}
@@ -216,7 +224,7 @@ export function CelebrityFinder() {
                     <p className="text-white/70 font-medium">Drag &amp; drop your photo</p>
                     <p className="text-white/30 text-sm mt-1">or click to browse</p>
                   </div>
-                  <span className="text-white/20 text-xs">JPG, PNG, WEBP · Max 10 MB</span>
+                  <span className="text-white/20 text-xs">JPG, PNG, WEBP</span>
                 </div>
               )}
               <input
@@ -251,6 +259,13 @@ export function CelebrityFinder() {
                 </>
               )}
             </button>
+            {remaining !== null && (
+              <p className="text-center text-xs text-white/30">
+                {remaining === 0
+                  ? "You've used all your free searches."
+                  : `${remaining} free search${remaining === 1 ? "" : "es"} left`}
+              </p>
+            )}
           </motion.div>
 
           {/* RIGHT: Results */}
@@ -270,7 +285,7 @@ export function CelebrityFinder() {
                   <div>
                     <p className="text-white/40 font-medium">Your top 5 matches will appear here</p>
                     <p className="text-white/20 text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
-                      Each result is a celebrity ranked by how closely your facial structure matches theirs
+                      Each result is a player ranked by how closely your facial structure matches theirs
                     </p>
                   </div>
                 </div>
@@ -280,7 +295,7 @@ export function CelebrityFinder() {
               {loading && (
                 <div className="h-full flex flex-col items-center justify-center gap-4 py-16">
                   <Loader2 size={36} className="text-(--ollie-cyan) animate-spin" />
-                  <p className="text-white/40 text-sm">Comparing your face across 9,131 celebrities...</p>
+                  <p className="text-white/40 text-sm">Comparing your face across 2,200+ soccer players...</p>
                 </div>
               )}
 
@@ -293,8 +308,31 @@ export function CelebrityFinder() {
               )}
 
               {/* Results */}
-              {matches && !loading && (
+              {results && matches && !loading && (
                 <div className="flex flex-col gap-3">
+                  {!faceFound && (
+                    <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                      <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                      <p className="text-amber-200/80 text-xs leading-relaxed">
+                        We couldn&apos;t find a clear face in your photo, so these matches may be off. Try a front-facing photo.
+                      </p>
+                    </div>
+                  )}
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.keys(results).map((m) => (
+                      <button
+                        key={m}
+                        onClick={() => setActiveMode(m)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors
+                          ${m === activeMode
+                            ? "bg-(--ollie-cyan)/15 text-(--ollie-cyan) border-(--ollie-cyan)/30"
+                            : "bg-white/[0.03] text-white/40 border-white/5 hover:text-white/70"
+                          }`}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
                   <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
                     Top {matches.length} Matches
                   </p>
@@ -306,15 +344,21 @@ export function CelebrityFinder() {
                       transition={{ delay: i * 0.07 }}
                       className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5"
                     >
-                      {/* Thumbnail */}
-                      <div className="w-11 h-11 rounded-lg overflow-hidden bg-white/5 shrink-0 flex items-center justify-center border border-white/10">
+                      {/* Thumbnail: click to enlarge */}
+                      <button
+                        type="button"
+                        disabled={!match.image}
+                        onClick={() => setZoom(match)}
+                        aria-label={`View ${match.name} full size`}
+                        className="w-24 h-24 rounded-xl overflow-hidden bg-white/5 shrink-0 flex items-center justify-center border border-white/10 enabled:cursor-zoom-in enabled:hover:border-(--ollie-cyan)/50 transition-colors"
+                      >
                         {match.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={match.image} alt={match.name} className="w-full h-full object-cover" />
                         ) : (
-                          <User size={18} className="text-white/20" />
+                          <User size={28} className="text-white/20" />
                         )}
-                      </div>
+                      </button>
 
                       {/* Name + bar */}
                       <div className="flex-1 min-w-0">
@@ -348,6 +392,23 @@ export function CelebrityFinder() {
           </motion.div>
         </div>
       </div>
+
+      {/* Full-size viewer */}
+      {zoom?.image && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={zoom.name}
+          onClick={() => setZoom(null)}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-black/85 p-4 cursor-zoom-out"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={zoom.image} alt={zoom.name} className="w-[min(90vw,80vh)] aspect-square rounded-2xl object-cover" />
+          <p className="text-white font-semibold">
+            {zoom.name} <span className="text-(--ollie-cyan) ml-1">{zoom.similarity.toFixed(1)}%</span>
+          </p>
+        </div>
+      )}
     </section>
   )
 }
