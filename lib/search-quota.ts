@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js"
 
 // Search limits, stored in Supabase (see supabase/search_limits.sql) because Cloudflare Workers
 // keep no memory between requests, so an in-process counter can't enforce anything.
+export const GUEST_LIMIT = 1          // free searches per IP address without an account (lifetime)
 export const USER_LIMIT = 10          // searches per account...
 const USER_WINDOW: string | null = null // ...ever (null). Use e.g. "24 hours" for a daily allowance.
 const IP_LIMIT = 30                   // searches per IP address...
@@ -25,8 +26,15 @@ function serviceClient() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
 }
 
+/** Stable uuid per IP, so a guest can use the same quota code as an account (search_log.user_id is a uuid). */
+export async function guestId(ip: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("guest:" + ip))
+  const h = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("")
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`
+}
+
 /** Counts one search against the user and the IP, atomically. Fails closed if the limiter is unreachable. */
-export async function consumeSearch(userId: string, ip: string): Promise<Quota> {
+export async function consumeSearch(userId: string, ip: string, userLimit = USER_LIMIT): Promise<Quota> {
   if (isExempt(userId)) return { ok: true, used: null, logId: null }
 
   const db = serviceClient()
@@ -37,7 +45,7 @@ export async function consumeSearch(userId: string, ip: string): Promise<Quota> 
   const { data, error } = await db.rpc("consume_search", {
     p_user: userId,
     p_ip: ip,
-    p_user_limit: USER_LIMIT,
+    p_user_limit: userLimit,
     p_ip_limit: IP_LIMIT,
     p_user_window: USER_WINDOW,
     p_ip_window: IP_WINDOW,

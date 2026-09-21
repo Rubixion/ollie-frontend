@@ -23,7 +23,7 @@ interface SearchResponse {
 }
 
 // Tab order; any other mode the server sends is ignored
-const MODES = ["CNN Only", "CNN Only (best image)"]
+const MODES = ["CNN Only (best image)"]
 
 function parseResponse(data: SearchResponse): Record<string, Match[]> {
   const out: Record<string, Match[]> = {}
@@ -111,10 +111,6 @@ export function CelebrityFinder() {
 
   const handleSearch = async () => {
     if (!imageDataUrl) return
-    if (!user) {
-      openModal(() => handleSearch())
-      return
-    }
     setLoading(true)
     setError(null)
     setResults(null)
@@ -135,6 +131,7 @@ export function CelebrityFinder() {
       const json = await res.json()
 
       if (!res.ok) {
+        if (json.code === "guest_limit") openModal(() => handleSearch()) // free search used: sign in, then retry
         throw new Error(json.error || "Search failed")
       }
 
@@ -265,7 +262,7 @@ export function CelebrityFinder() {
             {remaining !== null && (
               <p className="text-center text-xs text-white/30">
                 {remaining === 0
-                  ? "You've used all your searches."
+                  ? user ? "You've used all your searches." : "That was your free search. Sign in for more."
                   : `${remaining} free search${remaining === 1 ? "" : "es"} left`}
               </p>
             )}
@@ -321,21 +318,23 @@ export function CelebrityFinder() {
                       </p>
                     </div>
                   )}
-                  <div className="flex flex-wrap gap-1.5">
-                    {Object.keys(results).map((m) => (
-                      <button
-                        key={m}
-                        onClick={() => setActiveMode(m)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors
-                          ${m === activeMode
-                            ? "bg-(--ollie-cyan)/15 text-(--ollie-cyan) border-(--ollie-cyan)/30"
-                            : "bg-white/[0.03] text-white/40 border-white/5 hover:text-white/70"
-                          }`}
-                      >
-                        {m}
-                      </button>
-                    ))}
-                  </div>
+                  {Object.keys(results).length > 1 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {Object.keys(results).map((m) => (
+                        <button
+                          key={m}
+                          onClick={() => setActiveMode(m)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors
+                            ${m === activeMode
+                              ? "bg-(--ollie-cyan)/15 text-(--ollie-cyan) border-(--ollie-cyan)/30"
+                              : "bg-white/[0.03] text-white/40 border-white/5 hover:text-white/70"
+                            }`}
+                        >
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
                     Top {matches.length} Matches
                   </p>
