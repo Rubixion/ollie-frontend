@@ -1,4 +1,5 @@
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ollie-frontend",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-06-17",
@@ -15,5 +16,11 @@
       "binding": "WORKER_SELF_REFERENCE",
       "service": "ollie-frontend"
     }
-  ]
+  ],
+  "images": {
+    "binding": "IMAGES"
+  },
+  "observability": {
+    "enabled": true
+  }
 }
