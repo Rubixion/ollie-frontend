@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server"
 import { COMING_SOON, MATCH_ONLY } from "@/lib/site-config"
 
 const ALLOWED_PREFIXES = ["/chemistry", "/api", "/robots.txt", "/sitemap.xml", "/opengraph-image", "/icon", "/favicon.ico"]
-const MATCH_ONLY_ALLOWED = ["/match", "/api", "/robots.txt", "/sitemap.xml", "/opengraph-image", "/icon", "/favicon.ico"]
+const MATCH_ONLY_ALLOWED = ["/match", "/privacy", "/terms", "/api", "/robots.txt", "/sitemap.xml", "/opengraph-image", "/icon", "/favicon.ico"]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl

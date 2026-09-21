@@ -33,8 +33,8 @@ export function Footer() {
           </div>
 
           {/* Links */}
-          <div className={MATCH_ONLY ? "hidden" : "flex gap-16"}>
-            <div>
+          <div className="flex gap-16">
+            <div className={MATCH_ONLY ? "hidden" : undefined}>
               <p className="text-white/35 text-[10px] font-bold tracking-widest uppercase mb-4">Pages</p>
               <ul className="flex flex-col gap-3">
                 {nav.map((l) => (

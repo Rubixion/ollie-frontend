@@ -386,7 +386,10 @@ export function CelebrityFinder() {
               {loading && (
                 <div className="h-full flex flex-col items-center justify-center gap-4 py-16">
                   <Loader2 size={36} className="text-(--ollie-cyan) animate-spin" />
-                  <p className="text-white/40 text-sm">Comparing your face across 2,200+ soccer players...</p>
+                  <div className="text-center">
+                    <p className="text-white/40 text-sm">Comparing your face across 2,200+ soccer players...</p>
+                    <p className="text-white/25 text-xs mt-1">This can take up to 15 seconds</p>
+                  </div>
                 </div>
               )}
 
