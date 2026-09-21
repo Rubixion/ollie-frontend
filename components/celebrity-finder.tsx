@@ -25,12 +25,17 @@ interface SearchResponse {
 // Tab order; any other mode the server sends is ignored
 const MODES = ["CNN Only (best image)"]
 
+// Raw server scores are compressed (a same-person photo tops out ~62%, unrelated faces sit ~40%).
+// Linear stretch of [RAW_LO, RAW_HI] -> [OUT_LO, 99]; ranking is unchanged. Tune the three constants.
+const RAW_LO = 30, RAW_HI = 65, OUT_LO = 40
+const scale = (raw: number) => Math.max(0, Math.min(99, OUT_LO + ((raw - RAW_LO) * (99 - OUT_LO)) / (RAW_HI - RAW_LO)))
+
 function parseResponse(data: SearchResponse): Record<string, Match[]> {
   const out: Record<string, Match[]> = {}
   for (const mode of MODES) {
     const rows = data.modes?.[mode]
     if (rows?.length) {
-      out[mode] = rows.map((r) => ({ name: r.name, similarity: r.score, image: data.thumbs?.[r.name] }))
+      out[mode] = rows.map((r) => ({ name: r.name, similarity: scale(r.score), image: data.thumbs?.[r.name] }))
     }
   }
   return out
