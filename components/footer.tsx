@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { MATCH_ONLY } from "@/lib/site-config"
 
 const nav = [
   { label: "Match", href: "/match" },
@@ -32,7 +33,7 @@ export function Footer() {
           </div>
 
           {/* Links */}
-          <div className="flex gap-16">
+          <div className={MATCH_ONLY ? "hidden" : "flex gap-16"}>
             <div>
               <p className="text-white/35 text-[10px] font-bold tracking-widest uppercase mb-4">Pages</p>
               <ul className="flex flex-col gap-3">
