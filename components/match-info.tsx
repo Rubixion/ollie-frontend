@@ -21,19 +21,15 @@ const DETAILS: { title: string; body: string }[] = [
   },
   {
     title: "The player database",
-    body: "Photos were scraped from image search for ~2,800 player names. A face detector removed non-faces, and an LLM was asked \"is this really <name>?\" about each image to catch search junk. What's left is ~16,000 images of ~2,200 players.",
+    body: "Photos of ~2,200 player names were scraped from online and a face detector removed non-faces to create a database of ~16,000 player images",
   },
   {
-    title: "What happens when you press the button",
-    body: "Your face is detected and aligned, turned into a fingerprint, and compared to every stored photo by distance. Each player is scored by their single closest photo. The percentage comes from that distance, then stretched so the range is easier to read. Trust the ranking more than the exact number, and expect it to move between photos with different lighting or angles.",
-  },
-  {
-    title: "CNN with tweaks vs CNN only",
-    body: "\"CNN only\" is the raw model: pure fingerprint distance. \"CNN with tweaks\" (the default) adds a sanity filter that drops players whose typical skin tone is very different from yours, so you don't get a match that clearly looks nothing like you. It only removes candidates. It never changes anyone's score.",
+    title: "What happens when you upload a photo",
+    body: "Your face is detected and aligned, turned into a fingerprint, and compared to every stored photo's fingerprint. The closer the fingerprints, the higher the match. The model analyzes the coloring and facial features in your specific photo, so results may change between photos with different lighting or angles. \"CNN only\" is the raw model with nothing added, while \"CNN with tweaks\" (the default) removes players whose skin tones are very different from yours by accounting for image lighting, so you don't get a match that clearly looks nothing like you. Your photo is only used to run the search and is never stored.",
   },
   {
     title: "What's next",
-    body: "Extending the same model to a full celebrity look-alike search, and to a tool that lets you find yourself online. The soccer database and the model keep improving as more data is added.",
+    body: "The website is currently being extended to a full celebrity look-alike search tool, as well as a tool that lets you find yourself online using the same Ollie model.",
   },
 ]
 
