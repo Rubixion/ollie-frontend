@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAuthUser } from "@/lib/auth-server"
 import { checkRateLimit, getIp } from "@/lib/rate-limit"
-import { USER_LIMIT, consumeSearch, refundSearch } from "@/lib/search-quota"
+import { GUEST_LIMIT, USER_LIMIT, consumeSearch, guestId, refundSearch } from "@/lib/search-quota"
 
 const MAX_IMAGE_BYTES = 7 * 1024 * 1024
 
 export async function POST(req: NextRequest) {
   try {
+    // No token = guest (GUEST_LIMIT free search per IP). A token that doesn't check out is an expired
+    // session, not a guest: don't let it quietly burn the guest search.
     const user = await getAuthUser(req)
-    if (!user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+    if (!user && req.headers.get("authorization")) {
+      return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 })
     }
 
     const ip = getIp(req)
@@ -41,11 +43,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Everything above is free; only a valid, ready-to-run search counts against the user's allowance.
-    const quota = await consumeSearch(user.id, ip)
+    const limit = user ? USER_LIMIT : GUEST_LIMIT
+    const quota = await consumeSearch(user?.id ?? (await guestId(ip)), ip, limit)
     if (!quota.ok) {
       if (quota.reason === "user_limit") {
         return NextResponse.json(
-          { error: `You've used all ${USER_LIMIT} of your searches.`, code: "user_limit" },
+          user
+            ? { error: `You've used all ${USER_LIMIT} of your searches.`, code: "user_limit" }
+            : { error: "You've used your free search. Sign in to keep searching.", code: "guest_limit" },
           { status: 429 }
         )
       }
@@ -91,7 +96,7 @@ export async function POST(req: NextRequest) {
 
     const result = await res.json()
     // remaining: null = unlimited (exempt account)
-    const remaining = quota.used === null ? null : Math.max(0, USER_LIMIT - quota.used)
+    const remaining = quota.used === null ? null : Math.max(0, limit - quota.used)
     return NextResponse.json({ ...result, remaining })
   } catch (err) {
     console.error("Search API error:", err)
