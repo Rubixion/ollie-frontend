@@ -22,7 +22,7 @@ export default function ContactPage() {
 
         <div className="space-y-3">
           <a
-            href="mailto:rubixion76@gmail.com"
+            href="mailto:lbrad@student.ubc.ca"
             className="flex items-start gap-5 p-6 rounded-2xl bg-white/[0.03] border border-white/8 hover:border-white/20 hover:bg-white/[0.05] transition-all group"
           >
             <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
@@ -30,7 +30,7 @@ export default function ContactPage() {
             </div>
             <div>
               <p className="text-white font-semibold text-sm mb-1">Email</p>
-              <p className="text-white/50 text-sm mb-1">rubixion76@gmail.com</p>
+              <p className="text-white/50 text-sm mb-1">lbrad@student.ubc.ca</p>
               <p className="text-white/25 text-xs">Typically replied within 48 hours.</p>
             </div>
           </a>
