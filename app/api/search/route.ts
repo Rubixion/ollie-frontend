@@ -48,9 +48,10 @@ export async function POST(req: NextRequest) {
     if (!quota.ok) {
       if (quota.reason === "user_limit") {
         return NextResponse.json(
+          // Don't quote USER_LIMIT here — it's a token-cost guard, not a real cap, and not worth advertising.
           user
-            ? { error: `You've used all ${USER_LIMIT} of your searches.`, code: "user_limit" }
-            : { error: "You've used your free search. Sign in to keep searching.", code: "guest_limit" },
+            ? { error: "Search is temporarily unavailable for your account. Please try again later.", code: "user_limit" }
+            : { error: "You've used your free searches. Sign in to keep searching.", code: "guest_limit" },
           { status: 429 }
         )
       }
@@ -95,8 +96,9 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await res.json()
-    // remaining: null = unlimited (exempt account)
-    const remaining = quota.used === null ? null : Math.max(0, limit - quota.used)
+    // remaining: null = unlimited/not shown. Guests see their count; logged-in users don't — the 100
+    // cap is just a token-cost guard, not a number worth exposing.
+    const remaining = user || quota.used === null ? null : Math.max(0, limit - quota.used)
     return NextResponse.json({ ...result, remaining })
   } catch (err) {
     console.error("Search API error:", err)
