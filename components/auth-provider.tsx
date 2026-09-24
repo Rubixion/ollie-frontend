@@ -75,9 +75,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
+    // ponytail: pin to one stable URL (not window.location.href) so it always matches a fixed
+    // entry in Supabase's Redirect URLs allowlist, instead of a different exact URL per tab/query.
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: typeof window !== "undefined" ? window.location.href : undefined },
+      options: { redirectTo: typeof window !== "undefined" ? `${window.location.origin}/match` : undefined },
     })
   }
 
