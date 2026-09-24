@@ -91,7 +91,7 @@ export function AuthModal() {
                     <h2 className="text-lg font-black text-white tracking-tight">
                       {tab === "signin" ? "Welcome back" : "Join Ollie"}
                     </h2>
-                    <p className="text-white/35 text-xs mt-1 leading-relaxed">
+                    <p className="text-white/60 text-xs mt-1 leading-relaxed">
                       {tab === "signin"
                         ? "Sign in to keep searching."
                         : "Free. Sign up for more searches."}
@@ -99,7 +99,7 @@ export function AuthModal() {
                   </div>
                   <button
                     onClick={closeModal}
-                    className="text-white/25 hover:text-white/60 transition-colors ml-4 mt-0.5 shrink-0"
+                    className="text-white/60 hover:text-white/60 transition-colors ml-4 mt-0.5 shrink-0"
                     aria-label="Close"
                   >
                     <X size={17} />
@@ -114,7 +114,7 @@ export function AuthModal() {
                         key={t}
                         onClick={() => switchTab(t)}
                         className={`relative flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
-                          tab === t ? "text-black" : "text-white/35 hover:text-white/60"
+                          tab === t ? "text-black" : "text-white/60 hover:text-white/60"
                         }`}
                       >
                         {tab === t && (
@@ -147,7 +147,7 @@ export function AuthModal() {
                           <a href="/terms" target="_blank" className="underline hover:text-white/80">Terms of Service</a>
                           {" "}and{" "}
                           <a href="/privacy" target="_blank" className="underline hover:text-white/80">Privacy Policy</a>.
-                          <span className="text-white/30"> (required)</span>
+                          <span className="text-white/60"> (required)</span>
                         </span>
                       </label>
                       <label className="flex items-start gap-2.5 cursor-pointer">
@@ -159,7 +159,7 @@ export function AuthModal() {
                         />
                         <span className="text-white/55 text-xs leading-relaxed">
                           Send emails about new Ollie features and updates. Unsubscribe any time.
-                          <span className="text-white/30"> (optional)</span>
+                          <span className="text-white/60"> (optional)</span>
                         </span>
                       </label>
                     </div>
@@ -183,14 +183,14 @@ export function AuthModal() {
                   {/* Divider */}
                   <div className="relative flex items-center">
                     <span className="flex-1 border-t border-white/8" />
-                    <span className="px-3 text-white/20 text-[10px] uppercase tracking-widest">or</span>
+                    <span className="px-3 text-white/60 text-[10px] uppercase tracking-widest">or</span>
                     <span className="flex-1 border-t border-white/8" />
                   </div>
 
                   {/* Email + password form */}
                   <form onSubmit={handleSubmit} className="space-y-2.5">
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" size={14} />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 pointer-events-none" size={14} />
                       <input
                         type="email"
                         placeholder="email@example.com"
@@ -203,7 +203,7 @@ export function AuthModal() {
                     </div>
 
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" size={14} />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 pointer-events-none" size={14} />
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Password"
@@ -217,7 +217,7 @@ export function AuthModal() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/50 transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/50 transition-colors"
                         tabIndex={-1}
                       >
                         {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -249,7 +249,7 @@ export function AuthModal() {
                   </form>
 
                   {tab === "signin" && (
-                    <p className="text-white/30 text-[10px] text-center leading-relaxed">
+                    <p className="text-white/60 text-[10px] text-center leading-relaxed">
                       By continuing you agree to our{" "}
                       <a href="/terms" className="underline hover:text-white/35 transition-colors">Terms</a>
                       {" "}&amp;{" "}

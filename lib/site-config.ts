@@ -6,7 +6,8 @@ export const COMING_SOON = false
 export const MATCH_ONLY = true
 
 // The live domain. Every canonical URL, sitemap entry and JSON-LD id is built from this.
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://ollie.ml").replace(/\/$/, "")
+// Hard-coded on purpose: ollie.ml is the only domain. An old NEXT_PUBLIC_SITE_URL build variable must not override it.
+export const SITE_URL = "https://ollie.ml"
 
 // Version of the Terms + Privacy Policy a user agrees to at signup (their "Last updated" date).
 // Bump it whenever either page changes materially; it's stored with each user's consent.

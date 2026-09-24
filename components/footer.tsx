@@ -32,7 +32,7 @@ export function Footer() {
             <Link href={MATCH_ONLY ? "/match" : "/"} className="text-white font-black text-xl tracking-widest hover:text-white/60 transition-colors">
               OLLIE
             </Link>
-            <p className="text-white/30 text-xs leading-relaxed mt-3 max-w-[220px]">
+            <p className="text-white/60 text-xs leading-relaxed mt-3 max-w-[220px]">
               Celebrity look-alike search. Upload a photo and see who you look like.
             </p>
           </div>
@@ -40,11 +40,11 @@ export function Footer() {
           {/* Links */}
           <div className="flex gap-16">
             <div>
-              <p className="text-white/35 text-[10px] font-bold tracking-widest uppercase mb-4">Pages</p>
+              <p className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-4">Pages</p>
               <ul className="flex flex-col gap-3">
                 {nav.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-white/30 hover:text-white/70 text-sm transition-colors">
+                    <Link href={l.href} className="text-white/60 hover:text-white/70 text-sm transition-colors">
                       {l.label}
                     </Link>
                   </li>
@@ -52,11 +52,11 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <p className="text-white/35 text-[10px] font-bold tracking-widest uppercase mb-4">Legal</p>
+              <p className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-4">Legal</p>
               <ul className="flex flex-col gap-3">
                 {legal.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-white/30 hover:text-white/70 text-sm transition-colors">
+                    <Link href={l.href} className="text-white/60 hover:text-white/70 text-sm transition-colors">
                       {l.label}
                     </Link>
                   </li>
@@ -67,10 +67,10 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
-          <p className="text-white/25 text-xs">
+          <p className="text-white/60 text-xs">
             &copy; 2026 Ollie. Built on a face-recognition network trained from scratch.
           </p>
-          <p className="text-white/20 text-xs">
+          <p className="text-white/60 text-xs">
             For entertainment only. Not affiliated with or endorsed by anyone shown.
           </p>
         </div>

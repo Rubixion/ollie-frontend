@@ -58,7 +58,7 @@ function TableOfContents({ headings }: { headings: string[] }) {
   if (headings.length < 2) return null
   return (
     <nav aria-label="In this article" className="mb-10 p-5 rounded-xl bg-white/[0.03] border border-white/8">
-      <p className="text-[10px] font-bold tracking-widest uppercase text-white/30 mb-3">In this article</p>
+      <p className="text-[10px] font-bold tracking-widest uppercase text-white/60 mb-3">In this article</p>
       <ol className="space-y-1.5">
         {headings.map((h, i) => (
           <li key={i}>
@@ -141,7 +141,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         <div className="max-w-3xl mx-auto px-6 pt-28 pb-24">
           {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-white/40 mb-10">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-white/60 mb-10">
             <Link href="/blog" className="hover:text-white/70 transition-colors">Blog</Link>
             <ChevronRight size={12} aria-hidden="true" />
             <span className="text-white/50 truncate max-w-[240px]" aria-current="page">{post.title}</span>
@@ -158,7 +158,7 @@ export default async function BlogPostPage({ params }: Props) {
               {post.title}
             </h1>
             <p className="text-white/55 text-lg leading-relaxed mb-6">{post.excerpt}</p>
-            <div className="flex flex-wrap items-center gap-4 text-xs text-white/40 border-t border-white/8 pt-5">
+            <div className="flex flex-wrap items-center gap-4 text-xs text-white/60 border-t border-white/8 pt-5">
               <span className="flex items-center gap-1.5">
                 <User size={12} aria-hidden="true" />
                 {post.author}
@@ -216,7 +216,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* CTA */}
           <section className="mt-14 p-7 rounded-2xl bg-(--ollie-cyan)/5 border border-(--ollie-cyan)/20">
-            <p className="text-[10px] font-bold tracking-widest uppercase text-(--ollie-cyan)/70 mb-2">Try it yourself</p>
+            <p className="text-[10px] font-bold tracking-widest uppercase text-(--ollie-cyan) mb-2">Try it yourself</p>
             <h2 className="text-xl font-bold text-white mb-2">Find your celebrity lookalike</h2>
             <p className="text-white/55 text-sm mb-5">
               Upload a photo and see which celebrities you look most like. Free to try, and your photo is never stored.
@@ -240,13 +240,13 @@ export default async function BlogPostPage({ params }: Props) {
                     href={`/blog/${related.slug}`}
                     className="block p-5 rounded-xl bg-white/[0.02] border border-white/8 hover:border-white/20 hover:bg-white/[0.04] transition-all group"
                   >
-                    <span className="text-[9px] font-bold tracking-widest uppercase text-(--ollie-cyan)/70 block mb-2">
+                    <span className="text-[9px] font-bold tracking-widest uppercase text-(--ollie-cyan) block mb-2">
                       {related.category}
                     </span>
                     <h3 className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors leading-snug mb-1">
                       {related.title}
                     </h3>
-                    <span className="text-xs text-white/35">{related.readTime}</span>
+                    <span className="text-xs text-white/60">{related.readTime}</span>
                   </Link>
                 ))}
               </div>
@@ -257,7 +257,7 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="mt-14 pt-8 border-t border-white/8">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-sm text-white/45 hover:text-white/75 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white/75 transition-colors"
             >
               <ArrowLeft size={14} aria-hidden="true" />
               All articles

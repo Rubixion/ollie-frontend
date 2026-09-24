@@ -9,7 +9,7 @@ export const metadata = {
 }
 
 const EMAIL = "lbrad@student.ubc.ca"
-const link = "text-(--ollie-cyan) hover:underline"
+const link = "text-(--ollie-cyan) underline underline-offset-2 hover:text-white"
 
 export default function TermsPage() {
   return (
@@ -19,7 +19,7 @@ export default function TermsPage() {
         <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
         <div className="max-w-3xl mx-auto px-6 pt-32 pb-20">
           <h1 className="text-4xl font-black text-white mb-2 tracking-tight">Terms of Service</h1>
-          <p className="text-white/30 text-sm mb-12">Last updated: September 23, 2026</p>
+          <p className="text-white/60 text-sm mb-12">Last updated: September 23, 2026</p>
 
           <div className="prose prose-invert max-w-none space-y-10 text-white/60 leading-relaxed">
 

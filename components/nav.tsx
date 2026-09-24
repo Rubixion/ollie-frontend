@@ -63,7 +63,7 @@ function ProfileMenu() {
             className="absolute right-0 top-full mt-2 w-52 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black overflow-hidden z-50"
           >
             <div className="px-4 py-3 border-b border-white/5">
-              <p className="text-white/25 text-[10px] uppercase tracking-widest mb-0.5">Signed in as</p>
+              <p className="text-white/60 text-[10px] uppercase tracking-widest mb-0.5">Signed in as</p>
               <p className="text-white/70 text-xs truncate font-medium">{user.email}</p>
             </div>
             <div className="p-1.5">
@@ -123,7 +123,7 @@ export function Nav() {
                   className={`text-sm transition-colors ${
                     isActive
                       ? "text-white font-semibold"
-                      : "text-white/40 hover:text-white"
+                      : "text-white/60 hover:text-white"
                   }`}
                 >
                   {link.label}
@@ -165,7 +165,7 @@ export function Nav() {
                       href={link.href}
                       onClick={() => setOpen(false)}
                       className={`block w-full py-3 text-sm transition-colors border-b border-white/5 last:border-0 ${
-                        isActive ? "text-white font-semibold" : "text-white/40 hover:text-white"
+                        isActive ? "text-white font-semibold" : "text-white/60 hover:text-white"
                       }`}
                     >
                       {link.label}
@@ -176,7 +176,7 @@ export function Nav() {
               <li className="pt-2">
                 {user ? (
                   <div className="flex flex-col gap-2">
-                    <p className="text-white/25 text-xs px-1">{user.email}</p>
+                    <p className="text-white/60 text-xs px-1">{user.email}</p>
                     <button
                       onClick={() => { signOut(); setOpen(false) }}
                       className="flex items-center gap-2 w-full text-sm font-semibold py-3 px-4 rounded-full border border-red-500/20 text-red-400/70 hover:text-red-400 transition-colors"

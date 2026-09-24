@@ -69,13 +69,12 @@ function GenderMenu({ value, onChange }: { value: Gender; onChange: (g: Gender) 
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Show matches: ${current.label}`}
         onClick={() => setOpen((o) => !o)}
         className="-ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ollie-cyan)"
       >
-        <span className="text-white/30">Show</span>
+        <span className="text-white/60">Show</span>
         <span className="font-semibold text-(--ollie-cyan)">{current.label}</span>
-        <ChevronDown size={12} className={`text-white/40 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+        <ChevronDown size={12} className={`text-white/60 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       <AnimatePresence>
         {open && (
@@ -128,7 +127,7 @@ function parseResponse(data: SearchResponse): Match[] {
 function PhotoCredit({ credit, className = "" }: { credit: Credit; className?: string }) {
   const link = "underline decoration-white/20 underline-offset-2 hover:text-white/70"
   return (
-    <p className={`text-[10px] leading-snug text-white/30 ${className}`}>
+    <p className={`text-[10px] leading-snug text-white/60 ${className}`}>
       Photo:{" "}
       {credit.page ? (
         <a href={credit.page} target="_blank" rel="noopener noreferrer" className={link}>{credit.author}</a>
@@ -144,7 +143,8 @@ function PhotoCredit({ credit, className = "" }: { credit: Credit; className?: s
 
 export function CelebrityFinder() {
   const { user, openModal } = useAuth()
-  const [imageDataUrl, setImageDataUrl] = useState<string | null>(null)
+  const [imageDataUrl, setImageDataUrl] = useState<string | null>(null) // JPEG sent to the matcher
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)     // original file, transparency kept, for display
   const [isDragging, setIsDragging] = useState(false)
   const [loading, setLoading] = useState(false)
   const [matches, setMatches] = useState<Match[] | null>(null)
@@ -184,6 +184,7 @@ export function CelebrityFinder() {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
         }
         setImageDataUrl(canvas.toDataURL("image/jpeg", 0.9))
+        setPreviewUrl(img.src)
         setMatches(null)
         setError(null)
       }
@@ -223,6 +224,7 @@ export function CelebrityFinder() {
 
   const clearImage = () => {
     setImageDataUrl(null)
+    setPreviewUrl(null)
     setMatches(null)
     setError(null)
     if (fileInputRef.current) fileInputRef.current.value = ""
@@ -294,10 +296,10 @@ export function CelebrityFinder() {
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">
             Which celebrity do you look like?
           </h1>
-          <p className="mt-4 text-white/45 text-balance">
+          <p className="mt-4 text-white/60 text-balance">
             Upload a photo. Ollie compares your face with thousands of celebrity photos and shows your five closest matches.
           </p>
-          <p className="mt-2 text-white/30 text-sm text-balance">
+          <p className="mt-2 text-white/60 text-sm text-balance">
             Works best with one clear, front-facing face in good, even lighting.
           </p>
         </div>
@@ -311,7 +313,7 @@ export function CelebrityFinder() {
                 <div className="relative flex items-center justify-center p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={imageDataUrl}
+                    src={previewUrl ?? imageDataUrl}
                     alt="Your uploaded photo"
                     className="max-w-full max-h-[380px] rounded-xl object-contain"
                   />
@@ -336,13 +338,13 @@ export function CelebrityFinder() {
                 />
                 <span className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
                   <span className="p-4 rounded-full bg-white/5 border border-white/10">
-                    <Upload size={28} className="text-white/40" aria-hidden="true" />
+                    <Upload size={28} className="text-white/60" aria-hidden="true" />
                   </span>
                   <span className="text-center">
                     <span className="block text-white/70 font-medium">Drag &amp; drop your photo</span>
-                    <span className="block text-white/30 text-sm mt-1">click to browse, or paste with Ctrl+V</span>
+                    <span className="block text-white/60 text-sm mt-1">click to browse, or paste with Ctrl+V</span>
                   </span>
-                  <span className="text-white/20 text-xs">JPG, PNG, WEBP</span>
+                  <span className="text-white/60 text-xs">JPG, PNG, WEBP</span>
                 </span>
               </label>
             )}
@@ -389,12 +391,12 @@ export function CelebrityFinder() {
                 </>
               )}
             </button>
-            <p className="text-center text-xs text-white/30">
+            <p className="text-center text-xs text-white/60">
               Your photo is only used for this search and is never stored.{" "}
               <Link href="/privacy" className="underline decoration-white/20 underline-offset-2 hover:text-white/60">Privacy</Link>
             </p>
             {remaining !== null && (
-              <p className="text-center text-xs text-white/30">
+              <p className="text-center text-xs text-white/60">
                 {remaining === 0
                   ? user ? "You've used all your searches." : "That was your last free search. Sign in for more."
                   : `${remaining} free search${remaining === 1 ? "" : "es"} left`}
@@ -409,11 +411,11 @@ export function CelebrityFinder() {
               {!loading && !matches && !error && (
                 <div className="h-full flex flex-col items-center justify-center gap-4 py-16 text-center">
                   <div className="p-4 rounded-full bg-white/5 border border-white/5">
-                    <User size={32} className="text-white/20" aria-hidden="true" />
+                    <User size={32} className="text-white/60" aria-hidden="true" />
                   </div>
                   <div>
-                    <p className="text-white/40 font-medium">Your top 5 matches will appear here</p>
-                    <p className="text-white/20 text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
+                    <p className="text-white/60 font-medium">Your top 5 matches will appear here</p>
+                    <p className="text-white/60 text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
                       Each result is a celebrity, ranked by how closely their face matches yours
                     </p>
                   </div>
@@ -425,8 +427,8 @@ export function CelebrityFinder() {
                 <div className="h-full flex flex-col items-center justify-center gap-4 py-16">
                   <Loader2 size={36} className="text-(--ollie-cyan) animate-spin" aria-hidden="true" />
                   <div className="text-center">
-                    <p className="text-white/40 text-sm">Comparing your face with thousands of celebrities...</p>
-                    <p className="text-white/25 text-xs mt-1">This can take up to 15 seconds</p>
+                    <p className="text-white/60 text-sm">Comparing your face with thousands of celebrities...</p>
+                    <p className="text-white/60 text-xs mt-1">This can take up to 15 seconds</p>
                   </div>
                 </div>
               )}
@@ -453,7 +455,7 @@ export function CelebrityFinder() {
                       </p>
                     </div>
                   )}
-                  <h2 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
+                  <h2 className="text-white/60 text-xs font-semibold uppercase tracking-wider mb-1">
                     Top {matches.length} Matches
                   </h2>
                   {matches.map((match, i) => (
@@ -476,7 +478,7 @@ export function CelebrityFinder() {
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={match.image} alt={`Photo of ${match.name}`} className="w-full h-full object-cover" />
                         ) : (
-                          <User size={28} className="text-white/20" aria-hidden="true" />
+                          <User size={28} className="text-white/60" aria-hidden="true" />
                         )}
                       </button>
 
@@ -489,7 +491,7 @@ export function CelebrityFinder() {
                           </span>
                         </div>
                         {match.knownFor && (
-                          <p className="text-white/35 text-xs truncate mb-1.5">{match.knownFor}</p>
+                          <p className="text-white/60 text-xs truncate mb-1.5">{match.knownFor}</p>
                         )}
                         <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
                           <motion.div
@@ -510,7 +512,7 @@ export function CelebrityFinder() {
                       )}
                     </motion.div>
                   ))}
-                  {matches[0] && <ShareMatch match={matches[0]} userPhoto={imageDataUrl} />}
+                  {matches[0] && <ShareMatch match={matches[0]} userPhoto={previewUrl ?? imageDataUrl} />}
                 </div>
               )}
             </div>
