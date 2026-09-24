@@ -4,6 +4,8 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-06-17",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // esbuild's keep_names injects __name() into inlined scripts, which then throw in the browser
+  "keep_names": false,
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"

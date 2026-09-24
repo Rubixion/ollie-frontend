@@ -15,15 +15,15 @@ export const postsC: BlogPost[] = [
       {
         h2: "What Changes and What Doesn't",
         paragraphs: [
-          "Aging affects different facial components at different rates. <strong>Soft tissue</strong>,skin, subcutaneous fat, and muscle,changes substantially: skin loses elasticity and develops texture, fat redistributes and reduces in some areas, and facial volume changes over decades. <strong>Bone structure</strong>, by contrast, is largely stable after early adulthood. The mandible, orbital bones, and nasal cartilage retain their fundamental configuration for most of adult life.",
-          "Face recognition systems built on deep embeddings primarily capture structural geometry rather than surface texture, making them more robust to aging than systems that relied on texture features. The embedding of the same person photographed at 25 and at 55 will be more similar than a texture-based comparison would suggest,the bone geometry anchor keeps the embedding in roughly the same region of face space.",
+          "Aging affects different facial components at different rates. <strong>Soft tissue</strong>, skin, subcutaneous fat, and muscle, changes substantially: skin loses elasticity and develops texture, fat redistributes and reduces in some areas, and facial volume changes over decades. <strong>Bone structure</strong>, by contrast, is largely stable after early adulthood. The mandible, orbital bones, and nasal cartilage retain their fundamental configuration for most of adult life.",
+          "Face recognition systems built on deep embeddings primarily capture structural geometry rather than surface texture, making them more robust to aging than systems that relied on texture features. The embedding of the same person photographed at 25 and at 55 will be more similar than a texture-based comparison would suggest, the bone geometry anchor keeps the embedding in roughly the same region of face space.",
         ],
       },
       {
         h2: "Cross-Age Matching in Practice",
         paragraphs: [
-          "Cross-age face verification benchmarks test systems on pairs with large temporal gaps. State-of-the-art systems achieve above 90% accuracy on these benchmarks when gaps are under 20 years, with accuracy declining for larger gaps,particularly when childhood photos are compared against adult photos, since facial proportions change substantially during growth.",
-          "For Ollie, cross-age robustness means that a photo taken a decade ago will typically return the same top celebrity matches as a recent photo,the stable geometry signal dominates the changing surface signal. Photos from adolescence or early adulthood may diverge, because the face structure may not yet have fully developed.",
+          "Cross-age face verification benchmarks test systems on pairs with large temporal gaps. State-of-the-art systems achieve above 90% accuracy on these benchmarks when gaps are under 20 years, with accuracy declining for larger gaps, particularly when childhood photos are compared against adult photos, since facial proportions change substantially during growth.",
+          "For Ollie, cross-age robustness means that a photo taken a decade ago will typically return the same top celebrity matches as a recent photo, the stable geometry signal dominates the changing surface signal. Photos from adolescence or early adulthood may diverge, because the face structure may not yet have fully developed.",
         ],
       },
     ],
@@ -36,7 +36,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "photo-angle-celebrity-match",
     title: "The Best Angle for a Celebrity Face Match (According to the AI)",
-    excerpt: "Camera angle changes how your facial features appear at the pixel level. Here is what the research says about which angles produce the most accurate results,and why.",
+    excerpt: "Camera angle changes how your facial features appear at the pixel level. Here is what the research says about which angles produce the most accurate results, and why.",
     date: "March 2026",
     isoDate: "2026-03-06",
     readTime: "4 min read",
@@ -47,8 +47,8 @@ export const postsC: BlogPost[] = [
       {
         h2: "How Angle Affects Embedding Accuracy",
         paragraphs: [
-          "Face recognition networks are trained on predominantly front-facing images because most real-world applications require matching front-facing portraits. When you provide a photo at an angle, the 2D projection of your 3D face changes,features that are prominently visible from the front are partially obscured at an angle, and vice versa. This changes the feature pattern the network extracts.",
-          "The three degrees of angular freedom,<strong>yaw</strong> (left/right rotation), <strong>pitch</strong> (up/down tilt), and <strong>roll</strong> (sideways tilt),each affect the result differently. Yaw (looking left or right) has the largest effect, because it significantly changes which features are visible. Pitch and roll have smaller effects at moderate values.",
+          "Face recognition networks are trained on predominantly front-facing images because most real-world applications require matching front-facing portraits. When you provide a photo at an angle, the 2D projection of your 3D face changes, features that are prominently visible from the front are partially obscured at an angle, and vice versa. This changes the feature pattern the network extracts.",
+          "The three degrees of angular freedom, <strong>yaw</strong> (left/right rotation), <strong>pitch</strong> (up/down tilt), and <strong>roll</strong> (sideways tilt), each affect the result differently. Yaw (looking left or right) has the largest effect, because it significantly changes which features are visible. Pitch and roll have smaller effects at moderate values.",
         ],
       },
       {
@@ -70,6 +70,7 @@ export const postsC: BlogPost[] = [
     title: "Why Group Photos Usually Give Poor Celebrity Match Results",
     excerpt: "Cropping your face from a group photo might seem convenient, but it rarely works well for face matching. Here is why and what to do instead.",
     date: "March 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-03-04",
     readTime: "3 min read",
     category: "Guide",
@@ -79,15 +80,15 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Resolution Problem",
         paragraphs: [
-          "Group photos typically show multiple people at a distance, giving each face a small fraction of the total image resolution. A 12-megapixel photo of a group of eight people might show each face at only 200–400 pixels wide,borderline for accurate face recognition. When you crop and upload that small face region, the face detection pipeline is working with limited pixel information.",
-          "The face recognition network requires a minimum of approximately 160×160 pixels of aligned face to extract a reliable embedding. Below this, detail is insufficient and the embedding quality degrades. Group photo crops from standard smartphone photos often fall right at this borderline or below it, particularly if the photo was taken from more than a few metres away.",
+          "Group photos typically show multiple people at a distance, giving each face a small fraction of the total image resolution. A 12-megapixel photo of a group of eight people might show each face at only 200–400 pixels wide, borderline for accurate face recognition. When you crop and upload that small face region, the face detection pipeline is working with limited pixel information.",
+          "Ollie's network reads a face aligned to 112 × 112 pixels, and the aligner needs clean detail to work from, so the face in your photo should be comfortably larger than that. Below that size, detail is insufficient and the embedding quality degrades. Group photo crops from standard smartphone photos often fall right at this borderline or below it, particularly if the photo was taken from more than a few metres away.",
         ],
       },
       {
         h2: "What to Use Instead",
         paragraphs: [
-          "For best results, take a dedicated portrait photo for matching,you alone, rear camera at arm's length or further, good lighting. This gives maximum face resolution, controlled conditions, and no competing faces in the frame. It takes 30 seconds and produces substantially better results than even a cropped group photo from an event.",
-          "If you only have group photos available, choose one where you were closest to the camera, look for the sharpest, least motion-blurred option, and make sure you are roughly front-facing in the shot. Set expectations accordingly,the match may be less reliable than a dedicated portrait.",
+          "For best results, take a dedicated portrait photo for matching, you alone, rear camera at arm's length or further, good lighting. This gives maximum face resolution, controlled conditions, and no competing faces in the frame. It takes 30 seconds and produces substantially better results than even a cropped group photo from an event.",
+          "If you only have group photos available, choose one where you were closest to the camera, look for the sharpest, least motion-blurred option, and make sure you are roughly front-facing in the shot. Set expectations accordingly, the match may be less reliable than a dedicated portrait.",
         ],
       },
     ],
@@ -110,8 +111,8 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Recurring Face Archetype",
         paragraphs: [
-          "Historians of portraiture have long noted that certain facial types recur across centuries and cultures,the same strong jaw and prominent brow appears in Roman busts, in Renaissance portraits, and in contemporary celebrities. These recurring types are not coincidences or artistic conventions. They reflect the underlying population genetics: certain facial proportion combinations are common enough that they appear across historical eras and diverse populations.",
-          "The deep structure of these archetypes is what the face recognition embedding captures. When you receive a match with a historical celebrity whose era precedes yours by decades, the match is an archetype match,your facial proportions belong to a type that has existed throughout recorded history.",
+          "Historians of portraiture have long noted that certain facial types recur across centuries and cultures, the same strong jaw and prominent brow appears in Roman busts, in Renaissance portraits, and in contemporary celebrities. These recurring types are not coincidences or artistic conventions. They reflect the underlying population genetics: certain facial proportion combinations are common enough that they appear across historical eras and diverse populations.",
+          "The deep structure of these archetypes is what the face recognition embedding captures. When you receive a match with a historical celebrity whose era precedes yours by decades, the match is an archetype match, your facial proportions belong to a type that has existed throughout recorded history.",
         ],
       },
       {
@@ -123,14 +124,14 @@ export const postsC: BlogPost[] = [
       },
     ],
     faqs: [
-      { q: "Why do some people look like historical figures from different eras?", a: "Facial archetypes,characteristic proportion combinations,recur across populations and centuries because the genetic variants driving those proportions remain in the gene pool. Face recognition detects this structural similarity regardless of era." },
+      { q: "Why do some people look like historical figures from different eras?", a: "Facial archetypes, characteristic proportion combinations, recur across populations and centuries because the genetic variants driving those proportions remain in the gene pool. Face recognition detects this structural similarity regardless of era." },
     ],
     relatedSlugs: ["celebrity-match-different-era", "why-everyone-has-doppelganger", "most-matched-celebrities"],
   },
   {
     slug: "face-shape-guide",
     title: "Face Shapes Explained: What 'Oval', 'Square', and 'Heart' Actually Mean for AI",
-    excerpt: "Traditional face shape categories describe the overall outline. AI face recognition measures something more detailed. Here is how the two relate,and how each predicts your celebrity match.",
+    excerpt: "Traditional face shape categories describe the overall outline. AI face recognition measures something more detailed. Here is how the two relate, and how each predicts your celebrity match.",
     date: "February 2026",
     isoDate: "2026-02-26",
     readTime: "4 min read",
@@ -141,27 +142,27 @@ export const postsC: BlogPost[] = [
       {
         h2: "What Traditional Face Shapes Measure",
         paragraphs: [
-          "Traditional face shape categories,oval, round, square, heart, diamond, oblong,describe the two-dimensional silhouette of the face: the outline defined by the hairline, jaw, and widest point. These categories are useful heuristics for hairstyling and eyewear recommendations because they predict the visual balance of shapes applied around the face.",
+          "Traditional face shape categories, oval, round, square, heart, diamond, oblong, describe the two-dimensional silhouette of the face: the outline defined by the hairline, jaw, and widest point. These categories are useful heuristics for hairstyling and eyewear recommendations because they predict the visual balance of shapes applied around the face.",
           "From a face recognition perspective, these categories are quite coarse. Two faces categorised as 'square' might have very different inter-ocular distances, very different nose shapes, and very different midface proportions. The same celebrity embedding could sit in the 'square face' category and match users across a wide range of actual feature configurations within that category.",
         ],
       },
       {
         h2: "What AI Measures Instead",
         paragraphs: [
-          "A 256-dimensional facial embedding captures far more than the face silhouette. It simultaneously encodes: inter-ocular distance relative to face width, midface proportions (nose length relative to face height), jaw angle and definition, cheekbone prominence, nose bridge width, and many other geometric relationships,each varying continuously rather than falling into categories.",
+          "A 512-dimensional facial embedding captures far more than the face silhouette. It simultaneously encodes: inter-ocular distance relative to face width, midface proportions (nose length relative to face height), jaw angle and definition, cheekbone prominence, nose bridge width, and many other geometric relationships, each varying continuously rather than falling into categories.",
           "This richer representation explains why people with the same traditional face shape can receive very different celebrity matches. Two 'oval-faced' people whose midface proportions differ, or whose eye spacing differs, will have embeddings in different regions of face space and will match different sets of celebrities.",
         ],
       },
     ],
     faqs: [
-      { q: "What is my face shape and how does it affect my celebrity match?", a: "Traditional face shapes (oval, square, heart) describe the overall silhouette. AI matches on many more dimensions simultaneously,two people with the same shape category can receive very different matches due to differences in feature proportions." },
+      { q: "What is my face shape and how does it affect my celebrity match?", a: "Traditional face shapes (oval, square, heart) describe the overall silhouette. AI matches on many more dimensions simultaneously, two people with the same shape category can receive very different matches due to differences in feature proportions." },
     ],
     relatedSlugs: ["what-celebrity-match-reveals", "math-behind-your-face", "why-everyone-has-doppelganger"],
   },
   {
     slug: "celebrity-face-evolution",
     title: "How Celebrity Beauty Standards Have Changed Over 50 Years",
-    excerpt: "The faces that became famous in 1970 differ systematically from those that became famous in 2020. Here is how beauty standards have shifted,and what it means for face matching.",
+    excerpt: "The faces that became famous in 1970 differ systematically from those that became famous in 2020. Here is how beauty standards have shifted, and what it means for face matching.",
     date: "February 2026",
     isoDate: "2026-02-24",
     readTime: "4 min read",
@@ -173,13 +174,13 @@ export const postsC: BlogPost[] = [
         h2: "The Shifting Face of Fame",
         paragraphs: [
           "Different eras have favoured different facial types for celebrity status. The classic Hollywood era (1930s–1950s) tended toward strong symmetry, defined cheekbones, and the angular features associated with film noir cinematography. The 1970s shifted toward more naturalistic features. The 1990s and 2000s favoured particular combinations of large eyes and specific jaw profiles. Each era reflects the intersection of cultural aesthetics, media technologies, and the selection pressures of the industry.",
-          "These temporal clusters are visible in the face recognition embedding space. When celebrity embeddings are visualised and labelled by decade, some loose temporal clustering appears,not because features change across decades, but because different eras selected for different proportion combinations in the people who achieved widespread fame.",
+          "These temporal clusters are visible in the face recognition embedding space. When celebrity embeddings are visualised and labelled by decade, some loose temporal clustering appears, not because features change across decades, but because different eras selected for different proportion combinations in the people who achieved widespread fame.",
         ],
       },
       {
         h2: "What Era Clustering Means for Your Match",
         paragraphs: [
-          "If your matches consistently come from a particular era, you share facial proportions with the type favoured by that era's celebrity culture. This is aesthetically interesting,it identifies which visual archetype your face most closely resembles. It does not mean your face belongs to that era, only that the clearest examples of your facial type in the database happened to achieve prominence during that period.",
+          "If your matches consistently come from a particular era, you share facial proportions with the type favoured by that era's celebrity culture. This is aesthetically interesting, it identifies which visual archetype your face most closely resembles. It does not mean your face belongs to that era, only that the clearest examples of your facial type in the database happened to achieve prominence during that period.",
           "Era clustering also reflects data availability: celebrities from the 1940s who were photographed extensively by major studios have richer embedding representations than equally famous celebrities from periods with fewer available digitised photographs.",
         ],
       },
@@ -203,15 +204,15 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Portrait as Identity Document",
         paragraphs: [
-          "For most of human history, the portrait painting served the same function that a photograph or biometric scan serves today: creating a persistent representation of an individual's appearance that could be shared across time and space. Court portraits, memorial paintings, and miniatures were explicitly designed to encode identity,to be recognisable as a specific person, not just a face.",
-          "Portrait conventions that developed over centuries,controlled poses, specific lighting standards, particular spatial relationships between features,parallel the standardised conditions used in modern face recognition photography. Both reflect the same underlying insight: to capture identity reliably, you need to control the conditions that cause face appearance to vary.",
+          "For most of human history, the portrait painting served the same function that a photograph or biometric scan serves today: creating a persistent representation of an individual's appearance that could be shared across time and space. Court portraits, memorial paintings, and miniatures were explicitly designed to encode identity, to be recognisable as a specific person, not just a face.",
+          "Portrait conventions that developed over centuries, controlled poses, specific lighting standards, particular spatial relationships between features, parallel the standardised conditions used in modern face recognition photography. Both reflect the same underlying insight: to capture identity reliably, you need to control the conditions that cause face appearance to vary.",
         ],
       },
       {
         h2: "Physiognomy and Its Limits",
         paragraphs: [
-          "Physiognomy,the practice of inferring character from facial features,has ancient roots and was taken seriously as a science through the 19th century. Phrenology added skull shape to the mix. Both have been thoroughly discredited: there is no reliable relationship between facial features and personality traits, criminal tendency, intelligence, or moral character.",
-          "Modern face recognition makes no such inferences. It computes geometric similarity for identity comparison,a well-validated capability. The boundary between valid identity-based face comparison and invalid character-from-face inference is sharp and important. Any claim that AI can determine personality, criminality, or other character traits from face geometry is pseudoscience regardless of how technically sophisticated the system appears.",
+          "Physiognomy, the practice of inferring character from facial features, has ancient roots and was taken seriously as a science through the 19th century. Phrenology added skull shape to the mix. Both have been thoroughly discredited: there is no reliable relationship between facial features and personality traits, criminal tendency, intelligence, or moral character.",
+          "Modern face recognition makes no such inferences. It computes geometric similarity for identity comparison, a well-validated capability. The boundary between valid identity-based face comparison and invalid character-from-face inference is sharp and important. Any claim that AI can determine personality, criminality, or other character traits from face geometry is pseudoscience regardless of how technically sophisticated the system appears.",
         ],
       },
     ],
@@ -223,7 +224,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "golden-ratio-face",
     title: "The Golden Ratio and Facial Attractiveness: Myth vs Reality",
-    excerpt: "The golden ratio has been claimed to explain facial beauty for centuries. Here is what the actual research shows,and how it relates to facial geometry in AI.",
+    excerpt: "The golden ratio has been claimed to explain facial beauty for centuries. Here is what the actual research shows, and how it relates to facial geometry in AI.",
     date: "February 2026",
     isoDate: "2026-02-20",
     readTime: "4 min read",
@@ -235,27 +236,27 @@ export const postsC: BlogPost[] = [
         h2: "The Claim and the Evidence",
         paragraphs: [
           "The claim that the <strong>golden ratio</strong> (approximately 1.618) governs facial attractiveness has been popularised in cosmetic surgery, beauty guides, and viral videos. The idea is that faces with key proportions approximating this ratio are perceived as most beautiful. Like many appealing simple explanations, the reality is more complicated.",
-          "Controlled empirical research on the golden ratio and facial attractiveness is mixed at best. While some studies have found modest correlations between certain facial measurements and the ratio, others find no effect, or find that the relationship is confounded by averageness,faces close to the population mean on many dimensions tend to be both attractive and to approximate many ratio targets simultaneously.",
+          "Controlled empirical research on the golden ratio and facial attractiveness is mixed at best. While some studies have found modest correlations between certain facial measurements and the ratio, others find no effect, or find that the relationship is confounded by averageness, faces close to the population mean on many dimensions tend to be both attractive and to approximate many ratio targets simultaneously.",
         ],
       },
       {
         h2: "What Actually Predicts Attractiveness",
         paragraphs: [
           "The most robust predictors of facial attractiveness in the research literature are: <strong>averageness</strong> (faces near the mathematical average of the population are more attractive), <strong>symmetry</strong> (bilateral symmetry is attractive but has a smaller effect than often claimed), and <strong>sexual dimorphism</strong> (more pronounced sex-typical features are attractive within groups, but with complex cultural variation).",
-          "Notably, AI face recognition does not include attractiveness as a dimension. The embedding encodes identity-relevant geometry,the features that distinguish individuals,not beauty-relevant geometry. High-scoring matches reflect structural similarity to the celebrity's bone configuration, not any assessment of attractiveness.",
+          "Notably, AI face recognition does not include attractiveness as a dimension. The embedding encodes identity-relevant geometry, the features that distinguish individuals, not beauty-relevant geometry. High-scoring matches reflect structural similarity to the celebrity's bone configuration, not any assessment of attractiveness.",
         ],
       },
     ],
     faqs: [
       { q: "Does the golden ratio really determine facial attractiveness?", a: "The evidence is weak. Averageness (closeness to the population mean on many dimensions) is a more robust predictor of attractiveness than golden ratio proportions." },
-      { q: "Does Ollie's face recognition measure attractiveness?", a: "No. The embedding captures identity-relevant geometry,features that distinguish individuals. Attractiveness is not encoded as a dimension." },
+      { q: "Does Ollie's face recognition measure attractiveness?", a: "No. The embedding captures identity-relevant geometry, features that distinguish individuals. Attractiveness is not encoded as a dimension." },
     ],
     relatedSlugs: ["symmetrical-faces", "what-celebrity-match-reveals", "science-of-you-look-like"],
   },
   {
     slug: "face-attractiveness-research",
     title: "What 50 Years of Attractiveness Research Tells Us About Face Perception",
-    excerpt: "Attractiveness is partly universal and partly cultural. Here is what the research consensus actually says,and how it relates to face recognition technology.",
+    excerpt: "Attractiveness is partly universal and partly cultural. Here is what the research consensus actually says, and how it relates to face recognition technology.",
     date: "February 2026",
     isoDate: "2026-02-18",
     readTime: "4 min read",
@@ -266,7 +267,7 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Universality of Attractiveness",
         paragraphs: [
-          "Studies across cultures with varying levels of media exposure find broad agreement on facial attractiveness ratings for certain extreme cases,very symmetric faces are consistently rated more attractive; composites of many faces (mathematical average faces) are consistently rated higher than most individual faces. These findings support some cross-cultural universality in the attractiveness response.",
+          "Studies across cultures with varying levels of media exposure find broad agreement on facial attractiveness ratings for certain extreme cases, very symmetric faces are consistently rated more attractive; composites of many faces (mathematical average faces) are consistently rated higher than most individual faces. These findings support some cross-cultural universality in the attractiveness response.",
           "However, cross-cultural agreement is modest for faces in the middle of the attractiveness distribution, and some features that predict attractiveness within one cultural context are neutral or negative in others. The universality is partial, not complete.",
         ],
       },
@@ -286,7 +287,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "celebrity-resemblance-and-self-image",
     title: "What Your Celebrity Match Says About How You See Yourself",
-    excerpt: "People react very differently to their celebrity matches,with delight, scepticism, or surprise. Here is the psychology of self-image and how it filters your reaction to AI results.",
+    excerpt: "People react very differently to their celebrity matches, with delight, scepticism, or surprise. Here is the psychology of self-image and how it filters your reaction to AI results.",
     date: "February 2026",
     isoDate: "2026-02-16",
     readTime: "4 min read",
@@ -298,14 +299,14 @@ export const postsC: BlogPost[] = [
         h2: "Why Reactions Vary So Much",
         paragraphs: [
           "People's reactions to their celebrity match reveal as much about their self-image as about the match itself. Someone who receives a match with a celebrity they admire often accepts it immediately; the same geometric similarity, matched to someone they are neutral about, may produce scepticism. This asymmetry reflects motivated reasoning: we evaluate facial comparisons partly through the lens of how the comparison makes us feel.",
-          "The AI's computation is emotionally neutral,it measures geometric distance in 256-dimensional space without any awareness of whether a celebrity is admired or not. The emotional charge comes entirely from the human interpretation of the result.",
+          "The AI's computation is emotionally neutral, it measures geometric distance in 512-dimensional space without any awareness of whether a celebrity is admired or not. The emotional charge comes entirely from the human interpretation of the result.",
         ],
       },
       {
         h2: "The Self-Image Filter",
         paragraphs: [
-          "Self-image profoundly shapes perception of facial comparisons. People who have a positive self-image are more likely to accept matches that confirm their self-concept and find interesting angles in unexpected ones. People with more self-critical tendencies may systematically find fault with any result,not because the result is wrong, but because self-criticism makes genuine comparison feel uncomfortable.",
-          "The most productive approach treats the celebrity match as geometric information, not evaluation. Your top match indicates which celebrity's bone structure is most similar to yours,information about proportion and geometry, not about beauty, worth, or status.",
+          "Self-image profoundly shapes perception of facial comparisons. People who have a positive self-image are more likely to accept matches that confirm their self-concept and find interesting angles in unexpected ones. People with more self-critical tendencies may systematically find fault with any result, not because the result is wrong, but because self-criticism makes genuine comparison feel uncomfortable.",
+          "The most productive approach treats the celebrity match as geometric information, not evaluation. Your top match indicates which celebrity's bone structure is most similar to yours, information about proportion and geometry, not about beauty, worth, or status.",
         ],
       },
     ],
@@ -317,7 +318,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "face-recognition-in-dating",
     title: "Face Recognition in Dating Apps: How Match-by-Face Technology Works",
-    excerpt: "Some dating apps let you search for partners who resemble celebrities or even specific people. Here is how this works technically,and what the ethical considerations are.",
+    excerpt: "Some dating apps let you search for partners who resemble celebrities or even specific people. Here is how this works technically, and what the ethical considerations are.",
     date: "February 2026",
     isoDate: "2026-02-14",
     readTime: "4 min read",
@@ -336,12 +337,12 @@ export const postsC: BlogPost[] = [
         h2: "Ethical Considerations",
         paragraphs: [
           "Face-based dating search raises specific ethical concerns. Searching for someone who resembles a specific person (a celebrity, an ex-partner, a public figure) can facilitate harassment or objectification in ways that keyword-based search does not. Some platforms have declined to implement celebrity-image-based search precisely to prevent this pathway.",
-          "General type-based preference,similar to existing filtering for height, age, or other preferences,is less concerning than specific-person-based search. The design choices platforms make about what reference inputs they allow, and how they prevent misuse, significantly shape the ethical profile of these features.",
+          "General type-based preference, similar to existing filtering for height, age, or other preferences, is less concerning than specific-person-based search. The design choices platforms make about what reference inputs they allow, and how they prevent misuse, significantly shape the ethical profile of these features.",
         ],
       },
     ],
     faqs: [
-      { q: "Do dating apps use face recognition for matching?", a: "Some do, for features like celebrity-lookalike search. The technology is the same as celebrity matching,embeddings pre-computed for all profiles, similarity search against a query embedding." },
+      { q: "Do dating apps use face recognition for matching?", a: "Some do, for features like celebrity-lookalike search. The technology is the same as celebrity matching, embeddings pre-computed for all profiles, similarity search against a query embedding." },
     ],
     relatedSlugs: ["privacy-and-face-recognition", "find-your-celebrity-lookalike", "what-is-similarity-score"],
   },
@@ -359,14 +360,14 @@ export const postsC: BlogPost[] = [
       {
         h2: "Inherited Facial Features",
         paragraphs: [
-          "Facial structure is substantially heritable. Twin studies estimate heritability of face morphology in the range of 60–80% for many geometric measurements. This means that family members share facial proportions to a degree that face recognition systems can detect,relatives produce embedding pairs that are closer together than pairs of unrelated individuals, though further apart than same-person pairs.",
+          "Facial structure is substantially heritable. Twin studies estimate heritability of face morphology in the range of 60–80% for many geometric measurements. This means that family members share facial proportions to a degree that face recognition systems can detect, relatives produce embedding pairs that are closer together than pairs of unrelated individuals, though further apart than same-person pairs.",
           "The degree of embedding similarity correlates with genetic distance: parent-child pairs are more similar than second cousins, which are more similar than unrelated people of the same demographic group. This gradient is not strong enough to make family identification reliable with current systems, but it is statistically detectable in large datasets.",
         ],
       },
       {
         h2: "Historical Photo Identification",
         paragraphs: [
-          "Genealogists and archivists are increasingly using face recognition to identify individuals in historical photographs. The application is to match unidentified faces in old photos against databases of known individuals. The challenge is that historical photos (particularly pre-1950) have different photographic characteristics,different film grain, different tonal ranges, different geometric distortions from period lenses,that require adaptation to work with modern embedding models.",
+          "Genealogists and archivists are increasingly using face recognition to identify individuals in historical photographs. The application is to match unidentified faces in old photos against databases of known individuals. The challenge is that historical photos (particularly pre-1950) have different photographic characteristics, different film grain, different tonal ranges, different geometric distortions from period lenses, that require adaptation to work with modern embedding models.",
           "Commercial genealogy platforms have begun offering face-based search for this purpose, though accuracy on historical photos remains substantially below accuracy on modern photos. Research continues on domain adaptation techniques to bridge the modern-to-historical gap.",
         ],
       },
@@ -379,7 +380,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "face-reading-pseudoscience",
     title: "Face Reading and Physiognomy: Why Your Personality Is Not in Your Face",
-    excerpt: "Claims that facial features reveal personality, intelligence, or criminal tendency have a long history,and no scientific support. Here is why the claims persist and why they are wrong.",
+    excerpt: "Claims that facial features reveal personality, intelligence, or criminal tendency have a long history, and no scientific support. Here is why the claims persist and why they are wrong.",
     date: "February 2026",
     isoDate: "2026-02-10",
     readTime: "4 min read",
@@ -390,21 +391,21 @@ export const postsC: BlogPost[] = [
       {
         h2: "The History of Physiognomy",
         paragraphs: [
-          "Physiognomy,the practice of reading character from facial features,dates to ancient Greece and was considered a serious discipline through the Renaissance and into the 19th century. Johann Kaspar Lavater's Physiognomische Fragmente (1775–1778) systematised the practice into a four-volume work. Francis Galton attempted statistical versions using composite photography. Cesare Lombroso applied it to criminology, claiming to identify criminal 'types' from facial characteristics.",
-          "All of these approaches have been thoroughly discredited. Controlled studies find no reliable relationship between facial features and personality traits, intelligence, criminality, or moral character. The correlations occasionally found in studies using automated facial coding are explainable by confounds,age, health, emotional state, or the habitual expressions that modify facial appearance over time,not by any direct face-character relationship.",
+          "Physiognomy, the practice of reading character from facial features, dates to ancient Greece and was considered a serious discipline through the Renaissance and into the 19th century. Johann Kaspar Lavater's Physiognomische Fragmente (1775–1778) systematised the practice into a four-volume work. Francis Galton attempted statistical versions using composite photography. Cesare Lombroso applied it to criminology, claiming to identify criminal 'types' from facial characteristics.",
+          "All of these approaches have been thoroughly discredited. Controlled studies find no reliable relationship between facial features and personality traits, intelligence, criminality, or moral character. The correlations occasionally found in studies using automated facial coding are explainable by confounds, age, health, emotional state, or the habitual expressions that modify facial appearance over time, not by any direct face-character relationship.",
         ],
       },
       {
         h2: "The Resurgence in AI Contexts",
         paragraphs: [
-          "Claims of machine physiognomy,that AI can determine personality, criminality, or sexual orientation from facial images,have appeared in academic publications and commercial products. These claims face fundamental methodological problems: the claimed correlations are statistically fragile, confounded with demographic variables, and in several high-profile cases have been shown to reflect dataset biases rather than genuine face-character relationships.",
+          "Claims of machine physiognomy, that AI can determine personality, criminality, or sexual orientation from facial images, have appeared in academic publications and commercial products. These claims face fundamental methodological problems: the claimed correlations are statistically fragile, confounded with demographic variables, and in several high-profile cases have been shown to reflect dataset biases rather than genuine face-character relationships.",
           "Distinguishing legitimate face recognition capability (identity comparison, which is well-validated) from illegitimate character inference capability (which is not) is critical for responsible AI development. The former is technically and ethically defensible; the latter is not.",
         ],
       },
     ],
     faqs: [
       { q: "Can AI really tell personality from facial features?", a: "No. Claims of AI personality inference from faces are not scientifically supported. Controlled studies find no reliable face-personality relationship, and claimed correlations reflect methodological problems or dataset biases." },
-      { q: "What is the difference between face recognition and physiognomy?", a: "Face recognition computes identity similarity between face images,a validated capability. Physiognomy claims to infer character traits from facial features,a pseudoscientific claim without empirical support." },
+      { q: "What is the difference between face recognition and physiognomy?", a: "Face recognition computes identity similarity between face images, a validated capability. Physiognomy claims to infer character traits from facial features, a pseudoscientific claim without empirical support." },
     ],
     relatedSlugs: ["face-recognition-in-art", "bias-in-face-recognition", "history-of-face-recognition"],
   },
@@ -423,26 +424,26 @@ export const postsC: BlogPost[] = [
         h2: "The Celebrity Comparison Trap",
         paragraphs: [
           "Celebrity comparison has a well-documented downside: when people compare their appearance to professional celebrities styled, lit, and photographed by teams of specialists, the comparison is inherently unfair and often damaging. Appearance-based social comparison is associated with body dissatisfaction, lower self-esteem, and in some cases with disordered eating and dysmorphic preoccupation.",
-          "The celebrity face match experience is structured differently from typical celebrity comparison in one important way: it explicitly frames the comparison as geometric similarity rather than aesthetic evaluation. Your match is the celebrity whose bone structure is most similar to yours,not an invitation to evaluate yourself against their appearance.",
+          "The celebrity face match experience is structured differently from typical celebrity comparison in one important way: it explicitly frames the comparison as geometric similarity rather than aesthetic evaluation. Your match is the celebrity whose bone structure is most similar to yours, not an invitation to evaluate yourself against their appearance.",
         ],
       },
       {
         h2: "Healthy Engagement",
         paragraphs: [
-          "Mindful engagement with face matching treats the result as information: interesting geometric data about your facial proportions relative to a database of known people. The result becomes less about 'do I look like them?' and more about 'what does this tell me about my face structure?',a fundamentally different and more grounded question.",
-          "If you find yourself repeatedly uploading photos hoping for a different result, or feeling disappointed by your match, it may be worth stepping back. A face match tool is entertainment and mild curiosity satisfaction,it is not a comprehensive assessment of appearance, attractiveness, or worth.",
+          "Mindful engagement with face matching treats the result as information: interesting geometric data about your facial proportions relative to a database of known people. The result becomes less about 'do I look like them?' and more about 'what does this tell me about my face structure?', a fundamentally different and more grounded question.",
+          "If you find yourself repeatedly uploading photos hoping for a different result, or feeling disappointed by your match, it may be worth stepping back. A face match tool is entertainment and mild curiosity satisfaction, it is not a comprehensive assessment of appearance, attractiveness, or worth.",
         ],
       },
     ],
     faqs: [
-      { q: "Is celebrity face matching bad for self-esteem?", a: "It can be if treated as an appearance evaluation. Treated as geometric similarity information,'my bone structure is closest to this celebrity's',it is more grounded and less likely to trigger unfair self-comparison." },
+      { q: "Is celebrity face matching bad for self-esteem?", a: "It can be if treated as an appearance evaluation. Treated as geometric similarity information,'my bone structure is closest to this celebrity's', it is more grounded and less likely to trigger unfair self-comparison." },
     ],
     relatedSlugs: ["celebrity-resemblance-and-self-image", "your-own-face", "what-celebrity-match-reveals"],
   },
   {
     slug: "future-of-face-recognition",
     title: "The Future of Face Recognition: What Comes After Deep Embeddings",
-    excerpt: "Deep embedding models have dominated face recognition for a decade. Here is what the research frontier looks like,from 3D modelling to privacy-preserving biometrics.",
+    excerpt: "Deep embedding models have dominated face recognition for a decade. Here is what the research frontier looks like, from 3D modelling to privacy-preserving biometrics.",
     date: "February 2026",
     isoDate: "2026-02-06",
     readTime: "5 min read",
@@ -453,22 +454,22 @@ export const postsC: BlogPost[] = [
       {
         h2: "3D Face Recognition",
         paragraphs: [
-          "Current deep embedding models operate on 2D photographs. The fundamental limitation is that 3D facial geometry,the actual bone structure,must be inferred from a 2D projection, introducing angle and lighting variability. <strong>3D face recognition</strong> captures depth maps or point clouds of the face directly, providing angle-invariant geometric measurements that are inherently more stable than 2D photo-based approaches.",
+          "Current deep embedding models operate on 2D photographs. The fundamental limitation is that 3D facial geometry, the actual bone structure, must be inferred from a 2D projection, introducing angle and lighting variability. <strong>3D face recognition</strong> captures depth maps or point clouds of the face directly, providing angle-invariant geometric measurements that are inherently more stable than 2D photo-based approaches.",
           "Consumer-grade 3D facial capture is available on some smartphones (the structured light sensors used for Face ID, for example). The limitation is that almost all existing face databases are 2D,creating and maintaining large-scale 3D celebrity databases would be a substantial undertaking. Research systems demonstrate substantially higher accuracy with 3D input; the challenge is data scale.",
         ],
       },
       {
         h2: "Privacy-Preserving Face Recognition",
         paragraphs: [
-          "Cryptographic approaches to face recognition allow identity verification without exposing the face embedding. <strong>Homomorphic encryption</strong> allows computation on encrypted embeddings,comparing two encrypted embeddings without either party having access to the unencrypted values. <strong>Secure multi-party computation</strong> allows two parties to compute whether their embeddings match without revealing either embedding.",
-          "These approaches are computationally expensive but becoming tractable for specific use cases. They offer a path to face recognition deployments that provide strong identity guarantees while minimising the privacy exposure of biometric data,the combination that most critics of current deployments identify as desirable.",
+          "Cryptographic approaches to face recognition allow identity verification without exposing the face embedding. <strong>Homomorphic encryption</strong> allows computation on encrypted embeddings, comparing two encrypted embeddings without either party having access to the unencrypted values. <strong>Secure multi-party computation</strong> allows two parties to compute whether their embeddings match without revealing either embedding.",
+          "These approaches are computationally expensive but becoming tractable for specific use cases. They offer a path to face recognition deployments that provide strong identity guarantees while minimising the privacy exposure of biometric data, the combination that most critics of current deployments identify as desirable.",
         ],
       },
       {
         h2: "Generative Models and the Matching Challenge",
         paragraphs: [
           "The rapid improvement in AI face generation (diffusion models, GANs) creates new challenges for face recognition: generated faces can fool recognition systems, and faces are increasingly used in synthetic identity fraud. Parallel development of deep fake detection, face generation detection, and liveness detection (confirming that a presented face is physically present, not a printed or screen-displayed image) is an active research area.",
-          "For consumer matching applications, the primary implication is that future systems will need to perform liveness detection,confirming that the uploaded photo is a genuine photograph of a living person rather than a generated face,as quality standards for entry into celebrity databases.",
+          "For consumer matching applications, the primary implication is that future systems will need to perform liveness detection, confirming that the uploaded photo is a genuine photograph of a living person rather than a generated face, as quality standards for entry into celebrity databases.",
         ],
       },
     ],
@@ -481,7 +482,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "what-makes-a-face-memorable",
     title: "What Makes a Face Memorable? The Science of Facial Distinctiveness",
-    excerpt: "Some faces stick in memory immediately; others fade after minutes. Research reveals that memorability is a consistent, measurable property of faces,here is what makes it happen.",
+    excerpt: "Some faces stick in memory immediately; others fade after minutes. Research reveals that memorability is a consistent, measurable property of faces, here is what makes it happen.",
     date: "February 2026",
     isoDate: "2026-02-04",
     readTime: "4 min read",
@@ -492,21 +493,21 @@ export const postsC: BlogPost[] = [
       {
         h2: "Memorability Is Consistent Across People",
         paragraphs: [
-          "Face memorability,whether a particular face is remembered after brief exposure,is surprisingly consistent across different observers. Studies using large sets of face images find that inter-observer agreement on which faces are memorable and which are forgettable is high (r > 0.7), suggesting that memorability is a property of the face itself, not just the observer.",
+          "Face memorability, whether a particular face is remembered after brief exposure, is surprisingly consistent across different observers. Studies using large sets of face images find that inter-observer agreement on which faces are memorable and which are forgettable is high (r > 0.7), suggesting that memorability is a property of the face itself, not just the observer.",
           "This consistency implies that memorability reflects stable, objective characteristics of face images that all observers process similarly. It is not random and not primarily driven by personal association.",
         ],
       },
       {
         h2: "What Makes Faces Memorable",
         paragraphs: [
-          "<strong>Distinctiveness</strong> is the strongest predictor of face memorability. Faces that deviate from the population average,in eye size, nose shape, overall proportions, or other dimensions,are more memorable because they violate the expected configuration more strongly. The unusual face leaves a stronger memory trace precisely because it requires more processing effort to accommodate.",
+          "<strong>Distinctiveness</strong> is the strongest predictor of face memorability. Faces that deviate from the population average, in eye size, nose shape, overall proportions, or other dimensions, are more memorable because they violate the expected configuration more strongly. The unusual face leaves a stronger memory trace precisely because it requires more processing effort to accommodate.",
           "The averageness-memorability relationship is the inverse of the averageness-attractiveness relationship: average faces are more attractive but less memorable; distinctive faces are less conventionally attractive but more memorable. This trade-off reflects different evolutionary pressures on two separate cognitive functions.",
         ],
       },
       {
         h2: "Memorability and Face Matching",
         paragraphs: [
-          "In terms of celebrity matching, memorable (distinctive) celebrities tend to appear in fewer people's results,they occupy peripheral regions of embedding space and only match faces with genuinely similar distinctive proportions. Forgettable (average) celebrities appear more frequently, as their central embedding position makes them close to more people.",
+          "In terms of celebrity matching, memorable (distinctive) celebrities tend to appear in fewer people's results, they occupy peripheral regions of embedding space and only match faces with genuinely similar distinctive proportions. Forgettable (average) celebrities appear more frequently, as their central embedding position makes them close to more people.",
           "A match with a highly distinctive celebrity is typically a strong, visually obvious resemblance. A match with a more average-featured celebrity may reflect central embedding position as much as specific feature similarity.",
         ],
       },
@@ -520,7 +521,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "face-recognition-surveillance",
     title: "Face Recognition Surveillance: How It Differs From Consumer Applications",
-    excerpt: "Public space surveillance using face recognition raises fundamentally different questions than a celebrity matching app. Here is the distinction,and why it matters.",
+    excerpt: "Public space surveillance using face recognition raises fundamentally different questions than a celebrity matching app. Here is the distinction, and why it matters.",
     date: "January 2026",
     isoDate: "2026-01-30",
     readTime: "5 min read",
@@ -563,14 +564,14 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Challenge of Cross-Species Application",
         paragraphs: [
-          "Face recognition networks trained on human faces do not transfer to animal faces without adaptation. The distribution of features,facial proportions, typical texture patterns, landmark positions,differs between species. A network trained on human faces will produce poor quality embeddings for animal faces because its learned representations are tuned to the human distribution.",
+          "Face recognition networks trained on human faces do not transfer to animal faces without adaptation. The distribution of features, facial proportions, typical texture patterns, landmark positions, differs between species. A network trained on human faces will produce poor quality embeddings for animal faces because its learned representations are tuned to the human distribution.",
           "Successful cross-species face recognition requires either transfer learning from a human face model with fine-tuning on species-specific data, or training a dedicated network from scratch on the target species. Both approaches have been demonstrated. The constraint is data: large labelled datasets of individual animal identities are expensive to collect and often cover only a few hundred individuals.",
         ],
       },
       {
         h2: "Conservation Applications",
         paragraphs: [
-          "Wildlife conservationists are applying face recognition to automate individual identification from camera trap images,eliminating the need for manual identification by expert biologists who may spend hours per session reviewing footage. Systems have been developed for leopards, chimpanzees, sea turtles, whales (from fluke patterns), and cattle, among others.",
+          "Wildlife conservationists are applying face recognition to automate individual identification from camera trap images, eliminating the need for manual identification by expert biologists who may spend hours per session reviewing footage. Systems have been developed for leopards, chimpanzees, sea turtles, whales (from fluke patterns), and cattle, among others.",
           "The pattern approach also applies to non-facial features. Whale sharks and zebras are identified from their skin patterns using the same fundamental embedding and similarity search infrastructure. The architecture generalises beyond faces to any visual identity problem where individual identification can be inferred from consistent surface patterns.",
         ],
       },
@@ -594,7 +595,7 @@ export const postsC: BlogPost[] = [
       {
         h2: "Facial Dysmorphology as a Diagnostic Tool",
         paragraphs: [
-          "Many genetic conditions cause characteristic changes to facial development that are recognisable to trained clinicians. Down syndrome, Turner syndrome, Noonan syndrome, and hundreds of rare genetic disorders each have associated facial features. Identifying these features has traditionally required specialist training and clinical experience,a significant barrier in resource-limited settings.",
+          "Many genetic conditions cause characteristic changes to facial development that are recognisable to trained clinicians. Down syndrome, Turner syndrome, Noonan syndrome, and hundreds of rare genetic disorders each have associated facial features. Identifying these features has traditionally required specialist training and clinical experience, a significant barrier in resource-limited settings.",
           "AI systems trained on large databases of confirmed genetic condition diagnoses are learning to detect these patterns from photographs with diagnostic accuracy competitive with experienced clinicians. The approach is essentially the same as celebrity matching: train a network to distinguish between condition-associated and control face patterns, then use the resulting embedding for classification.",
         ],
       },
@@ -625,27 +626,27 @@ export const postsC: BlogPost[] = [
       {
         h2: "Why Symmetry Is a Health Signal",
         paragraphs: [
-          "Bilateral symmetry in bilateral organisms (like humans) is the developmental ideal: both sides of the face should, in principle, develop identically under genetically identical instruction. Departures from perfect symmetry,called <strong>fluctuating asymmetry</strong>,arise when developmental processes are disrupted by genetic or environmental stressors during growth.",
-          "The connection to health runs through this logic: a face that developed with minimal asymmetry experienced minimal developmental disruption, which implies a robust genetic programme and a relatively benign developmental environment. This is why symmetry is a reliable (if weak) signal of genetic quality and early-life health,not because symmetry itself is valuable, but because it is an indicator of things that are.",
+          "Bilateral symmetry in bilateral organisms (like humans) is the developmental ideal: both sides of the face should, in principle, develop identically under genetically identical instruction. Departures from perfect symmetry, called <strong>fluctuating asymmetry</strong>, arise when developmental processes are disrupted by genetic or environmental stressors during growth.",
+          "The connection to health runs through this logic: a face that developed with minimal asymmetry experienced minimal developmental disruption, which implies a robust genetic programme and a relatively benign developmental environment. This is why symmetry is a reliable (if weak) signal of genetic quality and early-life health, not because symmetry itself is valuable, but because it is an indicator of things that are.",
         ],
       },
       {
         h2: "The Magnitude of the Effect",
         paragraphs: [
-          "The symmetry-attractiveness relationship, while real, is smaller than popular treatments suggest. In most studies, symmetry manipulations explain 5–15% of the variance in attractiveness ratings,meaningful but not dominant. When symmetry is statistically controlled for, other variables (averageness, sexual dimorphism, skin quality signals) continue to explain most of the variance in attractiveness.",
-          "For face recognition, the relevant point is that natural levels of facial asymmetry in the normal range have minimal effect on matching accuracy. Asymmetry becomes relevant for recognition only at clinical levels,pathological facial asymmetry resulting from developmental conditions or injuries.",
+          "The symmetry-attractiveness relationship, while real, is smaller than popular treatments suggest. In most studies, symmetry manipulations explain 5–15% of the variance in attractiveness ratings, meaningful but not dominant. When symmetry is statistically controlled for, other variables (averageness, sexual dimorphism, skin quality signals) continue to explain most of the variance in attractiveness.",
+          "For face recognition, the relevant point is that natural levels of facial asymmetry in the normal range have minimal effect on matching accuracy. Asymmetry becomes relevant for recognition only at clinical levels, pathological facial asymmetry resulting from developmental conditions or injuries.",
         ],
       },
     ],
     faqs: [
-      { q: "Does facial symmetry reflect genetic health?", a: "Weakly yes. Facial symmetry is a signal of developmental stability,minimal disruption during growth. But it accounts for only a small fraction of variation in attractiveness or health, and is one signal among many." },
+      { q: "Does facial symmetry reflect genetic health?", a: "Weakly yes. Facial symmetry is a signal of developmental stability, minimal disruption during growth. But it accounts for only a small fraction of variation in attractiveness or health, and is one signal among many." },
     ],
     relatedSlugs: ["symmetrical-faces", "golden-ratio-face", "baby-face-features"],
   },
   {
     slug: "face-memory-psychology",
     title: "Face Memory: How the Brain Stores and Retrieves Thousands of Faces",
-    excerpt: "The average person can recognise roughly 5,000 faces. Here is how the brain manages this remarkable database,and how it compares to what Ollie's AI does.",
+    excerpt: "The average person can recognise roughly 5,000 faces. Here is how the brain manages this remarkable database, and how it compares to what Ollie's AI does.",
     date: "January 2026",
     isoDate: "2026-01-22",
     readTime: "4 min read",
@@ -656,15 +657,15 @@ export const postsC: BlogPost[] = [
       {
         h2: "How Many Faces Do We Know?",
         paragraphs: [
-          "A 2018 study by Jenkins et al. estimated that the average person can recognise approximately 5,000 faces,a number that surprised many researchers. The study measured this by showing participants large numbers of celebrity and personal contact faces and counting distinct identities they could recognise. Individual variation was large, with ranges spanning from around 1,000 to over 10,000.",
-          "This database is built over a lifetime of social exposure. Face memories are more durable than most other types of memory,people often recognise classmates they have not seen in 30+ years from a single photo. The face memory system is specifically optimised for long-duration storage and rapid retrieval.",
+          "A 2018 study by Jenkins et al. estimated that the average person can recognise approximately 5,000 faces, a number that surprised many researchers. The study measured this by showing participants large numbers of celebrity and personal contact faces and counting distinct identities they could recognise. Individual variation was large, with ranges spanning from around 1,000 to over 10,000.",
+          "This database is built over a lifetime of social exposure. Face memories are more durable than most other types of memory, people often recognise classmates they have not seen in 30+ years from a single photo. The face memory system is specifically optimised for long-duration storage and rapid retrieval.",
         ],
       },
       {
         h2: "How the Brain Indexes Faces",
         paragraphs: [
           "The brain's face memory system stores face representations in a way that differs from other object memories. Faces are stored as multi-dimensional representations in distributed memory structures, with connections to associated information (name, context, personal relationship). The same face can be recognised from a single feature (distinctive nose) or from the holistic gestalt without any individual feature being diagnostic.",
-          "The multi-dimensional storage is conceptually similar to embedding space: each stored face is a point in a representational space where proximity reflects similarity. Recognition occurs when a new perceptual experience activates the stored representation most strongly,the brain is performing something analogous to nearest-neighbour search, just implemented in biological neural tissue.",
+          "The multi-dimensional storage is conceptually similar to embedding space: each stored face is a point in a representational space where proximity reflects similarity. Recognition occurs when a new perceptual experience activates the stored representation most strongly, the brain is performing something analogous to nearest-neighbour search, just implemented in biological neural tissue.",
         ],
       },
     ],
@@ -688,13 +689,13 @@ export const postsC: BlogPost[] = [
         h2: "The Developmental Arc of Face Recognition",
         paragraphs: [
           "Face recognition ability develops through childhood and peaks in young adulthood, typically in the late teens to mid-20s. After peaking, performance on face recognition tests (especially for unfamiliar faces and in challenging conditions) gradually declines through the 40s and more rapidly from the 60s onward.",
-          "The decline is selective: recognition of very familiar faces (close family members, long-term friends) remains well-preserved into advanced age. The deficit affects primarily unfamiliar face matching and learning of new faces,exactly the tasks where aging disrupts the encoding efficiency of the fusiform face area and the working memory resources needed for effortful comparison.",
+          "The decline is selective: recognition of very familiar faces (close family members, long-term friends) remains well-preserved into advanced age. The deficit affects primarily unfamiliar face matching and learning of new faces, exactly the tasks where aging disrupts the encoding efficiency of the fusiform face area and the working memory resources needed for effortful comparison.",
         ],
       },
       {
         h2: "AI Performance Is Age-Independent",
         paragraphs: [
-          "Unlike human face recognition, AI face recognition does not degrade with the age of the operator,the system is equally accurate at any time, without fatigue or attentional variation across a session. This is one of the structural advantages of AI for tasks that require consistent face comparison performance over extended periods.",
+          "Unlike human face recognition, AI face recognition does not degrade with the age of the operator, the system is equally accurate at any time, without fatigue or attentional variation across a session. This is one of the structural advantages of AI for tasks that require consistent face comparison performance over extended periods.",
           "The interaction between human and AI aging is interesting in the context of celebrity databases. Older users matching against older celebrities share an age-related appearance range that is well-represented in databases spanning many decades. The AI handles cross-age matching better than human observers in general.",
         ],
       },
@@ -718,15 +719,15 @@ export const postsC: BlogPost[] = [
       {
         h2: "Face Recognition from Birth",
         paragraphs: [
-          "The face recognition system is active before birth. Foetuses show orientation responses to face-like stimuli projected onto the uterine wall at 34 weeks of gestation. Newborns, within hours of birth, preferentially track face-like stimuli over scrambled face stimuli,they already have an innate preference for face-like configurations, despite having no visual experience with faces.",
+          "The face recognition system is active before birth. Foetuses show orientation responses to face-like stimuli projected onto the uterine wall at 34 weeks of gestation. Newborns, within hours of birth, preferentially track face-like stimuli over scrambled face stimuli, they already have an innate preference for face-like configurations, despite having no visual experience with faces.",
           "This innate preference reflects genetically pre-specified tuning of subcortical visual pathways to the spatial frequency and configuration characteristic of faces. It is not learned; it is built in as a starting point for the learning that follows.",
         ],
       },
       {
         h2: "The Learning Curve",
         paragraphs: [
-          "From birth, experience with faces begins rapidly tuning the face recognition system. Infants at 3 months can distinguish between individual human faces but also between individual monkey faces. By 6 months, the other-species advantage disappears,they have become specialised for the human faces that dominate their visual experience. This is a clear demonstration of perceptual learning: the own-race/own-species effect begins in infancy.",
-          "By approximately 6 years of age, children can match unfamiliar faces comparably to adults in many conditions, though the system continues maturing through adolescence. The full face recognition capability,including reliable unfamiliar face matching,reaches its peak in young adulthood.",
+          "From birth, experience with faces begins rapidly tuning the face recognition system. Infants at 3 months can distinguish between individual human faces but also between individual monkey faces. By 6 months, the other-species advantage disappears, they have become specialised for the human faces that dominate their visual experience. This is a clear demonstration of perceptual learning: the own-race/own-species effect begins in infancy.",
+          "By approximately 6 years of age, children can match unfamiliar faces comparably to adults in many conditions, though the system continues maturing through adolescence. The full face recognition capability, including reliable unfamiliar face matching, reaches its peak in young adulthood.",
         ],
       },
     ],
@@ -749,14 +750,14 @@ export const postsC: BlogPost[] = [
       {
         h2: "Holistic vs Analytic Processing",
         paragraphs: [
-          "Face processing research has documented consistent cultural differences in processing style. <strong>Western observers</strong> typically process faces more analytically,attending relatively more to individual features. <strong>East Asian observers</strong> process faces more holistically,attending to the overall gestalt with less focused attention on individual features like the eye region.",
+          "Face processing research has documented consistent cultural differences in processing style. <strong>Western observers</strong> typically process faces more analytically, attending relatively more to individual features. <strong>East Asian observers</strong> process faces more holistically, attending to the overall gestalt with less focused attention on individual features like the eye region.",
           "These differences are visible in eye tracking data: observers from different cultural backgrounds have characteristically different scan paths when viewing faces. They also manifest in performance differences: conditions that disrupt holistic processing (the face inversion effect, the composite face effect) tend to be somewhat smaller in observers with more analytic processing styles.",
         ],
       },
       {
         h2: "What This Means for AI",
         paragraphs: [
-          "AI face recognition is not culturally variable,it applies the same computation to every face. This is both its strength (consistent) and a potential limitation (may not capture culturally variable aspects of identity perception). The features weighted most heavily by the network,stable mid-face geometry,are relatively culture-independent in how they predict identity.",
+          "AI face recognition is not culturally variable, it applies the same computation to every face. This is both its strength (consistent) and a potential limitation (may not capture culturally variable aspects of identity perception). The features weighted most heavily by the network, stable mid-face geometry, are relatively culture-independent in how they predict identity.",
           "However, when human observers evaluate celebrity matches and disagree with the AI's ranking, cultural processing style may contribute to the disagreement. An analytic processor may focus on a specific feature that differs; a holistic processor may respond to gestalt impression. The AI's embedding captures a different combination than either.",
         ],
       },
@@ -780,14 +781,14 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Masking Challenge",
         paragraphs: [
-          "Face masks occlude approximately the lower half of the face,the nose and mouth region. For face recognition systems trained primarily on unmasked faces, this was a significant performance degradation: NIST testing in 2020 found that surgical masks increased error rates by 5–50 times across different systems, depending on mask type and coverage.",
-          "The primary issue was that many systems had learned to weight lower-face features significantly. The lower face,particularly mouth width and shape, chin configuration, and jaw profile,contains substantial identity information. Occluding this region removed information that many systems had relied on heavily.",
+          "Face masks occlude approximately the lower half of the face, the nose and mouth region. For face recognition systems trained primarily on unmasked faces, this was a significant performance degradation: NIST testing in 2020 found that surgical masks increased error rates by 5–50 times across different systems, depending on mask type and coverage.",
+          "The primary issue was that many systems had learned to weight lower-face features significantly. The lower face, particularly mouth width and shape, chin configuration, and jaw profile, contains substantial identity information. Occluding this region removed information that many systems had relied on heavily.",
         ],
       },
       {
         h2: "How the Field Adapted",
         paragraphs: [
-          "Two primary adaptations emerged: <strong>masked-face fine-tuning</strong>,augmenting training data with synthetic masks applied to face images, forcing the network to learn effective representations from upper-face features alone,and <strong>periocular recognition</strong>, focusing recognition on the eye and eyebrow region that remains visible behind masks.",
+          "Two primary adaptations emerged: <strong>masked-face fine-tuning</strong>, augmenting training data with synthetic masks applied to face images, forcing the network to learn effective representations from upper-face features alone, and <strong>periocular recognition</strong>, focusing recognition on the eye and eyebrow region that remains visible behind masks.",
           "Post-COVID face recognition models are significantly more robust to partial face occlusion than pre-pandemic models. The forced adaptation produced better-than-expected upper-face recognition capability: the eye and brow complex, it turns out, contains more identity information than the lower face at equivalent quality, and modern systems exploit this effectively.",
         ],
       },
@@ -800,7 +801,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "weight-change-and-matching",
     title: "Does Weight Change Affect Your Celebrity Face Match?",
-    excerpt: "Significant weight change alters facial volume and soft tissue distribution. Here is how much this affects face recognition,and whether your match changes after losing or gaining weight.",
+    excerpt: "Significant weight change alters facial volume and soft tissue distribution. Here is how much this affects face recognition, and whether your match changes after losing or gaining weight.",
     date: "January 2026",
     isoDate: "2026-01-12",
     readTime: "3 min read",
@@ -812,14 +813,14 @@ export const postsC: BlogPost[] = [
         h2: "How Weight Changes the Face",
         paragraphs: [
           "Weight changes redistribute facial fat, primarily affecting the cheeks, jawline definition, and the thickness of soft tissue structures around the eyes and midface. At high body weights, fuller cheeks can appear to reduce inter-cheekbone distance and reduce the apparent definition of bony facial features. At lower body weights, bony structure becomes more prominent and facial geometry more closely matches the bony skeleton.",
-          "The bony skeleton,the basis for the most stable components of a facial embedding,does not change with weight. But the soft tissue overlay can change substantially, altering the apparent geometry of features and shifting the facial embedding toward or away from different regions of face space.",
+          "The bony skeleton, the basis for the most stable components of a facial embedding, does not change with weight. But the soft tissue overlay can change substantially, altering the apparent geometry of features and shifting the facial embedding toward or away from different regions of face space.",
         ],
       },
       {
         h2: "Practical Effect on Matching",
         paragraphs: [
           "For modest weight changes, the effect on celebrity matching is usually small. The embedding is robust to typical soft tissue variation because the network has been trained on faces across a wide range of healthy body weights. For large weight changes (30+ kg / 65+ lbs), the soft tissue changes become large enough to noticeably shift the embedding.",
-          "People who have lost significant weight often report that their celebrity matches change,typically toward celebrities with more defined bony features. This reflects a genuine shift in facial geometry rather than a recognition error.",
+          "People who have lost significant weight often report that their celebrity matches change, typically toward celebrities with more defined bony features. This reflects a genuine shift in facial geometry rather than a recognition error.",
         ],
       },
     ],
@@ -831,7 +832,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "hair-color-affects-matching",
     title: "Does Hair Colour Affect Your Face Match? The Surprising Answer",
-    excerpt: "Hair colour is not encoded in the facial embedding. Here is why,and in what circumstances hairstyle choices can still affect your result.",
+    excerpt: "Hair colour is not encoded in the facial embedding. Here is why, and in what circumstances hairstyle choices can still affect your result.",
     date: "January 2026",
     isoDate: "2026-01-10",
     readTime: "3 min read",
@@ -842,7 +843,7 @@ export const postsC: BlogPost[] = [
       {
         h2: "Why Hair Colour Doesn't Affect Your Embedding",
         paragraphs: [
-          "The face recognition pipeline crops to the face region,cheeks, forehead, chin,largely excluding the hair. The facial embedding encodes the geometry of this cropped region: feature positions and their spatial relationships. Hair colour is not a geometric property of the face; it is a surface colour property of the region the crop deliberately excludes.",
+          "The face recognition pipeline crops to the face region, cheeks, forehead, chin, largely excluding the hair. The facial embedding encodes the geometry of this cropped region: feature positions and their spatial relationships. Hair colour is not a geometric property of the face; it is a surface colour property of the region the crop deliberately excludes.",
           "This means changing your hair colour has essentially no effect on your celebrity match results. The same is true for hair highlights, dye treatments, and other colour changes. Even very striking colour changes (going from black to blonde) will not meaningfully shift your facial embedding.",
         ],
       },
@@ -850,7 +851,7 @@ export const postsC: BlogPost[] = [
         h2: "When Hair Can Affect Results",
         paragraphs: [
           "Hair does affect results in two specific cases: when it falls across the face (obscuring the crop region), and when a hairstyle creates strong visual asymmetry that affects the alignment pipeline. Long bangs covering the forehead, hair swept dramatically to one side, or very voluminous styles that push the face off-centre in the frame can all affect the face detection and alignment pipeline, potentially degrading embedding quality.",
-          "The solution is to pull hair back for a matching photo, or ensure that the face crop region is fully visible and approximately centred in the frame. The hair itself can be any colour or style,what matters is that it does not encroach on the face region.",
+          "The solution is to pull hair back for a matching photo, or ensure that the face crop region is fully visible and approximately centred in the frame. The hair itself can be any colour or style, what matters is that it does not encroach on the face region.",
         ],
       },
     ],
@@ -863,7 +864,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "beard-affects-matching",
     title: "Does Having a Beard Change Your Celebrity Face Match?",
-    excerpt: "A beard covers the lower face,a region that carries real identity information. Here is exactly how much facial hair affects face recognition accuracy and what you can do about it.",
+    excerpt: "A beard covers the lower face, a region that carries real identity information. Here is exactly how much facial hair affects face recognition accuracy and what you can do about it.",
     date: "January 2026",
     isoDate: "2026-01-08",
     readTime: "3 min read",
@@ -874,68 +875,69 @@ export const postsC: BlogPost[] = [
       {
         h2: "What a Beard Covers",
         paragraphs: [
-          "A full beard or heavy stubble covers the chin, jaw line, and sometimes extends to the cheeks,regions that contribute meaningfully to the facial embedding. Jaw shape and chin prominence are stable bony features that the network has learned to use for identity. A dense beard effectively removes these features from the information available for embedding extraction.",
+          "A full beard or heavy stubble covers the chin, jaw line, and sometimes extends to the cheeks, regions that contribute meaningfully to the facial embedding. Jaw shape and chin prominence are stable bony features that the network has learned to use for identity. A dense beard effectively removes these features from the information available for embedding extraction.",
           "Unlike hair colour (which is excluded from the crop) or glasses (which affect the most-weighted eye region), beard coverage falls in a middle category. It is a meaningful occlusion but not as severe as the impact of glasses on the eye region.",
         ],
       },
       {
         h2: "The Practical Effect",
         paragraphs: [
-          "For light stubble (1–3 days), the effect on matching is minimal. The sparse coverage changes texture more than geometry, and the network handles this variation well. For heavy stubble and short beards (3–10mm), there is a small but measurable shift in embedding quality. For full dense beards, the effect becomes larger,particularly if the beard is styled in a way that substantially alters apparent jaw width or chin shape.",
+          "For light stubble (1–3 days), the effect on matching is minimal. The sparse coverage changes texture more than geometry, and the network handles this variation well. For heavy stubble and short beards (3–10mm), there is a small but measurable shift in embedding quality. For full dense beards, the effect becomes larger, particularly if the beard is styled in a way that substantially alters apparent jaw width or chin shape.",
           "If you have a beard and are curious how it affects your results, try matching both a bearded and a clean-shaven photo (or a recent photo from before growing the beard). Systematic differences in the top match reveal the extent to which the beard is masking jaw and chin geometry.",
         ],
       },
     ],
     faqs: [
       { q: "Does a beard affect celebrity face matching accuracy?", a: "Yes, moderately. Light stubble has minimal effect. A full dense beard can shift the embedding by masking jaw and chin geometry, which are identity-relevant features." },
-      { q: "Should I shave for the best celebrity match?", a: "If you want the most geometrically accurate result, a clean-shaven photo is better. But the match with a beard still reflects genuine similarity,it just reflects your bearded appearance." },
+      { q: "Should I shave for the best celebrity match?", a: "If you want the most geometrically accurate result, a clean-shaven photo is better. But the match with a beard still reflects genuine similarity, it just reflects your bearded appearance." },
     ],
     relatedSlugs: ["glasses-hats-hair", "best-photo-celebrity-match", "face-detection-vs-recognition"],
   },
   {
     slug: "ollie-how-it-works",
     title: "How Ollie Works: The Complete Technical Overview",
-    excerpt: "From upload to results, here is the complete technical picture of what Ollie does to your photo,every pipeline step explained in plain English.",
+    excerpt: "From upload to results, here is the complete technical picture of what Ollie does to your photo, every pipeline step explained in plain English.",
     date: "January 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-01-06",
     readTime: "6 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["Ollie face matching", "face recognition explained", "how face matching works", "AI celebrity match", "Siamese network"],
+    keywords: ["Ollie face matching", "face recognition explained", "how face matching works", "AI celebrity match", "facial embedding"],
     sections: [
       {
         h2: "The Full Pipeline",
         paragraphs: [
-          "Ollie processes your photo through a sequence of specialised steps. Each step is optimised for its specific function, and together they produce the celebrity match results. Understanding the full pipeline explains both why results are accurate and where errors can arise.",
-          "The five stages are: <strong>1.</strong> Face detection and landmark extraction,finding your face and its key points. <strong>2.</strong> Face alignment,standardising the crop for the recognition network. <strong>3.</strong> Embedding extraction,computing the 256-dimensional facial fingerprint. <strong>4.</strong> Feature augmentation,combining with 32 explicit geometric measurements. <strong>5.</strong> FAISS similarity search,finding the closest celebrity matches.",
+          "Ollie processes your photo through a short sequence of steps. Each has one job, and together they produce your celebrity matches. Knowing the pipeline explains both why results are usually sensible and where they can go wrong.",
+          "The four stages are: <strong>1.</strong> Face detection, finding your face and five key points on it. <strong>2.</strong> Face alignment, straightening and cropping the face to a standard size. <strong>3.</strong> Embedding extraction, turning the face into a 512-number facial fingerprint. <strong>4.</strong> Comparison, measuring the distance from your fingerprint to every celebrity photo and ranking the closest celebrities.",
         ],
       },
       {
         h2: "Detection and Alignment (Steps 1–2)",
         paragraphs: [
-          "Detection uses a cascade network (similar to MTCNN) to locate all faces in your image and identify five key landmarks: both eye centres, nose tip, and both mouth corners. These five points define an affine transformation that maps the detected face to a standard 160×160 pixel crop,both eyes at a specific height and horizontal spacing, face centred.",
-          "This alignment step is critical. The ResNet backbone that follows was trained on consistently aligned crops, and small misalignments translate directly into degraded embedding quality.",
+          "Detection uses <strong>InsightFace</strong> to find every face in your image. Ollie keeps the largest one and locates five landmarks on it: both eye centres, the nose tip and both mouth corners. Those five points define a transformation that maps the face onto a standard 112 × 112 pixel crop, with the eyes level and in fixed positions.",
+          "This alignment step is critical. The recognition network was trained on crops aligned exactly this way, so a badly aligned face, from a strong angle or a face half out of frame, gives a less reliable fingerprint.",
         ],
       },
       {
         h2: "The Neural Network (Step 3)",
         paragraphs: [
-          "The aligned 160×160 crop passes through a modified ResNet-50 backbone. The final dense layer produces a 512-dimensional vector, which a projection layer compresses to 256 dimensions. L2 normalisation places this vector on the unit hypersphere. The result is your facial fingerprint,the same format as every celebrity embedding in Ollie's database.",
-          "The backbone was pre-trained on VGGFace2 (3.3M images, 9,131 identities) and fine-tuned for the celebrity matching task with a learning rate of 1e-4 and CosineAnnealingLR scheduling over 150 epochs.",
+          "The aligned crop goes through Ollie's own 20-layer convolutional network, built in the SphereFace style with residual connections. Its last layer outputs 512 numbers, which are normalised to unit length. That vector is your facial fingerprint, in exactly the same format as every celebrity fingerprint in the database.",
+          "The network was written and trained from scratch in PyTorch, with no pretrained weights. It learned from MS1MV2, about 5.8 million photos of 85,742 people, using the CosFace loss, over about 10 days on a single NVIDIA RTX 4060 Ti. It scores 98.5% on the LFW benchmark, whose people were all removed from the training data first.",
         ],
       },
       {
-        h2: "Geometric Features and Search (Steps 4–5)",
+        h2: "Comparison and Ranking (Step 4)",
         paragraphs: [
-          "MediaPipe Facemesh extracts 32 geometric measurements from 468 facial landmarks: inter-ocular distance normalised to face width, nose width ratio, facial height/width ratio, and other structural proportions. These are concatenated with the neural embedding, providing an interpretable geometric component that complements the learned neural features.",
-          "The combined vector is searched against Ollie's FAISS index of 9,131 pre-computed celebrity embeddings. FAISS returns the top-K matches with distances, which are converted to percentage similarity scores using a calibration curve derived from validation data.",
+          "Every celebrity photo in the database was run through the same network ahead of time. Your fingerprint is compared with all of them at once, a single matrix calculation that takes milliseconds, and each celebrity is scored by the average of their two closest photos, so people with more photos in the database don't get an unfair edge.",
+          "The distances are rescaled into percentages that are easier to read, and the five closest celebrities come back to you, each with the photo that matched you best. The match score comes from the network alone; there are no hand-made adjustments for skin tone or other features. You can also narrow the results to Male or Female celebrities, using each celebrity's gender as recorded on Wikidata.",
         ],
       },
     ],
     faqs: [
-      { q: "How many steps does Ollie's face matching pipeline have?", a: "Five: face detection, face alignment, neural embedding extraction, geometric feature augmentation, and FAISS similarity search." },
-      { q: "What neural network does Ollie use?", a: "A modified ResNet-50 pre-trained on VGGFace2 and fine-tuned for celebrity matching. The final embedding is 256-dimensional and L2-normalised." },
-      { q: "What is FAISS and why does Ollie use it?", a: "FAISS (Facebook AI Similarity Search) is a library for fast approximate nearest-neighbour search in high-dimensional vector spaces. It allows Ollie to search 9,131 celebrity embeddings in under 10 milliseconds." },
+      { q: "How many steps does Ollie's face matching pipeline have?", a: "Four: face detection, face alignment, embedding extraction, and comparison against every celebrity photo." },
+      { q: "What neural network does Ollie use?", a: "A 20-layer SphereFace-style convolutional network trained from scratch on MS1MV2 with the CosFace loss. Its fingerprints have 512 numbers and it scores 98.5% on LFW." },
+      { q: "How does Ollie search the celebrity database so fast?", a: "Celebrity fingerprints are computed ahead of time, so a search only runs your photo through the network once and then compares one fingerprint with the stored ones, which takes milliseconds." },
     ],
     relatedSlugs: ["inside-ai-face-matching", "siamese-neural-networks-explained", "what-is-facial-embedding"],
   },
@@ -965,7 +967,7 @@ export const postsC: BlogPost[] = [
       {
         h2: "3. Remove Glasses",
         paragraphs: [
-          "If you wear glasses, remove them for one matching photo. Glasses occlude the eye region,the most identity-weighted part of the face,and add reflective artefacts. Even thin-rimmed glasses can reduce embedding quality. Try both with and without to compare results.",
+          "If you wear glasses, remove them for one matching photo. Glasses occlude the eye region, the most identity-weighted part of the face, and add reflective artefacts. Even thin-rimmed glasses can reduce embedding quality. Try both with and without to compare results.",
         ],
       },
       {
@@ -996,8 +998,9 @@ export const postsC: BlogPost[] = [
   {
     slug: "understanding-your-results",
     title: "Understanding Your Ollie Results: What the Scores and Rankings Mean",
-    excerpt: "A guide to interpreting everything on your Ollie results page,what the percentages mean, why the ranking matters more than the score, and how to read the top five.",
+    excerpt: "A guide to interpreting everything on your Ollie results page, what the percentages mean, why the ranking matters more than the score, and how to read the top five.",
     date: "January 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-01-02",
     readTime: "4 min read",
     category: "Guide",
@@ -1007,8 +1010,8 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Percentage Score",
         paragraphs: [
-          "The percentage similarity score on each result represents the calibrated distance between your facial embedding and the celebrity's in 256-dimensional space. A score of 90%+ indicates very strong geometric similarity,the kind most people would notice on direct visual comparison. Scores of 70–89% indicate meaningful similarity in specific geometric dimensions. Below 70%, matches are present but may not be visually obvious.",
-          "The percentage is not a probability. It does not mean there is a 90% chance you are the same person as the celebrity. It means the embedding distance falls in the range corresponding to strong geometric similarity, based on calibration from validation data.",
+          "The percentage similarity score on each result is the distance between your facial embedding and the celebrity's in 512-dimensional space, rescaled so it is easier to read. A score of 90%+ indicates very strong geometric similarity, the kind most people would notice on direct visual comparison. Scores of 70–89% indicate meaningful similarity in specific geometric dimensions. Below 70%, matches are present but may not be visually obvious.",
+          "The percentage is not a probability. It does not mean there is a 90% chance you are the same person as the celebrity. It means the celebrity's fingerprint is very close to yours compared with the rest of the database. Treat the ranges above as a loose rule of thumb, not measured thresholds.",
         ],
       },
       {
@@ -1021,13 +1024,13 @@ export const postsC: BlogPost[] = [
       {
         h2: "Reading the Top Five",
         paragraphs: [
-          "The top five results give more information than just the #1 match. Look for shared features across multiple top-five results: if several celebrities all have a similar jaw shape, strong cheekbones, or similar eye spacing, those shared features are likely driving your embedding's position in face space,and are characteristic of your face.",
+          "The top five results give more information than just the #1 match. Look for shared features across multiple top-five results: if several celebrities all have a similar jaw shape, strong cheekbones, or similar eye spacing, those shared features are likely driving your embedding's position in face space, and are characteristic of your face.",
           "If your top five results look very diverse with no obvious common thread, you are likely in a central region of face space where multiple celebrity clusters are approximately equidistant. Your face does not strongly resemble any one archetype; it is structurally average across many dimensions.",
         ],
       },
     ],
     faqs: [
-      { q: "What does the percentage score mean on Ollie results?", a: "A calibrated similarity score based on embedding distance. Above 90% is very strong resemblance; 70–89% is meaningful similarity; below 70% the match is present but may not be visually obvious." },
+      { q: "What does the percentage score mean on Ollie results?", a: "A rescaled similarity score based on embedding distance, useful for ranking. Above 90% is very strong resemblance; 70–89% is meaningful similarity; below 70% the match is present but may not be visually obvious." },
       { q: "Should I focus on the #1 result or look at all five?", a: "Both. Your #1 is the closest geometric match, but looking across the top five for shared features is more informative about what specifically characterises your face's position in embedding space." },
     ],
     relatedSlugs: ["what-is-similarity-score", "confidence-vs-accuracy", "what-celebrity-match-reveals"],
@@ -1046,8 +1049,8 @@ export const postsC: BlogPost[] = [
       {
         h2: "How Much Does Your Face Change Between Photos?",
         paragraphs: [
-          "For adults in the 20–50 age range, the bone structure of the face,the geometric foundation that dominates the facial embedding,is remarkably stable. Photos taken 5, 10, or 15 years apart will typically produce embeddings that land in the same region of face space and generate the same top celebrity matches.",
-          "Surface changes,skin texture, wrinkles, minor fat redistribution,do shift the embedding slightly but do not typically displace it from the neighbourhood of the same celebrities. The embedding's anchor in stable bone geometry preserves the match quality across moderate time spans.",
+          "For adults in the 20–50 age range, the bone structure of the face, the geometric foundation that dominates the facial embedding, is remarkably stable. Photos taken 5, 10, or 15 years apart will typically produce embeddings that land in the same region of face space and generate the same top celebrity matches.",
+          "Surface changes, skin texture, wrinkles, minor fat redistribution, do shift the embedding slightly but do not typically displace it from the neighbourhood of the same celebrities. The embedding's anchor in stable bone geometry preserves the match quality across moderate time spans.",
         ],
       },
       {
@@ -1065,9 +1068,10 @@ export const postsC: BlogPost[] = [
   },
   {
     slug: "vggface2-explained",
-    title: "VGGFace2: The Training Dataset Behind Ollie's Face Recognition",
-    excerpt: "Ollie is trained on VGGFace2,3.3 million photos of 9,131 celebrities. Here is what makes this dataset so powerful for face recognition.",
+    title: "VGGFace2 Explained: The Dataset That Shaped Modern Face Recognition",
+    excerpt: "VGGFace2 packs 3.3 million photos of 9,131 people. Here is what made it important for face recognition, and how it compares with MS1MV2, the dataset Ollie was trained on.",
     date: "December 2025",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2025-12-24",
     readTime: "4 min read",
     category: "Machine Learning",
@@ -1084,14 +1088,14 @@ export const postsC: BlogPost[] = [
       {
         h2: "How It Compares to Earlier Datasets",
         paragraphs: [
-          "The original VGGFace dataset (2015) contained 2.6 million images of 2,622 subjects,impressive at the time but limited in identity diversity. The MS-Celeb dataset (2016) contained 10 million images but had widely reported label noise and demographic imbalance. VGGFace2 addressed these issues with more careful collection methodology and deliberate demographic balancing.",
-          "LFW (Labeled Faces in the Wild), the classic benchmark, contains only 13,000 images of 5,749 subjects,far too small for training but useful for evaluation. VGGFace2 occupies the training-focused end of the data spectrum: large enough to train powerful representations, diverse enough to generalise broadly.",
+          "The original VGGFace dataset (2015) contained 2.6 million images of 2,622 subjects, impressive at the time but limited in identity diversity. The MS-Celeb dataset (2016) contained 10 million images but had widely reported label noise and demographic imbalance. VGGFace2 addressed these issues with more careful collection methodology and deliberate demographic balancing.",
+          "LFW (Labeled Faces in the Wild), the classic benchmark, contains only 13,000 images of 5,749 subjects, far too small for training but useful for evaluation. VGGFace2 occupies the training-focused end of the data spectrum: large enough to train powerful representations, diverse enough to generalise broadly.",
         ],
       },
     ],
     faqs: [
       { q: "What is VGGFace2?", a: "VGGFace2 is a large-scale face recognition dataset containing 3.31 million images of 9,131 subjects, developed by Oxford's Visual Geometry Group. It emphasises variation in pose, age, and ethnicity for robust model training." },
-      { q: "Why does Ollie use VGGFace2?", a: "VGGFace2's combination of scale, diversity, and demographic balance makes it the best available training dataset for general face recognition. Models trained on it generalise well to real-world photo conditions." },
+      { q: "Was Ollie trained on VGGFace2?", a: "No. Ollie's network was trained from scratch on MS1MV2, about 5.8 million photos of 85,742 people. VGGFace2 is covered here because it shaped how modern face datasets are built." },
     ],
     relatedSlugs: ["training-data-matters", "siamese-neural-networks-explained", "how-face-recognition-works"],
   },
@@ -1109,15 +1113,15 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Vanishing Gradient Problem",
         paragraphs: [
-          "Training deep neural networks (networks with many layers) using gradient descent was extremely difficult before 2015. Gradients,the signals used to update network parameters,shrink as they propagate backward through many layers, becoming negligibly small by the time they reach the early layers. This <strong>vanishing gradient problem</strong> prevented deep networks from learning effectively: early layers received almost no training signal.",
+          "Training deep neural networks (networks with many layers) using gradient descent was extremely difficult before 2015. Gradients, the signals used to update network parameters, shrink as they propagate backward through many layers, becoming negligibly small by the time they reach the early layers. This <strong>vanishing gradient problem</strong> prevented deep networks from learning effectively: early layers received almost no training signal.",
           "The consequence was a ceiling on useful depth. In the early 2010s, most powerful networks had 5–10 layers. Deeper networks trained worse than shallower ones, despite theoretically having more capacity.",
         ],
       },
       {
         h2: "Residual Connections: The Solution",
         paragraphs: [
-          "He et al. (2015) solved the vanishing gradient problem with <strong>residual connections</strong>,skip connections that allow gradient to flow directly from later layers to earlier ones without passing through all intermediate layers. A residual block adds its input to its output: output = f(x) + x. This identity shortcut ensures that even if the learned function f(x) has vanishing gradients, the identity path carries gradient directly through.",
-          "The result was dramatic: ResNet-152 (152 layers) trained successfully and outperformed much shallower networks. ResNet won the ImageNet competition in 2015 by a substantial margin. More relevantly for face recognition, it unlocked the training of much deeper face recognition networks,and depth correlates directly with representational richness.",
+          "He et al. (2015) solved the vanishing gradient problem with <strong>residual connections</strong>, skip connections that allow gradient to flow directly from later layers to earlier ones without passing through all intermediate layers. A residual block adds its input to its output: output = f(x) + x. This identity shortcut ensures that even if the learned function f(x) has vanishing gradients, the identity path carries gradient directly through.",
+          "The result was dramatic: ResNet-152 (152 layers) trained successfully and outperformed much shallower networks. ResNet won the ImageNet competition in 2015 by a substantial margin. More relevantly for face recognition, it unlocked the training of much deeper face recognition networks, and depth correlates directly with representational richness.",
         ],
       },
     ],
@@ -1148,7 +1152,7 @@ export const postsC: BlogPost[] = [
       {
         h2: "Why Angular Margin Works So Well",
         paragraphs: [
-          "The angular margin in ArcFace produces more uniformly distributed class centres in the embedding space and cleaner decision boundaries between classes. Unlike triplet loss, which only requires pairwise ordering, ArcFace enforces absolute angular separation,producing tighter clusters and larger inter-class gaps.",
+          "The angular margin in ArcFace produces more uniformly distributed class centres in the embedding space and cleaner decision boundaries between classes. Unlike triplet loss, which only requires pairwise ordering, ArcFace enforces absolute angular separation, producing tighter clusters and larger inter-class gaps.",
           "The practical effect is that ArcFace-trained models produce embeddings that separate cleanly at lower similarity thresholds, making face verification more reliable at intermediate confidence levels. ArcFace achieves 99.83% accuracy on LFW,essentially saturating that benchmark. It has become the standard loss function for production-grade face recognition systems worldwide.",
         ],
       },
@@ -1181,12 +1185,12 @@ export const postsC: BlogPost[] = [
         h2: "IARPA Janus: Harder Benchmarks",
         paragraphs: [
           "IARPA's Janus benchmarks (IJB-A, IJB-B, IJB-C) were designed to be substantially harder than LFW. IJB-C contains 11,779 subjects including both still images and video frames, with deliberate inclusion of difficult pose, illumination, and expression conditions. NIST's FRVT (Face Recognition Vendor Test) is the most comprehensive independent evaluation, testing commercial and research systems on very large datasets including millions of photos.",
-          "Performance on IJB-C at the standard verification threshold (False Match Rate = 0.01%) benchmarks typically around 95–97% for top systems,significantly harder than LFW. NIST FRVT remains the gold standard for evaluating real-world face recognition system performance.",
+          "Performance on IJB-C at the standard verification threshold (False Match Rate = 0.01%) benchmarks typically around 95–97% for top systems, significantly harder than LFW. NIST FRVT remains the gold standard for evaluating real-world face recognition system performance.",
         ],
       },
     ],
     faqs: [
-      { q: "What is LFW in face recognition?", a: "Labeled Faces in the Wild,a benchmark dataset of 13,000+ face pairs used to evaluate verification accuracy. It was the standard benchmark for a decade but is now largely solved by modern systems." },
+      { q: "What is LFW in face recognition?", a: "Labeled Faces in the Wild, a benchmark dataset of 13,000+ face pairs used to evaluate verification accuracy. It was the standard benchmark for a decade but is now largely solved by modern systems." },
       { q: "What benchmark do serious face recognition systems use today?", a: "NIST FRVT (Face Recognition Vendor Test) and IARPA Janus benchmarks (IJB-C) are the most rigorous current evaluations. They include harder conditions than LFW and test demographic performance differences." },
     ],
     relatedSlugs: ["why-ai-beats-human-eye", "vggface2-explained", "training-data-matters"],
@@ -1226,7 +1230,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "face-spoof-detection",
     title: "Liveness Detection: How AI Knows You're a Real Person, Not a Photo",
-    excerpt: "Anti-spoofing,detecting whether a camera is pointed at a real live face or at a photo/screen/3D print,is a separate technical challenge from face recognition itself.",
+    excerpt: "Anti-spoofing, detecting whether a camera is pointed at a real live face or at a photo/screen/3D print, is a separate technical challenge from face recognition itself.",
     date: "December 2025",
     isoDate: "2025-12-04",
     readTime: "4 min read",
@@ -1244,8 +1248,8 @@ export const postsC: BlogPost[] = [
       {
         h2: "How Liveness Detection Works",
         paragraphs: [
-          "Multiple technical approaches to liveness detection exist. <strong>Texture analysis</strong> detects the characteristic flat texture and rectilinear artefacts of printed or displayed images. <strong>3D depth sensing</strong> (used in iPhone Face ID) confirms the face is a three-dimensional object at the expected depth. <strong>Motion-based</strong> approaches require the user to perform specific movements (blink, turn head) that are difficult to replicate in a replay attack. <strong>Passive video analysis</strong> detects rPPG (remote photoplethysmography),the subtle colour changes in skin caused by blood pulsation,which cannot be replicated by a static photo.",
-          "For Ollie's celebrity matching application, presentation attack vulnerability is less concerning than for identity verification applications,the attack incentive is lower. But as AI face generation improves, detecting AI-generated input will become relevant for maintaining database integrity.",
+          "Multiple technical approaches to liveness detection exist. <strong>Texture analysis</strong> detects the characteristic flat texture and rectilinear artefacts of printed or displayed images. <strong>3D depth sensing</strong> (used in iPhone Face ID) confirms the face is a three-dimensional object at the expected depth. <strong>Motion-based</strong> approaches require the user to perform specific movements (blink, turn head) that are difficult to replicate in a replay attack. <strong>Passive video analysis</strong> detects rPPG (remote photoplethysmography), the subtle colour changes in skin caused by blood pulsation, which cannot be replicated by a static photo.",
+          "For Ollie's celebrity matching application, presentation attack vulnerability is less concerning than for identity verification applications, the attack incentive is lower. But as AI face generation improves, detecting AI-generated input will become relevant for maintaining database integrity.",
         ],
       },
     ],
@@ -1257,8 +1261,9 @@ export const postsC: BlogPost[] = [
   {
     slug: "face-recognition-performance-tricks",
     title: "How to Run Face Recognition 10x Faster: Performance Optimisation Techniques",
-    excerpt: "Real-time face recognition requires tricks beyond training a good model. Here is how production systems achieve speed,from quantisation to FAISS to GPU batching.",
+    excerpt: "Real-time face recognition requires tricks beyond training a good model. Here is how production systems achieve speed, from quantisation to FAISS to GPU batching.",
     date: "November 2025",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2025-11-30",
     readTime: "5 min read",
     category: "Machine Learning",
@@ -1268,15 +1273,15 @@ export const postsC: BlogPost[] = [
       {
         h2: "The Speed Challenge",
         paragraphs: [
-          "A face recognition pipeline must complete in under 200ms for a real-time experience. The individual stages,detection, alignment, embedding extraction, search,each contribute to this budget. Training a model for accuracy and deploying it for speed are different engineering problems, and most of the effort in production systems is in the deployment stage.",
-          "The embedding extraction step (running the ResNet backbone) is typically the bottleneck on CPU. On a modern laptop CPU without optimisation, a full forward pass through ResNet-50 takes 80–200ms,consuming the entire latency budget. With optimisation, this can be reduced to 5–15ms.",
+          "A face recognition pipeline must complete in under 200ms for a real-time experience. The individual stages, detection, alignment, embedding extraction, search, each contribute to this budget. Training a model for accuracy and deploying it for speed are different engineering problems, and most of the effort in production systems is in the deployment stage.",
+          "The embedding extraction step (running the ResNet backbone) is typically the bottleneck on CPU. On a modern laptop CPU without optimisation, a full forward pass through ResNet-50 takes 80–200ms, consuming the entire latency budget. With optimisation, this can be reduced to 5–15ms.",
         ],
       },
       {
         h2: "Key Optimisation Techniques",
         paragraphs: [
-          "<strong>Quantisation</strong>: Converting model weights from 32-bit float to 8-bit integer. This reduces model size by 4× and speeds up matrix multiplication (the dominant operation) by 2–4× on most hardware, with negligible accuracy loss for inference. <strong>ONNX export</strong>: Converting the model to the Open Neural Network Exchange format, enabling optimised inference runtimes (ONNX Runtime, TensorRT) to apply hardware-specific optimisations. <strong>TensorRT</strong>: NVIDIA's inference optimiser that fuses operations, optimises memory access patterns, and generates hardware-specific kernels for NVIDIA GPUs,typically achieving 2–4× speed improvement over unoptimised PyTorch on the same hardware.",
-          "<strong>FAISS quantisation</strong>: The celebrity embedding index can be compressed using product quantisation (PQ), reducing memory and search time at a small accuracy cost. For 9,131 celebrities, this is not necessary, but becomes valuable at millions-of-entries scale. <strong>Batching</strong>: Processing multiple user photos simultaneously on a GPU to maximise hardware utilisation when many concurrent requests arrive.",
+          "<strong>Quantisation</strong>: Converting model weights from 32-bit float to 8-bit integer. This reduces model size by 4× and speeds up matrix multiplication (the dominant operation) by 2–4× on most hardware, with negligible accuracy loss for inference. <strong>ONNX export</strong>: Converting the model to the Open Neural Network Exchange format, enabling optimised inference runtimes (ONNX Runtime, TensorRT) to apply hardware-specific optimisations. <strong>TensorRT</strong>: NVIDIA's inference optimiser that fuses operations, optimises memory access patterns, and generates hardware-specific kernels for NVIDIA GPUs, typically achieving 2–4× speed improvement over unoptimised PyTorch on the same hardware.",
+          "<strong>FAISS quantisation</strong>: The celebrity embedding index can be compressed using product quantisation (PQ), reducing memory and search time at a small accuracy cost. For an index of tens of thousands of photos, like Ollie's, this is not necessary, but it becomes valuable at millions of entries. <strong>Batching</strong>: Processing multiple user photos simultaneously on a GPU to maximise hardware utilisation when many concurrent requests arrive.",
         ],
       },
     ],
@@ -1289,32 +1294,48 @@ export const postsC: BlogPost[] = [
   {
     slug: "celebrity-database-how-built",
     title: "How Ollie's Celebrity Database Was Built",
-    excerpt: "Behind every face match is a database of 9,131 celebrity embeddings. Here is how it was assembled,the data sources, quality filters, and embedding computation process.",
+    excerpt: "Behind every match is a database of thousands of celebrities, each with verified, freely licensed photos. Here is how the list was chosen and how every photo was checked.",
     date: "November 2025",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2025-11-26",
     readTime: "4 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["celebrity database", "face recognition database", "VGGFace2 database", "celebrity embeddings", "face index"],
+    keywords: ["celebrity database", "face recognition database", "Wikimedia Commons", "celebrity embeddings", "face index"],
     sections: [
       {
-        h2: "Data Sources",
+        h2: "Choosing the Celebrities",
         paragraphs: [
-          "Ollie's celebrity database is built on the VGGFace2 identity list,9,131 named public figures covering actors, athletes, musicians, politicians, and other well-known individuals across many nationalities and eras. For each identity, multiple photographs are sourced from public image archives, covering varied ages, conditions, and contexts.",
-          "Quality filtering removes duplicate frames, low-resolution images, photos where the target celebrity is not the primary subject, and photos with extreme occlusion or quality issues. Typically 50–200 clean photos per celebrity pass quality filtering for embedding computation.",
+          "The list starts from Wikidata: every living person covered by at least ten language editions of Wikipedia. Each is ranked by how many people read their English Wikipedia article over the previous six months, with a boost for being covered in many languages, so the list reflects who is famous now, worldwide.",
+          "Only adults are included, and a known birth date is required, so nobody under 18 slips in. People known mainly for adult entertainment or for serious crimes are left out.",
+        ],
+      },
+      {
+        h2: "Only Freely Licensed Photos",
+        paragraphs: [
+          "Every photo comes from <strong>Wikimedia Commons</strong> and must carry a free license that allows reuse with credit: public domain, CC0, CC BY, CC BY-SA and a few similar licenses. Photos under non-commercial or no-derivatives licenses are never used, and files flagged for deletion are skipped.",
+          "For each photo Ollie keeps the photographer's name, the license and a link to the original, and shows that credit under the photo in your results.",
+        ],
+      },
+      {
+        h2: "Checking Every Photo",
+        paragraphs: [
+          "Candidates come from the person's own Wikidata photo, photos tagged as depicting them, their Commons category, and name searches. Each one is checked automatically before it is kept: one clear, large face; not a group shot; facing the camera; sharp; in colour, so no black-and-white or sepia prints; no sunglasses; an adult face; and a real photograph rather than a statue, wax figure, drawing, poster or meme, checked with both the file's title and an image model.",
+          "Identity is checked too. A face-recognition model compares every candidate with the person's own Wikidata photo and with their other photos, and keeps only clear matches. If the reference photos disagree about who the person is, the person is skipped rather than guessed. Near-duplicates and too many photos from the same event are dropped.",
         ],
       },
       {
         h2: "Building the Index",
         paragraphs: [
-          "For each celebrity, all passing photos are processed through the full pipeline,detection, alignment, embedding extraction, feature augmentation. The resulting embeddings are averaged and L2-normalised to produce a single representative embedding per celebrity. Averaging multiple embeddings from different conditions produces a more stable and representative position in face space than any single photo would.",
-          "The resulting 9,131 embeddings are loaded into a FAISS Flat index,a brute-force exact search structure appropriate for this scale. At 9,131 entries, exact search is fast enough (under 1ms) that the approximate search structures are unnecessary. If the database grows substantially, IVF (Inverted File) or HNSW (Hierarchical Navigable Small World) FAISS indices would be used.",
+          "Each celebrity ends up with 3 to 12 verified photos. Every photo is run through Ollie's network once, and the resulting fingerprints are stored side by side, one per photo rather than one averaged fingerprint per person, so a search can show you the exact photo that matched you best.",
+          "When you search, your fingerprint is compared with every stored one, and each celebrity is scored by their two closest photos.",
         ],
       },
     ],
     faqs: [
-      { q: "How many celebrities are in Ollie's database?", a: "9,131 celebrities from the VGGFace2 identity list, spanning actors, athletes, musicians, politicians, and other public figures across many nationalities and eras." },
-      { q: "How is each celebrity's embedding computed?", a: "Multiple photos per celebrity are processed through the full pipeline and averaged. L2-normalisation produces a single representative embedding per celebrity that is stable across varied photo conditions." },
+      { q: "How many celebrities are in Ollie's database?", a: "Thousands of the most-viewed living celebrities on Wikipedia, each with 3 to 12 verified photos." },
+      { q: "Where do the celebrity photos come from?", a: "From Wikimedia Commons, under free licenses such as public domain, CC0, CC BY and CC BY-SA. Every result credits its photographer and links to the original." },
+      { q: "How do you make sure every photo shows the right person?", a: "A face-recognition model compares each photo with the person's own Wikidata photo and their other photos, and keeps only clear matches. If the references disagree, the person is skipped." },
     ],
     relatedSlugs: ["vggface2-explained", "inside-ai-face-matching", "what-is-facial-embedding"],
   },

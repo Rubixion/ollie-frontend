@@ -1,44 +1,55 @@
-﻿"use client"
+"use client"
 
 import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
+import Link from "next/link"
 import { AnimatePresence, motion } from "framer-motion"
-import { Upload, X, Search, Loader2, AlertCircle, User, ChevronDown } from "lucide-react"
+import { Upload, X, Search, Loader2, AlertCircle, User, Camera, ChevronDown } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { MATCH_ONLY } from "@/lib/site-config"
-import { MatchInfo } from "@/components/match-info"
+import { ShareMatch } from "@/components/share-match"
 
+// Who took the photo and under which license: CC BY / BY-SA require this next to every photo shown.
+interface Credit {
+  author: string
+  license: string
+  license_url?: string
+  page?: string // the photo's Wikimedia Commons page
+}
 
 interface Match {
   name: string
   similarity: number
   image?: string
+  credit?: Credit
+  knownFor?: string
 }
 
-// What the inference server (server.py on Hugging Face) returns from POST /search
+// What the matching server returns from POST /search (credits/known_for only once the celebrity index is live)
 interface SearchResponse {
   face_found: boolean
+  gender_used?: "female" | "male" | null
   modes: Record<string, { name: string; score: number }[]>
   thumbs: Record<string, string>
-  remaining: number | null // searches left on this account; null = unlimited
+  credits?: Record<string, Credit>
+  known_for?: Record<string, string>
+  remaining: number | null // searches left; null = not shown
 }
 
-// Server mode key -> dropdown label. First entry is the default. Any other mode the server sends is
-// ignored, and an older server that only sends the first one just hides the dropdown.
-const MODE_LABELS: Record<string, string> = {
-  "CNN Only (best image)": "CNN with tweaks",
-  "CNN Only (best image, no tweaks)": "CNN only",
-}
-const MODE_HINTS: Record<string, string> = {
-  "CNN Only (best image)": "Filters out implausible skin tones",
-  "CNN Only (best image, no tweaks)": "Raw model, no filtering",
-}
-const MODES = Object.keys(MODE_LABELS)
+// Who to show. "any" = no filter (default); the server can also do "auto" (same apparent gender as the
+// uploaded face), which isn't offered here.
+const GENDER_OPTIONS = [
+  { value: "any", label: "Any gender" },
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+] as const
+type Gender = (typeof GENDER_OPTIONS)[number]["value"]
 
 // Custom dropdown (a native <select> pops up in OS colours that clash with the dark theme)
-function ModeMenu({ modes, value, onChange }: { modes: string[]; value: string; onChange: (m: string) => void }) {
+function GenderMenu({ value, onChange }: { value: Gender; onChange: (g: Gender) => void }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const current = GENDER_OPTIONS.find((o) => o.value === value) ?? GENDER_OPTIONS[0]
 
   useEffect(() => {
     if (!open) return
@@ -58,36 +69,35 @@ function ModeMenu({ modes, value, onChange }: { modes: string[]; value: string; 
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={`Show matches: ${current.label}`}
         onClick={() => setOpen((o) => !o)}
-        className="-ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs transition-colors hover:bg-white/5"
+        className="-ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ollie-cyan)"
       >
-        <span className="text-white/30">Mode</span>
-        <span className="font-semibold text-(--ollie-cyan)">{MODE_LABELS[value] ?? value}</span>
-        <ChevronDown size={12} className={`text-white/40 transition-transform ${open ? "rotate-180" : ""}`} />
+        <span className="text-white/30">Show</span>
+        <span className="font-semibold text-(--ollie-cyan)">{current.label}</span>
+        <ChevronDown size={12} className={`text-white/40 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       <AnimatePresence>
         {open && (
           <motion.ul
             role="listbox"
+            aria-label="Show matches"
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-0 top-full z-20 mt-1 min-w-56 rounded-xl border border-white/10 bg-black/90 p-1 shadow-xl shadow-black/50 backdrop-blur-md"
+            className="absolute left-0 top-full z-20 mt-1 min-w-44 rounded-xl border border-white/10 bg-black/90 p-1 shadow-xl shadow-black/50 backdrop-blur-md"
           >
-            {modes.map((m) => (
-              <li key={m} role="option" aria-selected={m === value}>
+            {GENDER_OPTIONS.map((o) => (
+              <li key={o.value} role="option" aria-selected={o.value === value}>
                 <button
                   type="button"
-                  onClick={() => { onChange(m); setOpen(false) }}
-                  className={`w-full rounded-lg px-3 py-2 text-left transition-colors ${
-                    m === value ? "bg-(--ollie-cyan)/10" : "hover:bg-white/5"
+                  onClick={() => { onChange(o.value); setOpen(false) }}
+                  className={`w-full rounded-lg px-3 py-2 text-left text-xs font-semibold transition-colors ${
+                    o.value === value ? "bg-(--ollie-cyan)/10 text-(--ollie-cyan)" : "text-white/80 hover:bg-white/5"
                   }`}
                 >
-                  <span className={`block text-xs font-semibold ${m === value ? "text-(--ollie-cyan)" : "text-white/80"}`}>
-                    {MODE_LABELS[m] ?? m}
-                  </span>
-                  {MODE_HINTS[m] && <span className="block text-[11px] text-white/35">{MODE_HINTS[m]}</span>}
+                  {o.label}
                 </button>
               </li>
             ))}
@@ -103,15 +113,33 @@ function ModeMenu({ modes, value, onChange }: { modes: string[]; value: string; 
 const RAW_LO = 30, RAW_HI = 65, OUT_LO = 40
 const scale = (raw: number) => Math.max(0, Math.min(99, OUT_LO + ((raw - RAW_LO) * (99 - OUT_LO)) / (RAW_HI - RAW_LO)))
 
-function parseResponse(data: SearchResponse): Record<string, Match[]> {
-  const out: Record<string, Match[]> = {}
-  for (const mode of MODES) {
-    const rows = data.modes?.[mode]
-    if (rows?.length) {
-      out[mode] = rows.map((r) => ({ name: r.name, similarity: scale(r.score), image: data.thumbs?.[r.name] }))
-    }
-  }
-  return out
+// One scoring mode now; take whichever the server sends first (older servers sent two).
+function parseResponse(data: SearchResponse): Match[] {
+  const rows = Object.values(data.modes ?? {})[0] ?? []
+  return rows.map((r) => ({
+    name: r.name,
+    similarity: scale(r.score),
+    image: data.thumbs?.[r.name],
+    credit: data.credits?.[r.name],
+    knownFor: data.known_for?.[r.name],
+  }))
+}
+
+function PhotoCredit({ credit, className = "" }: { credit: Credit; className?: string }) {
+  const link = "underline decoration-white/20 underline-offset-2 hover:text-white/70"
+  return (
+    <p className={`text-[10px] leading-snug text-white/30 ${className}`}>
+      Photo:{" "}
+      {credit.page ? (
+        <a href={credit.page} target="_blank" rel="noopener noreferrer" className={link}>{credit.author}</a>
+      ) : credit.author}
+      ,{" "}
+      {credit.license_url ? (
+        <a href={credit.license_url} target="_blank" rel="noopener noreferrer license" className={link}>{credit.license}</a>
+      ) : credit.license}{" "}
+      (cropped), via Wikimedia Commons
+    </p>
+  )
 }
 
 export function CelebrityFinder() {
@@ -119,13 +147,13 @@ export function CelebrityFinder() {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [results, setResults] = useState<Record<string, Match[]> | null>(null)
-  const [activeMode, setActiveMode] = useState(MODES[0])
+  const [matches, setMatches] = useState<Match[] | null>(null)
+  const [gender, setGender] = useState<Gender>("any")
   const [faceFound, setFaceFound] = useState(true)
   const [remaining, setRemaining] = useState<number | null>(null)
-  const matches = results ? results[activeMode] ?? [] : null
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const selfieInputRef = useRef<HTMLInputElement>(null)
   const [zoom, setZoom] = useState<Match | null>(null)
 
   useEffect(() => {
@@ -156,7 +184,7 @@ export function CelebrityFinder() {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
         }
         setImageDataUrl(canvas.toDataURL("image/jpeg", 0.9))
-        setResults(null)
+        setMatches(null)
         setError(null)
       }
       img.onerror = () => setError("Couldn't read that image. Try a JPG or PNG.")
@@ -179,7 +207,7 @@ export function CelebrityFinder() {
   }, [loadFile])
 
   const onDrop = useCallback(
-    (e: DragEvent<HTMLDivElement>) => {
+    (e: DragEvent<HTMLElement>) => {
       e.preventDefault()
       setIsDragging(false)
       const file = e.dataTransfer.files[0]
@@ -195,16 +223,17 @@ export function CelebrityFinder() {
 
   const clearImage = () => {
     setImageDataUrl(null)
-    setResults(null)
+    setMatches(null)
     setError(null)
     if (fileInputRef.current) fileInputRef.current.value = ""
+    if (selfieInputRef.current) selfieInputRef.current.value = ""
   }
 
   const handleSearch = async () => {
     if (!imageDataUrl) return
     setLoading(true)
     setError(null)
-    setResults(null)
+    setMatches(null)
 
     try {
       const { data: { session } } = await supabase.auth.getSession()
@@ -216,7 +245,7 @@ export function CelebrityFinder() {
           "Content-Type": "application/json",
           ...(token ? { "Authorization": `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ image: imageDataUrl }),
+        body: JSON.stringify({ image: imageDataUrl, gender }),
       })
 
       const json = await res.json()
@@ -226,15 +255,14 @@ export function CelebrityFinder() {
         throw new Error(json.error || "Search failed")
       }
 
-      const parsed = parseResponse(json as SearchResponse)
-      const modes = Object.keys(parsed)
-      if (modes.length === 0) {
+      const data = json as SearchResponse
+      const parsed = parseResponse(data)
+      if (parsed.length === 0) {
         setError("No matches found. Try a different photo.")
       } else {
-        setResults(parsed)
-        setActiveMode((cur) => (parsed[cur] ? cur : modes[0])) // keep the chosen mode across searches
-        setFaceFound(Boolean((json as SearchResponse).face_found))
-        setRemaining((json as SearchResponse).remaining ?? null)
+        setMatches(parsed)
+        setFaceFound(Boolean(data.face_found))
+        setRemaining(data.remaining ?? null)
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unknown error"
@@ -245,91 +273,102 @@ export function CelebrityFinder() {
   }
 
 
+  const dropZone = `relative block rounded-2xl border-2 border-dashed transition-all focus-within:ring-2 focus-within:ring-(--ollie-cyan) focus-within:ring-offset-2 focus-within:ring-offset-black
+    ${isDragging
+      ? "border-(--ollie-cyan) bg-(--ollie-glow)"
+      : imageDataUrl
+        ? "border-white/10 bg-white/[0.02]"
+        : "border-white/15 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.03] cursor-pointer"
+    }`
+  const dragProps = {
+    onDragOver: (e: DragEvent<HTMLElement>) => { e.preventDefault(); setIsDragging(true) },
+    onDragLeave: () => setIsDragging(false),
+    onDrop,
+  }
+
   return (
     <section id="finder" className={`px-6 ${MATCH_ONLY ? "pt-28 pb-24" : "py-24 md:py-32 border-t border-white/5"}`}>
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-12 text-center"
-        >
+        {/* Header: static so it's in the server HTML at full opacity (LCP) */}
+        <div className="mb-12 text-center">
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">
-            Which soccer player do you look like?
+            Which celebrity do you look like?
           </h1>
           <p className="mt-4 text-white/45 text-balance">
-            Upload your photo below. Ollie ranks soccer players by how similar their face is to yours.
+            Upload a photo. Ollie compares your face with thousands of celebrity photos and shows your five closest matches.
           </p>
           <p className="mt-2 text-white/30 text-sm text-balance">
-            Works best with male faces in good lighting. Poor lighting makes it difficult for the AI to determine skin tone and analyze features.
+            Works best with one clear, front-facing face in good, even lighting.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-2 gap-8 items-start">
           {/* LEFT: Uploader */}
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="flex flex-col gap-5"
-          >
-            {/* Drop zone */}
-            <div
-              onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={onDrop}
-              onClick={() => !imageDataUrl && fileInputRef.current?.click()}
-              className={`relative rounded-2xl border-2 border-dashed transition-all cursor-pointer
-                ${isDragging
-                  ? "border-(--ollie-cyan) bg-(--ollie-glow)"
-                  : imageDataUrl
-                    ? "border-white/10 bg-white/[0.02]"
-                    : "border-white/15 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.03]"
-                }`}
-              style={{ minHeight: 280 }}
-            >
-              {imageDataUrl ? (
+          <div className="flex flex-col gap-5">
+            {/* Drop zone: a label around the file input, so it works with the keyboard and screen readers */}
+            {imageDataUrl ? (
+              <div {...dragProps} className={dropZone} style={{ minHeight: 280 }}>
                 <div className="relative flex items-center justify-center p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={imageDataUrl}
-                    alt="Uploaded preview"
+                    alt="Your uploaded photo"
                     className="max-w-full max-h-[380px] rounded-xl object-contain"
                   />
                   <button
-                    onClick={(e) => { e.stopPropagation(); clearImage() }}
+                    type="button"
+                    onClick={clearImage}
                     className="absolute top-3 right-3 p-1.5 rounded-full bg-black/70 border border-white/10 text-white hover:bg-black/90 transition-colors"
-                    aria-label="Remove image"
+                    aria-label="Remove photo"
                   >
                     <X size={14} />
                   </button>
                 </div>
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
-                  <div className="p-4 rounded-full bg-white/5 border border-white/10">
-                    <Upload size={28} className="text-white/40" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-white/70 font-medium">Drag &amp; drop your photo</p>
-                    <p className="text-white/30 text-sm mt-1">click to browse, or paste with Ctrl+V</p>
-                  </div>
+              </div>
+            ) : (
+              <label {...dragProps} className={dropZone} style={{ minHeight: 280 }}>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={onFileChange}
+                />
+                <span className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8">
+                  <span className="p-4 rounded-full bg-white/5 border border-white/10">
+                    <Upload size={28} className="text-white/40" aria-hidden="true" />
+                  </span>
+                  <span className="text-center">
+                    <span className="block text-white/70 font-medium">Drag &amp; drop your photo</span>
+                    <span className="block text-white/30 text-sm mt-1">click to browse, or paste with Ctrl+V</span>
+                  </span>
                   <span className="text-white/20 text-xs">JPG, PNG, WEBP</span>
-                </div>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={onFileChange}
-              />
-            </div>
+                </span>
+              </label>
+            )}
 
+            {/* Phones: straight to the front camera */}
+            {!imageDataUrl && (
+              <label className="md:hidden flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/10 bg-white/[0.03] text-white/70 text-sm font-semibold focus-within:ring-2 focus-within:ring-(--ollie-cyan) cursor-pointer">
+                <input
+                  ref={selfieInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="user"
+                  className="sr-only"
+                  onChange={onFileChange}
+                />
+                <Camera size={16} aria-hidden="true" />
+                Take a selfie
+              </label>
+            )}
+
+            {/* Who to show */}
+            <GenderMenu value={gender} onChange={setGender} />
 
             {/* Search button */}
             <button
+              type="button"
               onClick={handleSearch}
               disabled={!imageDataUrl || loading}
               className={`flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold text-sm transition-all
@@ -340,43 +379,42 @@ export function CelebrityFinder() {
             >
               {loading ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader2 size={16} className="animate-spin" aria-hidden="true" />
                   Running your face through the network...
                 </>
               ) : (
                 <>
-                  <Search size={16} />
+                  <Search size={16} aria-hidden="true" />
                   Find my match
                 </>
               )}
             </button>
+            <p className="text-center text-xs text-white/30">
+              Your photo is only used for this search and is never stored.{" "}
+              <Link href="/privacy" className="underline decoration-white/20 underline-offset-2 hover:text-white/60">Privacy</Link>
+            </p>
             {remaining !== null && (
               <p className="text-center text-xs text-white/30">
                 {remaining === 0
-                  ? user ? "You've used all your searches." : "That was your free search. Sign in for more."
+                  ? user ? "You've used all your searches." : "That was your last free search. Sign in for more."
                   : `${remaining} free search${remaining === 1 ? "" : "es"} left`}
               </p>
             )}
-          </motion.div>
+          </div>
 
-          {/* RIGHT: Results */}
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col gap-4"
-          >
-            <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5" style={{ minHeight: 380 }}>
+          {/* RIGHT: Results (announced to screen readers when they change) */}
+          <div className="flex flex-col gap-4">
+            <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5" style={{ minHeight: 380 }} aria-live="polite" aria-busy={loading}>
               {/* Placeholder */}
               {!loading && !matches && !error && (
                 <div className="h-full flex flex-col items-center justify-center gap-4 py-16 text-center">
                   <div className="p-4 rounded-full bg-white/5 border border-white/5">
-                    <User size={32} className="text-white/20" />
+                    <User size={32} className="text-white/20" aria-hidden="true" />
                   </div>
                   <div>
                     <p className="text-white/40 font-medium">Your top 5 matches will appear here</p>
                     <p className="text-white/20 text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
-                      Each result is a player ranked by how closely your facial structure matches theirs
+                      Each result is a celebrity, ranked by how closely their face matches yours
                     </p>
                   </div>
                 </div>
@@ -385,9 +423,9 @@ export function CelebrityFinder() {
               {/* Loading */}
               {loading && (
                 <div className="h-full flex flex-col items-center justify-center gap-4 py-16">
-                  <Loader2 size={36} className="text-(--ollie-cyan) animate-spin" />
+                  <Loader2 size={36} className="text-(--ollie-cyan) animate-spin" aria-hidden="true" />
                   <div className="text-center">
-                    <p className="text-white/40 text-sm">Comparing your face across 2,200+ soccer players...</p>
+                    <p className="text-white/40 text-sm">Comparing your face with thousands of celebrities...</p>
                     <p className="text-white/25 text-xs mt-1">This can take up to 15 seconds</p>
                   </div>
                 </div>
@@ -395,32 +433,32 @@ export function CelebrityFinder() {
 
               {/* Error */}
               {error && !loading && (
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-                  <AlertCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                <div role="alert" className="flex items-start gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+                  <AlertCircle size={18} className="text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
                   <p className="text-red-300 text-sm leading-relaxed">{error}</p>
                 </div>
               )}
 
               {/* Results */}
-              {results && matches && !loading && (
+              {matches && !loading && (
                 <div className="flex flex-col gap-3">
+                  <p className="sr-only">
+                    Top {matches.length} matches ready. Number 1 is {matches[0].name}, {matches[0].similarity.toFixed(0)} percent.
+                  </p>
                   {!faceFound && (
                     <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                      <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                      <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
                       <p className="text-amber-200/80 text-xs leading-relaxed">
                         We couldn&apos;t find a clear face in your photo, so these matches may be off. Try a front-facing photo.
                       </p>
                     </div>
                   )}
-                  {Object.keys(results).length > 1 && (
-                    <ModeMenu modes={Object.keys(results)} value={activeMode} onChange={setActiveMode} />
-                  )}
-                  <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
+                  <h2 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1">
                     Top {matches.length} Matches
-                  </p>
+                  </h2>
                   {matches.map((match, i) => (
                     <motion.div
-                      key={i}
+                      key={`${match.name}-${i}`}
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.07 }}
@@ -431,25 +469,28 @@ export function CelebrityFinder() {
                         type="button"
                         disabled={!match.image}
                         onClick={() => setZoom(match)}
-                        aria-label={`View ${match.name} full size`}
+                        aria-label={`View photo of ${match.name} full size`}
                         className="w-24 h-24 rounded-xl overflow-hidden bg-white/5 shrink-0 flex items-center justify-center border border-white/10 enabled:cursor-zoom-in enabled:hover:border-(--ollie-cyan)/50 transition-colors"
                       >
                         {match.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={match.image} alt={match.name} className="w-full h-full object-cover" />
+                          <img src={match.image} alt={`Photo of ${match.name}`} className="w-full h-full object-cover" />
                         ) : (
-                          <User size={28} className="text-white/20" />
+                          <User size={28} className="text-white/20" aria-hidden="true" />
                         )}
                       </button>
 
-                      {/* Name + bar */}
+                      {/* Name, what they're known for, score bar, photo credit */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center justify-between mb-1">
                           <span className="text-white text-sm font-semibold truncate">{match.name}</span>
                           <span className="text-(--ollie-cyan) text-xs font-bold ml-2 shrink-0">
                             {match.similarity.toFixed(1)}%
                           </span>
                         </div>
+                        {match.knownFor && (
+                          <p className="text-white/35 text-xs truncate mb-1.5">{match.knownFor}</p>
+                        )}
                         <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
@@ -458,6 +499,7 @@ export function CelebrityFinder() {
                             className="h-full rounded-full bg-(--ollie-cyan)"
                           />
                         </div>
+                        {match.credit && <PhotoCredit credit={match.credit} className="mt-1.5 line-clamp-2" />}
                       </div>
 
                       {/* Rank badge */}
@@ -468,29 +510,34 @@ export function CelebrityFinder() {
                       )}
                     </motion.div>
                   ))}
+                  {matches[0] && <ShareMatch match={matches[0]} userPhoto={imageDataUrl} />}
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      <MatchInfo />
 
       {/* Full-size viewer */}
       {zoom?.image && (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={zoom.name}
+          aria-label={`Photo of ${zoom.name}`}
           onClick={() => setZoom(null)}
           className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-black/85 p-4 cursor-zoom-out"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={zoom.image} alt={zoom.name} className="w-[min(90vw,80vh)] aspect-square rounded-2xl object-cover" />
+          <img src={zoom.image} alt={`Photo of ${zoom.name}`} className="w-[min(90vw,80vh)] aspect-square rounded-2xl object-cover" />
           <p className="text-white font-semibold">
             {zoom.name} <span className="text-(--ollie-cyan) ml-1">{zoom.similarity.toFixed(1)}%</span>
           </p>
+          {zoom.credit && (
+            <div onClick={(e) => e.stopPropagation()} className="max-w-md text-center cursor-auto">
+              <PhotoCredit credit={zoom.credit} />
+            </div>
+          )}
         </div>
       )}
     </section>

@@ -66,3 +66,13 @@ revoke all on function public.consume_search(uuid, text, int, int, interval, int
 revoke all on function public.refund_search(bigint) from public, anon, authenticated;
 grant execute on function public.consume_search(uuid, text, int, int, interval, interval) to service_role;
 grant execute on function public.refund_search(bigint) to service_role;
+
+-- Retention: search records are deleted after 90 days (the privacy policy promises this; SEARCH_LOG_DAYS in
+-- lib/facts.ts must match). Side effect: "lifetime" limits become "per 90 days", e.g. a guest's 5 free searches.
+-- Runs daily at 03:15 UTC; re-running this file just updates the job.
+create extension if not exists pg_cron;
+select cron.schedule(
+  'purge-search-log',
+  '15 3 * * *',
+  $$ delete from public.search_log where created_at < now() - interval '90 days' $$
+);

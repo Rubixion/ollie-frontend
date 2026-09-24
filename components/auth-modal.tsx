@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react"
-import { useAuth } from "@/components/auth-provider"
+import { rememberConsent, useAuth } from "@/components/auth-provider"
 
 type Tab = "signin" | "signup"
 
@@ -16,6 +16,22 @@ export function AuthModal() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [agree, setAgree] = useState(false)         // required: 18+ and Terms/Privacy
+  const [emailOptIn, setEmailOptIn] = useState(false) // optional: email list (never pre-ticked)
+  const needsAgreement = () => {
+    if (tab === "signup" && !agree) {
+      setError("Please confirm you're 18 or older and agree to the Terms and Privacy Policy.")
+      return true
+    }
+    return false
+  }
+
+  const handleGoogle = () => {
+    setError(null)
+    if (needsAgreement()) return
+    if (tab === "signup") rememberConsent({ terms: true, emailOptIn })
+    signInWithGoogle()
+  }
 
   const switchTab = (t: Tab) => {
     setTab(t)
@@ -25,13 +41,14 @@ export function AuthModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
     setError(null)
     setSuccess(null)
+    if (needsAgreement()) return
+    setLoading(true)
 
     const err = tab === "signin"
       ? await signIn(email, password)
-      : await signUp(email, password)
+      : await signUp(email, password, { terms: true, emailOptIn })
 
     if (err) {
       setError(err)
@@ -76,8 +93,8 @@ export function AuthModal() {
                     </h2>
                     <p className="text-white/35 text-xs mt-1 leading-relaxed">
                       {tab === "signin"
-                        ? "Sign in to search and track your matches."
-                        : "Free forever. Save results. Help train the AI."}
+                        ? "Sign in to keep searching."
+                        : "Free. Sign up for more searches."}
                     </p>
                   </div>
                   <button
@@ -114,9 +131,44 @@ export function AuthModal() {
                 </div>
 
                 <div className="px-6 pb-6 space-y-3">
+                  {/* Signup agreements: apply to Google and email sign-up alike */}
+                  {tab === "signup" && (
+                    <div className="space-y-2.5 pb-1">
+                      <label className="flex items-start gap-2.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={agree}
+                          onChange={(e) => { setAgree(e.target.checked); setError(null) }}
+                          required
+                          className="mt-0.5 size-3.5 shrink-0 accent-(--ollie-cyan)"
+                        />
+                        <span className="text-white/55 text-xs leading-relaxed">
+                          18 or older, and agree to the{" "}
+                          <a href="/terms" target="_blank" className="underline hover:text-white/80">Terms of Service</a>
+                          {" "}and{" "}
+                          <a href="/privacy" target="_blank" className="underline hover:text-white/80">Privacy Policy</a>.
+                          <span className="text-white/30"> (required)</span>
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-2.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={emailOptIn}
+                          onChange={(e) => setEmailOptIn(e.target.checked)}
+                          className="mt-0.5 size-3.5 shrink-0 accent-(--ollie-cyan)"
+                        />
+                        <span className="text-white/55 text-xs leading-relaxed">
+                          Send emails about new Ollie features and updates. Unsubscribe any time.
+                          <span className="text-white/30"> (optional)</span>
+                        </span>
+                      </label>
+                    </div>
+                  )}
+
                   {/* Google */}
                   <button
-                    onClick={signInWithGoogle}
+                    type="button"
+                    onClick={handleGoogle}
                     className="w-full flex items-center justify-center gap-2.5 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] text-white/60 text-sm font-semibold hover:bg-white/[0.06] hover:text-white hover:border-white/20 transition-all"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
@@ -196,9 +248,9 @@ export function AuthModal() {
                     </button>
                   </form>
 
-                  {tab === "signup" && (
-                    <p className="text-white/18 text-[10px] text-center leading-relaxed">
-                      By signing up you agree to our{" "}
+                  {tab === "signin" && (
+                    <p className="text-white/30 text-[10px] text-center leading-relaxed">
+                      By continuing you agree to our{" "}
                       <a href="/terms" className="underline hover:text-white/35 transition-colors">Terms</a>
                       {" "}&amp;{" "}
                       <a href="/privacy" className="underline hover:text-white/35 transition-colors">Privacy Policy</a>

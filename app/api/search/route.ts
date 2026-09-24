@@ -20,7 +20,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 })
     }
 
-    const { image } = await req.json()
+    const { image, gender } = await req.json()
+    // who to show: "any" (default), "female"/"male" (Wikidata gender), or "auto" = same apparent gender as the face
+    const genderChoice = ["auto", "female", "male", "any"].includes(gender) ? gender : "any"
 
     if (!image) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 })
@@ -67,6 +69,7 @@ export async function POST(req: NextRequest) {
     const form = new FormData()
     const bytes = Uint8Array.from(atob(parsed[2]), (c) => c.charCodeAt(0))
     form.append("file", new Blob([bytes], { type: parsed[1] }), "upload")
+    form.append("gender", genderChoice)
 
     let res: Response
     try {

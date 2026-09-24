@@ -20,11 +20,11 @@ const FAQ_ITEMS = [
   },
   {
     q: "How accurate are the results?",
-    a: "The model reaches 83%+ accuracy on standard face recognition benchmarks. Real-world accuracy depends on photo quality — front-facing, evenly lit photos give the best matches. The model improves with every training run as more feedback comes in.",
+    a: "The model scores 98.5% on the LFW face-verification benchmark. Real-world results depend on photo quality: front-facing, evenly lit photos give the best matches.",
   },
   {
     q: "My result looks wrong. What should I do?",
-    a: "Use the Feedback page to flag it. Every correction gets fed directly into the next training run — your report makes the model more accurate for everyone, not just you.",
+    a: "Try a different photo: front-facing, evenly lit, no sunglasses. If something still looks broken, use the Contact page.",
   },
   {
     q: "Does it cost anything?",

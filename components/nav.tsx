@@ -8,11 +8,15 @@ import { usePathname } from "next/navigation"
 import { useAuth } from "@/components/auth-provider"
 import { MATCH_ONLY } from "@/lib/site-config"
 
-const links = MATCH_ONLY ? [] : [
-  { label: "Match", href: "/match" },
-  { label: "Projects", href: "/projects" },
-  { label: "About", href: "/about" },
-]
+// Match-only release: no nav links for now (logo + sign-in only)
+const links = MATCH_ONLY
+  ? []
+  : [
+      { label: "Match", href: "/match" },
+      { label: "Blog", href: "/blog" },
+      { label: "Projects", href: "/projects" },
+      { label: "About", href: "/about" },
+    ]
 
 function ProfileMenu() {
   const { user, signOut, openModal } = useAuth()
@@ -101,7 +105,7 @@ export function Nav() {
       <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
-          href="/"
+          href={MATCH_ONLY ? "/match" : "/"}
           className="text-white font-black text-xl tracking-widest hover:text-white/60 transition-colors"
         >
           OLLIE
@@ -110,7 +114,7 @@ export function Nav() {
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-8">
           {links.map((link) => {
-            const isActive = pathname === link.href
+            const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
             return (
               <li key={link.href}>
                 <Link
@@ -154,7 +158,7 @@ export function Nav() {
           >
             <ul className="flex flex-col gap-1 pt-2">
               {links.map((link) => {
-                const isActive = pathname === link.href
+                const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
                 return (
                   <li key={link.href}>
                     <Link

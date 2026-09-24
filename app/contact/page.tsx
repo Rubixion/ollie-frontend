@@ -1,60 +1,54 @@
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { Mail, MessageSquare } from "lucide-react"
+import { OWNER } from "@/lib/facts"
+import { BGPattern } from "@/components/bg-pattern"
 
 export const metadata = {
   title: "Contact",
-  description: "Get in touch with the Ollie team. Questions, bug reports, feedback, or anything else.",
+  description:
+    "Email the Ollie team about questions, bugs, privacy or data-deletion requests, or removing a photo from the celebrity index.",
   alternates: { canonical: "/contact" },
 }
 
+const REASONS = [
+  ["Questions and bugs", "Something broke, a result looks wrong, or you want to know how a part of Ollie works."],
+  ["Privacy requests", "Ask what data is held about your account, or ask for your account and search records to be deleted."],
+  ["Photo removal", "If you appear in the celebrity index, or you took one of the photos, ask for it to be taken down."],
+  ["Legal and press", "Put \"Legal\" or \"Press\" in the subject line."],
+]
+
 export default function ContactPage() {
   return (
-    <main className="relative min-h-screen bg-black">
+    <>
       <Nav />
-      <div className="max-w-xl mx-auto px-6 pt-32 pb-20">
-        <div className="mb-14">
-          <h1 className="text-4xl font-black text-white mb-3 tracking-tight">Get in touch</h1>
-          <p className="text-white/40 text-base leading-relaxed">
-            Got a question, found a bug, or want to share something? We read everything.
+      <main id="main" className="relative min-h-screen bg-transparent">
+        <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
+        <div className="max-w-xl mx-auto px-6 pt-32 pb-20">
+          <h1 className="text-4xl font-black text-white mb-4 tracking-tight">Contact</h1>
+          <p className="text-white/70 text-base leading-relaxed text-pretty">
+            Ollie is built and run by a small team. Email goes straight to the people who build it.
           </p>
-        </div>
-
-        <div className="space-y-3">
-          <a
-            href="mailto:lbrad@student.ubc.ca"
-            className="flex items-start gap-5 p-6 rounded-2xl bg-white/[0.03] border border-white/8 hover:border-white/20 hover:bg-white/[0.05] transition-all group"
-          >
-            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
-              <Mail size={18} className="text-white/40 group-hover:text-white/70 transition-colors" />
-            </div>
-            <div>
-              <p className="text-white font-semibold text-sm mb-1">Email</p>
-              <p className="text-white/50 text-sm mb-1">lbrad@student.ubc.ca</p>
-              <p className="text-white/25 text-xs">Typically replied within 48 hours.</p>
-            </div>
-          </a>
 
           <a
-            href="/feedback"
-            className="flex items-start gap-5 p-6 rounded-2xl bg-white/[0.03] border border-white/8 hover:border-white/20 hover:bg-white/[0.05] transition-all group"
+            href={`mailto:${OWNER.email}`}
+            className="mt-10 block rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-(--ollie-cyan)/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ollie-cyan)"
           >
-            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
-              <MessageSquare size={18} className="text-white/40 group-hover:text-white/70 transition-colors" />
-            </div>
-            <div>
-              <p className="text-white font-semibold text-sm mb-1">Report a wrong match</p>
-              <p className="text-white/50 text-sm mb-1">Got a result that looks off? Tell us.</p>
-              <p className="text-white/25 text-xs">Every report goes straight into the next training run.</p>
-            </div>
+            <span className="block text-white/60 text-sm">Email</span>
+            <span className="mt-1 block text-lg font-semibold text-white break-all">{OWNER.email}</span>
           </a>
-        </div>
 
-        <p className="text-white/20 text-xs mt-10 leading-relaxed">
-          For legal or press enquiries, email us with the subject line &quot;Legal&quot; or &quot;Press&quot;.
-        </p>
-      </div>
+          <h2 className="mt-14 mb-5 text-lg font-bold text-white">What to email about</h2>
+          <dl className="space-y-5">
+            {REASONS.map(([title, body]) => (
+              <div key={title}>
+                <dt className="text-white text-sm font-semibold">{title}</dt>
+                <dd className="mt-1 text-white/65 text-sm leading-relaxed">{body}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </main>
       <Footer />
-    </main>
+    </>
   )
 }

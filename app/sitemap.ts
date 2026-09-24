@@ -1,28 +1,25 @@
-import { MetadataRoute } from "next"
+import type { MetadataRoute } from "next"
 import { allPosts } from "@/lib/blog-posts"
+import { SITE_URL } from "@/lib/site-config"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ollieai.app"
-const now = new Date()
+// Only URLs that return 200 (under MATCH_ONLY the other pages redirect to /match).
+// Fixed dates: bump one when that page's content really changes, so crawlers can trust lastModified.
+const MATCH_UPDATED = "2026-09-23"
+const LEGAL_UPDATED = "2026-09-23"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: siteUrl, lastModified: now, changeFrequency: "weekly", priority: 1.0 },
-    { url: `${siteUrl}/match`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${siteUrl}/ai`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${siteUrl}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${siteUrl}/feedback`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${siteUrl}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${siteUrl}/contact`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
-    { url: `${siteUrl}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${siteUrl}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+  const latestPost = allPosts.map((p) => p.updatedIsoDate ?? p.isoDate).sort().at(-1) ?? MATCH_UPDATED
+  return [
+    { url: `${SITE_URL}/match`, lastModified: MATCH_UPDATED, changeFrequency: "monthly", priority: 1.0 },
+    { url: `${SITE_URL}/blog`, lastModified: latestPost, changeFrequency: "weekly", priority: 0.8 },
+    ...allPosts.map((post) => ({
+      url: `${SITE_URL}/blog/${post.slug}`,
+      lastModified: post.updatedIsoDate ?? post.isoDate,
+      changeFrequency: "yearly" as const,
+      priority: 0.7,
+    })),
+    { url: `${SITE_URL}/contact`, lastModified: MATCH_UPDATED, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${SITE_URL}/privacy`, lastModified: LEGAL_UPDATED, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}/terms`, lastModified: LEGAL_UPDATED, changeFrequency: "yearly", priority: 0.3 },
   ]
-
-  const blogRoutes: MetadataRoute.Sitemap = allPosts.map((post) => ({
-    url: `${siteUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.isoDate),
-    changeFrequency: "yearly",
-    priority: 0.7,
-  }))
-
-  return [...staticRoutes, ...blogRoutes]
 }

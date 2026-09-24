@@ -3,14 +3,19 @@
 import Link from "next/link"
 import { MATCH_ONLY } from "@/lib/site-config"
 
-const nav = [
-  { label: "Match", href: "/match" },
-  { label: "How It Works", href: "/ai" },
-  { label: "Blog", href: "/blog" },
-  { label: "Feedback", href: "/feedback" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-]
+const nav = MATCH_ONLY
+  ? [
+      { label: "Match", href: "/match" },
+      { label: "Blog", href: "/blog" },
+      { label: "Contact", href: "/contact" },
+    ]
+  : [
+      { label: "Match", href: "/match" },
+      { label: "How It Works", href: "/ai" },
+      { label: "Blog", href: "/blog" },
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" },
+    ]
 
 const legal = [
   { label: "Privacy Policy", href: "/privacy" },
@@ -24,17 +29,17 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-10">
           {/* Brand */}
           <div>
-            <Link href="/" className="text-white font-black text-xl tracking-widest hover:text-white/60 transition-colors">
+            <Link href={MATCH_ONLY ? "/match" : "/"} className="text-white font-black text-xl tracking-widest hover:text-white/60 transition-colors">
               OLLIE
             </Link>
             <p className="text-white/30 text-xs leading-relaxed mt-3 max-w-[220px]">
-              AI-powered celebrity face matching. Upload your photo, find your twin.
+              Celebrity look-alike search. Upload a photo and see who you look like.
             </p>
           </div>
 
           {/* Links */}
           <div className="flex gap-16">
-            <div className={MATCH_ONLY ? "hidden" : undefined}>
+            <div>
               <p className="text-white/35 text-[10px] font-bold tracking-widest uppercase mb-4">Pages</p>
               <ul className="flex flex-col gap-3">
                 {nav.map((l) => (
@@ -63,10 +68,10 @@ export function Footer() {
 
         <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
           <p className="text-white/25 text-xs">
-            &copy; 2026 Ollie. Built with a custom Siamese Neural Network.
+            &copy; 2026 Ollie. Built on a face-recognition network trained from scratch.
           </p>
           <p className="text-white/20 text-xs">
-            For entertainment only. Not affiliated with any celebrity.
+            For entertainment only. Not affiliated with or endorsed by anyone shown.
           </p>
         </div>
       </div>

@@ -1,62 +1,249 @@
+import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
 import { BGPattern } from "@/components/bg-pattern"
 import { CelebrityFinder } from "@/components/celebrity-finder"
-import { MATCH_ONLY } from "@/lib/site-config"
+import { INDEX, MODEL, OWNER, SEARCH_LOG_DAYS } from "@/lib/facts"
+import { SITE_URL } from "@/lib/site-config"
+import { GUEST_LIMIT } from "@/lib/search-quota"
 
-export const metadata = {
-  title: "Celebrity Match - Ollie",
-  description: "Upload your photo and discover which celebrity you resemble using Ollie's AI face matching.",
+
+const DESCRIPTION = `Upload a photo and Ollie's face-recognition model ranks ${INDEX.celebrities} celebrities by how closely they resemble you. Free, and your photo is never stored.`
+
+export const metadata: Metadata = {
+  title: "Which Celebrity Do You Look Like? Free AI Face Match",
+  description: DESCRIPTION,
+  alternates: { canonical: "/match" },
+  openGraph: {
+    type: "website",
+    url: "/match",
+    title: "Which celebrity do you look like?",
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Which celebrity do you look like?",
+    description: DESCRIPTION,
+  },
 }
 
-export default function FindPage() {
+const STEPS = [
+  [
+    "Ollie finds your face.",
+    "InsightFace, an open-source face detector, finds the largest face in your photo and lines it up so the eyes and mouth sit in the same place every time.",
+  ],
+  [
+    "The model turns it into numbers.",
+    "Ollie's own neural network reads the aligned face and outputs 512 numbers that describe its structure. Photos of the same person land close together, and different people land further apart.",
+  ],
+  [
+    "Celebrities are ranked by closeness.",
+    `Those numbers are compared with every photo of ${INDEX.celebrities} celebrities (${INDEX.photosPerPerson} photos each). Each celebrity is scored by their single closest photo, and you see the top five with the photo that matched.`,
+  ],
+]
+
+const TIPS: { tip: string; href?: string; link?: string }[] = [
+  { tip: "Face the camera straight on. A turned head hides half of your face from the model.", href: "/blog/best-photo-celebrity-match", link: "What makes a good photo" },
+  { tip: "Use soft, even light, like a window in daytime. Poor lighting hides the structure of your face and shifts its skin tone, and both lower match quality.", href: "/blog/best-lighting-for-match", link: "Lighting guide" },
+  { tip: "Take off sunglasses and hats, and keep hair off your face.", href: "/blog/improving-ollie-results", link: "How to improve your results" },
+  { tip: "Be the only face in the photo, or the biggest one. Ollie matches the largest face it finds." },
+  { tip: "Use a sharp, recent photo without beauty filters. Filters smooth away the details the model measures." },
+]
+
+const LIMITS = [
+  [
+    "The celebrity list follows Wikipedia.",
+    "People were picked by how much their English Wikipedia page is read and how many languages cover them, so the list leans toward people famous in English-speaking countries, and roughly two-thirds of the people on it are men. Someone who is a household name in one country may be missing.",
+  ],
+  [
+    "The model learned from an uneven set of faces.",
+    "Its training photos (MS1MV2) are mostly of lighter-skinned people, so the model is likely less precise for darker skin tones. It hasn't been measured separately for each group yet.",
+  ],
+  [
+    "The percentage is for comparing, not a verdict.",
+    "It comes from the distance between your face's numbers and a celebrity's, stretched onto a 0 to 100 scale so the gaps are easier to read. Compare your five matches with each other. Don't compare scores across different photos, and don't treat them as a probability.",
+  ],
+  [
+    "It's for fun, and for adults.",
+    "Everyone in the index is an adult, and Ollie is for people aged 18 and over. It can't tell who someone is, and it shouldn't be used to try.",
+  ],
+]
+
+const FAQ: [string, string][] = [
+  [
+    "How accurate is Ollie?",
+    `Ollie's face-recognition model scores ${MODEL.lfw} on Labeled Faces in the Wild (LFW), a standard test that asks whether two photos show the same person, and none of the people in LFW were in its training data. Lookalike matching has no right answer, so there's no accuracy figure for it. Your top match is the celebrity whose face the model places closest to yours, and the percentage is only meant for comparing your five results with each other.`,
+  ],
+  [
+    "Is Ollie free?",
+    `Yes. You get ${GUEST_LIMIT} free searches without an account. After that, sign in with email or Google to keep searching; accounts are free too. There are no ads and nothing to buy. The limits exist because every search runs a neural network on a paid server.`,
+  ],
+  [
+    "Do you keep my photo?",
+    `No. Your photo is held in memory on the matching server only while your search runs, then discarded. It is never saved, logged, shown to anyone, or used to train the model, and neither are the numbers made from your face or your results. Ollie keeps a small record of each search (the time, your account or an IP-based ID, and your IP address) to enforce the free-search limit, and deletes it after ${SEARCH_LOG_DAYS} days.`,
+  ],
+  [
+    "Why do I get different results with different photos?",
+    "Because Ollie reads the photo, not you. Lighting, head angle, expression, glasses, distance from the camera and image quality all change how your face looks in pixels, which changes the numbers the model produces. Celebrities near the top often swap places between photos. For the most reliable result, use a sharp, front-facing photo in soft light, and try two or three photos to see who keeps showing up.",
+  ],
+  [
+    "Does it work for women?",
+    "Yes. The celebrity index includes women and men, and the model was trained on photos of both. By default Ollie ranks everyone. To see only female or only male celebrities, pick one in the menu above Find my match before you search.",
+  ],
+  [
+    "Which celebrities are included?",
+    `About ${INDEX.celebrities} of the most famous living adults: actors, musicians, athletes, politicians, business people and online creators. They were chosen by how much their English Wikipedia page was read over six months and how many language editions of Wikipedia cover them. People known mainly for crimes or adult films are left out. Every photo is a freely licensed picture from ${INDEX.source}, credited under your matches.`,
+  ],
+  [
+    "Can I use a group photo?",
+    "You can, but Ollie only matches the largest face in the photo. If someone else's face is bigger or closer to the camera, you'll get their matches instead of yours. Crop the photo to just your face first. It takes a few seconds and gives a cleaner result.",
+  ],
+  [
+    "How is Ollie different from other lookalike apps?",
+    `The face-recognition model behind Ollie was written and trained from scratch by the Ollie team, instead of calling a commercial face-recognition service. Every celebrity photo is openly licensed and credited, and your photo is never stored. It's a small project, so the celebrity list is smaller than a big company's would be, and its limitations are listed on this page.`,
+  ],
+]
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Ollie",
+    url: `${SITE_URL}/match`,
+    description: DESCRIPTION,
+    applicationCategory: "EntertainmentApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    featureList: [
+      `Ranks ${INDEX.celebrities} celebrities by facial similarity`,
+      "Top five matches with credited, openly licensed photos",
+      "Optional filter for female or male celebrities",
+      "Uploaded photos are never stored",
+      "Shareable result image made on your device",
+    ],
+    creator: { "@type": "Organization", name: "Ollie" },
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+  },
+]
+
+const h2 = "text-2xl font-black text-white tracking-tight text-balance"
+const body = "text-white/70 leading-relaxed text-pretty"
+const link = "text-(--ollie-cyan) underline underline-offset-4 hover:text-white"
+
+export default function MatchPage() {
   return (
-    <main className="relative min-h-screen bg-transparent">
-      <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
+    <>
       <Nav />
+      <main id="main" className="relative min-h-screen bg-transparent">
+        <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
 
-      {/* Tips — shown before the finder so users see them first */}
-      <div className={`pt-28 max-w-4xl mx-auto px-6 pb-6 ${MATCH_ONLY ? "hidden" : ""}`}>
-        <div className="flex flex-col sm:flex-row gap-4">
-          {[
-            {
-              slug: "best-photo-celebrity-match",
-              title: "Best photos for matching",
-              desc: "Lighting, framing, and settings that improve accuracy.",
-            },
-            {
-              slug: "best-lighting-for-match",
-              title: "Lighting guide",
-              desc: "From daylight to ring lights, ranked by match quality.",
-            },
-            {
-              slug: "improving-ollie-results",
-              title: "How to improve results",
-              desc: "What to avoid and what helps most.",
-            },
-          ].map(({ slug, title, desc }) => (
-            <Link
-              key={slug}
-              href={`/blog/${slug}`}
-              className="flex-1 block px-4 py-3.5 rounded-xl bg-white/[0.02] border border-white/8 hover:border-white/20 hover:bg-white/[0.04] transition-all group"
-            >
-              <h3 className="text-xs font-bold text-white/60 group-hover:text-white/90 transition-colors leading-snug mb-1">
-                {title}
-              </h3>
-              <p className="text-white/25 text-xs leading-relaxed">{desc}</p>
-              <span className="inline-flex items-center gap-1 text-white/20 text-xs mt-2 group-hover:text-white/40 transition-colors">
-                Read <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
-              </span>
-            </Link>
-          ))}
+        <CelebrityFinder />
+
+        {/* Server-rendered so crawlers, AI answer engines and no-JS visitors get the full explanation */}
+        <div className="relative max-w-3xl mx-auto px-6 pb-24">
+          <section aria-labelledby="how" className="border-t border-white/10 pt-14">
+            <h2 id="how" className={h2}>How Ollie matches your face</h2>
+            <ol className="mt-6 space-y-5">
+              {STEPS.map(([title, text], i) => (
+                <li key={title} className="flex gap-4">
+                  <span className="text-(--ollie-cyan) font-black tabular-nums leading-relaxed">{i + 1}</span>
+                  <p className={body}>
+                    <strong className="text-white font-semibold">{title}</strong> {text}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section aria-labelledby="tips" className="mt-16 border-t border-white/10 pt-14">
+            <h2 id="tips" className={h2}>Getting a better match</h2>
+            <ul className="mt-6 space-y-4 list-disc pl-5 marker:text-(--ollie-cyan)">
+              {TIPS.map(({ tip, href, link: label }) => (
+                <li key={tip} className={body}>
+                  {tip}
+                  {href && (
+                    <>
+                      {" "}
+                      <Link href={href} className={link}>{label}</Link>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section aria-labelledby="limits" className="mt-16 border-t border-white/10 pt-14">
+            <h2 id="limits" className={h2}>What Ollie gets wrong</h2>
+            <div className="mt-6 space-y-5">
+              {LIMITS.map(([title, text]) => (
+                <p key={title} className={body}>
+                  <strong className="text-white font-semibold">{title}</strong> {text}
+                </p>
+              ))}
+            </div>
+          </section>
+
+          <section aria-labelledby="privacy" className="mt-16 border-t border-white/10 pt-14">
+            <h2 id="privacy" className={h2}>What happens to your photo</h2>
+            <div className="mt-6 space-y-4">
+              <p className={body}>
+                Your photo is shrunk in your browser, sent over an encrypted connection to Ollie&apos;s matching server,
+                and held in memory for the few seconds the search takes. Then it&apos;s gone. It is never saved, logged,
+                or used to train the model, and nobody looks at it.
+              </p>
+              <p className={body}>
+                For each search Ollie records the time, your account (or an ID made from your IP address if you
+                aren&apos;t signed in) and your IP address, so the free-search limit works. Those records are deleted
+                after {SEARCH_LOG_DAYS} days. The share image is made on your device, and your own photo is only on it
+                if you tick the box.
+              </p>
+              <p className={body}>
+                The details, including the companies that run the servers, are in the{" "}
+                <Link href="/privacy" className={link}>privacy policy</Link>.
+              </p>
+            </div>
+          </section>
+
+          <section aria-labelledby="faq" className="mt-16 border-t border-white/10 pt-14">
+            <h2 id="faq" className={h2}>Questions</h2>
+            <div className="mt-6 space-y-8">
+              {FAQ.map(([q, a]) => (
+                <div key={q}>
+                  <h3 className="text-lg font-bold text-white text-balance">{q}</h3>
+                  <p className={`mt-2 ${body}`}>{a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section aria-labelledby="model" className="mt-16 border-t border-white/10 pt-14">
+            <h2 id="model" className={h2}>About the model</h2>
+            <p className={`mt-6 ${body}`}>
+              The Ollie team wrote and trained Ollie&apos;s face-recognition model from scratch in PyTorch: {MODEL.summary}, on{" "}
+              {MODEL.trainingSet}. Training took {MODEL.trainingTime}. It scores {MODEL.lfw} on the LFW benchmark, with
+              every LFW identity removed from the training data first so the test is fair. InsightFace handles finding
+              and aligning the face; everything after that is Ollie&apos;s own model.
+            </p>
+            <p className="mt-6 text-sm text-white/60">
+              {OWNER.name}, <Link href="/contact" className={link}>contact</Link>.
+            </p>
+          </section>
         </div>
-      </div>
 
-      <CelebrityFinder />
-
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+        />
+      </main>
       <Footer />
-    </main>
+    </>
   )
 }

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -136,6 +135,8 @@
     }
 }
 
+/* ponytail: Press Start 2P was a render-blocking Google Fonts import on every page for the hidden /info page.
+   If /info comes back, load it there with next/font. */
 .retro {
   font-family: 'Press Start 2P', monospace;
 }

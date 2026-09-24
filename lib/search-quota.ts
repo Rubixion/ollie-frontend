@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js"
 
 // Search limits, stored in Supabase (see supabase/search_limits.sql) because Cloudflare Workers
 // keep no memory between requests, so an in-process counter can't enforce anything.
+// "Lifetime" below really means 90 days: search_log rows are purged after that (supabase/search_limits.sql).
 export const GUEST_LIMIT = 5          // free searches per IP address without an account (lifetime)
 export const USER_LIMIT = 100         // searches per account, kept high and not shown to users (token cost guard, not a real cap)...
 const USER_WINDOW: string | null = null // ...ever (null). Use e.g. "24 hours" for a daily allowance.

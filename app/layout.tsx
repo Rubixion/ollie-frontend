@@ -1,54 +1,47 @@
-import type { Metadata } from "next"
-import { Outfit, JetBrains_Mono } from "next/font/google"
+import type { Metadata, Viewport } from "next"
+import { Outfit } from "next/font/google"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth-provider"
 import { AuthModal } from "@/components/auth-modal"
 import { cn } from "@/lib/utils"
+import { SITE_URL } from "@/lib/site-config"
 
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "900"], // only the weights in use (docs/DESIGN.md)
 })
 
-const fontMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "500", "600"],
-})
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ollieai.app"
+const description =
+  "Upload a photo and see which celebrities you look like. Ollie's face-recognition network compares your face with thousands of celebrity photos. Free to try."
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Ollie - Find Your Celebrity Lookalike",
+    default: "Ollie: Which Celebrity Do You Look Like?",
     template: "%s | Ollie",
   },
-  description: "Upload your photo and discover which celebrity you most resemble. Free AI-powered celebrity face matching using deep learning and facial recognition technology.",
-  keywords: ["celebrity lookalike", "celebrity face match", "AI face recognition", "who do I look like", "celebrity twin finder", "facial recognition AI", "celebrity doppelganger"],
+  description,
+  applicationName: "Ollie",
   openGraph: {
     type: "website",
     siteName: "Ollie",
-    title: "Ollie - Find Your Celebrity Lookalike",
-    description: "Upload your photo and discover which celebrity you most resemble. Free AI-powered celebrity face matching.",
-    url: siteUrl,
+    title: "Ollie: Which Celebrity Do You Look Like?",
+    description,
+    url: SITE_URL,
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ollie - Find Your Celebrity Lookalike",
-    description: "Upload your photo and discover which celebrity you most resemble. Free AI-powered celebrity face matching.",
+    title: "Ollie: Which Celebrity Do You Look Like?",
+    description,
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
-  },
-  alternates: { canonical: siteUrl },
+  // one directive for every crawler; each page sets its own canonical (none is inherited from here)
+  robots: { index: true, follow: true, "max-image-preview": "large" },
 }
+
+export const viewport: Viewport = { themeColor: "#000000", colorScheme: "dark" }
 
 export default function RootLayout({
   children,
@@ -58,45 +51,44 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={cn("dark antialiased", fontMono.variable, outfit.variable)}
+      className={cn("dark antialiased", outfit.variable)}
     >
       <body suppressHydrationWarning>
-        <ThemeProvider defaultTheme="dark" enableSystem={false}>
-          <AuthProvider>
-            {children}
-            <AuthModal />
-          </AuthProvider>
-        </ThemeProvider>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-xl focus:bg-(--ollie-cyan) focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-black"
+        >
+          Skip to content
+        </a>
+        <AuthProvider>
+          {children}
+          <AuthModal />
+        </AuthProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "Ollie",
-              "url": siteUrl,
-              "description": "Ollie builds AI-powered facial recognition tools, starting with a celebrity face matching app backed by a custom neural network.",
-              "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "url": `${siteUrl}/contact` },
-              "knowsAbout": ["Facial recognition", "Deep learning", "Celebrity face matching", "Neural networks"],
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              "name": "Ollie",
-              "url": siteUrl,
-              "description": "AI-powered celebrity face matching. Upload your photo and discover which celebrity you most resemble.",
-              "applicationCategory": "EntertainmentApplication",
-              "operatingSystem": "Web",
-              "browserRequirements": "Requires JavaScript",
-              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-              "creator": { "@type": "Organization", "name": "Ollie", "url": siteUrl },
-              "featureList": ["Celebrity face matching", "AI facial recognition", "Siamese neural network", "Real-time results"],
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": `${SITE_URL}/#organization`,
+                  name: "Ollie",
+                  url: SITE_URL,
+                  logo: `${SITE_URL}/icon.svg`,
+                  description:
+                    "Ollie is a celebrity look-alike search built on a face-recognition neural network trained from scratch.",
+                  knowsAbout: ["Face recognition", "Deep learning", "Convolutional neural networks", "Celebrity look-alikes"],
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": `${SITE_URL}/#website`,
+                  name: "Ollie",
+                  url: SITE_URL,
+                  inLanguage: "en",
+                  publisher: { "@id": `${SITE_URL}/#organization` },
+                },
+              ],
             }),
           }}
         />

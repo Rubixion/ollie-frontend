@@ -297,10 +297,6 @@ function ArchitectureScroll() {
           </div>
         </div>
 
-        <Callout>
-          When you give Ollie feedback, it isn&apos;t RLHF — your correction is treated as a labelled training example,
-          the same as the original dataset. It goes straight into the next training run without a reward model in between.
-        </Callout>
       </Section>
 
       {/* 03 ── CNNs */}
@@ -608,48 +604,9 @@ function ArchitectureScroll2() {
         </div>
       </Section>
 
-      {/* 08 ── Feedback */}
-      <Section id="s-feedback" num="08" title="How does Ollie get better after it's deployed?">
-        <p className="text-white/60 text-base leading-relaxed mb-6">
-          The model isn&apos;t frozen after training. When you mark a match as wrong, that correction is stored as a
-          labelled training pair. The next time the model is retrained, it sees your feedback alongside the original
-          85k-identity dataset — and adjusts itself so it won&apos;t make the same mistake on faces like yours.
-        </p>
 
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
-          <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/8">
-            <div className="text-white font-bold text-sm mb-3">What happens when you submit feedback</div>
-            <ol className="text-white/40 text-sm leading-relaxed list-decimal list-inside space-y-2">
-              <li>Your face + the wrong celebrity are saved as a pair</li>
-              <li>Labelled as &quot;these are different people&quot;</li>
-              <li>Added to the training data for the next run</li>
-              <li>CosFace loss pushes those embeddings apart</li>
-              <li>Every future user benefits from the correction</li>
-            </ol>
-          </div>
-          <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/8">
-            <div className="text-white font-bold text-sm mb-3">Why this isn&apos;t RLHF</div>
-            <p className="text-white/40 text-sm leading-relaxed">
-              RLHF requires a separate reward model, preference rankings, and PPO training — a pipeline used by
-              large language models. Ollie&apos;s feedback is simpler and more direct: your correction is just a new
-              training example with a hard label. No reward model, no subjective scoring.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex">
-          <Link
-            href="/feedback"
-            className="group flex items-center gap-2 px-6 py-3 rounded-full bg-(--ollie-cyan)/10 border border-(--ollie-cyan)/30 text-(--ollie-cyan) text-sm font-semibold hover:bg-(--ollie-cyan)/20 transition-all"
-          >
-            Submit a correction
-            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-      </Section>
-
-      {/* 09 ── Training numbers */}
-      <Section id="s-training" num="09" title="How long did it take to train?">
+      {/* 08 ── Training numbers */}
+      <Section id="s-training" num="08" title="How long did it take to train?">
         <p className="text-white/60 text-base leading-relaxed mb-6">
           Training a neural network is not like installing software. It&apos;s a process that runs for days,
           showing the network millions of examples and adjusting billions of weights, one batch at a time.
@@ -692,8 +649,8 @@ function ArchitectureScroll2() {
         </p>
       </Section>
 
-      {/* 10 ── Blog */}
-      <Section id="s-learnmore" num="10" title="Go deeper in the blog">
+      {/* 09 ── Blog */}
+      <Section id="s-learnmore" num="09" title="Go deeper in the blog">
         <p className="text-white/60 text-base leading-relaxed mb-6">
           These articles expand on each concept above, with more detail on the algorithms and research behind Ollie.
         </p>
@@ -803,7 +760,7 @@ export default function NeuralPage() {
         <NeuralDeepViz />
       </motion.section>
 
-      {/* Remaining sections: architecture, libraries, pipeline, feedback, stats, blog */}
+      {/* Remaining sections: architecture, libraries, pipeline, stats, blog */}
       <ArchitectureScroll2 />
 
       <Footer />

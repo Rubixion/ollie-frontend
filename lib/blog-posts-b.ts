@@ -15,36 +15,36 @@ export const postsB: BlogPost[] = [
       {
         h2: "The Familiar/Unfamiliar Divide",
         paragraphs: [
-          "Face recognition researchers draw a fundamental distinction between two very different tasks: recognising a <strong>familiar</strong> face you have seen many times, and matching an <strong>unfamiliar</strong> face from a photo against another photo of the same person. The first task humans do extraordinarily well,you can recognise a close friend even from a blurry, low-quality image taken at an extreme angle. The second task humans do surprisingly poorly.",
-          "In controlled experiments where participants decide whether two photos show the same person,neither of whom they know,error rates typically range from 20% to 30% on challenging pairs, even under unhurried laboratory conditions. For unfamiliar faces photographed under varied lighting and pose conditions, humans are working essentially from appearance rather than identity, which is a much weaker signal.",
+          "Face recognition researchers draw a fundamental distinction between two very different tasks: recognising a <strong>familiar</strong> face you have seen many times, and matching an <strong>unfamiliar</strong> face from a photo against another photo of the same person. The first task humans do extraordinarily well, you can recognise a close friend even from a blurry, low-quality image taken at an extreme angle. The second task humans do surprisingly poorly.",
+          "In controlled experiments where participants decide whether two photos show the same person, neither of whom they know, error rates typically range from 20% to 30% on challenging pairs, even under unhurried laboratory conditions. For unfamiliar faces photographed under varied lighting and pose conditions, humans are working essentially from appearance rather than identity, which is a much weaker signal.",
         ],
       },
       {
         h2: "Why Familiarity Changes Everything",
         paragraphs: [
-          "The cognitive difference between familiar and unfamiliar face recognition is not merely a matter of degree,it involves qualitatively different neural processes. Familiar face recognition draws on rich stored representations built from many exposures: seeing the same person in different lighting, from different angles, in different emotional states. This representation is robust to surface variation because it averages over many instances.",
-          "Unfamiliar face matching relies only on a single visual instance. Observers must compare pixel patterns rather than accessing a stored identity representation. Under these conditions, superficial appearance features,hairstyle, skin tone, image quality,become dominant, and the subtle geometric identity cues that make recognition reliable are much harder to access.",
+          "The cognitive difference between familiar and unfamiliar face recognition is not merely a matter of degree, it involves qualitatively different neural processes. Familiar face recognition draws on rich stored representations built from many exposures: seeing the same person in different lighting, from different angles, in different emotional states. This representation is robust to surface variation because it averages over many instances.",
+          "Unfamiliar face matching relies only on a single visual instance. Observers must compare pixel patterns rather than accessing a stored identity representation. Under these conditions, superficial appearance features, hairstyle, skin tone, image quality, become dominant, and the subtle geometric identity cues that make recognition reliable are much harder to access.",
         ],
       },
       {
         h2: "What the Research Shows",
         paragraphs: [
-          "A series of landmark studies in the 2010s established the scale of the problem. Burton et al. (2010) showed that university students matched unfamiliar face photographs with accuracy around 70% on difficult pairs,substantially below chance on some specific conditions. Jenkins et al. (2011) showed that when the same person is photographed in many different conditions, naïve observers will often sort the photos as showing multiple different people rather than one person.",
-          "The practical implications are significant. Passport control officers, police officers, and bank tellers are regularly asked to make identity verification decisions from photos. Studies of these professional groups show modest accuracy advantages over naïve observers,between 5% and 15% depending on task and training,far below the accuracy of automated face recognition systems on controlled inputs.",
+          "A series of landmark studies in the 2010s established the scale of the problem. Burton et al. (2010) showed that university students matched unfamiliar face photographs with accuracy around 70% on difficult pairs, substantially below chance on some specific conditions. Jenkins et al. (2011) showed that when the same person is photographed in many different conditions, naïve observers will often sort the photos as showing multiple different people rather than one person.",
+          "The practical implications are significant. Passport control officers, police officers, and bank tellers are regularly asked to make identity verification decisions from photos. Studies of these professional groups show modest accuracy advantages over naïve observers, between 5% and 15% depending on task and training, far below the accuracy of automated face recognition systems on controlled inputs.",
         ],
       },
     ],
     faqs: [
       { q: "Why are humans worse at matching unfamiliar faces than familiar ones?", a: "Familiar face recognition uses rich stored representations built from many exposures. Unfamiliar face matching relies on a single visual instance, making it susceptible to surface appearance changes and image quality variation." },
       { q: "How accurate are humans at matching unfamiliar face photos?", a: "Typically 70–80% on controlled experimental pairs, dropping further under time pressure, stress, or with degraded image quality. Trained professionals show modest improvements over naïve observers." },
-      { q: "Do professionals (police, passport control) perform better at face matching?", a: "Only slightly,typically 5–15% better than untrained observers. This is far below the accuracy of well-calibrated automated systems on controlled inputs." },
+      { q: "Do professionals (police, passport control) perform better at face matching?", a: "Only slightly, typically 5–15% better than untrained observers. This is far below the accuracy of well-calibrated automated systems on controlled inputs." },
     ],
     relatedSlugs: ["why-ai-beats-human-eye", "prosopagnosia", "own-race-effect"],
   },
   {
     slug: "prosopagnosia",
     title: "Prosopagnosia: What Face Blindness Reveals About How We See Faces",
-    excerpt: "People with prosopagnosia cannot recognise faces,even their own. This rare condition illuminates how dedicated the brain's face processing system is, and what happens when it fails.",
+    excerpt: "People with prosopagnosia cannot recognise faces, even their own. This rare condition illuminates how dedicated the brain's face processing system is, and what happens when it fails.",
     date: "April 2026",
     isoDate: "2026-04-26",
     readTime: "5 min read",
@@ -55,21 +55,21 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Is Prosopagnosia?",
         paragraphs: [
-          "<strong>Prosopagnosia</strong>,often called face blindness,is a neurological condition characterised by inability to recognise faces, including, in severe cases, the person's own face in a mirror. People with prosopagnosia typically have normal vision and can describe individual facial features clearly, but cannot use that information to identify who a face belongs to. They compensate by relying on other cues: voice, gait, hairstyle, clothing, and context.",
-          "The condition exists on a spectrum. Acquired prosopagnosia results from brain damage,typically to the right fusiform gyrus or nearby occipitotemporal regions,following stroke or traumatic brain injury. Developmental prosopagnosia arises without brain damage, as a failure of the face processing system to develop normally. Recent research suggests developmental prosopagnosia is more common than previously thought, affecting perhaps 2–2.5% of the population to some degree.",
+          "<strong>Prosopagnosia</strong>, often called face blindness, is a neurological condition characterised by inability to recognise faces, including, in severe cases, the person's own face in a mirror. People with prosopagnosia typically have normal vision and can describe individual facial features clearly, but cannot use that information to identify who a face belongs to. They compensate by relying on other cues: voice, gait, hairstyle, clothing, and context.",
+          "The condition exists on a spectrum. Acquired prosopagnosia results from brain damage, typically to the right fusiform gyrus or nearby occipitotemporal regions, following stroke or traumatic brain injury. Developmental prosopagnosia arises without brain damage, as a failure of the face processing system to develop normally. Recent research suggests developmental prosopagnosia is more common than previously thought, affecting perhaps 2–2.5% of the population to some degree.",
         ],
       },
       {
         h2: "The Fusiform Face Area",
         paragraphs: [
           "The primary neural substrate for face recognition is the <strong>fusiform face area (FFA)</strong>, a region of the fusiform gyrus in the inferior temporal cortex that shows selective activation for face stimuli. In prosopagnosia, FFA activation during face viewing is typically reduced or abnormal. Damage to the FFA, or disrupted connectivity between the FFA and downstream memory regions, produces the characteristic inability to recognise familiar faces.",
-          "The FFA's functional specialisation for faces has been debated,some researchers argue it responds to any object category for which the observer has developed expert-level discrimination, not just faces. But the clinical evidence from prosopagnosia is clear: damage to this specific region selectively impairs face recognition while leaving object recognition largely intact. The specialisation is real, whatever its ultimate computational basis.",
+          "The FFA's functional specialisation for faces has been debated, some researchers argue it responds to any object category for which the observer has developed expert-level discrimination, not just faces. But the clinical evidence from prosopagnosia is clear: damage to this specific region selectively impairs face recognition while leaving object recognition largely intact. The specialisation is real, whatever its ultimate computational basis.",
         ],
       },
       {
         h2: "What Prosopagnosia Teaches Us About AI",
         paragraphs: [
-          "Prosopagnosia provides a natural experiment in selective face recognition failure. The condition reveals that face recognition is computationally distinct from object recognition,it is not simply difficult object recognition but a separate capability with its own dedicated neural hardware. When that hardware is damaged or absent, identity cannot be extracted from appearance even when all the visual details are perceived correctly.",
+          "Prosopagnosia provides a natural experiment in selective face recognition failure. The condition reveals that face recognition is computationally distinct from object recognition, it is not simply difficult object recognition but a separate capability with its own dedicated neural hardware. When that hardware is damaged or absent, identity cannot be extracted from appearance even when all the visual details are perceived correctly.",
           "AI face recognition systems are analogously modular: the face embedding network is a specialised component trained exclusively for the face recognition task. Its selectivity and power come from this specialisation, just as the FFA's power comes from its selective tuning. The parallel suggests that building highly capable face recognition requires dedicated, specialised systems rather than general-purpose visual intelligence.",
         ],
       },
@@ -84,7 +84,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "pareidolia-faces-everywhere",
     title: "Why Your Brain Sees Faces in Toast, Clouds, and Power Sockets",
-    excerpt: "Pareidolia,the tendency to see faces in random patterns,reveals how fundamentally biased the brain is toward face detection. Here is the neuroscience behind this quirk.",
+    excerpt: "Pareidolia, the tendency to see faces in random patterns, reveals how fundamentally biased the brain is toward face detection. Here is the neuroscience behind this quirk.",
     date: "April 2026",
     isoDate: "2026-04-24",
     readTime: "4 min read",
@@ -95,27 +95,27 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Is Pareidolia?",
         paragraphs: [
-          "<strong>Pareidolia</strong> is the perceptual phenomenon where a vague or random stimulus is interpreted as a meaningful pattern,most commonly, a face. You have experienced it: a power socket that looks like a surprised face, a cloud that resembles a person, a piece of toast with an arrangement of browning that suggests eyes and a mouth. These percepts arise automatically and irresistibly; you cannot choose not to see the face once the configuration is triggered.",
+          "<strong>Pareidolia</strong> is the perceptual phenomenon where a vague or random stimulus is interpreted as a meaningful pattern, most commonly, a face. You have experienced it: a power socket that looks like a surprised face, a cloud that resembles a person, a piece of toast with an arrangement of browning that suggests eyes and a mouth. These percepts arise automatically and irresistibly; you cannot choose not to see the face once the configuration is triggered.",
           "Pareidolia with faces is the most common form, though similar effects occur with other meaningful patterns. The face-specific version is called <strong>face pareidolia</strong> and provides a direct window into the architecture of the brain's face detection system.",
         ],
       },
       {
         h2: "The Bias Toward Face Detection",
         paragraphs: [
-          "Evolutionary pressures have produced a <strong>face detection system</strong> strongly biased toward false positives over false negatives. Missing a face,failing to detect a predator or a threatening conspecific,was potentially fatal. Falsely seeing a face in a rock or cloud was harmless. This asymmetric cost structure drove the evolution of a detector tuned for very high sensitivity at the expense of specificity.",
+          "Evolutionary pressures have produced a <strong>face detection system</strong> strongly biased toward false positives over false negatives. Missing a face, failing to detect a predator or a threatening conspecific, was potentially fatal. Falsely seeing a face in a rock or cloud was harmless. This asymmetric cost structure drove the evolution of a detector tuned for very high sensitivity at the expense of specificity.",
           "The result is a system that triggers on any configuration meeting minimal face-like criteria: two roughly symmetric spots (eyes) above a horizontal feature (mouth), arranged within an oval region (head). This minimal trigger specification is effective for real faces but also activates for many non-face stimuli that happen to share this crude layout.",
         ],
       },
       {
         h2: "Neural Mechanisms",
         paragraphs: [
-          "Brain imaging studies have shown that face pareidolia activates the <strong>fusiform face area</strong>,the same region that processes real faces. When participants view noise images that have been rated as face-like, FFA activation is significantly higher than for matched noise images rated as non-face-like. The face processing system responds to the perceived face, not the actual stimulus.",
-          "Furthermore, the activity pattern in FFA during pareidolia resembles the pattern during real face viewing, not random object viewing. This suggests that the high-level face representation system is genuinely engaged,the percept is not just a low-level pattern match but an activation of face-specific processing machinery.",
+          "Brain imaging studies have shown that face pareidolia activates the <strong>fusiform face area</strong>, the same region that processes real faces. When participants view noise images that have been rated as face-like, FFA activation is significantly higher than for matched noise images rated as non-face-like. The face processing system responds to the perceived face, not the actual stimulus.",
+          "Furthermore, the activity pattern in FFA during pareidolia resembles the pattern during real face viewing, not random object viewing. This suggests that the high-level face representation system is genuinely engaged, the percept is not just a low-level pattern match but an activation of face-specific processing machinery.",
         ],
       },
     ],
     faqs: [
-      { q: "What is pareidolia?", a: "Pareidolia is the tendency to perceive meaningful patterns,especially faces,in random visual stimuli. It is caused by a strongly over-sensitive face detection system evolved for safety in ancestral environments." },
+      { q: "What is pareidolia?", a: "Pareidolia is the tendency to perceive meaningful patterns, especially faces, in random visual stimuli. It is caused by a strongly over-sensitive face detection system evolved for safety in ancestral environments." },
       { q: "Why do we see faces in random objects?", a: "The face detection system is tuned for high sensitivity (to avoid missing real faces) at the expense of specificity. Any configuration with two roughly symmetric spots above a horizontal feature triggers it." },
       { q: "Is pareidolia a sign of mental illness?", a: "No. Pareidolia is a normal perceptual phenomenon experienced by virtually everyone. It reflects the architecture of a highly tuned face detection system, not any pathological condition." },
     ],
@@ -126,6 +126,7 @@ export const postsB: BlogPost[] = [
     title: "The Own-Race Effect: Why We Recognise Same-Race Faces Better",
     excerpt: "People consistently recognise faces from their own racial group more accurately than faces from other groups. Here is what this cross-race effect means for AI face recognition.",
     date: "April 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-04-22",
     readTime: "4 min read",
     category: "Psychology",
@@ -135,7 +136,7 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Is the Own-Race Effect?",
         paragraphs: [
-          "The <strong>own-race effect</strong>,also called the cross-race effect or other-race effect,is one of the most replicated findings in face recognition research. People are more accurate at recognising and distinguishing faces from their own racial group than faces from other racial groups. This effect occurs in memory tests (recognising a face seen previously), in matching tests (deciding whether two photos show the same person), and in eyewitness identification tasks.",
+          "The <strong>own-race effect</strong>, also called the cross-race effect or other-race effect, is one of the most replicated findings in face recognition research. People are more accurate at recognising and distinguishing faces from their own racial group than faces from other racial groups. This effect occurs in memory tests (recognising a face seen previously), in matching tests (deciding whether two photos show the same person), and in eyewitness identification tasks.",
           "The magnitude of the effect is substantial. Across many studies, within-race recognition accuracy averages about 10–15 percentage points higher than cross-race accuracy under matched conditions. This is a large and practically significant difference, with direct implications for eyewitness reliability and for the design of face recognition systems.",
         ],
       },
@@ -150,7 +151,7 @@ export const postsB: BlogPost[] = [
         h2: "Implications for AI Systems",
         paragraphs: [
           "The own-race effect in humans has a direct analogue in AI face recognition: training data bias. A model trained predominantly on faces from one demographic group will have better-calibrated representations for that group, because the training objective sees more face pairs within the well-represented group and receives more specific gradient signal for their within-group differences.",
-          "Ollie uses VGGFace2, which covers over 9,000 identities with deliberate demographic diversity across regions, ages, and ethnicities. Achieving good performance across all demographic groups requires not just diversity in the training data, but balance,ensuring that the loss function receives comparable numbers of within-group comparison examples from all groups represented in the database.",
+          "Ollie's network was trained on MS1MV2, about 5.8 million photos of 85,742 people from many regions, ages and backgrounds. Achieving good performance across all demographic groups requires not just diversity in the training data, but balance, ensuring that the loss function receives comparable numbers of within-group comparison examples from all groups represented in the database.",
         ],
       },
     ],
@@ -164,7 +165,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "your-own-face",
     title: "Why You Don't Recognise Your Own Face (At First)",
-    excerpt: "Most people are poor judges of their own appearance. You see your face more often in mirrors than in photos,and those are very different experiences. Here is the psychology of self-face recognition.",
+    excerpt: "Most people are poor judges of their own appearance. You see your face more often in mirrors than in photos, and those are very different experiences. Here is the psychology of self-face recognition.",
     date: "April 2026",
     isoDate: "2026-04-20",
     readTime: "4 min read",
@@ -175,8 +176,8 @@ export const postsB: BlogPost[] = [
       {
         h2: "Mirror vs Photo: Two Different Faces",
         paragraphs: [
-          "Most people are more familiar with their mirror image than with their photographed face. A mirror always shows a <strong>laterally reversed</strong> image,left and right are flipped compared to what others see. Over years of daily mirror use, this reversed image becomes the reference representation for self-appearance. When you then see a non-reversed photo,what others see,slight asymmetries and unfamiliar feature orientations can make the photo feel wrong or unflattering, even though it is the accurate version.",
-          "This is one reason people are often surprised by their celebrity match,the photo they uploaded may not match their mental self-image, which is dominated by the mirror version. The AI processes what is actually in the photo; your judgment of the result compares it to a mental image that may be laterally flipped relative to objective reality.",
+          "Most people are more familiar with their mirror image than with their photographed face. A mirror always shows a <strong>laterally reversed</strong> image, left and right are flipped compared to what others see. Over years of daily mirror use, this reversed image becomes the reference representation for self-appearance. When you then see a non-reversed photo, what others see, slight asymmetries and unfamiliar feature orientations can make the photo feel wrong or unflattering, even though it is the accurate version.",
+          "This is one reason people are often surprised by their celebrity match, the photo they uploaded may not match their mental self-image, which is dominated by the mirror version. The AI processes what is actually in the photo; your judgment of the result compares it to a mental image that may be laterally flipped relative to objective reality.",
         ],
       },
       {
@@ -203,7 +204,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "baby-face-features",
     title: "Baby Face Features: Why Some Adults Score High Matches with Youthful Celebrities",
-    excerpt: "Baby-faced adults have large eyes, small noses, rounded chins, and high foreheads. These features map predictably onto specific celebrities,and specific audience reactions.",
+    excerpt: "Baby-faced adults have large eyes, small noses, rounded chins, and high foreheads. These features map predictably onto specific celebrities, and specific audience reactions.",
     date: "April 2026",
     isoDate: "2026-04-18",
     readTime: "4 min read",
@@ -215,21 +216,21 @@ export const postsB: BlogPost[] = [
         h2: "What Are Baby Face Features?",
         paragraphs: [
           "The <strong>baby face effect</strong>, identified by Robert Cialdini and systematically studied by Leslie Zebrowitz, describes a set of facial features that trigger caretaking responses associated with infant appearance: large eyes relative to face size, small upturned nose, full lips, rounded chin, and high forehead. These features are characteristic of human infants and young children across all cultures and are reliably read as signals of youth and approachability.",
-          "Some adults retain these features into adulthood,a biological phenomenon called neoteny. Baby-faced adults are reliably perceived as more trustworthy, less dominant, and younger than their actual age. They are also, in studies, more likely to be believed when testifying in court but less likely to be selected for leadership roles,a consistent pattern reflecting the social meaning these features carry.",
+          "Some adults retain these features into adulthood, a biological phenomenon called neoteny. Baby-faced adults are reliably perceived as more trustworthy, less dominant, and younger than their actual age. They are also, in studies, more likely to be believed when testifying in court but less likely to be selected for leadership roles, a consistent pattern reflecting the social meaning these features carry.",
         ],
       },
       {
         h2: "How Baby Face Features Appear in Celebrity Matching",
         paragraphs: [
-          "In face recognition embedding space, baby face features cluster together. Celebrities with strong neotenic characteristics,many famous actors and pop stars cultivate this aesthetic deliberately,form a region of the space that baby-faced users map into. If you have strongly baby-faced proportions, your top celebrity matches will disproportionately come from this cluster: celebrities known for youthful, approachable appearances.",
-          "Conversely, users with more mature facial features,stronger mandible, deeper-set eyes, lower forehead-to-face ratio,will map toward the mature end of the age-appearance distribution. Neither end is better or worse; they reflect different regions of face geometry space.",
+          "In face recognition embedding space, baby face features cluster together. Celebrities with strong neotenic characteristics, many famous actors and pop stars cultivate this aesthetic deliberately, form a region of the space that baby-faced users map into. If you have strongly baby-faced proportions, your top celebrity matches will disproportionately come from this cluster: celebrities known for youthful, approachable appearances.",
+          "Conversely, users with more mature facial features, stronger mandible, deeper-set eyes, lower forehead-to-face ratio, will map toward the mature end of the age-appearance distribution. Neither end is better or worse; they reflect different regions of face geometry space.",
         ],
       },
       {
         h2: "Beyond the Baby Face: The Maturity Continuum",
         paragraphs: [
           "Face maturity exists on a continuum, and the embedding space represents this. Age-related changes in facial geometry are gradual and multi-dimensional. Bone density increases, the mandible becomes more prominent, the midface elongates, and soft tissue redistributes across adulthood. The face recognition network has learned these age-correlated patterns from training data spanning all ages.",
-          "Understanding where you fall on this continuum helps interpret your results. If your matches consistently skew young or old relative to your actual age, you likely have facial proportions that fall nearer one end of the geometric maturity spectrum,a dimension of face space that is entirely independent of actual chronological age.",
+          "Understanding where you fall on this continuum helps interpret your results. If your matches consistently skew young or old relative to your actual age, you likely have facial proportions that fall nearer one end of the geometric maturity spectrum, a dimension of face space that is entirely independent of actual chronological age.",
         ],
       },
     ],
@@ -253,8 +254,8 @@ export const postsB: BlogPost[] = [
       {
         h2: "The Biology of Facial Symmetry",
         paragraphs: [
-          "Perfect bilateral symmetry is the theoretical developmental ideal,genes code for a symmetric face, and developmental noise during growth introduces asymmetries. <strong>Facial symmetry</strong> therefore serves as a signal of developmental stability: low asymmetry indicates that development proceeded smoothly without disruption from genetic or environmental stressors. This is why symmetry is associated with perceived attractiveness and health across cultures.",
-          "In reality, no human face is perfectly symmetric. Even highly symmetric-looking faces, when measured precisely, show asymmetries in eye height, nose orientation, and jaw position. The average face asymmetry is small but measurable, and the distribution has a long tail,some individuals have quite pronounced asymmetries resulting from developmental or medical factors.",
+          "Perfect bilateral symmetry is the theoretical developmental ideal, genes code for a symmetric face, and developmental noise during growth introduces asymmetries. <strong>Facial symmetry</strong> therefore serves as a signal of developmental stability: low asymmetry indicates that development proceeded smoothly without disruption from genetic or environmental stressors. This is why symmetry is associated with perceived attractiveness and health across cultures.",
+          "In reality, no human face is perfectly symmetric. Even highly symmetric-looking faces, when measured precisely, show asymmetries in eye height, nose orientation, and jaw position. The average face asymmetry is small but measurable, and the distribution has a long tail, some individuals have quite pronounced asymmetries resulting from developmental or medical factors.",
         ],
       },
       {
@@ -274,7 +275,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "resting-face",
     title: "Does Resting Face Expression Affect Your Celebrity Match?",
-    excerpt: "Your face at rest still carries expression information. Here is how neutral expression variation affects face recognition,and why a genuine neutral is better than a forced smile.",
+    excerpt: "Your face at rest still carries expression information. Here is how neutral expression variation affects face recognition, and why a genuine neutral is better than a forced smile.",
     date: "April 2026",
     isoDate: "2026-04-14",
     readTime: "3 min read",
@@ -285,21 +286,21 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Resting Face Is (and Isn't)",
         paragraphs: [
-          "A <strong>resting face</strong> is the face you make when you are not deliberately expressing anything,the default configuration of your facial muscles in a relaxed state. Despite the term 'neutral', resting faces are not expressionless. Small variations in the natural resting tension of facial muscles, and in the structure of features like the mouth corners and brow, make some faces appear happy, sad, or stern even at rest.",
-          "These resting face variations reflect genuine structural differences between individuals,not expressions, but the baseline geometry of the face in an unexerted state. Face recognition systems process these structural differences as identity signals, which is appropriate: your resting face geometry is part of who you are.",
+          "A <strong>resting face</strong> is the face you make when you are not deliberately expressing anything, the default configuration of your facial muscles in a relaxed state. Despite the term 'neutral', resting faces are not expressionless. Small variations in the natural resting tension of facial muscles, and in the structure of features like the mouth corners and brow, make some faces appear happy, sad, or stern even at rest.",
+          "These resting face variations reflect genuine structural differences between individuals, not expressions, but the baseline geometry of the face in an unexerted state. Face recognition systems process these structural differences as identity signals, which is appropriate: your resting face geometry is part of who you are.",
         ],
       },
       {
         h2: "Why Neutral Expression Produces the Best Matches",
         paragraphs: [
-          "Strong expressions,smiling, frowning, raising eyebrows,temporarily alter the apparent positions of facial landmarks. A wide smile raises the cheeks, partially closes the eyes, and stretches the mouth horizontally. These changes shift the facial embedding, because the apparent geometry of the face differs from its neutral-state configuration.",
+          "Strong expressions, smiling, frowning, raising eyebrows, temporarily alter the apparent positions of facial landmarks. A wide smile raises the cheeks, partially closes the eyes, and stretches the mouth horizontally. These changes shift the facial embedding, because the apparent geometry of the face differs from its neutral-state configuration.",
           "Celebrity training data includes varied expressions, so the system handles expression variation reasonably well. But using a photo with a neutral or mildly positive expression produces the most stable, accurate embedding. Strong expressions add noise to the geometric representation, potentially moving the embedding away from the position it occupies in your neutral-face photos.",
         ],
       },
     ],
     faqs: [
       { q: "Should I smile in my celebrity match photo?", a: "A neutral or mildly relaxed expression produces the most accurate results. Strong smiles alter the apparent positions of facial landmarks, which can shift your embedding slightly." },
-      { q: "Does having a 'resting sad face' affect my celebrity matches?", a: "Resting face variation reflects real structural differences in face geometry and will be encoded in your embedding,but this is correct behaviour, as it is part of your face's identity." },
+      { q: "Does having a 'resting sad face' affect my celebrity matches?", a: "Resting face variation reflects real structural differences in face geometry and will be encoded in your embedding, but this is correct behaviour, as it is part of your face's identity." },
     ],
     relatedSlugs: ["best-photo-celebrity-match", "why-same-person-different-ai-results", "your-own-face"],
   },
@@ -317,21 +318,21 @@ export const postsB: BlogPost[] = [
       {
         h2: "The Visual Pathway to Face Identity",
         paragraphs: [
-          "Face recognition begins with light striking the retina, producing a retinotopic map of the visual scene in primary visual cortex (V1) at the back of the brain. From V1, visual processing proceeds along the <strong>ventral stream</strong>,a pathway running forward through temporal cortex that extracts increasingly complex object and identity information. By the time the signal reaches the inferior temporal lobe, around 150–200 milliseconds after stimulus onset, face-specific processing is fully engaged.",
-          "The key station along this pathway is the <strong>fusiform face area (FFA)</strong> in the fusiform gyrus of the inferior temporal cortex. The FFA shows selective activation for faces over other object categories and responds particularly strongly to upright faces. Damage to this region produces prosopagnosia,the inability to recognise faces despite normal vision.",
+          "Face recognition begins with light striking the retina, producing a retinotopic map of the visual scene in primary visual cortex (V1) at the back of the brain. From V1, visual processing proceeds along the <strong>ventral stream</strong>, a pathway running forward through temporal cortex that extracts increasingly complex object and identity information. By the time the signal reaches the inferior temporal lobe, around 150–200 milliseconds after stimulus onset, face-specific processing is fully engaged.",
+          "The key station along this pathway is the <strong>fusiform face area (FFA)</strong> in the fusiform gyrus of the inferior temporal cortex. The FFA shows selective activation for faces over other object categories and responds particularly strongly to upright faces. Damage to this region produces prosopagnosia, the inability to recognise faces despite normal vision.",
         ],
       },
       {
         h2: "The N170: A Neural Signature of Face Processing",
         paragraphs: [
-          "Electroencephalography (EEG) studies reveal a distinctive electrical brain response to faces called the <strong>N170</strong>,a negative deflection peaking around 170 milliseconds after a face appears. The N170 is larger for faces than for any other object category, and largest for upright faces. Inverted faces produce a delayed and altered N170, consistent with the difficulty humans have recognising inverted faces compared to upright ones.",
-          "The N170 reflects the moment at which the face is structurally encoded,when the brain represents it as a face with specific features in specific spatial relations. This structural encoding precedes identity recognition; the N170 is similar for famous and unfamiliar faces. Identity matching happens in subsequent time windows, around 300–600 milliseconds, when the encoded face structure is compared against stored representations.",
+          "Electroencephalography (EEG) studies reveal a distinctive electrical brain response to faces called the <strong>N170</strong>, a negative deflection peaking around 170 milliseconds after a face appears. The N170 is larger for faces than for any other object category, and largest for upright faces. Inverted faces produce a delayed and altered N170, consistent with the difficulty humans have recognising inverted faces compared to upright ones.",
+          "The N170 reflects the moment at which the face is structurally encoded, when the brain represents it as a face with specific features in specific spatial relations. This structural encoding precedes identity recognition; the N170 is similar for famous and unfamiliar faces. Identity matching happens in subsequent time windows, around 300–600 milliseconds, when the encoded face structure is compared against stored representations.",
         ],
       },
       {
         h2: "What This Tells Us About AI Design",
         paragraphs: [
-          "The brain's multi-stage face recognition pipeline,low-level edge detection, structural face encoding, identity matching,is a blueprint that mirrors the architecture of deep convolutional networks used for face recognition. Early CNN layers extract edges (analogous to V1), intermediate layers extract face structure (analogous to FFA), and the final embedding layer represents identity (analogous to the recognition stage). The convergence is striking given that CNNs were not explicitly designed to model the brain.",
+          "The brain's multi-stage face recognition pipeline, low-level edge detection, structural face encoding, identity matching, is a blueprint that mirrors the architecture of deep convolutional networks used for face recognition. Early CNN layers extract edges (analogous to V1), intermediate layers extract face structure (analogous to FFA), and the final embedding layer represents identity (analogous to the recognition stage). The convergence is striking given that CNNs were not explicitly designed to model the brain.",
           "The parallel suggests both that the CNN architecture has discovered something genuinely efficient about the computational problem, and that studying the brain continues to provide insights into what good face recognition should achieve. The 200-millisecond biological benchmark remains an aspirational target for edge deployment of face recognition on resource-constrained hardware.",
         ],
       },
@@ -346,7 +347,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "uncanny-valley",
     title: "The Uncanny Valley: Why Near-Perfect AI Faces Feel Wrong",
-    excerpt: "Faces that are almost but not quite human trigger a specific discomfort response. Here is what the uncanny valley reveals about the face perception system,and how AI generation falls into it.",
+    excerpt: "Faces that are almost but not quite human trigger a specific discomfort response. Here is what the uncanny valley reveals about the face perception system, and how AI generation falls into it.",
     date: "April 2026",
     isoDate: "2026-04-10",
     readTime: "4 min read",
@@ -357,22 +358,22 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Is the Uncanny Valley?",
         paragraphs: [
-          "The <strong>uncanny valley</strong> is a concept from robotics introduced by Masahiro Mori in 1970. It describes the relationship between human likeness and the emotional response it produces: as an entity (robot, animation, AI face) becomes more similar to a real human, it becomes more appealing,until it reaches a region of 'near-human' similarity where it becomes distinctly unsettling. The dip in this curve is the uncanny valley.",
-          "The phenomenon is well-documented across many domains: early computer-animated films, hyper-realistic humanoid robots, and AI-generated face images. Faces that are very close to realistic but not quite right trigger a specific aversive response,a sense of something being fundamentally wrong,that neither obviously cartoonish nor fully realistic faces produce.",
+          "The <strong>uncanny valley</strong> is a concept from robotics introduced by Masahiro Mori in 1970. It describes the relationship between human likeness and the emotional response it produces: as an entity (robot, animation, AI face) becomes more similar to a real human, it becomes more appealing, until it reaches a region of 'near-human' similarity where it becomes distinctly unsettling. The dip in this curve is the uncanny valley.",
+          "The phenomenon is well-documented across many domains: early computer-animated films, hyper-realistic humanoid robots, and AI-generated face images. Faces that are very close to realistic but not quite right trigger a specific aversive response, a sense of something being fundamentally wrong, that neither obviously cartoonish nor fully realistic faces produce.",
         ],
       },
       {
         h2: "Why Does It Happen?",
         paragraphs: [
-          "Several explanations have been proposed. The <strong>pathogen avoidance hypothesis</strong> suggests the uncanny valley reflects an evolved response to faces showing subtle signs of disease or death,the specific anomalies that near-perfect artificial faces display (wrong micro-expressions, static gaze, or incorrect skin texture) may trigger the same cues that signal illness in a real person.",
+          "Several explanations have been proposed. The <strong>pathogen avoidance hypothesis</strong> suggests the uncanny valley reflects an evolved response to faces showing subtle signs of disease or death, the specific anomalies that near-perfect artificial faces display (wrong micro-expressions, static gaze, or incorrect skin texture) may trigger the same cues that signal illness in a real person.",
           "The <strong>violated expectation hypothesis</strong> proposes that near-human faces set up a strong expectation of full human behaviour and expression, which the artificial face fails to meet. The gap between expectation and reality is larger than for an obviously artificial entity (like a cartoon character) that sets up no such expectation. The closer the approach to human likeness, the higher the bar set and the more jarring the failure.",
         ],
       },
       {
         h2: "Relevance to AI-Generated Faces",
         paragraphs: [
-          "Modern AI face generation models (diffusion models, GANs) produce faces that fall squarely into the uncanny valley in many cases. Human observers can identify AI-generated faces significantly above chance even when they cannot articulate what is wrong,they report a general sense of incorrectness. Face recognition models, however, cannot reliably detect AI-generated faces using their standard embedding architecture: the embedding was optimised for identity similarity, not for detecting generation artefacts.",
-          "Dedicated AI face detection models are trained specifically to identify generation signatures,texture anomalies, frequency domain artefacts, and other traces of the generation process. These are a distinct capability from face recognition and require separate system design.",
+          "Modern AI face generation models (diffusion models, GANs) produce faces that fall squarely into the uncanny valley in many cases. Human observers can identify AI-generated faces significantly above chance even when they cannot articulate what is wrong, they report a general sense of incorrectness. Face recognition models, however, cannot reliably detect AI-generated faces using their standard embedding architecture: the embedding was optimised for identity similarity, not for detecting generation artefacts.",
+          "Dedicated AI face detection models are trained specifically to identify generation signatures, texture anomalies, frequency domain artefacts, and other traces of the generation process. These are a distinct capability from face recognition and require separate system design.",
         ],
       },
     ],
@@ -385,7 +386,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "best-photo-celebrity-match",
     title: "The Best Photo for Celebrity Matching: A Practical Guide",
-    excerpt: "Not all photos are equal for face matching. Here is exactly what makes a photo perform well,and a checklist to get the best result every time.",
+    excerpt: "Not all photos are equal for face matching. Here is exactly what makes a photo perform well, and a checklist to get the best result every time.",
     date: "April 2026",
     isoDate: "2026-04-08",
     readTime: "4 min read",
@@ -396,14 +397,14 @@ export const postsB: BlogPost[] = [
       {
         h2: "The Five Properties of an Ideal Photo",
         paragraphs: [
-          "Five properties determine whether a photo will produce an accurate and stable celebrity match. In order of importance: <strong>1. Even lighting</strong>,both sides of the face should be well lit, with no deep shadows. <strong>2. Front-facing pose</strong>,the face should be roughly forward-facing, within about 15 degrees of straight-on. <strong>3. Rear camera at distance</strong>,taken with the main camera from at least 50–60 cm to avoid wide-angle distortion. <strong>4. Adequate resolution</strong>,the face should be at least 200 pixels wide in the image. <strong>5. Neutral to relaxed expression</strong>,avoid strong smiles or frowns that alter landmark positions.",
+          "Five properties determine whether a photo will produce an accurate and stable celebrity match. In order of importance: <strong>1. Even lighting</strong>, both sides of the face should be well lit, with no deep shadows. <strong>2. Front-facing pose</strong>, the face should be roughly forward-facing, within about 15 degrees of straight-on. <strong>3. Rear camera at distance</strong>, taken with the main camera from at least 50–60 cm to avoid wide-angle distortion. <strong>4. Adequate resolution</strong>, the face should be at least 200 pixels wide in the image. <strong>5. Neutral to relaxed expression</strong>, avoid strong smiles or frowns that alter landmark positions.",
           "Photos that meet all five criteria produce the most accurate and consistent matches. If your result is surprising, systematically reviewing which of these criteria the photo meets often reveals the source of any discrepancy.",
         ],
       },
       {
         h2: "What to Avoid",
         paragraphs: [
-          "The most common photo problems that degrade matching quality: <strong>Backlighting</strong> (bright window or lamp behind you),this creates a near-silhouette. <strong>Close selfies</strong>,wide-angle front camera at close range distorts facial proportions. <strong>Strong shadows</strong>,directional light from one side creates false geometric asymmetries. <strong>Heavy filters or face-tuning apps</strong>,these alter facial proportions and landmark positions directly. <strong>Group photos</strong>,low-resolution crops from group shots rarely have sufficient face resolution.",
+          "The most common photo problems that degrade matching quality: <strong>Backlighting</strong> (bright window or lamp behind you), this creates a near-silhouette. <strong>Close selfies</strong>, wide-angle front camera at close range distorts facial proportions. <strong>Strong shadows</strong>, directional light from one side creates false geometric asymmetries. <strong>Heavy filters or face-tuning apps</strong>, these alter facial proportions and landmark positions directly. <strong>Group photos</strong>, low-resolution crops from group shots rarely have sufficient face resolution.",
           "Screenshots from video calls (Zoom, Teams, FaceTime) also frequently produce poor results due to compression artefacts and the slightly distorted geometry of screen-facing cameras. Use an original camera file wherever possible.",
         ],
       },
@@ -425,7 +426,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "best-lighting-for-match",
     title: "Best Lighting for a Celebrity Face Match: A Complete Guide",
-    excerpt: "Lighting is the single most controllable factor affecting face match accuracy. Here is how to get it right in every environment,indoors, outdoors, and in between.",
+    excerpt: "Lighting is the single most controllable factor affecting face match accuracy. Here is how to get it right in every environment, indoors, outdoors, and in between.",
     date: "April 2026",
     isoDate: "2026-04-06",
     readTime: "4 min read",
@@ -436,7 +437,7 @@ export const postsB: BlogPost[] = [
       {
         h2: "The Lighting Hierarchy",
         paragraphs: [
-          "From best to worst for face matching: <strong>1. Overcast outdoor daylight</strong>,diffuse, even, spectrally balanced, no shadows. <strong>2. Open shade outdoors</strong>,reflected skylight, still diffuse. <strong>3. Large window indoors</strong>,north or east facing, bright day. <strong>4. Ring light</strong>,frontal, even, slight specular. <strong>5. Softbox or bounce flash</strong>,diffuse artificial light. <strong>6. Standard room lighting</strong>,usually workable if multiple sources. <strong>7. Directional lamp alone</strong>,creates strong one-sided shadows. <strong>8. Smartphone LED flash</strong>,harsh, flat, bleaches features. <strong>9. Backlighting</strong>,avoid entirely.",
+          "From best to worst for face matching: <strong>1. Overcast outdoor daylight</strong>, diffuse, even, spectrally balanced, no shadows. <strong>2. Open shade outdoors</strong>, reflected skylight, still diffuse. <strong>3. Large window indoors</strong>, north or east facing, bright day. <strong>4. Ring light</strong>, frontal, even, slight specular. <strong>5. Softbox or bounce flash</strong>, diffuse artificial light. <strong>6. Standard room lighting</strong>, usually workable if multiple sources. <strong>7. Directional lamp alone</strong>, creates strong one-sided shadows. <strong>8. Smartphone LED flash</strong>, harsh, flat, bleaches features. <strong>9. Backlighting</strong>, avoid entirely.",
           "The higher in this hierarchy your light source, the better your match quality will be.",
         ],
       },
@@ -457,7 +458,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "glasses-hats-hair",
     title: "Glasses, Hats, and Hairstyles: What Accessories Do to Your Face Match",
-    excerpt: "Glasses cover the eye region,the most diagnostically important feature for identity. Here is what wearing accessories does to face recognition results, and when to remove them.",
+    excerpt: "Glasses cover the eye region, the most diagnostically important feature for identity. Here is what wearing accessories does to face recognition results, and when to remove them.",
     date: "April 2026",
     isoDate: "2026-04-04",
     readTime: "4 min read",
@@ -468,7 +469,7 @@ export const postsB: BlogPost[] = [
       {
         h2: "Glasses and the Eye Region",
         paragraphs: [
-          "The eye region,including the eyebrows and the upper part of the nose bridge,carries the most diagnostic weight for face identity in both human and machine recognition. <strong>Glasses</strong> occlude parts of this region, cover the eyebrows in many styles, add reflective artefacts, and alter the apparent size of the eyes and eye socket. These changes affect the most identity-weighted region of the face, degrading embedding accuracy more than accessory effects in other face regions.",
+          "The eye region, including the eyebrows and the upper part of the nose bridge, carries the most diagnostic weight for face identity in both human and machine recognition. <strong>Glasses</strong> occlude parts of this region, cover the eyebrows in many styles, add reflective artefacts, and alter the apparent size of the eyes and eye socket. These changes affect the most identity-weighted region of the face, degrading embedding accuracy more than accessory effects in other face regions.",
           "Thick-rimmed glasses create strong geometric edges that can be mistaken by early convolutional layers for face structure edges. Highly reflective lenses in photos can create bright patches that the network has limited experience handling. For the most accurate celebrity match, remove glasses if possible. If you prefer to match with glasses on, understand that the result reflects your appearance with that accessory.",
         ],
       },
@@ -482,13 +483,13 @@ export const postsB: BlogPost[] = [
       {
         h2: "Hair and Overall Face Shape",
         paragraphs: [
-          "Hairstyle affects the perceived face silhouette but not the internal face geometry that dominates the embedding. The face detection and alignment pipeline crops to the internal face region,forehead to chin, cheek to cheek,largely excluding the hair region. Hair affects the result less than many users expect.",
+          "Hairstyle affects the perceived face silhouette but not the internal face geometry that dominates the embedding. The face detection and alignment pipeline crops to the internal face region, forehead to chin, cheek to cheek, largely excluding the hair region. Hair affects the result less than many users expect.",
           "However, very long hair that falls across the face does affect results, as it occludes parts of the cheek and jaw region used for alignment. Hair swept to one side that creates a strong asymmetry in the face crop can also introduce small embedding shifts. For best results, pull hair back to reveal the full face region.",
         ],
       },
     ],
     faqs: [
-      { q: "Should I remove glasses for a celebrity face match?", a: "Yes, if possible. Glasses occlude the eye region,the most diagnostically important area for face identity,and add artefacts that can degrade matching accuracy." },
+      { q: "Should I remove glasses for a celebrity face match?", a: "Yes, if possible. Glasses occlude the eye region, the most diagnostically important area for face identity, and add artefacts that can degrade matching accuracy." },
       { q: "Does hairstyle affect my celebrity match results?", a: "Less than expected. The face crop excludes most hair, so hairstyle has limited effect unless hair falls across the face or creates significant asymmetry." },
     ],
     relatedSlugs: ["best-photo-celebrity-match", "face-detection-vs-recognition", "how-lighting-affects-recognition"],
@@ -514,22 +515,23 @@ export const postsB: BlogPost[] = [
       {
         h2: "Practical Differences in Results",
         paragraphs: [
-          "Close selfies with the front camera can produce celebrity matches that skew toward people with wider noses and narrower jaws,because the selfie distortion makes your face appear to have those proportions. Rear camera photos at arm's length or further produce undistorted proportions and typically more accurate, consistent matches.",
-          "If you get surprising results with a selfie, try the same photo with the rear camera and compare. In most cases, the rear camera match will feel more intuitively correct,it shows your face as others actually see you rather than as the wide-angle lens distorts it.",
+          "Close selfies with the front camera can produce celebrity matches that skew toward people with wider noses and narrower jaws, because the selfie distortion makes your face appear to have those proportions. Rear camera photos at arm's length or further produce undistorted proportions and typically more accurate, consistent matches.",
+          "If you get surprising results with a selfie, try the same photo with the rear camera and compare. In most cases, the rear camera match will feel more intuitively correct, it shows your face as others actually see you rather than as the wide-angle lens distorts it.",
         ],
       },
     ],
     faqs: [
       { q: "Why does the selfie camera give different face match results?", a: "Selfie cameras have wide-angle lenses that distort facial proportions at close range. The nose appears wider and the jaw narrower than they actually are, shifting the facial embedding." },
-      { q: "How far should I hold the phone for the rear camera?", a: "At least 50–60cm. Further is better,up to about 1.5m,as long as your face still fills at least 30% of the image height." },
+      { q: "How far should I hold the phone for the rear camera?", a: "At least 50–60cm. Further is better, up to about 1.5m, as long as your face still fills at least 30% of the image height." },
     ],
     relatedSlugs: ["selfie-vs-passport-match", "best-photo-celebrity-match", "why-same-person-different-ai-results"],
   },
   {
     slug: "accuracy-across-demographics",
     title: "Face Recognition Accuracy Across Demographics: What the Research Shows",
-    excerpt: "Facial recognition systems do not perform equally across all demographic groups. Here is what the research shows,and what Ollie does to address it.",
+    excerpt: "Facial recognition systems do not perform equally across all demographic groups. Here is what the research shows, and what Ollie does to address it.",
     date: "March 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-03-30",
     readTime: "5 min read",
     category: "Ethics",
@@ -539,28 +541,28 @@ export const postsB: BlogPost[] = [
       {
         h2: "The Research Evidence",
         paragraphs: [
-          "Systematic evaluation of commercial and academic face recognition systems reveals consistent accuracy disparities across demographic groups. The 2019 NIST Face Recognition Vendor Test (FRVT),the most comprehensive evaluation to date,found false non-match rates (failures to match the same person) were typically 10–100 times higher for Black and Asian faces than for white faces across many systems. False positive rates also varied substantially.",
-          "Gender disparities are also documented. Multiple independent studies have found higher error rates for female faces than male faces in many commercial systems, and compounded disparities for the intersection of gender and ethnicity,particularly for darker-skinned women. These are not findings confined to low-quality systems; they appear in some of the highest-performing models in their respective evaluations.",
+          "Systematic evaluation of commercial and academic face recognition systems reveals consistent accuracy disparities across demographic groups. The 2019 NIST Face Recognition Vendor Test (FRVT), the most comprehensive evaluation to date, found false non-match rates (failures to match the same person) were typically 10–100 times higher for Black and Asian faces than for white faces across many systems. False positive rates also varied substantially.",
+          "Gender disparities are also documented. Multiple independent studies have found higher error rates for female faces than male faces in many commercial systems, and compounded disparities for the intersection of gender and ethnicity, particularly for darker-skinned women. These are not findings confined to low-quality systems; they appear in some of the highest-performing models in their respective evaluations.",
         ],
       },
       {
         h2: "Why Disparities Occur",
         paragraphs: [
-          "The root causes are primarily in <strong>training data</strong>. Systems trained on imbalanced datasets,which describe the majority of systems until very recently,receive more within-group comparison examples from overrepresented groups. This provides stronger gradient signal for those groups, producing more discriminative, better-calibrated representations. Underrepresented groups receive weaker training signal, producing less precise embeddings that are harder to separate.",
+          "The root causes are primarily in <strong>training data</strong>. Systems trained on imbalanced datasets, which describe the majority of systems until very recently, receive more within-group comparison examples from overrepresented groups. This provides stronger gradient signal for those groups, producing more discriminative, better-calibrated representations. Underrepresented groups receive weaker training signal, producing less precise embeddings that are harder to separate.",
           "The problem compounds at deployment. If most of the celebrity database entries are from particular demographic groups, users from underrepresented groups have fewer closely matched options, reducing the quality of top matches even when the embedding is accurate.",
         ],
       },
       {
         h2: "What Ollie Does",
         paragraphs: [
-          "Ollie trains on VGGFace2, which was explicitly constructed to cover age, ethnicity, and pose diversity across over 9,000 identities. Ongoing evaluation across demographic groups informs future training decisions. The celebrity database spans multiple demographic regions, ensuring that users from all backgrounds have a rich space of potential matches.",
-          "No system fully eliminates accuracy disparities,the research field continues to develop better approaches. Transparency about the issue and ongoing monitoring are the appropriate responses. Users who believe they are receiving systematically poor quality results are encouraged to provide feedback through the app's feedback mechanism.",
+          "Ollie's network was trained on MS1MV2, a large dataset of 85,742 people photographed in many conditions. The celebrity database is built from the most-viewed living people on Wikipedia, so it spans many countries, ages and backgrounds, giving people from all backgrounds a rich set of potential matches.",
+          "No system fully eliminates accuracy disparities, the research field continues to develop better approaches. Transparency about the issue and ongoing monitoring are the appropriate responses. If you think your results are consistently poor, try a few different photos in soft, even light; if that doesn't help, the contact address in the privacy policy reaches the person who runs Ollie.",
         ],
       },
     ],
     faqs: [
       { q: "Is face recognition equally accurate for all racial groups?", a: "Not in most systems. Research consistently finds higher error rates for darker-skinned faces and women in many commercial and academic face recognition systems, primarily due to training data imbalance." },
-      { q: "What does VGGFace2 do to improve demographic fairness?", a: "VGGFace2 was constructed with explicit diversity goals across age, ethnicity, and pose. This produces more balanced training signal for face recognition models." },
+      { q: "What dataset was Ollie trained on?", a: "MS1MV2, a research dataset of about 5.8 million photos of 85,742 people. Every person in the LFW benchmark was removed from it before training, so the model's 98.5% LFW score is measured on people it never saw." },
     ],
     relatedSlugs: ["bias-in-face-recognition", "own-race-effect", "why-ai-beats-human-eye"],
   },
@@ -578,14 +580,14 @@ export const postsB: BlogPost[] = [
       {
         h2: "Defining Bias in Face Recognition",
         paragraphs: [
-          "In face recognition, <strong>bias</strong> refers to systematic differences in accuracy across demographic groups,not random variation, but consistent patterns where certain groups are served worse than others. Bias manifests as higher false non-match rates (failing to match the same person), higher false positive rates (matching different people), or lower quality similarity scores for particular groups.",
+          "In face recognition, <strong>bias</strong> refers to systematic differences in accuracy across demographic groups, not random variation, but consistent patterns where certain groups are served worse than others. Bias manifests as higher false non-match rates (failing to match the same person), higher false positive rates (matching different people), or lower quality similarity scores for particular groups.",
           "Bias can also be more subtle: a system might achieve similar verification accuracy across groups but produce lower-quality ranked match lists for some users, or have confidence calibration that is accurate on average but systematically miscalibrated for specific subgroups.",
         ],
       },
       {
         h2: "Sources of Bias",
         paragraphs: [
-          "The dominant source of bias in current systems is <strong>training data imbalance</strong>. Most large face recognition datasets were assembled from internet data, which overrepresents certain demographics,particularly younger, lighter-skinned, male individuals from certain geographic regions. A model trained on such data develops more precise representations for well-represented groups.",
+          "The dominant source of bias in current systems is <strong>training data imbalance</strong>. Most large face recognition datasets were assembled from internet data, which overrepresents certain demographics, particularly younger, lighter-skinned, male individuals from certain geographic regions. A model trained on such data develops more precise representations for well-represented groups.",
           "Annotation bias is a secondary source: human labellers who annotate training data make more errors on faces from groups they are less familiar with (the own-race effect), introducing label noise that disproportionately affects underrepresented groups. Evaluation bias is also a concern: models are often benchmarked on datasets that do not represent deployment populations, masking disparities that emerge in practice.",
         ],
       },
@@ -598,7 +600,7 @@ export const postsB: BlogPost[] = [
       },
     ],
     faqs: [
-      { q: "What is bias in AI face recognition?", a: "Bias refers to systematic differences in accuracy across demographic groups,consistent patterns where certain groups receive higher error rates or lower match quality than others." },
+      { q: "What is bias in AI face recognition?", a: "Bias refers to systematic differences in accuracy across demographic groups, consistent patterns where certain groups receive higher error rates or lower match quality than others." },
       { q: "What is the main cause of face recognition bias?", a: "Training data imbalance: most datasets overrepresent certain demographics, giving those groups more training signal and producing more precise representations for them." },
       { q: "How do developers address face recognition bias?", a: "Through rebalanced training data, fairness-aware loss functions, adversarial debiasing, and ongoing evaluation and monitoring across demographic groups." },
     ],
@@ -618,8 +620,8 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Makes Face Recognition Data Sensitive",
         paragraphs: [
-          "Facial data is a form of <strong>biometric data</strong>,it is linked to biological identity in ways that cannot be changed if compromised. You can change your password; you cannot change your face. This permanence makes facial data qualitatively different from other personal data: a leak of facial data has lifelong implications in a way that a leaked email address does not.",
-          "Additionally, facial data can be collected passively and at scale, without the subject's knowledge or consent. This is not relevant to a consumer application where you deliberately upload your own photo,but it is what makes widespread face recognition infrastructure, used in public spaces, substantially more privacy-invasive than other forms of personal data collection.",
+          "Facial data is a form of <strong>biometric data</strong>, it is linked to biological identity in ways that cannot be changed if compromised. You can change your password; you cannot change your face. This permanence makes facial data qualitatively different from other personal data: a leak of facial data has lifelong implications in a way that a leaked email address does not.",
+          "Additionally, facial data can be collected passively and at scale, without the subject's knowledge or consent. This is not relevant to a consumer application where you deliberately upload your own photo, but it is what makes widespread face recognition infrastructure, used in public spaces, substantially more privacy-invasive than other forms of personal data collection.",
         ],
       },
       {
@@ -632,14 +634,14 @@ export const postsB: BlogPost[] = [
       {
         h2: "The Broader Context",
         paragraphs: [
-          "Consumer celebrity matching applications represent one end of a spectrum. At the other end are large-scale government and commercial surveillance systems that build persistent databases of facial embeddings linked to identities. These raise fundamentally different privacy and civil liberties concerns,concerns about chilling effects on public assembly, disproportionate targeting of specific groups, and the normalization of continuous identity tracking.",
+          "Consumer celebrity matching applications represent one end of a spectrum. At the other end are large-scale government and commercial surveillance systems that build persistent databases of facial embeddings linked to identities. These raise fundamentally different privacy and civil liberties concerns, concerns about chilling effects on public assembly, disproportionate targeting of specific groups, and the normalization of continuous identity tracking.",
           "Understanding the spectrum helps calibrate response. The appropriate question is not 'is any face recognition acceptable?' but 'does this specific application, with this specific data handling, in this specific context, produce net benefits while managing risks appropriately?' Those are evaluable questions that require specific answers, not categorical positions.",
         ],
       },
     ],
     faqs: [
       { q: "Does Ollie store my face data?", a: "No. Ollie processes your photo to compute a facial embedding during the session but does not store your photo or embedding after the session ends." },
-      { q: "Is facial data more sensitive than other personal data?", a: "Yes. Facial data is biometric,permanently linked to your biological identity. Unlike a password, it cannot be changed if compromised. Regulations like GDPR classify it as a special category of sensitive personal data." },
+      { q: "Is facial data more sensitive than other personal data?", a: "Yes. Facial data is biometric, permanently linked to your biological identity. Unlike a password, it cannot be changed if compromised. Regulations like GDPR classify it as a special category of sensitive personal data." },
       { q: "What is biometric data minimisation?", a: "Data minimisation means collecting only the biometric data needed for the immediate function, retaining nothing beyond what is necessary, and deleting data as soon as the purpose is served." },
     ],
     relatedSlugs: ["bias-in-face-recognition", "accuracy-across-demographics", "inside-ai-face-matching"],
@@ -647,7 +649,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "history-of-face-recognition",
     title: "A Short History of Face Recognition Technology",
-    excerpt: "From Woodrow Wilson Bledsoe's hand-measured coordinates in 1965 to today's 99.8% accurate deep networks,here is 60 years of face recognition progress.",
+    excerpt: "From Woodrow Wilson Bledsoe's hand-measured coordinates in 1965 to today's 99.8% accurate deep networks, here is 60 years of face recognition progress.",
     date: "March 2026",
     isoDate: "2026-03-24",
     readTime: "5 min read",
@@ -659,7 +661,7 @@ export const postsB: BlogPost[] = [
         h2: "1960s–1980s: The Manual and Geometric Era",
         paragraphs: [
           "The first documented face recognition research was conducted by Woodrow Wilson Bledsoe at Stanford Research Institute in the early 1960s. Using a computer stylus, Bledsoe manually entered the coordinates of facial landmarks from photographed faces. The system searched a database by finding images with similar coordinate patterns. This required human involvement at every step but demonstrated the core concept: reducing face identity to measurable geometry.",
-          "Through the 1970s and 1980s, research focused on geometric feature approaches,automatically measuring inter-feature distances and comparing them. These systems were limited to controlled, well-lit, front-facing photos under consistent conditions, and accuracy was poor by modern standards. But they established the vocabulary of facial landmarks and geometric ratios that influenced subsequent decades of work.",
+          "Through the 1970s and 1980s, research focused on geometric feature approaches, automatically measuring inter-feature distances and comparing them. These systems were limited to controlled, well-lit, front-facing photos under consistent conditions, and accuracy was poor by modern standards. But they established the vocabulary of facial landmarks and geometric ratios that influenced subsequent decades of work.",
         ],
       },
       {
@@ -679,8 +681,8 @@ export const postsB: BlogPost[] = [
       {
         h2: "2012–Present: The Deep Learning Revolution",
         paragraphs: [
-          "The deep learning revolution arrived in face recognition in 2014 with DeepFace (Facebook) and DeepID (Hong Kong Chinese University), which achieved LFW accuracy exceeding 97%,dramatically surpassing all prior approaches. These systems used convolutional neural networks trained on millions of labelled face images, learning representations that captured identity far more richly than any hand-designed feature.",
-          "FaceNet (Google, 2015) introduced triplet loss training and achieved 99.63% LFW accuracy. ArcFace (2019) pushed further to 99.83%, approaching saturation on that benchmark. The field has since shifted to more challenging evaluation conditions,cross-age verification, low-resolution matching, and demographic fairness,as the original LFW benchmark has been solved.",
+          "The deep learning revolution arrived in face recognition in 2014 with DeepFace (Facebook) and DeepID (Hong Kong Chinese University), which achieved LFW accuracy exceeding 97%, dramatically surpassing all prior approaches. These systems used convolutional neural networks trained on millions of labelled face images, learning representations that captured identity far more richly than any hand-designed feature.",
+          "FaceNet (Google, 2015) introduced triplet loss training and achieved 99.63% LFW accuracy. ArcFace (2019) pushed further to 99.83%, approaching saturation on that benchmark. The field has since shifted to more challenging evaluation conditions, cross-age verification, low-resolution matching, and demographic fairness, as the original LFW benchmark has been solved.",
         ],
       },
     ],
@@ -693,9 +695,10 @@ export const postsB: BlogPost[] = [
   },
   {
     slug: "what-overfitting-means",
-    title: "What Is Overfitting,and Why It Matters for Your Celebrity Matches",
+    title: "What Is Overfitting, and Why It Matters for Your Celebrity Matches",
     excerpt: "Overfitting is the silent failure mode of machine learning: when a model works brilliantly on training data but generalises poorly to new faces. Here is what it is and how it is prevented.",
     date: "March 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-03-22",
     readTime: "5 min read",
     category: "Machine Learning",
@@ -705,7 +708,7 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Is Overfitting?",
         paragraphs: [
-          "<strong>Overfitting</strong> occurs when a machine learning model learns the training data so thoroughly,including its noise and idiosyncratic patterns,that it loses the ability to generalise to new data. The model has memorised rather than learned. On training examples it performs well; on new examples it performs poorly, because the patterns it has learned are specific to the training set rather than general to the underlying problem.",
+          "<strong>Overfitting</strong> occurs when a machine learning model learns the training data so thoroughly, including its noise and idiosyncratic patterns, that it loses the ability to generalise to new data. The model has memorised rather than learned. On training examples it performs well; on new examples it performs poorly, because the patterns it has learned are specific to the training set rather than general to the underlying problem.",
           "In face recognition terms: an overfit model might perfectly match every training celebrity, but when presented with a new user's face, it fails to place the embedding in the correct region of face space because its representation of face identity is too tightly coupled to the specific photos in the training set.",
         ],
       },
@@ -713,27 +716,27 @@ export const postsB: BlogPost[] = [
         h2: "Why It Occurs",
         paragraphs: [
           "Overfitting becomes more likely as model <strong>capacity</strong> increases relative to training data size. A model with more parameters than training examples can potentially memorise every training example exactly. For face recognition, where models have millions of parameters trained on hundreds of thousands to millions of examples, overfitting is a real risk that requires active countermeasures.",
-          "It is also more likely when training proceeds for too many epochs: the model first learns general patterns (fast, early in training) and then progressively fits to idiosyncratic training data characteristics (slow, late in training). Validation curves typically show training accuracy continuing to increase while validation accuracy plateaus or decreases,a characteristic overfitting signature.",
+          "It is also more likely when training proceeds for too many epochs: the model first learns general patterns (fast, early in training) and then progressively fits to idiosyncratic training data characteristics (slow, late in training). Validation curves typically show training accuracy continuing to increase while validation accuracy plateaus or decreases, a characteristic overfitting signature.",
         ],
       },
       {
         h2: "How Overfitting Is Prevented",
         paragraphs: [
-          "Standard techniques include: <strong>Dropout</strong>,randomly zeroing neural activations during training, preventing any single pathway from being relied on exclusively. <strong>Weight decay (L2 regularisation)</strong>,penalising large weights, pushing the model toward simpler representations. <strong>Data augmentation</strong>,artificially expanding the training set by transforming training images (flipping, rotating, colour jitter), making the model learn representations robust to these variations.",
-          "Ollie's training uses <strong>early stopping</strong>,monitoring validation accuracy and stopping when it begins to plateau, before overfitting to training data occurs. The training schedule uses <strong>CosineAnnealingLR</strong> with T_max=150, enabling thorough exploration of the loss landscape while avoiding late-training overfitting. The validation set acts as a held-out proxy for real-world generalisation.",
+          "Standard techniques include: <strong>Dropout</strong>, randomly zeroing neural activations during training, preventing any single pathway from being relied on exclusively. <strong>Weight decay (L2 regularisation)</strong>, penalising large weights, pushing the model toward simpler representations. <strong>Data augmentation</strong>, artificially expanding the training set by transforming training images (flipping, rotating, colour jitter), making the model learn representations robust to these variations.",
+          "Ollie's training uses <strong>early stopping</strong>, monitoring validation accuracy and stopping when it begins to plateau, before overfitting to training data occurs. The training schedule uses <strong>CosineAnnealingLR</strong> with T_max=150, enabling thorough exploration of the loss landscape while avoiding late-training overfitting. The validation set acts as a held-out proxy for real-world generalisation.",
         ],
       },
       {
         h2: "Signs of Overfitting in Practice",
         paragraphs: [
-          "At training time, overfitting is visible in the divergence between training and validation loss,when training loss continues falling while validation loss stops improving or rises. A well-trained model shows these two losses tracking each other closely throughout training.",
-          "In deployment, overfitting shows as poor generalisation: the model works well on photo conditions similar to its training data but degrades more than expected on novel conditions. This is one reason diverse training data is so important,a model trained only on high-quality controlled portraits will overfit to that condition and generalise poorly to real-world selfie photos.",
+          "At training time, overfitting is visible in the divergence between training and validation loss, when training loss continues falling while validation loss stops improving or rises. A well-trained model shows these two losses tracking each other closely throughout training.",
+          "In deployment, overfitting shows as poor generalisation: the model works well on photo conditions similar to its training data but degrades more than expected on novel conditions. This is one reason diverse training data is so important, a model trained only on high-quality controlled portraits will overfit to that condition and generalise poorly to real-world selfie photos.",
         ],
       },
     ],
     faqs: [
-      { q: "What is overfitting in machine learning?", a: "Overfitting is when a model learns training data so specifically,including noise,that it fails to generalise to new data. It memorises rather than learns." },
-      { q: "How is overfitting prevented in face recognition training?", a: "Through dropout, weight decay, data augmentation, early stopping, and validation monitoring. Ollie's training uses CosineAnnealingLR scheduling and early stopping based on validation accuracy." },
+      { q: "What is overfitting in machine learning?", a: "Overfitting is when a model learns training data so specifically, including noise, that it fails to generalise to new data. It memorises rather than learns." },
+      { q: "How is overfitting prevented in face recognition training?", a: "Through dropout, weight decay, data augmentation, early stopping, and validation monitoring. Ollie's network was trained from scratch, and the saved model is the epoch that scored best on the LFW benchmark, whose people were kept out of training." },
       { q: "What are the signs of an overfit face recognition model?", a: "High training accuracy with much lower validation accuracy, and good performance on controlled conditions but unexpectedly poor performance on varied real-world inputs." },
     ],
     relatedSlugs: ["contrastive-loss-explained", "training-data-matters", "confidence-vs-accuracy"],
@@ -743,6 +746,7 @@ export const postsB: BlogPost[] = [
     title: "Why Training Data Is the Most Important Factor in Face Recognition Quality",
     excerpt: "\"Garbage in, garbage out\",but in deep learning, data quantity and diversity are almost more important than architecture. Here is why training data dominates face recognition performance.",
     date: "March 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-03-20",
     readTime: "5 min read",
     category: "Machine Learning",
@@ -752,28 +756,28 @@ export const postsB: BlogPost[] = [
       {
         h2: "Data vs Architecture: What Matters More?",
         paragraphs: [
-          "In the early years of deep learning, much research effort was spent on architecture design,inventing new network structures to squeeze more performance from fixed datasets. The emerging consensus from large-scale empirical studies is that <strong>data scale and diversity dominate architecture choice</strong> once model capacity is sufficient. A larger, more diverse dataset with a simple architecture typically outperforms a small, curated dataset with a complex architecture.",
+          "In the early years of deep learning, much research effort was spent on architecture design, inventing new network structures to squeeze more performance from fixed datasets. The emerging consensus from large-scale empirical studies is that <strong>data scale and diversity dominate architecture choice</strong> once model capacity is sufficient. A larger, more diverse dataset with a simple architecture typically outperforms a small, curated dataset with a complex architecture.",
           "For face recognition specifically, the jump from the LFW-era datasets (thousands of images) to VGGFace2-scale datasets (millions of images across thousands of identities, multiple conditions per identity) produced dramatically larger accuracy gains than any single architectural innovation of the same period.",
         ],
       },
       {
         h2: "What Makes a Good Face Recognition Dataset?",
         paragraphs: [
-          "Four properties define a high-quality face recognition training dataset: <strong>Scale</strong>,enough images per identity (>20 ideally) and enough identities (>5000) to learn a well-generalised notion of face similarity. <strong>Diversity of conditions</strong>,each identity photographed under varied lighting, angles, ages, and expressions, so the model learns condition-invariant representations. <strong>Demographic balance</strong>,representation of all demographic groups that will appear at deployment. <strong>Label accuracy</strong>,correct identity labels; mislabelled pairs corrupt the contrastive objective.",
-          "VGGFace2 was designed with these properties in mind: 9,131 identities, over 3.31 million images, specifically constructed for diversity in pose, age, illumination, ethnicity, and profession. It is the primary training data underlying Ollie's model.",
+          "Four properties define a high-quality face recognition training dataset: <strong>Scale</strong>, enough images per identity (>20 ideally) and enough identities (>5000) to learn a well-generalised notion of face similarity. <strong>Diversity of conditions</strong>, each identity photographed under varied lighting, angles, ages, and expressions, so the model learns condition-invariant representations. <strong>Demographic balance</strong>, representation of all demographic groups that will appear at deployment. <strong>Label accuracy</strong>, correct identity labels; mislabelled photos corrupt the training signal.",
+          "Well-known research datasets aim for exactly these properties. VGGFace2 has 9,131 identities and over 3.31 million images chosen for variety in pose, age and lighting. MS1MV2, the dataset Ollie's network was trained on, is larger still: about 5.8 million images of 85,742 people.",
         ],
       },
       {
         h2: "The Transfer Learning Shortcut",
         paragraphs: [
-          "Training face recognition from scratch on millions of images is computationally expensive,requiring days of GPU compute. <strong>Transfer learning</strong> makes this tractable for most applications: start with a model pre-trained on a large dataset (like VGGFace2), then fine-tune the final layers on your specific task or with task-specific augmentation.",
-          "The pre-trained backbone has already learned general face representations that are useful across tasks. Fine-tuning adjusts these representations for the specific domain,in Ollie's case, matching proportions that predict celebrity resemblance specifically. This approach achieves better performance than training from scratch on a smaller dataset, while being computationally feasible without industrial-scale hardware.",
+          "Training face recognition from scratch on millions of images is computationally expensive, requiring days of GPU compute. <strong>Transfer learning</strong> makes this tractable for most applications: start with a model pre-trained on a large dataset (like VGGFace2), then fine-tune the final layers on your specific task or with task-specific augmentation.",
+          "The pre-trained backbone has already learned general face representations that are useful across tasks, and fine-tuning adapts them to a new domain. Ollie took the harder route: its 20-layer network was trained from scratch on MS1MV2, with no pretrained weights, which took about 10 days on a single RTX 4060 Ti.",
         ],
       },
     ],
     faqs: [
       { q: "Why is training data so important for face recognition?", a: "Scale and diversity of training data dominate model accuracy once architecture capacity is sufficient. More data covering more conditions, identities, and demographics produces better generalisation." },
-      { q: "What dataset does Ollie use for training?", a: "Ollie trains primarily on VGGFace2,9,131 identities, over 3.31 million images, with explicit diversity in pose, age, illumination, and ethnicity." },
+      { q: "What dataset does Ollie use for training?", a: "MS1MV2: about 5.8 million photos of 85,742 people. Ollie's network was trained on it from scratch, with no pretrained weights." },
       { q: "What is transfer learning?", a: "Transfer learning starts with a model pre-trained on a large dataset and fine-tunes it for a specific task. This achieves better results than training from scratch on a smaller dataset, while requiring much less compute." },
     ],
     relatedSlugs: ["what-overfitting-means", "contrastive-loss-explained", "siamese-neural-networks-explained"],
@@ -783,6 +787,7 @@ export const postsB: BlogPost[] = [
     title: "Transfer Learning Explained: How One AI Model Becomes Another",
     excerpt: "Ollie's face recognition network was not built from scratch. It started life as a model trained on millions of celebrity photos and was then refined. Here is how transfer learning works.",
     date: "March 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-03-18",
     readTime: "4 min read",
     category: "Machine Learning",
@@ -793,20 +798,20 @@ export const postsB: BlogPost[] = [
         h2: "The Concept: Borrowed Knowledge",
         paragraphs: [
           "<strong>Transfer learning</strong> exploits the fact that neural networks trained on large datasets develop general, reusable representations. A network trained to recognise face identity must learn about edges, shapes, skin texture, facial geometry, and identity-relevant proportions. These representations are useful not just for the specific faces in the training set but for any face recognition task.",
-          "Rather than learning these representations from scratch,which requires enormous amounts of data and compute,transfer learning takes a pre-trained network and adapts it for a new task by fine-tuning on new data. The pre-trained network provides a rich starting point; the fine-tuning adjusts it for the specific target task.",
+          "Rather than learning these representations from scratch, which requires enormous amounts of data and compute, transfer learning takes a pre-trained network and adapts it for a new task by fine-tuning on new data. The pre-trained network provides a rich starting point; the fine-tuning adjusts it for the specific target task.",
         ],
       },
       {
         h2: "How Fine-Tuning Works",
         paragraphs: [
           "<strong>Fine-tuning</strong> typically freezes the early layers of the pre-trained network (which encode general low-level features) while allowing the later layers (which encode task-specific high-level features) to update. This preserves the learned general representations while adapting the task-specific representations for the new domain.",
-          "The learning rate for fine-tuning is typically much lower than for initial training,a small adjustment to an already-useful representation rather than large gradient steps from random initialisation. Ollie uses lr=1e-4 and CosineAnnealingLR scheduling during fine-tuning, gradually decaying the learning rate to allow the model to settle into a locally optimal configuration for the celebrity matching task.",
+          "The learning rate for fine-tuning is typically much lower than for initial training, a small adjustment to an already-useful representation rather than large gradient steps from random initialisation. Ollie's own network wasn't fine-tuned: it was trained from scratch on MS1MV2, so its early layers learned their edge and texture detectors from face photos directly.",
         ],
       },
       {
         h2: "Why It Works So Well",
         paragraphs: [
-          "Transfer learning works because the representations learned by large-scale pre-trained models are genuinely general. The features a network learns to distinguish millions of face identities turn out to be exactly the features needed to match any new pair of faces,not because of task-specific engineering, but because the same structural information that discriminates between celebrities also discriminates between any two people.",
+          "Transfer learning works because the representations learned by large-scale pre-trained models are genuinely general. The features a network learns to distinguish millions of face identities turn out to be exactly the features needed to match any new pair of faces, not because of task-specific engineering, but because the same structural information that discriminates between celebrities also discriminates between any two people.",
           "This generalisation is what allows a model trained entirely on celebrities to work for ordinary user uploads. The model has never seen your face, but the representation it learned from millions of celebrity photos is rich enough to place your face accurately in the same space.",
         ],
       },
@@ -820,8 +825,9 @@ export const postsB: BlogPost[] = [
   {
     slug: "confidence-vs-accuracy",
     title: "AI Confidence vs Accuracy: Why Your 95% Match Might Be Wrong",
-    excerpt: "A high confidence score does not guarantee a correct match. Here is the difference between confidence and accuracy in AI systems,and why calibration matters.",
+    excerpt: "A high confidence score does not guarantee a correct match. Here is the difference between confidence and accuracy in AI systems, and why calibration matters.",
     date: "March 2026",
+    updatedIsoDate: "2026-09-23",
     isoDate: "2026-03-16",
     readTime: "4 min read",
     category: "Machine Learning",
@@ -831,27 +837,27 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Confidence Means in AI",
         paragraphs: [
-          "In the context of face matching, a <strong>confidence score</strong> (or similarity score) represents the model's estimate of how similar two face embeddings are,not a direct statement about whether the match is 'correct' in any ground truth sense. A score of 95% means the embeddings are close together in the 256-dimensional space; it does not mean there is a 95% probability that this is the 'right' answer, because there may not be a single right answer.",
-          "For celebrity lookalike matching, there is no ground truth. You are looking for the closest match in a database,the result is definitionally the most similar face, not a correct or incorrect identification. In this context, the score is genuinely meaningful as a relative similarity measure.",
+          "In the context of face matching, a <strong>confidence score</strong> (or similarity score) represents the model's estimate of how similar two face embeddings are, not a direct statement about whether the match is 'correct' in any ground truth sense. A score of 95% means the embeddings are close together in the 512-dimensional space; it does not mean there is a 95% probability that this is the 'right' answer, because there may not be a single right answer.",
+          "For celebrity lookalike matching, there is no ground truth. You are looking for the closest match in a database, the result is definitionally the most similar face, not a correct or incorrect identification. In this context, the score is genuinely meaningful as a relative similarity measure.",
         ],
       },
       {
         h2: "Calibration: When Confidence and Accuracy Align",
         paragraphs: [
-          "For applications where there is a ground truth,for example, two photos should show the same person or different people,<strong>calibration</strong> is the property that confidence scores accurately reflect actual accuracy. A well-calibrated model produces scores where faces scored at 80% similarity are correctly matched 80% of the time; faces at 90% are correctly matched 90% of the time. A poorly calibrated model might be confidently wrong,consistently reporting high similarity for mismatched pairs.",
-          "Ollie's score calibration was derived from a held-out validation set of known match/non-match pairs, tuned so that the percentage scores reflect the real-world distribution of match quality. This means scores in the 70–85% range represent matches that are meaningfully similar but not exact; scores above 90% represent the strongest geometric matches in the database.",
+          "For applications where there is a ground truth, for example, two photos should show the same person or different people, <strong>calibration</strong> is the property that confidence scores accurately reflect actual accuracy. A well-calibrated model produces scores where faces scored at 80% similarity are correctly matched 80% of the time; faces at 90% are correctly matched 90% of the time. A poorly calibrated model might be confidently wrong, consistently reporting high similarity for mismatched pairs.",
+          "Ollie's percentages are not calibrated in this sense. They are distances between face fingerprints, rescaled so the differences between your top matches are easy to see. They are good for ranking, but an 80% doesn't mean an 80% chance of anything.",
         ],
       },
       {
         h2: "When Confident Results Are Surprising",
         paragraphs: [
           "A high confidence match that surprises you visually is telling you something: either the similarity is in dimensions not obvious to casual inspection (the embedding has found geometric relationships you are not noticing), or the photo conditions have shifted your embedding in a direction that produces an unexpected result. The response is different for each case.",
-          "Try uploading another photo under different conditions. If the same celebrity appears at high confidence across multiple photos, trust the result,the similarity is real even if not obvious. If the result changes significantly across photos, the original photo's conditions were driving the match more than your actual face geometry.",
+          "Try uploading another photo under different conditions. If the same celebrity appears at high confidence across multiple photos, trust the result, the similarity is real even if not obvious. If the result changes significantly across photos, the original photo's conditions were driving the match more than your actual face geometry.",
         ],
       },
     ],
     faqs: [
-      { q: "What does a 95% similarity score mean in Ollie?", a: "It means the distance between your facial embedding and the celebrity's is in the range corresponding to strong geometric similarity. It is not a probability of being the same person,it is a calibrated similarity measure." },
+      { q: "What does a 95% similarity score mean in Ollie?", a: "It means the distance between your facial embedding and the celebrity's is in the range corresponding to strong geometric similarity. It is not a probability of being the same person; it is a rescaled similarity score for ranking." },
       { q: "What is AI confidence calibration?", a: "Calibration is the property that confidence scores accurately reflect actual accuracy. A calibrated model's 80% confidence matches are correct 80% of the time." },
     ],
     relatedSlugs: ["what-is-similarity-score", "what-overfitting-means", "inside-ai-face-matching"],
@@ -859,7 +865,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "identical-twins-different-profiles",
     title: "Identical Twins, Different Profiles: What Face Recognition Reveals",
-    excerpt: "Face recognition can distinguish identical twins in most conditions. Here is what that tells us about how small the differences are,and how sensitive modern AI has become.",
+    excerpt: "Face recognition can distinguish identical twins in most conditions. Here is what that tells us about how small the differences are, and how sensitive modern AI has become.",
     date: "March 2026",
     isoDate: "2026-03-14",
     readTime: "4 min read",
@@ -870,7 +876,7 @@ export const postsB: BlogPost[] = [
       {
         h2: "The Challenge of Twins",
         paragraphs: [
-          "Identical (monozygotic) twins present the hardest possible test for face recognition systems,two individuals with nearly identical genetic instructions for facial development, photographed in the same conditions. For decades, twin pairs were used as near-failure cases to establish the limits of face recognition performance.",
+          "Identical (monozygotic) twins present the hardest possible test for face recognition systems, two individuals with nearly identical genetic instructions for facial development, photographed in the same conditions. For decades, twin pairs were used as near-failure cases to establish the limits of face recognition performance.",
           "Modern deep learning systems handle most twin pairs with reasonable accuracy under controlled conditions. The key word is controlled: the genuine biological differences between identical twins are small, and poor photo conditions (especially backlighting, extreme angles, or low resolution) can easily produce false matches between twins even for sophisticated systems.",
         ],
       },
@@ -891,7 +897,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "expression-affects-matching",
     title: "Does Your Expression Affect Your Celebrity Match Result?",
-    excerpt: "Smiling changes the apparent geometry of your face significantly. Here is what expression does to the facial embedding,and which expressions to use for the most accurate results.",
+    excerpt: "Smiling changes the apparent geometry of your face significantly. Here is what expression does to the facial embedding, and which expressions to use for the most accurate results.",
     date: "March 2026",
     isoDate: "2026-03-12",
     readTime: "3 min read",
@@ -909,7 +915,7 @@ export const postsB: BlogPost[] = [
       {
         h2: "What to Do",
         paragraphs: [
-          "For best results, use a neutral or mildly relaxed expression,not forced neutral, which can produce an unusual muscle configuration, but natural resting to slight relaxation. Avoid: very wide smiles that partially close the eyes; raised eyebrows; frowning; any expression involving strong muscle contraction.",
+          "For best results, use a neutral or mildly relaxed expression, not forced neutral, which can produce an unusual muscle configuration, but natural resting to slight relaxation. Avoid: very wide smiles that partially close the eyes; raised eyebrows; frowning; any expression involving strong muscle contraction.",
           "If you are curious how expression affects your results, try uploading the same photo session with different expressions and compare the top results. The consistency of your top match across expressions reflects how robustly the identity signal comes through despite expression variation.",
         ],
       },
@@ -922,7 +928,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "makeup-affects-matching",
     title: "Does Makeup Change Your Celebrity Match?",
-    excerpt: "Heavy makeup can alter the apparent positions of facial features. Here is what contouring, eye makeup, and lip colour do to face recognition,and when it matters.",
+    excerpt: "Heavy makeup can alter the apparent positions of facial features. Here is what contouring, eye makeup, and lip colour do to face recognition, and when it matters.",
     date: "March 2026",
     isoDate: "2026-03-10",
     readTime: "3 min read",
@@ -933,15 +939,15 @@ export const postsB: BlogPost[] = [
       {
         h2: "What Makeup Changes",
         paragraphs: [
-          "Most makeup does not significantly affect face recognition results because it changes colour and texture (surface properties) without changing the geometric positions of features. The face recognition network extracts structural geometry,landmark positions and their spatial relationships,which is largely unchanged by most cosmetics.",
-          "The exception is makeup that deliberately reshapes apparent feature positions. Heavy <strong>contouring</strong> using dark shading along the jawline, nose bridge, or cheekbones changes the contrast map in exactly the same way that lighting changes do,altering the apparent geometry without changing actual geometry. Dramatic contouring can shift nose width, jaw definition, and cheekbone prominence enough to affect the embedding.",
+          "Most makeup does not significantly affect face recognition results because it changes colour and texture (surface properties) without changing the geometric positions of features. The face recognition network extracts structural geometry, landmark positions and their spatial relationships, which is largely unchanged by most cosmetics.",
+          "The exception is makeup that deliberately reshapes apparent feature positions. Heavy <strong>contouring</strong> using dark shading along the jawline, nose bridge, or cheekbones changes the contrast map in exactly the same way that lighting changes do, altering the apparent geometry without changing actual geometry. Dramatic contouring can shift nose width, jaw definition, and cheekbone prominence enough to affect the embedding.",
         ],
       },
       {
         h2: "Practical Guidance",
         paragraphs: [
           "Standard everyday makeup (foundation, blush, mascara, moderate lip colour) will not meaningfully affect your celebrity match results. Heavy theatrical contouring, dramatic prosthetic or decorative applications, or heavy theatrical eye makeup that substantially changes eye shape can produce small embedding shifts.",
-          "If you want to compare how your results change with and without makeup, the most informative comparison uses matched photos,same lighting, same angle, same expression, identical everything except the makeup. This isolates the makeup effect from other photo variables.",
+          "If you want to compare how your results change with and without makeup, the most informative comparison uses matched photos, same lighting, same angle, same expression, identical everything except the makeup. This isolates the makeup effect from other photo variables.",
         ],
       },
     ],

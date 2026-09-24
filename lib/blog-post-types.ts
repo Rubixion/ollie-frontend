@@ -14,6 +14,7 @@ export type BlogPost = {
   excerpt: string
   date: string
   isoDate: string
+  updatedIsoDate?: string // set when the content is revised (dateModified, sitemap lastmod)
   readTime: string
   category: string
   author: string
