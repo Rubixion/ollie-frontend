@@ -118,12 +118,12 @@ export function Nav() {
         scrolled && "border-white/10 bg-black/80 shadow-lg shadow-black/30 backdrop-blur-xl",
       )}
     >
-      <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-6">
-        <PageLink href="/" onClick={() => setOpen(false)} className="shrink-0 rounded-lg p-2 text-xl font-black tracking-widest text-white transition-colors hover:bg-white/[0.05] hover:text-white/70">
+      <nav className="mx-auto grid h-16 w-full max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-6">
+        <PageLink href="/" onClick={() => setOpen(false)} className="col-start-1 shrink-0 justify-self-start rounded-lg p-2 text-xl font-black tracking-widest text-white transition-colors hover:bg-white/[0.05] hover:text-white/70">
           OLLIE
         </PageLink>
 
-        <div className="hidden min-w-0 items-center gap-1 md:flex">
+        <div className="col-start-2 hidden min-w-0 items-center gap-1 md:flex">
           {links.map((link) => {
             const active = pathname === link.href || pathname.startsWith(`${link.href}/`)
             return (
@@ -142,19 +142,21 @@ export function Nav() {
           })}
         </div>
 
-        <ProfileMenu />
+        <div className="col-start-3 flex items-center justify-self-end">
+          <ProfileMenu />
 
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => setOpen((value) => !value)}
-          className="md:hidden"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label="Toggle menu"
-        >
-          <MenuToggleIcon open={open} className="size-5" />
-        </Button>
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={() => setOpen((value) => !value)}
+            className="md:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label="Toggle menu"
+          >
+            <MenuToggleIcon open={open} className="size-5" />
+          </Button>
+        </div>
       </nav>
 
       <MobileMenu open={open} id="mobile-menu" className="flex flex-col justify-between gap-3">

@@ -125,7 +125,7 @@ export function ContactForm() {
       </button>
       <p role="status" className="text-sm text-white/70 min-h-5">
         {status === "sent" && "Sent. Thanks, we'll get back to you if you left an email."}
-        {status === "error" && "Couldn't send. Try again, or use the email below."}
+        {status === "error" && "Couldn't send. Try again, or use the email above."}
       </p>
     </form>
   )

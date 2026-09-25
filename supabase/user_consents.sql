@@ -13,6 +13,9 @@ create table if not exists public.user_consents (
 );
 alter table public.user_consents enable row level security;
 revoke all on public.user_consents from anon, authenticated;
+-- The server route uses the service_role key. Grant it explicitly: tables made in the SQL editor can miss Supabase's
+-- default grants, and then every /api/consent call fails with "permission denied for table user_consents".
+grant all on public.user_consents to service_role;
 
 -- The mailing list: everyone who opted in and hasn't unsubscribed. Export it from here for your email tool,
 -- and put an unsubscribe link in every email (CASL); on unsubscribe, set email_opt_in = false, email_opt_out_at = now().
@@ -21,3 +24,4 @@ create or replace view public.email_list with (security_invoker = true) as
   from public.user_consents
   where email_opt_in and email is not null;
 revoke all on public.email_list from anon, authenticated;
+grant select on public.email_list to service_role;
