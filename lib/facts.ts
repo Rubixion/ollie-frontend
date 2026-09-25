@@ -12,12 +12,12 @@ export const MODEL = {
 }
 
 export const INDEX = {
-  // Owner's call (2026-09-24): shown as "5,000+" site-wide; the index is going past 5,000 with the regional top-up.
+  // Rounded down to the thousand (owner's rule). v2 index, 2026-09-25: 5,955 people, 40,252 photos.
   celebrities: "5,000+",
+  photos: "40,000+",
   photosPerPerson: "2 to 12",
   source: "Wikimedia Commons",
-  // TODO(owner): /match and llms.txt say "roughly two-thirds ... are men" (Wikidata gender: 63% men among the first 479
-  // collected, 66% across the 12,000 candidates). Recheck when the run finishes.
+  // Gender (Wikidata), v2 index: 62% men, 37% women. /match and llms.txt say "about three in five ... are men".
 }
 
 // Must match the purge job in supabase/search_limits.sql.

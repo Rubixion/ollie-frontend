@@ -141,7 +141,7 @@ export function ModelSection() {
             <div className="space-y-2">
               <h3 className="text-lg font-medium text-white">{INDEX.celebrities} celebrities, all credited</h3>
               <p className="text-sm text-white/60 text-pretty">
-                Well-known living adults, {INDEX.photosPerPerson} photos each, freely licensed from {INDEX.source} and
+                Well-known living adults, {INDEX.photos} photos in all ({INDEX.photosPerPerson} each), freely licensed from {INDEX.source} and
                 credited next to every match.
               </p>
             </div>

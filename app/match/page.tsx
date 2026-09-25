@@ -45,7 +45,7 @@ const STEPS = [
   ],
   [
     "Celebrities are ranked by closeness.",
-    `Those numbers are compared with every photo of ${INDEX.celebrities} celebrities (${INDEX.photosPerPerson} photos each). Each celebrity is scored by their single closest photo, and you see the top five with the photo that matched.`,
+    `Those numbers are compared with ${INDEX.photos} photos of ${INDEX.celebrities} celebrities (${INDEX.photosPerPerson} photos each). Each celebrity is scored by their single closest photo, and you see the top five with the photo that matched.`,
   ],
 ]
 
@@ -60,7 +60,7 @@ const TIPS: { tip: string; href?: string; link?: string }[] = [
 const LIMITS = [
   [
     "The celebrity list follows Wikipedia.",
-    "People were picked by how much their English Wikipedia page is read and how many languages cover them, so the list leans toward people famous in English-speaking countries, and roughly two-thirds of the people on it are men. Someone who is a household name in one country may be missing.",
+    "Most people were picked by how much their English Wikipedia page is read and how many languages cover them, so the list leans toward people famous in English-speaking countries. A second list, ranked by each region's own-language Wikipedias, adds stars from East and South Asia, Southeast Asia, Latin America, Africa and the Middle East, but coverage is still uneven, and about three in five of the people on it are men. Someone who is a household name in one country may be missing.",
   ],
   [
     "The model learned from an uneven set of faces.",
@@ -107,7 +107,7 @@ const FAQ: [string, string][] = [
   ],
   [
     "Which celebrities are included?",
-    `${INDEX.celebrities} of the most famous living adults: actors, musicians, athletes, politicians, business people and online creators. They were chosen by how much their English Wikipedia page was read over six months and how many language editions of Wikipedia cover them. People known mainly for crimes or adult films are left out. Every photo is a freely licensed picture from ${INDEX.source}, credited under your matches.`,
+    `${INDEX.celebrities} of the most famous living adults: actors, musicians, athletes, politicians, business people and online creators. They were chosen by how much their English Wikipedia page was read over six months and how many language editions of Wikipedia cover them, plus a regional list ranked by views on Asian, Latin American, African and Middle Eastern Wikipedias. People known mainly for crimes or adult films are left out. Every photo is a freely licensed picture from ${INDEX.source}, credited under your matches.`,
   ],
   [
     "Can I use a group photo?",

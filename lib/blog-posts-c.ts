@@ -958,7 +958,7 @@ export const postsC: BlogPost[] = [
       {
         h2: "Comparison and Ranking (Step 4)",
         paragraphs: [
-          "Every celebrity photo in the database was run through the same network ahead of time. Your fingerprint is compared with all of them at once, a single matrix calculation that takes milliseconds, and each celebrity is scored by the average of their two closest photos, so people with more photos in the database don't get an unfair edge.",
+          "Every celebrity photo in the database was run through the same network ahead of time. Your fingerprint is compared with all of them at once, a single matrix calculation that takes milliseconds, and each celebrity is scored by their single closest photo.",
           "The distances are rescaled into percentages that are easier to read, and the five closest celebrities come back to you, each with the photo that matched you best. The match score comes from the network alone; there are no hand-made adjustments for skin tone or other features. By default the results are limited to celebrities of the gender InsightFace estimates from your face, using each celebrity's gender as recorded on Wikidata; you can pick men or women yourself, and narrow the list to actors, singers or footballers.",
         ],
       },
@@ -1346,7 +1346,7 @@ export const postsC: BlogPost[] = [
       {
         h2: "Choosing the Celebrities",
         paragraphs: [
-          "The list starts from Wikidata: every living person covered by at least ten language editions of Wikipedia. Each is ranked by how many people read their English Wikipedia article over the previous six months, with a boost for being covered in many languages, so the list reflects who is famous now, worldwide.",
+          "The list starts from Wikidata: every living person covered by at least ten language editions of Wikipedia. Each is ranked by how many people read their English Wikipedia article over the previous six months, with a boost for being covered in many languages, so the list reflects who is famous now. Because English Wikipedia under-counts stars from other regions, a second list ranks people from East and South Asia, Southeast Asia, Latin America, Africa and the Middle East by views on their own languages' Wikipedias, about half of them women.",
           "Only adults are included, and a known birth date is required, so nobody under 18 slips in. People known mainly for adult entertainment or for serious crimes are left out.",
         ],
       },
@@ -1368,7 +1368,7 @@ export const postsC: BlogPost[] = [
         h2: "Building the Index",
         paragraphs: [
           "Each celebrity ends up with 2 to 12 verified photos. Every photo is run through Ollie's network once, and the resulting fingerprints are stored side by side, one per photo rather than one averaged fingerprint per person, so a search can show you the exact photo that matched you best.",
-          "When you search, your fingerprint is compared with every stored one, and each celebrity is scored by their two closest photos.",
+          "When you search, your fingerprint is compared with every stored one, and each celebrity is scored by their closest photo.",
         ],
       },
     ],

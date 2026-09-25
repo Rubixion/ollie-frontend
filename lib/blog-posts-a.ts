@@ -493,7 +493,7 @@ export const postsA: BlogPost[] = [
         h2: "Step 3: Comparing Against Every Celebrity",
         paragraphs: [
           "Your embedding is compared with the pre-computed embedding of every celebrity photo in Ollie's database. There is no shortcut or approximation: for tens of thousands of photos this is one matrix calculation that finishes in milliseconds.",
-          "The comparison gives a distance for each photo: the Euclidean distance between two L2-normalised vectors, which grows with the angle between them. Each celebrity's score comes from their two closest photos, averaged, so people with more photos in the database don't get an unfair advantage.",
+          "The comparison gives a distance for each photo: the Euclidean distance between two L2-normalised vectors, which grows with the angle between them. Each celebrity's score comes from their single closest photo, the one that looks most like you.",
         ],
       },
       {
