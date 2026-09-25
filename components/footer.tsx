@@ -25,7 +25,7 @@ export function Footer() {
   return (
     <footer className="pt-12 pb-8 px-6 mt-auto">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-10">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-10">
           {/* Brand */}
           <div>
             <PageLink href="/" className="text-white font-black text-xl tracking-widest hover:text-white/60 transition-colors">
@@ -34,6 +34,7 @@ export function Footer() {
             <p className="text-white/60 text-xs leading-relaxed mt-3 max-w-[220px]">
               Celebrity lookalike search. Upload a photo and see who you look like.
             </p>
+            <p className="text-white/60 text-xs mt-3">&copy; 2026 Ollie</p>
           </div>
 
           {/* Links */}
@@ -63,15 +64,6 @@ export function Footer() {
               </ul>
             </div>
           </div>
-        </div>
-
-        <div className="pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
-          <p className="text-white/60 text-xs">
-            &copy; 2026 Ollie. Built on a facial recognition network trained from scratch.
-          </p>
-          <p className="text-white/60 text-xs">
-            For entertainment only. Not affiliated with or endorsed by anyone shown.
-          </p>
         </div>
       </div>
     </footer>

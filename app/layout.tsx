@@ -56,7 +56,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("dark antialiased", outfit.variable)}
-      style={{ background: "#000", colorScheme: "dark" }} // inline, so the first paint is dark before the stylesheet arrives (no white flash)
+      style={{ background: "#0a0a0a", colorScheme: "dark" }} // = --background. Inline so the first paint is dark (no white flash). Only on html: a body background would cover the z-[-10] dot pattern
     >
       <body suppressHydrationWarning>
         <a

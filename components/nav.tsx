@@ -4,7 +4,8 @@ import { createPortal } from "react-dom"
 import { useEffect, useRef, useState } from "react"
 import type { ComponentProps } from "react"
 import { AnimatePresence, motion } from "framer-motion"
-import { LogOut, User } from "lucide-react"
+import { LogOut } from "lucide-react"
+import { AccountIcon } from "@/components/ui/account-icon"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/components/auth-provider"
 import { PageLink } from "@/components/page-link"
@@ -53,10 +54,11 @@ function ProfileMenu() {
     <div ref={ref} className="relative hidden md:block">
       <button
         onClick={() => setOpen((value) => !value)}
-        className="flex size-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-white/60 transition-colors hover:border-white/25 hover:bg-white/[0.1] hover:text-white"
+        className="flex size-9 items-center justify-center text-white/60 transition-colors hover:text-white aria-expanded:text-white"
         aria-label="Account menu"
+        aria-expanded={open}
       >
-        <User size={16} />
+        <AccountIcon size={22} aria-hidden="true" />
       </button>
       <AnimatePresence>
         {open && (
