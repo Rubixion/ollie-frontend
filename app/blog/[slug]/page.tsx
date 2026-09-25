@@ -12,7 +12,8 @@ interface Props {
   params: Promise<{ slug: string }>
 }
 
-export const dynamicParams = false // only the posts in lib/blog-posts*.ts; anything else is a real 404
+// No `dynamicParams = false`: on Cloudflare (OpenNext, no incremental cache) it 404s every post.
+// Unknown slugs still 404 through notFound() below.
 
 export async function generateStaticParams() {
   return allPosts.map((post) => ({ slug: post.slug }))
