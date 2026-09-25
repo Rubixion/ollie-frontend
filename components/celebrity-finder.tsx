@@ -527,7 +527,7 @@ export function CelebrityFinder() {
 
               {/* Loading */}
               {loading && (
-                <div className="h-full flex flex-col justify-center gap-5 py-16 px-2">
+                <div className="h-full hidden md:flex flex-col justify-center gap-5 py-16 px-2">{/* phones show the bar under the button instead */}
                   <SearchProgress elapsed={elapsed} />
                 </div>
               )}

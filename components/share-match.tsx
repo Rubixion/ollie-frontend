@@ -65,7 +65,8 @@ function fitFont(ctx: CanvasRenderingContext2D, text: string, weight: number, ma
 
 async function drawCard(match: ShareableMatch, runnerUps: ShareableMatch[], userPhoto: string | null, opts: ShareOptions): Promise<Blob> {
   const family = getComputedStyle(document.documentElement).getPropertyValue("--font-sans").trim() || "sans-serif"
-  await Promise.all([document.fonts.load(`900 64px ${family}`), document.fonts.load(`700 32px ${family}`), document.fonts.load(`500 32px ${family}`)])
+  // A font that fails to download (seen on Android Brave: "A network error occurred") shouldn't sink the image: draw with the fallback
+  await Promise.all([document.fonts.load(`900 64px ${family}`), document.fonts.load(`700 32px ${family}`), document.fonts.load(`500 32px ${family}`)]).catch(() => {})
 
   const canvas = document.createElement("canvas")
   canvas.width = W
