@@ -222,7 +222,10 @@ export function ShareMatch({
         setResult({ key, blob, url: URL.createObjectURL(blob), canShare: Boolean(navigator.canShare?.({ files: [file] })) })
         setError(null)
       })
-      .catch(() => { if (!cancelled) setError("Couldn't make the image. Try again.") })
+      .catch((e) => {
+        console.error("share image", e)
+        if (!cancelled) setError(`Couldn't make the image. Try again. (${e instanceof Error ? e.message : e?.type ?? e})`)
+      })
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` stands for `opts`
   }, [open, key, match, runnerUps, userPhoto])
