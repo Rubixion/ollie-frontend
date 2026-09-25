@@ -5,13 +5,14 @@ export const postsA: BlogPost[] = [
     slug: "how-face-recognition-works",
     title: "How Does AI Facial Recognition Actually Work? A Plain-English Guide",
     excerpt: "A plain-English breakdown of how a neural network turns a photo into a unique numerical fingerprint, and how that fingerprint finds your celebrity match.",
+    summary: "Facial recognition works in three steps: find the face, turn it into numbers, and compare those numbers. A neural network converts the aligned face into a 512-number facial fingerprint (an embedding), and two faces match when their fingerprints are close. Ollie uses this to compare your photo with thousands of celebrity photos and show the five closest.",
     date: "June 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-06-07",
     readTime: "6 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["facial recognition", "neural network", "face matching", "AI", "facial embedding", "convolutional neural network"],
+    keywords: ["how does facial recognition work", "how does face recognition work", "facial recognition", "face embedding", "neural network", "celebrity lookalike"],
     sections: [
       {
         h2: "The Short Version",
@@ -76,13 +77,14 @@ export const postsA: BlogPost[] = [
     slug: "what-is-a-facial-fingerprint",
     title: "What Is a Facial Fingerprint, and Why Is Yours Unique?",
     excerpt: "Every face can be reduced to 512 numbers. Here is what those numbers represent, how they are generated, and why they make accurate celebrity matching possible at Ollie.",
+    summary: "A facial fingerprint, or faceprint, is a list of numbers a neural network produces from a photo of a face; Ollie's has 512. Photos of the same person give nearly the same numbers even in different lighting, while different people give distant ones. That is what makes face matching and celebrity lookalike search possible.",
     date: "June 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-06-06",
     readTime: "5 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["facial fingerprint", "face embedding", "facial recognition", "neural network", "biometric", "similarity search", "FAISS"],
+    keywords: ["facial fingerprint", "faceprint", "face embedding", "facial recognition", "biometric", "celebrity lookalike"],
     sections: [
       {
         h2: "Faces Are More Than Pixels",
@@ -92,7 +94,7 @@ export const postsA: BlogPost[] = [
         ],
       },
       {
-        h2: "What the 256 Numbers Actually Represent",
+        h2: "What the 512 Numbers Actually Represent",
         paragraphs: [
           "A <strong>neural network</strong> processes your photo through a series of convolutional layers, each one extracting progressively higher-level features. Early layers detect edges and gradients. Middle layers combine these into shapes, nose bridges, eye socket curves, jaw contours. The final layers produce a 512-dimensional embedding: a list of 512 numbers that encodes the structural identity of the face in a format optimised for comparison. This is the facial fingerprint.",
           "The network does not explicitly measure any single feature. It discovers, through training on millions of face photos, which combinations of measurements best predict whether two photos show the same person. The result is a representation more discriminative than any hand-designed feature set, one that captures subtle relationships between features that no human would think to measure explicitly.",
@@ -132,12 +134,13 @@ export const postsA: BlogPost[] = [
     slug: "why-same-person-different-ai-results",
     title: "Why Two Photos of the Same Person Can Give Different AI Results",
     excerpt: "Upload two photos of yourself and you might get different celebrity matches. Here is the science behind why that happens and how to get more consistent results from Ollie.",
+    summary: "Two photos of the same person can give different AI face recognition results because lighting, camera angle, lens distortion and compression all change the pixels the network reads. The same reasons explain why you look different in photos. For consistent celebrity matches, use even light, face the camera and take the photo from arm's length or further.",
     date: "June 2026",
     isoDate: "2026-06-05",
     readTime: "5 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["face recognition accuracy", "facial recognition variation", "AI face matching", "photo quality", "lighting effects", "neural network"],
+    keywords: ["face recognition results", "why do i look different in photos", "facial recognition accuracy", "photo lighting", "AI face matching", "celebrity match"],
     sections: [
       {
         h2: "The Variability Problem in Face Matching",
@@ -186,13 +189,14 @@ export const postsA: BlogPost[] = [
     slug: "math-behind-your-face",
     title: "The Math Behind Your Face: How Machines Read Bone Structure",
     excerpt: "Your skeleton doesn't change with age, lighting, or mood, that's exactly what makes it a reliable basis for AI face recognition. Here's how the math works.",
+    summary: "Facial recognition math turns facial geometry, the proportions set by your bone structure, into a point in a 512-dimensional space. Bone structure barely changes with lighting, expression or age, so it is a reliable signal of identity. The face is first lined up using five landmarks, and similarity is the distance between two points.",
     date: "June 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-06-04",
     readTime: "5 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["facial geometry", "bone structure", "face recognition math", "neural network", "MediaPipe", "facial landmarks", "biometric"],
+    keywords: ["facial geometry", "facial recognition math", "bone structure", "facial landmarks", "face recognition", "neural network"],
     sections: [
       {
         h2: "Geometry as the Ground Truth",
@@ -234,12 +238,13 @@ export const postsA: BlogPost[] = [
     slug: "how-cnns-see-faces",
     title: "How Convolutional Neural Networks \"See\" a Human Face",
     excerpt: "A convolutional neural network doesn't see your face the way you do, it processes edges, then shapes, then geometry. Here is what each stage looks like from the inside.",
+    summary: "A convolutional neural network (CNN) for face recognition reads a face in layers: early layers find edges, middle layers find shapes like eyes and noses, and deep layers encode the proportions that make a face unique. The last layer outputs an embedding, a list of numbers used for matching. The network never sees a face the way people do, only patterns in pixels.",
     date: "June 2026",
     isoDate: "2026-06-03",
     readTime: "5 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["convolutional neural network", "CNN", "face recognition", "neural network layers", "feature extraction", "deep learning", "facial embedding"],
+    keywords: ["convolutional neural network face recognition", "CNN face recognition", "convolutional neural network", "feature extraction", "deep learning", "face embedding"],
     sections: [
       {
         h2: "Layers of Abstraction: From Pixels to Identity",
@@ -281,13 +286,14 @@ export const postsA: BlogPost[] = [
     slug: "what-is-facial-embedding",
     title: "What Is Facial Embedding? The Technology Behind Celebrity Matching",
     excerpt: "Facial embedding is the technique that makes it possible to compare two faces mathematically. Here is what it means, how it works, and why it enables instant search at Ollie.",
+    summary: "A face embedding is a list of numbers (512 at Ollie) that places a face as a point in a high-dimensional space, where photos of the same person land close together and different people land far apart. Comparing two faces then means measuring the distance between two points. That is how thousands of celebrity faces can be searched in milliseconds.",
     date: "June 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-06-02",
     readTime: "4 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["facial embedding", "face embedding", "vector space", "FAISS", "similarity search", "neural network", "face recognition"],
+    keywords: ["face embedding", "facial embeddings", "face embedding model", "vector space", "similarity search", "face recognition"],
     sections: [
       {
         h2: "Turning Faces into Coordinates",
@@ -329,13 +335,14 @@ export const postsA: BlogPost[] = [
     slug: "why-ai-beats-human-eye",
     title: "Why AI Face Matching Is More Accurate Than the Human Eye",
     excerpt: "Humans are surprisingly bad at comparing unfamiliar faces. Controlled studies put expert accuracy around 80%. Here is why AI consistently outperforms human examiners, and where it still falls short.",
+    summary: "On unfamiliar faces, AI face recognition accuracy beats the human eye. Controlled studies put untrained observers near 70% on hard photo pairs and trained examiners around 80%, while top models score above 99% on the LFW benchmark. AI still falls short on very poor photos and conditions it was not trained for.",
     date: "June 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-06-01",
     readTime: "5 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["face recognition accuracy", "AI vs human", "facial recognition", "LFW benchmark", "forensic face examination", "biometric accuracy"],
+    keywords: ["face recognition accuracy", "AI vs human face recognition", "facial recognition", "LFW benchmark", "forensic face examiners", "unfamiliar faces"],
     sections: [
       {
         h2: "The Human Accuracy Ceiling",
@@ -377,12 +384,13 @@ export const postsA: BlogPost[] = [
     slug: "face-detection-vs-recognition",
     title: "The Difference Between Face Detection and Face Recognition",
     excerpt: "Detection asks whether a face is present. Recognition asks whose face it is. They are different problems, different algorithms, and both must work for Ollie to return a result.",
+    summary: "Face detection vs face recognition: face detection finds where a face is in a photo, and face recognition works out whose face it is. They are separate steps with separate models, and both have to work. Ollie first detects and aligns your face, then compares it with celebrity faces to find your lookalike.",
     date: "May 2026",
     isoDate: "2026-05-30",
     readTime: "4 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["face detection", "face recognition", "MTCNN", "facial landmarks", "face alignment", "computer vision"],
+    keywords: ["face detection vs face recognition", "difference between face detection and face recognition", "face detection", "face recognition", "face alignment", "computer vision"],
     sections: [
       {
         h2: "Two Completely Different Problems",
@@ -417,12 +425,13 @@ export const postsA: BlogPost[] = [
     slug: "how-lighting-affects-recognition",
     title: "How Lighting Affects AI Facial Recognition (More Than You Think)",
     excerpt: "Lighting is the single biggest source of variation in face recognition accuracy. Here is what it does to your photo at a technical level and how to work with it.",
+    summary: "Lighting is the biggest source of variation in facial recognition accuracy, because shadows change how your nose, eyes and jaw appear in a photo. Harsh side light, backlight and very dim light are the worst; soft, even light facing you is best. For a celebrity match, face a window or go outside on an overcast day.",
     date: "May 2026",
     isoDate: "2026-05-28",
     readTime: "4 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["lighting face recognition", "facial recognition accuracy", "photo lighting", "face matching tips", "AI accuracy", "facial embedding"],
+    keywords: ["facial recognition lighting", "lighting face recognition", "face recognition accuracy", "best lighting for photos", "face matching tips", "celebrity match"],
     sections: [
       {
         h2: "Why Lighting Changes Everything",
@@ -457,13 +466,14 @@ export const postsA: BlogPost[] = [
     slug: "inside-ai-face-matching",
     title: "What Happens Inside an AI in the 2 Seconds It Takes to Match Your Face",
     excerpt: "From the moment you click Search to the moment results appear, your photo travels through several distinct processing stages. Here is exactly what happens at each step.",
+    summary: "How does face matching work? AI face matching takes four steps, all within about two seconds: detect the face and its five key points, align and crop it, turn it into a 512-number embedding, then compare that embedding with every celebrity photo in the database. The closest celebrities are ranked, and their distances are turned into percentage scores.",
     date: "May 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-05-26",
     readTime: "5 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["face matching pipeline", "face recognition process", "similarity search", "neural network inference", "face alignment", "AI face matching"],
+    keywords: ["how does face matching work", "face matching AI", "face recognition process", "face alignment", "face embedding", "similarity search"],
     sections: [
       {
         h2: "Step 1: Face Detection and Alignment",
@@ -505,13 +515,14 @@ export const postsA: BlogPost[] = [
     slug: "siamese-neural-networks-explained",
     title: "Siamese Neural Networks Explained: The Twin-Network Idea Behind Face Matching",
     excerpt: "A Siamese network compares two inputs by running both through the same network. Here is how the idea works, where it is used, and how it relates to the way Ollie compares faces.",
+    summary: "A Siamese neural network compares two inputs by passing both through the same network and measuring the distance between the two embeddings: close means similar, far means different. It is a classic approach to face verification and signature checking. Ollie uses the same idea, one shared network that turns every face into comparable numbers, though it was trained with a different loss.",
     date: "April 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-04-01",
     readTime: "5 min read",
     category: "Deep Dive",
     author: "Ollie Research Team",
-    keywords: ["Siamese neural network", "face matching", "contrastive learning", "neural network architecture", "face recognition", "deep learning"],
+    keywords: ["siamese neural network", "siamese network", "siamese network face recognition", "what is a siamese network", "face verification", "embeddings"],
     sections: [
       {
         h2: "What Is a Siamese Network?",
@@ -567,13 +578,14 @@ export const postsA: BlogPost[] = [
     slug: "why-two-networks",
     title: "Why Face Matching Uses Two Neural Networks at Once",
     excerpt: "A Siamese network runs two identical copies of the same network in parallel. Here is why this architecture exists, what problem it solves, and why shared weights are the key insight.",
+    summary: "Face matching uses a Siamese network architecture, one network applied to two faces, because a plain classifier can only recognise the people it was trained on. Comparing embeddings instead lets the system match faces it has never seen, including celebrities who became famous after training. Celebrity embeddings are computed in advance, so each search runs the network only once, on your photo.",
     date: "May 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-05-24",
     readTime: "5 min read",
     category: "Deep Dive",
     author: "Ollie Research Team",
-    keywords: ["Siamese network", "shared weights", "face matching", "contrastive loss", "neural network", "face recognition architecture"],
+    keywords: ["siamese network architecture", "siamese network", "face verification", "face recognition", "neural network", "embeddings"],
     sections: [
       {
         h2: "Why a Single Network Is Not Enough",
@@ -615,13 +627,14 @@ export const postsA: BlogPost[] = [
     slug: "siamese-versatility",
     title: "What Fraud Detection, Medical Imaging, and Celebrity Lookalikes Have in Common",
     excerpt: "The Siamese network idea behind face matching also detects forged signatures, matches medical images, and verifies product listings. Here is the common thread.",
+    summary: "Siamese network applications go far beyond faces: the same compare-two-things design checks signatures for fraud, finds similar medical scans, spots duplicate product listings and helps drug discovery. Any problem that asks whether two things are the same fits. Celebrity lookalike matching is one more example.",
     date: "May 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-05-22",
     readTime: "4 min read",
     category: "Deep Dive",
     author: "Ollie Research Team",
-    keywords: ["Siamese network applications", "face matching", "fraud detection", "medical imaging", "similarity learning", "deep learning"],
+    keywords: ["siamese network applications", "siamese network use cases", "signature verification", "fraud detection", "medical imaging", "similarity learning"],
     sections: [
       {
         h2: "Similarity as a Universal Primitive",
@@ -655,13 +668,14 @@ export const postsA: BlogPost[] = [
     slug: "contrastive-loss-explained",
     title: "Contrastive Loss Explained: The Math That Teaches Networks to Compare Faces",
     excerpt: "Without a loss function that teaches the network what facial similarity means, face matching would not be possible. Here is how contrastive loss does it, and what modern systems like Ollie use instead.",
+    summary: "Contrastive loss is a training rule that pulls embeddings of the same person together and pushes different people apart until they are at least a set margin away. Triplet loss does the same with three images at once: an anchor, a match and a non-match. Most modern face recognition, including Ollie's model, uses margin-based losses such as CosFace or ArcFace instead.",
     date: "May 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-05-20",
     readTime: "5 min read",
     category: "Deep Dive",
     author: "Ollie Research Team",
-    keywords: ["contrastive loss", "triplet loss", "face recognition training", "neural network loss function", "metric learning", "embedding learning"],
+    keywords: ["contrastive loss", "contrastive loss vs triplet loss", "triplet loss", "loss function", "face recognition", "metric learning"],
     sections: [
       {
         h2: "The Training Problem: Teaching Similarity",
@@ -703,13 +717,14 @@ export const postsA: BlogPost[] = [
     slug: "what-is-similarity-score",
     title: "What Is a Similarity Score? How AI Ranks Face Matches by Percentage",
     excerpt: "When Ollie says you are 87% similar to a celebrity, what does that number actually mean? It is not a probability. It is a rescaled distance. Here is the difference.",
+    summary: "A face similarity score shows how close two face embeddings are. Ollie measures the distance between your 512-number embedding and each celebrity's (for unit-length vectors this ranks faces the same way as cosine similarity), then rescales it to a percentage that is easier to read. The percentage is for ranking matches; it is not a probability that you look alike.",
     date: "May 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-05-18",
     readTime: "4 min read",
     category: "Deep Dive",
     author: "Ollie Research Team",
-    keywords: ["similarity score", "face matching score", "cosine similarity", "face recognition percentage", "embedding distance", "AI confidence"],
+    keywords: ["face similarity score", "face match score", "cosine similarity face recognition", "similarity score", "face recognition", "celebrity match percentage"],
     sections: [
       {
         h2: "From Distance to Percentage",
@@ -744,13 +759,14 @@ export const postsA: BlogPost[] = [
     slug: "find-your-celebrity-lookalike",
     title: "Find Your Celebrity Lookalike: A Complete Guide",
     excerpt: "Everything you need to know about getting the best celebrity match results, lighting, angles, photo quality, and why some photos work better than others.",
+    summary: "To find your celebrity lookalike, upload a clear, front-facing photo to Ollie: it turns your face into a 512-number fingerprint and shows the five celebrities whose faces are closest. It is free to try online. Soft light, a neutral expression and the rear camera give the most accurate celebrity look alike results.",
     date: "May 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-05-01",
     readTime: "4 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["celebrity lookalike", "find your celebrity match", "face matching guide", "Ollie celebrity match", "best photo for face match"],
+    keywords: ["celebrity lookalike", "celebrity look alike finder", "what celebrity do i look like", "celebrity lookalike ai", "upload photo", "face match"],
     sections: [
       {
         h2: "How Ollie Finds Your Lookalike",
@@ -775,7 +791,7 @@ export const postsA: BlogPost[] = [
       {
         h2: "Pick Who You Are Compared With",
         paragraphs: [
-          "Under the upload box you can choose who to see. <strong>Any gender</strong> (the default) compares you with everyone, and often turns up surprising cross-gender lookalikes. Choose <strong>Male</strong> or <strong>Female</strong> to narrow it down, based on each celebrity's gender as recorded on Wikidata.",
+          "Under the upload box you can choose who you are compared with. By default Ollie estimates from your photo whether your face looks male or female and shows celebrities of that gender, using each celebrity's gender as recorded on Wikidata. The <strong>Gender</strong> menu is set to <strong>Auto-detect</strong>; switch it to <strong>Men</strong> or <strong>Women</strong> to choose yourself. The <strong>Compare with</strong> menu next to it narrows the list to <strong>Actors</strong>, <strong>Singers</strong> or <strong>Footballers</strong>.",
         ],
       },
       {
@@ -801,7 +817,7 @@ export const postsA: BlogPost[] = [
     faqs: [
       { q: "What kind of photo gives the best celebrity match?", a: "A clear, front-facing photo of just your face, in soft and even light, without sunglasses or heavy filters." },
       { q: "Why do I get different matches with different photos?", a: "Lighting, angle, expression and image quality all change the facial fingerprint the network computes. Try a few photos and look for the names that repeat." },
-      { q: "Can I see matches of any gender?", a: "Yes, that is the default: Any gender. Choose Male or Female under the upload box to narrow your matches." },
+      { q: "Can I choose which gender I am matched with?", a: "Yes. By default the Gender menu under the upload box is set to Auto-detect, which shows celebrities of the gender Ollie estimates from your photo. Set it to Men or Women to choose yourself." },
       { q: "Does Ollie store my photo?", a: "No. Your photo is used only in memory to run the search and is discarded as soon as it finishes." },
       { q: "Where do the celebrity photos come from?", a: "From Wikimedia Commons, under free licenses such as public domain, CC BY and CC BY-SA. Each result credits its photographer." },
     ],
@@ -811,13 +827,14 @@ export const postsA: BlogPost[] = [
     slug: "why-everyone-has-doppelganger",
     title: "Why Everyone Has a Celebrity Doppelgänger (According to Science)",
     excerpt: "There are only so many ways to arrange eyes, a nose, and a jaw within biological constraints. Here is why the mathematics of facial geometry virtually guarantees you have a famous lookalike.",
+    summary: "Does everyone have a doppelganger? Probably not an exact copy, but close lookalikes are common. Faces vary along a limited number of features within biological limits, so among eight billion people many faces land near yours, and among thousands of celebrities Ollie can nearly always find one whose face is close.",
     date: "May 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-05-16",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["celebrity doppelganger", "facial geometry", "face matching", "biological similarity", "face recognition", "lookalike"],
+    keywords: ["does everyone have a doppelganger", "doppelganger", "celebrity doppelganger", "lookalike", "facial similarity", "face recognition"],
     sections: [
       {
         h2: "Finite Face Space",
@@ -852,12 +869,13 @@ export const postsA: BlogPost[] = [
     slug: "most-matched-celebrities",
     title: "The Most Commonly Matched Celebrities, and What It Says About Facial Geometry",
     excerpt: "Some celebrities appear in far more Ollie results than others. This is not about fame, it is about where their face sits in mathematical space.",
+    summary: "The most common celebrity lookalikes are celebrities with average facial proportions: their faces sit near the middle of face space, so they are close to many people. Celebrities with unusual features match fewer people, but those matches tend to look stronger. Any celebrity lookalike app that ranks faces by distance shows this effect.",
     date: "May 2026",
     isoDate: "2026-05-14",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["celebrity face matching", "facial geometry", "embedding space", "average face", "face recognition", "lookalike results"],
+    keywords: ["most common celebrity lookalikes", "celebrity lookalike app", "averageness", "face embedding", "celebrity match", "facial geometry"],
     sections: [
       {
         h2: "Why Some Celebrities Match More People",
@@ -891,13 +909,14 @@ export const postsA: BlogPost[] = [
     slug: "why-some-celebrities-matched-more",
     title: "Why Some Celebrities Get Matched More Than Others",
     excerpt: "Three factors determine how often a celebrity appears in Ollie results: geometric position in embedding space, dataset representation, and facial distinctiveness.",
+    summary: "Some celebrities show up in celebrity lookalike results far more often because their faces sit in a crowded, average part of face space, close to many users. How many good photos a celebrity has in the database also matters. Distinctive faces appear less often, but when they do, the resemblance is usually clear.",
     date: "May 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-05-12",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["celebrity matching frequency", "facial geometry", "embedding space", "face recognition dataset", "distinctiveness"],
+    keywords: ["celebrity lookalike results", "same celebrity match", "face embedding", "celebrity database", "distinctive faces", "face recognition"],
     sections: [
       {
         h2: "Geometric Position in Embedding Space",
@@ -929,39 +948,40 @@ export const postsA: BlogPost[] = [
   {
     slug: "celebrity-match-different-era",
     title: "Do You Look Like a Celebrity from a Different Era? Here's Why AI Thinks So",
-    excerpt: "Many people receive their strongest Ollie matches with celebrities from decades before they were born. Facial geometry doesn't have a release date, here is why.",
+    excerpt: "Many people's strongest Ollie matches are celebrities who became famous decades before they were born. Facial geometry doesn't have a release date, here is why.",
+    summary: "Yes, you can look most like a celebrity from an earlier era: face recognition reads bone structure, not when a photo was taken or what styles were in fashion. Ollie's database covers living celebrities, including stars who became famous decades ago, so your closest celebrity lookalike can be someone who was famous before you were born.",
     date: "May 2026",
     isoDate: "2026-05-10",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["celebrity match era", "classic Hollywood", "face recognition", "facial geometry", "historical celebrity", "lookalike"],
+    keywords: ["celebrity lookalike", "celebrity from a different era", "older celebrity lookalike", "facial geometry", "face recognition", "facial archetype"],
     sections: [
       {
         h2: "Why Era Does Not Matter to Geometry",
         paragraphs: [
           "A <strong>neural network</strong> that extracts facial embeddings does not notice when a photograph was taken. It extracts the same structural features from a 1950s film still as from a modern smartphone selfie. The bone structure beneath the face, inter-ocular distance, jaw angle, cheekbone prominence, is the same regardless of whether the image was captured on nitrate film or a modern CMOS sensor. Temporal distance is simply not a variable the embedding encodes.",
-          "This means that if your facial geometry is closest to that of a Golden Age Hollywood star, Ollie will return that match regardless of the decades between you. The geometry matches; the chronology is irrelevant. <strong>Facial similarity</strong> is about three-dimensional structure, not photographic era.",
+          "This means that if your facial geometry is closest to that of a star who has been famous since the 1970s, Ollie will return that match regardless of the decades between you. The geometry matches; the chronology is irrelevant. <strong>Facial similarity</strong> is about three-dimensional structure, not photographic era.",
         ],
       },
       {
-        h2: "Why Classic Hollywood Appears So Often",
+        h2: "Why Long Careers Show Up in Your Results",
         paragraphs: [
-          "Classic Hollywood studios photographed their stars extensively, hundreds of controlled, well-lit, high-quality portraits of each major actor and actress across many years. This archive produces excellent training data: varied conditions, consistent identity, large quantity. The resulting embeddings are robust and well-positioned in the embedding space.",
-          "Additionally, Golden Age Hollywood favoured specific facial types: strong symmetry, defined cheekbones, a particular ratio of eye width to face width. These proportions occur throughout the population and produce reliable matches for people who share them, regardless of ethnicity, geography, or contemporary celebrity exposure.",
+          "Ollie's database holds living celebrities only, but many of them have been famous for decades. Actors, musicians and public figures whose careers began in the 1960s, 70s or 80s sit alongside today's stars, so a match can point to someone your parents or grandparents would recognise.",
+          "Each celebrity is represented by several verified photos, and the network judges them by bone structure. A photo from 1985 and one from last year land in the same region of the embedding space, so the age of a photo does not push a celebrity up or down your list.",
         ],
       },
       {
         h2: "What an Era Match Reveals",
         paragraphs: [
-          "Receiving a strong match with a celebrity from an earlier era is a signal about <em>facial archetype</em>, not coincidence. Golden Age Hollywood favoured specific geometric types, and those proportions transcend decades. If those proportions are yours, the match will appear in your results with high confidence.",
-          "Think of the era match as an aesthetic anchor. It identifies which geometric archetype your face most closely resembles. That archetype has been prominent throughout human history and continues to appear in contemporary celebrity faces, but if the clearest example in the database is from 1955, that is what you will see.",
+          "Receiving a strong match with a celebrity from an earlier era is a signal about <em>facial archetype</em>, not coincidence. Every generation of stars includes particular geometric types, and those proportions transcend decades. If those proportions are yours, the match will appear in your results with high confidence.",
+          "Think of the era match as an aesthetic anchor. It identifies which geometric archetype your face most closely resembles. That archetype has been prominent throughout human history and continues to appear in contemporary celebrity faces, but if the clearest example in the database became famous in the 1970s, that is who you will see.",
         ],
       },
     ],
     faqs: [
-      { q: "Why am I matched with celebrities from before I was born?", a: "Face matching is based on geometric similarity, not temporal proximity. If a historical celebrity's bone structure is closest to yours in embedding space, they appear as your top match regardless of era." },
-      { q: "Does the age of a celebrity photo affect matching accuracy?", a: "Old photographs processed through digital scanning can have different noise and colour profiles than modern photos, but the network extracts geometric features that survive these differences. Controlled classic Hollywood portraits often produce excellent matches." },
+      { q: "Why am I matched with celebrities from before I was born?", a: "Face matching is based on geometric similarity, not temporal proximity. If an older celebrity's bone structure is closest to yours in embedding space, they appear as your top match regardless of era." },
+      { q: "Does the age of a celebrity photo affect matching accuracy?", a: "Old photographs processed through digital scanning can have different noise and colour profiles than modern photos, but the network extracts geometric features that survive these differences. A sharp, well-lit older photo matches as well as a modern one." },
     ],
     relatedSlugs: ["why-everyone-has-doppelganger", "most-matched-celebrities", "what-celebrity-match-reveals"],
   },
@@ -969,12 +989,13 @@ export const postsA: BlogPost[] = [
     slug: "selfie-vs-passport-match",
     title: "Why Your Selfie Might Match a Different Celebrity Than Your Passport Photo",
     excerpt: "Selfie cameras distort the shape of your face in a way most people are never told about. Here is the physics of focal length distortion and why it matters for face matching.",
+    summary: "Your selfie can match a different celebrity than your passport photo because the front camera's wide-angle lens, held close, makes your nose look bigger and your face rounder. A passport photo is taken from further away in even light, so it shows your real proportions. That is also why you look different in selfies.",
     date: "May 2026",
     isoDate: "2026-05-08",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["selfie distortion", "focal length", "perspective distortion", "face matching photo", "passport photo", "face recognition accuracy"],
+    keywords: ["why do i look different in selfies", "selfie vs real face", "selfie camera distortion", "passport photo", "celebrity match", "face recognition"],
     sections: [
       {
         h2: "The Selfie Distortion Problem",
@@ -1009,12 +1030,13 @@ export const postsA: BlogPost[] = [
     slug: "celebrities-that-fool-ai",
     title: "The Celebrity Faces That Fool AI the Most",
     excerpt: "Some celebrity faces produce inconsistent or surprisingly broad matching behaviour. Here is what makes a face 'hard' for face recognition, and what it reveals about how the system works.",
+    summary: "The celebrity faces that fool AI most are average-looking faces near the centre of face space, and faces that change a lot between photos. Average faces match many people at moderate scores; unstable faces jump around with lighting and angle. Neither means the system is broken, but together they explain most surprising celebrity lookalike results.",
     date: "May 2026",
     isoDate: "2026-05-06",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["face recognition difficulty", "celebrity matching", "embedding space", "average face", "facial distinctiveness", "false positive"],
+    keywords: ["celebrity lookalike results", "AI face matching", "celebrities who look alike", "famous people who look alike", "face recognition", "face embedding"],
     sections: [
       {
         h2: "What 'Fooling' Means in Face Matching",
@@ -1048,12 +1070,13 @@ export const postsA: BlogPost[] = [
     slug: "what-celebrity-match-reveals",
     title: "What Your Celebrity Match Actually Tells You About Your Face Shape",
     excerpt: "Your top celebrity match is a geometric statement about your bone structure. Here is how to decode what it says about your facial proportions beyond just being a fun comparison.",
+    summary: "Your celebrity match shares a specific set of facial proportions with you, such as eye spacing relative to face width and midface height, not just the same face shape. That is why two people can match strongly without looking identical. It is far more precise than labels like oval or square, so celebrities with the same face shape as you are not always your best celebrity lookalike.",
     date: "May 2026",
     isoDate: "2026-05-04",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["face shape", "celebrity match meaning", "facial proportions", "facial geometry", "face recognition", "bone structure"],
+    keywords: ["face shape celebrity lookalike", "celebrities with the same face shape", "face shape", "facial proportions", "celebrity match", "facial geometry"],
     sections: [
       {
         h2: "Your Match as a Geometric Mirror",
@@ -1087,12 +1110,13 @@ export const postsA: BlogPost[] = [
     slug: "twins-different-celebrity",
     title: "Why Twins Don't Always Match the Same Celebrity",
     excerpt: "Identical twins share nearly all their DNA, yet they can receive different top celebrity matches. This reveals something subtle about how face recognition actually works.",
+    summary: "Identical twins can match different celebrities because their faces are not truly identical: small differences in feature position, asymmetry and marks build up during development. Face recognition is sensitive to exactly those small differences, and photo conditions add more. Twins' match lists often overlap, but the top match can differ.",
     date: "May 2026",
     isoDate: "2026-05-02",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["identical twins face recognition", "facial differences", "epigenetics", "biometric", "face matching", "facial geometry"],
+    keywords: ["identical twins face recognition", "twins face ID", "identical twins", "celebrity match", "face embedding", "facial differences"],
     sections: [
       {
         h2: "Identical DNA, Different Faces",
@@ -1126,12 +1150,13 @@ export const postsA: BlogPost[] = [
     slug: "science-of-you-look-like",
     title: "The Science of the \"You Look Just Like...\" Compliment",
     excerpt: "When someone says you look like a famous person, they are making an automatic geometric comparison. Here is what the psychology research says about how that works.",
+    summary: "People say you look like a celebrity because the brain automatically compares every new face with faces it already knows, and celebrities are faces almost everyone knows. Humans lean on hair, expression and overall impression, so people often disagree about lookalikes. AI measures facial proportions instead, which is why its matches can differ from your friends'.",
     date: "April 2026",
     isoDate: "2026-04-30",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["facial resemblance", "celebrity lookalike", "face recognition psychology", "holistic processing", "fusiform face area"],
+    keywords: ["why do people say i look like a celebrity", "you look like", "celebrity lookalike", "face perception", "fusiform face area", "face recognition"],
     sections: [
       {
         h2: "Why Humans Compare Faces Spontaneously",

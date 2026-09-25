@@ -1,11 +1,15 @@
 import type { Metadata, Viewport } from "next"
 import { Outfit } from "next/font/google"
+import Script from "next/script"
 
 import "./globals.css"
 import { AuthProvider } from "@/components/auth-provider"
 import { AuthModal } from "@/components/auth-modal"
 import { cn } from "@/lib/utils"
-import { SITE_URL } from "@/lib/site-config"
+import { GA_ID, SITE_URL } from "@/lib/site-config"
+
+// EEA + UK + Switzerland: GDPR/ePrivacy need opt-in before analytics cookies.
+const CONSENT_REGIONS = ["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO","GB","CH"]
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -64,6 +68,19 @@ export default function RootLayout({
           {children}
           <AuthModal />
         </AuthProvider>
+        {/* Google Analytics. EEA, UK and Swiss visitors start with analytics cookies denied (consent mode):
+            those laws need opt-in consent first, and there's no consent banner yet.
+            lazyOnload: gtag.js is ~170 KB of script, so it waits until the page is idle instead of competing
+            with first paint and the uploader (it still counts the visit; very fast bounces may be missed). */}
+        <Script id="gtag-init" strategy="lazyOnload">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ${JSON.stringify(CONSENT_REGIONS)} });
+          gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+          gtag('js', new Date());
+          gtag('config', '${GA_ID}');
+        `}</Script>
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="lazyOnload" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -77,7 +94,7 @@ export default function RootLayout({
                   url: SITE_URL,
                   logo: `${SITE_URL}/icon.svg`,
                   description:
-                    "Ollie is a celebrity look-alike search built on a face-recognition neural network trained from scratch.",
+                    "Ollie is a celebrity lookalike search built on a facial recognition neural network trained from scratch.",
                   knowsAbout: ["Face recognition", "Deep learning", "Convolutional neural networks", "Celebrity look-alikes"],
                 },
                 {

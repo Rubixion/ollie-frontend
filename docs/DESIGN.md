@@ -14,7 +14,7 @@ Ollie is one person's face-recognition project shown plainly: a black page, whit
 | text | `#fff` at opacity steps | see contrast floor below |
 | blue | `rgb(100 130 210)` / `#6482D2` (`--ollie-cyan`, misnamed, don't rename casually) | the one accent: primary button fill, links, scores, rank, step numbers, focus rings |
 | blue glow | `rgb(100 130 210 / 15%)` (`--ollie-glow`) | drag-over state only |
-| hairline | `white/10` | section dividers and panel borders |
+| hairline | `white/10` | panel borders and rows inside a component, never between sections |
 | error / warning | red-300 / amber-200 on 10% tints | only for errors and the "no clear face" warning |
 
 - Blue on black is 5.7:1, and black text on blue is 5.7:1. Both pass AA.
@@ -34,10 +34,32 @@ Ollie is one person's face-recognition project shown plainly: a black page, whit
 - Numbers that compare (scores, counts, steps) use `tabular-nums`.
 - Headings are sentence case. The wordmark "OLLIE" is the only tracked-out all-caps text.
 
+## Home, match and contact share one look
+
+Owner's call, 2026-09-24: `/`, `/match` and `/contact` use the same look, so moving between them feels like one site.
+- The three.js dotted wave (`components/ui/dotted-surface`) behind the page, hidden under `prefers-reduced-motion`.
+- A centred headline that drifts back and fades as you scroll (`data-parallax="near"`). On home the last words are `text-white/50` and blur in (`TextEffect`); on /match and /contact the title is plain white and static (owner's call), and /match keeps its subtitles short so the uploader and results fit on the first screen of a 1366×768 laptop.
+- Borderless lit cards from `lib/surfaces.ts` (`card`, or `cardOpen` when the card holds a dropdown menu that must not be clipped), with recessed `bg-black/35` wells inside. No outlined boxes. The match tool uses the see-through `glass` / `glassOpen` version instead, so the dotted background shows through and the tool feels lighter.
+- The first screen's cards load in with `animate-in fade-in slide-in-from-bottom-6` (staggered with `delay-150`). Cards further down use `data-reveal` and `RevealOnScroll`.
+- On /match the explanations under the finder are tabs (`components/info-tabs.tsx`), not a long scroll. Every panel stays in the server HTML, so crawlers and no-JS visitors still get all of it. `/match#faq` etc. open the matching tab.
+- Clicking a nav or footer link to the page you're already on glides back to the top (`components/page-link.tsx`).
+
+## Sizing for every screen
+
+The first screen of home, match and contact must fit the visible height, not just the width, so a short laptop and a tall monitor both look finished.
+- The first-screen sections are `min-h-svh` flex columns. Spacing uses `clamp(min, N svh, max)`, and headlines use `.fluid-h1` / `.fluid-h1-sm` (globals.css), which follow `svh` as well as `vw`.
+- The flexible part takes the leftover height: the mock window on home (`flex-1` with `min-h`/`max-h`), the uploader and results cards on /match. Nothing from the next section may peek in at the bottom of the first screen.
+- Checked at 1280×720, 1366×768, 1536×730, 1098×846, 1920×950 and 2560×1300, plus phones 360 to 390 wide. Only very short phones (about 667px tall) and phones held sideways need a scroll to reach the bottom of the tool.
+- Measure a change with headless Chrome at those sizes before shipping it.
+
+## Home page exception
+
+The home page (`/`) keeps the three.js dotted wave (`components/ui/dotted-surface`), the trust strip, and the three step cards. Its hero (owner's call, 2026-09-24) is a large two-tone headline (second half `text-white/50`), `rounded-xl` buttons, and a mock /match window that loops the search loader (`components/ui/progressive-flux-loader`, blue `--ollie-purple` → `--ollie-cyan`). It replaced the particle "OLLIE" canvas. Its sections share the hero's centred axis. Everything else in this file still applies there: text is server-rendered at full opacity, no scroll reveals, the effects respect `prefers-reduced-motion`, and every fact comes from `lib/facts.ts` (no example matches, no made-up stats). Other pages stay on the plain grid look below.
+
 ## Layout
 
 - One centred column. The tool sits at `max-w-6xl` (uploader left, results right from `md:` up), and reading content sits at `max-w-3xl`. 24px side gutters (`px-6`).
-- Sections are separated by a `border-t border-white/10` hairline and `pt-14`/`mt-16` spacing, not by boxing each section in a card.
+- Sections are separated by spacing alone (`pt-14`/`mt-16`), with no hairline dividers anywhere, footer included (owner's call, 2026-09-24), and not by boxing each section in a card. Lines only appear inside components: table rows, menus, and the credit/share rows of a result card.
 - The page background is the faint grid (`BGPattern`, `fill rgba(255,255,255,0.04)`). There are no other decorative backgrounds, blobs or gradients.
 
 ## Components
@@ -56,7 +78,7 @@ Ollie is one person's face-recognition project shown plainly: a black page, whit
 ## Motion
 
 - Motion happens only in response to the user: the result bars grow and the five rows appear one after another. That is the one orchestrated moment.
-- Nothing above the fold fades or slides in on load. Content must paint at full opacity from the server HTML, because it's the LCP.
+- Text must paint at full opacity from the server HTML, because it's the LCP. The one exception is the last words of a headline (`TextEffect`), which blur in; on home, match and contact the cards on the first screen also load in (see above).
 - No scroll-triggered reveals and no hover lifts.
 - Respect `prefers-reduced-motion`.
 

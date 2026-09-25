@@ -2,11 +2,15 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { BGPattern } from "@/components/bg-pattern"
+import { DottedSurface } from "@/components/ui/dotted-surface"
 import { CelebrityFinder } from "@/components/celebrity-finder"
+import { InfoTabs, type InfoTab } from "@/components/info-tabs"
+import { TextEffect } from "@/components/ui/text-effect"
+import { card } from "@/lib/surfaces"
 import { INDEX, MODEL, OWNER, SEARCH_LOG_DAYS } from "@/lib/facts"
 import { SITE_URL } from "@/lib/site-config"
 import { GUEST_LIMIT } from "@/lib/search-quota"
+import { RevealOnScroll } from "@/components/reveal-on-scroll"
 
 
 const DESCRIPTION = `Upload a photo and Ollie's face-recognition model ranks ${INDEX.celebrities} celebrities by how closely they resemble you. Free, and your photo is never stored.`
@@ -89,11 +93,15 @@ const FAQ: [string, string][] = [
   ],
   [
     "Does it work for women?",
-    "Yes. The celebrity index includes women and men, and the model was trained on photos of both. By default Ollie ranks everyone. To see only female or only male celebrities, pick one in the menu above Find my match before you search.",
+    "Yes. The celebrity index includes women and men, and the model was trained on photos of both. By default Ollie estimates from your photo whether your face looks male or female and compares you with celebrities of that gender, whose gender comes from Wikidata. The estimate can be wrong. To choose yourself, set the Gender menu above Find my match to Men or Women before you search.",
+  ],
+  [
+    "Can I match with only actors, singers or footballers?",
+    "Yes. Pick Actors, Singers or Footballers in the Compare with menu before you search. Ollie goes by what each person is best known for on Wikidata, so a singer with one film role counts as a singer. All celebrities is the default.",
   ],
   [
     "Which celebrities are included?",
-    `About ${INDEX.celebrities} of the most famous living adults: actors, musicians, athletes, politicians, business people and online creators. They were chosen by how much their English Wikipedia page was read over six months and how many language editions of Wikipedia cover them. People known mainly for crimes or adult films are left out. Every photo is a freely licensed picture from ${INDEX.source}, credited under your matches.`,
+    `${INDEX.celebrities} of the most famous living adults: actors, musicians, athletes, politicians, business people and online creators. They were chosen by how much their English Wikipedia page was read over six months and how many language editions of Wikipedia cover them. People known mainly for crimes or adult films are left out. Every photo is a freely licensed picture from ${INDEX.source}, credited under your matches.`,
   ],
   [
     "Can I use a group photo?",
@@ -119,7 +127,8 @@ const jsonLd = [
     featureList: [
       `Ranks ${INDEX.celebrities} celebrities by facial similarity`,
       "Top five matches with credited, openly licensed photos",
-      "Optional filter for female or male celebrities",
+      "Detects your gender from the photo by default, or lets you pick men or women",
+      "Optional filter for actors, singers or footballers",
       "Uploaded photos are never stored",
       "Shareable result image made on your device",
     ],
@@ -138,105 +147,152 @@ const h2 = "text-2xl font-black text-white tracking-tight text-balance"
 const body = "text-white/70 leading-relaxed text-pretty"
 const link = "text-(--ollie-cyan) underline underline-offset-4 hover:text-white"
 
+const TABS: InfoTab[] = [
+  {
+    id: "how",
+    label: "How it works",
+    content: (
+      <>
+        <h2 id="how" className={`${h2} scroll-mt-24`}>How Ollie matches your face</h2>
+        <ol className="mt-6 space-y-5">
+          {STEPS.map(([title, text], i) => (
+            <li key={title} className="flex gap-4">
+              <span className="text-(--ollie-cyan) font-black tabular-nums leading-relaxed">{i + 1}</span>
+              <p className={body}>
+                <strong className="text-white font-semibold">{title}</strong> {text}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </>
+    ),
+  },
+  {
+    id: "tips",
+    label: "Better photos",
+    content: (
+      <>
+        <h2 id="tips" className={h2}>Getting a better match</h2>
+        <ul className="mt-6 space-y-4 list-disc pl-5 marker:text-(--ollie-cyan)">
+          {TIPS.map(({ tip, href, link: label }) => (
+            <li key={tip} className={body}>
+              {tip}
+              {href && (
+                <>
+                  {" "}
+                  <Link href={href} className={link}>{label}</Link>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: "limits",
+    label: "Limitations",
+    content: (
+      <>
+        <h2 id="limits" className={h2}>What Ollie gets wrong</h2>
+        <div className="mt-6 space-y-5">
+          {LIMITS.map(([title, text]) => (
+            <p key={title} className={body}>
+              <strong className="text-white font-semibold">{title}</strong> {text}
+            </p>
+          ))}
+          <p className={body}>
+            More on reading the percentage: <Link href="/blog/understanding-your-results" className={link}>understanding your results</Link>.
+          </p>
+        </div>
+      </>
+    ),
+  },
+  {
+    id: "privacy",
+    label: "Privacy",
+    content: (
+      <>
+        <h2 id="privacy" className={h2}>What happens to your photo</h2>
+        <div className="mt-6 space-y-4">
+          <p className={body}>
+            Your photo is shrunk in your browser, sent over an encrypted connection to Ollie&apos;s matching server,
+            and held in memory for the few seconds the search takes. Then it&apos;s gone. It is never saved, logged,
+            or used to train the model, and nobody looks at it.
+          </p>
+          <p className={body}>
+            For each search Ollie records the time, your account (or an ID made from your IP address if you
+            aren&apos;t signed in) and your IP address, so the free-search limit works. Those records are deleted
+            after {SEARCH_LOG_DAYS}{" "}days. The share image is made on your device and shows your photo next to your
+            match; untick &ldquo;Include my photo&rdquo; to leave it off.
+          </p>
+          <p className={body}>
+            The details, including the companies that run the servers, are in the{" "}
+            <Link href="/privacy" className={link}>privacy policy</Link>.
+          </p>
+        </div>
+      </>
+    ),
+  },
+  {
+    id: "faq",
+    label: "FAQ",
+    content: (
+      <>
+        <h2 id="faq" className={h2}>Questions</h2>
+        <div className="mt-6 space-y-8">
+          {FAQ.map(([q, a]) => (
+            <div key={q}>
+              <h3 className="text-lg font-bold text-white text-balance">{q}</h3>
+              <p className={`mt-2 ${body}`}>{a}</p>
+            </div>
+          ))}
+        </div>
+      </>
+    ),
+  },
+  {
+    id: "model",
+    label: "The model",
+    content: (
+      <>
+        <h2 id="model" className={h2}>About the model</h2>
+        <p className={`mt-6 ${body}`}>
+          The Ollie team wrote and trained Ollie&apos;s face-recognition model from scratch in PyTorch: {MODEL.summary}, on{" "}
+          {MODEL.trainingSet}. Training took {MODEL.trainingTime}. It scores {MODEL.lfw} on the LFW benchmark, with
+          every LFW identity removed from the training data first so the test is fair. InsightFace handles finding
+          and aligning the face; everything after that is Ollie&apos;s own model.
+        </p>
+        <p className="mt-6 text-sm text-white/60">
+          {OWNER.name}, <Link href="/contact" className={link}>contact</Link>.
+        </p>
+      </>
+    ),
+  },
+]
+
 export default function MatchPage() {
   return (
     <>
+      <DottedSurface className="motion-reduce:hidden" />
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
-        <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
-
         <CelebrityFinder />
 
-        {/* Server-rendered so crawlers, AI answer engines and no-JS visitors get the full explanation */}
-        <div className="relative max-w-3xl mx-auto px-6 pb-24">
-          <section aria-labelledby="how" className="border-t border-white/10 pt-14">
-            <h2 id="how" className={h2}>How Ollie matches your face</h2>
-            <ol className="mt-6 space-y-5">
-              {STEPS.map(([title, text], i) => (
-                <li key={title} className="flex gap-4">
-                  <span className="text-(--ollie-cyan) font-black tabular-nums leading-relaxed">{i + 1}</span>
-                  <p className={body}>
-                    <strong className="text-white font-semibold">{title}</strong> {text}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </section>
-
-          <section aria-labelledby="tips" className="mt-16 border-t border-white/10 pt-14">
-            <h2 id="tips" className={h2}>Getting a better match</h2>
-            <ul className="mt-6 space-y-4 list-disc pl-5 marker:text-(--ollie-cyan)">
-              {TIPS.map(({ tip, href, link: label }) => (
-                <li key={tip} className={body}>
-                  {tip}
-                  {href && (
-                    <>
-                      {" "}
-                      <Link href={href} className={link}>{label}</Link>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section aria-labelledby="limits" className="mt-16 border-t border-white/10 pt-14">
-            <h2 id="limits" className={h2}>What Ollie gets wrong</h2>
-            <div className="mt-6 space-y-5">
-              {LIMITS.map(([title, text]) => (
-                <p key={title} className={body}>
-                  <strong className="text-white font-semibold">{title}</strong> {text}
-                </p>
-              ))}
-            </div>
-          </section>
-
-          <section aria-labelledby="privacy" className="mt-16 border-t border-white/10 pt-14">
-            <h2 id="privacy" className={h2}>What happens to your photo</h2>
-            <div className="mt-6 space-y-4">
-              <p className={body}>
-                Your photo is shrunk in your browser, sent over an encrypted connection to Ollie&apos;s matching server,
-                and held in memory for the few seconds the search takes. Then it&apos;s gone. It is never saved, logged,
-                or used to train the model, and nobody looks at it.
-              </p>
-              <p className={body}>
-                For each search Ollie records the time, your account (or an ID made from your IP address if you
-                aren&apos;t signed in) and your IP address, so the free-search limit works. Those records are deleted
-                after {SEARCH_LOG_DAYS} days. The share image is made on your device, and your own photo is only on it
-                if you tick the box.
-              </p>
-              <p className={body}>
-                The details, including the companies that run the servers, are in the{" "}
-                <Link href="/privacy" className={link}>privacy policy</Link>.
+        {/* Server-rendered (inside the tabs) so crawlers, AI answer engines and no-JS visitors get the full explanation */}
+        <section id="info" aria-labelledby="info-heading" className="relative mx-auto max-w-3xl scroll-mt-20 px-6 pb-24 pt-8">
+          <div data-reveal="1">
+            <div className="mb-8 text-center">
+              <h2 id="info-heading" className="text-3xl md:text-4xl font-black text-white tracking-tight text-balance">
+                <TextEffect as="span" per="word" preset="blur" inView>Good to know</TextEffect>
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-base text-white/70 text-pretty">
+                How Ollie works, what it gets wrong and what happens to your photo.
               </p>
             </div>
-          </section>
-
-          <section aria-labelledby="faq" className="mt-16 border-t border-white/10 pt-14">
-            <h2 id="faq" className={h2}>Questions</h2>
-            <div className="mt-6 space-y-8">
-              {FAQ.map(([q, a]) => (
-                <div key={q}>
-                  <h3 className="text-lg font-bold text-white text-balance">{q}</h3>
-                  <p className={`mt-2 ${body}`}>{a}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section aria-labelledby="model" className="mt-16 border-t border-white/10 pt-14">
-            <h2 id="model" className={h2}>About the model</h2>
-            <p className={`mt-6 ${body}`}>
-              The Ollie team wrote and trained Ollie&apos;s face-recognition model from scratch in PyTorch: {MODEL.summary}, on{" "}
-              {MODEL.trainingSet}. Training took {MODEL.trainingTime}. It scores {MODEL.lfw} on the LFW benchmark, with
-              every LFW identity removed from the training data first so the test is fair. InsightFace handles finding
-              and aligning the face; everything after that is Ollie&apos;s own model.
-            </p>
-            <p className="mt-6 text-sm text-white/60">
-              {OWNER.name}, <Link href="/contact" className={link}>contact</Link>.
-            </p>
-          </section>
-        </div>
+            <InfoTabs tabs={TABS} panelClassName={`${card} p-6 md:p-10`} />
+          </div>
+        </section>
 
         <script
           type="application/ld+json"
@@ -244,6 +300,7 @@ export default function MatchPage() {
         />
       </main>
       <Footer />
+      <RevealOnScroll />
     </>
   )
 }

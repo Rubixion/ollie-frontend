@@ -1,19 +1,27 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, User, LogOut } from "lucide-react"
-import Link from "next/link"
+import { createPortal } from "react-dom"
+import { useEffect, useRef, useState } from "react"
+import type { ComponentProps } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { LogOut, User } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/components/auth-provider"
+import { PageLink } from "@/components/page-link"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { MenuToggleIcon } from "@/components/ui/menu-toggle-icon"
+import { useScroll } from "@/components/ui/use-scroll"
+import { cn } from "@/lib/utils"
 import { MATCH_ONLY } from "@/lib/site-config"
 
-// Match-only release: no nav links for now (logo + sign-in only)
 const links = MATCH_ONLY
-  ? []
+  ? [
+      { label: "Home", href: "/" },
+      { label: "Match", href: "/match" },
+      { label: "Contact", href: "/contact" },
+    ]
   : [
       { label: "Match", href: "/match" },
-      { label: "Blog", href: "/blog" },
       { label: "Projects", href: "/projects" },
       { label: "About", href: "/about" },
     ]
@@ -24,57 +32,52 @@ function ProfileMenu() {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-    }
-    document.addEventListener("mousedown", handler)
-    return () => document.removeEventListener("mousedown", handler)
-  }, [])
+  const onDown = (event: globalThis.MouseEvent) => {
+    if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false)
+  }
+
+  document.addEventListener("mousedown", onDown)
+  return () => document.removeEventListener("mousedown", onDown)
+}, [])
 
   if (!user) {
     return (
-      <button
-        onClick={() => openModal()}
-        className="hidden md:flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full border border-white/15 text-white/60 hover:text-white hover:border-white/30 transition-all"
-      >
-        <User size={14} />
-        Sign In
-      </button>
+      <div className="hidden items-center gap-2 md:flex">
+        <Button variant="outline" onClick={() => openModal(undefined, "signin")}>Sign In</Button>
+        <Button onClick={() => openModal(undefined, "signup")}>Get Started</Button>
+      </div>
     )
   }
 
   return (
-    <div ref={ref} className="hidden md:block relative">
+    <div ref={ref} className="relative hidden md:block">
       <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-9 h-9 rounded-full border border-white/10 bg-white/[0.06] hover:bg-white/[0.10] hover:border-white/25 transition-all flex items-center justify-center"
+        onClick={() => setOpen((value) => !value)}
+        className="flex size-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-white/60 transition-colors hover:border-white/25 hover:bg-white/[0.1] hover:text-white"
         aria-label="Account menu"
       >
-        <User size={16} className="text-white/50" />
+        <User size={16} />
       </button>
-
       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 6 }}
-            transition={{ type: "spring", bounce: 0.15, duration: 0.25 }}
-            className="absolute right-0 top-full mt-2 w-52 bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl shadow-black overflow-hidden z-50"
+            transition={{ duration: 0.18 }}
+            className="absolute right-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] shadow-2xl shadow-black"
           >
-            <div className="px-4 py-3 border-b border-white/5">
-              <p className="text-white/60 text-[10px] uppercase tracking-widest mb-0.5">Signed in as</p>
-              <p className="text-white/70 text-xs truncate font-medium">{user.email}</p>
+            <div className="border-b border-white/5 px-4 py-3">
+              <p className="mb-0.5 text-[10px] uppercase tracking-widest text-white/60">Signed in as</p>
+              <p className="truncate text-xs font-medium text-white/70">{user.email}</p>
             </div>
-            <div className="p-1.5">
-              <button
-                onClick={() => { signOut(); setOpen(false) }}
-                className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-red-400/70 hover:text-red-400 hover:bg-red-500/8 text-sm transition-all"
-              >
-                <LogOut size={14} />
-                Sign out
-              </button>
-            </div>
+            <button
+              onClick={() => { signOut(); setOpen(false) }}
+              className="flex w-full items-center gap-2.5 px-4 py-3 text-left text-sm text-red-400/80 transition-colors hover:bg-red-500/10 hover:text-red-300"
+            >
+              <LogOut size={14} />
+              Sign out
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -82,123 +85,111 @@ function ProfileMenu() {
   )
 }
 
+type MobileMenuProps = ComponentProps<"div"> & { open: boolean }
+
+function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
+  if (!open || typeof window === "undefined") return null
+
+  return createPortal(
+    <div className="fixed inset-x-0 top-16 bottom-0 z-40 overflow-hidden border-y border-white/10 bg-black/95 backdrop-blur-xl md:hidden">
+      <div className={cn("size-full p-4", className)} {...props}>
+        {children}
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
 export function Nav() {
   const { user, openModal, signOut } = useAuth()
-  const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const scrolled = useScroll(10)
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 20)
-    window.addEventListener("scroll", handler, { passive: true })
-    return () => window.removeEventListener("scroll", handler)
-  }, [])
+    document.body.style.overflow = open ? "hidden" : ""
+    return () => { document.body.style.overflow = "" }
+  }, [open])
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-black/60 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/40"
-          : "bg-transparent"
-      }`}
+      className={cn(
+        "fixed left-0 right-0 top-0 z-50 w-full border-b border-transparent transition-colors duration-200",
+        scrolled && "border-white/10 bg-black/80 shadow-lg shadow-black/30 backdrop-blur-xl",
+      )}
     >
-      <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link
-          href={MATCH_ONLY ? "/match" : "/"}
-          className="text-white font-black text-xl tracking-widest hover:text-white/60 transition-colors"
-        >
+      <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-6">
+        <PageLink href="/" onClick={() => setOpen(false)} className="shrink-0 rounded-lg p-2 text-xl font-black tracking-widest text-white transition-colors hover:bg-white/[0.05] hover:text-white/70">
           OLLIE
-        </Link>
+        </PageLink>
 
-        {/* Desktop links */}
-        <ul className="hidden md:flex items-center gap-8">
+        <div className="hidden min-w-0 items-center gap-1 md:flex">
           {links.map((link) => {
-            const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
+            const active = pathname === link.href || pathname.startsWith(`${link.href}/`)
             return (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`text-sm transition-colors ${
-                    isActive
-                      ? "text-white font-semibold"
-                      : "text-white/60 hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              </li>
+              <PageLink
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={buttonVariants({
+                  variant: active ? "secondary" : "ghost",
+                  className: active ? "text-white" : "text-white/60 hover:text-white",
+                })}
+              >
+                {link.label}
+              </PageLink>
             )
           })}
-        </ul>
+        </div>
 
-        {/* Desktop right: profile or sign in */}
         <ProfileMenu />
 
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden text-white/80 hover:text-white transition-colors"
-          onClick={() => setOpen((v) => !v)}
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => setOpen((value) => !value)}
+          className="md:hidden"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
           aria-label="Toggle menu"
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+          <MenuToggleIcon open={open} className="size-5" />
+        </Button>
       </nav>
 
-      {/* Mobile dropdown */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden bg-black/90 backdrop-blur-xl border-b border-white/5 px-6 pb-4"
-          >
-            <ul className="flex flex-col gap-1 pt-2">
-              {links.map((link) => {
-                const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={() => setOpen(false)}
-                      className={`block w-full py-3 text-sm transition-colors border-b border-white/5 last:border-0 ${
-                        isActive ? "text-white font-semibold" : "text-white/60 hover:text-white"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                )
-              })}
-              <li className="pt-2">
-                {user ? (
-                  <div className="flex flex-col gap-2">
-                    <p className="text-white/60 text-xs px-1">{user.email}</p>
-                    <button
-                      onClick={() => { signOut(); setOpen(false) }}
-                      className="flex items-center gap-2 w-full text-sm font-semibold py-3 px-4 rounded-full border border-red-500/20 text-red-400/70 hover:text-red-400 transition-colors"
-                    >
-                      <LogOut size={14} />
-                      Sign out
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => { openModal(); setOpen(false) }}
-                    className="flex items-center justify-center gap-2 w-full text-sm font-semibold py-3 rounded-full border border-white/15 text-white/70 hover:text-white transition-colors"
-                  >
-                    <User size={14} />
-                    Sign In / Create Account
-                  </button>
-                )}
-              </li>
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MobileMenu open={open} id="mobile-menu" className="flex flex-col justify-between gap-3">
+        <div className="grid gap-y-1">
+          {links.map((link) => {
+            const active = pathname === link.href || pathname.startsWith(`${link.href}/`)
+            return (
+              <PageLink
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className={buttonVariants({ variant: active ? "secondary" : "ghost", className: "justify-start text-base" })}
+              >
+                {link.label}
+              </PageLink>
+            )
+          })}
+        </div>
+        <div className="flex flex-col gap-2">
+          {user ? (
+            <>
+              <p className="px-1 text-xs text-white/60">{user.email}</p>
+              <Button variant="outline" className="w-full justify-start text-red-300" onClick={() => { signOut(); setOpen(false) }}>
+                <LogOut size={15} />
+                Sign out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" className="w-full" onClick={() => { openModal(undefined, "signin"); setOpen(false) }}>Sign In</Button>
+              <Button className="w-full" onClick={() => { openModal(undefined, "signup"); setOpen(false) }}>Get Started</Button>
+            </>
+          )}
+        </div>
+      </MobileMenu>
     </header>
   )
 }

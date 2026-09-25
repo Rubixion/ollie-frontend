@@ -216,7 +216,7 @@ function HelpFaqTab() {
           </Link>
           {" "}and we&apos;ll get back to you within 48 hours.
         </p>
-        <div className="border-t border-white/5 pt-4 flex flex-wrap gap-x-5 gap-y-2">
+        <div className="pt-4 flex flex-wrap gap-x-5 gap-y-2">
           <p className="text-white/20 text-xs w-full mb-1">Legal</p>
           <Link
             href="/terms"

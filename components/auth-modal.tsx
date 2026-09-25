@@ -1,15 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react"
+import { X, Eye, EyeOff, Mail, Lock, AlertCircle, Check } from "lucide-react"
+import Link from "next/link"
 import { rememberConsent, useAuth } from "@/components/auth-provider"
 
 type Tab = "signin" | "signup"
 
 export function AuthModal() {
-  const { isModalOpen, closeModal, signIn, signUp, signInWithGoogle } = useAuth()
-  const [tab, setTab] = useState<Tab>("signin")
+  const { user, isModalOpen, closeModal, signIn, signUp, signInWithGoogle, initialAuthTab, signedInInModal, hasAuthCallback, finishAuth } = useAuth()
+  const signedIn = signedInInModal && Boolean(user)
+  const [tab, setTab] = useState<Tab>(initialAuthTab)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -18,6 +20,25 @@ export function AuthModal() {
   const [success, setSuccess] = useState<string | null>(null)
   const [agree, setAgree] = useState(false)         // required: 18+ and Terms/Privacy
   const [emailOptIn, setEmailOptIn] = useState(false) // optional: email list (never pre-ticked)
+
+  useEffect(() => {
+    if (!isModalOpen) return
+    const id = window.setTimeout(() => {
+      setTab(initialAuthTab)
+      setError(null)
+      setSuccess(null)
+    }, 0)
+    return () => window.clearTimeout(id)
+  }, [initialAuthTab, isModalOpen])
+
+  // Escape closes the modal, like the X
+  useEffect(() => {
+    if (!isModalOpen) return
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeModal()
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [isModalOpen, closeModal])
+
   const needsAgreement = () => {
     if (tab === "signup" && !agree) {
       setError("Please confirm you're 18 or older and agree to the Terms and Privacy Policy.")
@@ -89,12 +110,14 @@ export function AuthModal() {
                 <div className="flex items-start justify-between px-6 pt-6 pb-4">
                   <div>
                     <h2 className="text-lg font-black text-white tracking-tight">
-                      {tab === "signin" ? "Welcome back" : "Join Ollie"}
+                      {signedIn ? "You're signed in" : tab === "signin" ? "Welcome back" : "Join Ollie"}
                     </h2>
                     <p className="text-white/60 text-xs mt-1 leading-relaxed">
-                      {tab === "signin"
-                        ? "Sign in to keep searching."
-                        : "Free. Sign up for more searches."}
+                      {signedIn
+                        ? "You can keep searching."
+                        : tab === "signin"
+                          ? "Sign in to keep searching."
+                          : "Free. Sign up for more searches."}
                     </p>
                   </div>
                   <button
@@ -106,6 +129,46 @@ export function AuthModal() {
                   </button>
                 </div>
 
+                {signedIn ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-4 px-6 pb-6 pt-2"
+                  >
+                    <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] p-3">
+                      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-(--ollie-cyan)/15 text-(--ollie-cyan)">
+                        <Check size={16} aria-hidden="true" />
+                      </span>
+                      <p className="min-w-0 truncate text-xs text-white/70">{user?.email}</p>
+                    </div>
+                    {hasAuthCallback ? (
+                      <button
+                        type="button"
+                        onClick={finishAuth}
+                        className="w-full min-h-11 rounded-xl bg-(--ollie-cyan) text-sm font-bold text-black transition-all hover:opacity-90 active:scale-[0.98]"
+                      >
+                        Search again
+                      </button>
+                    ) : (
+                      <Link
+                        href="/match"
+                        onClick={closeModal}
+                        className="flex w-full min-h-11 items-center justify-center rounded-xl bg-(--ollie-cyan) text-sm font-bold text-black transition-all hover:opacity-90 active:scale-[0.98]"
+                      >
+                        Go to Match
+                      </Link>
+                    )}
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="w-full min-h-11 rounded-xl text-sm font-semibold text-white/60 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      Close
+                    </button>
+                  </motion.div>
+                ) : (
+                <>
                 {/* Tabs */}
                 <div className="px-6 pb-4">
                   <div className="flex gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/8">
@@ -131,40 +194,6 @@ export function AuthModal() {
                 </div>
 
                 <div className="px-6 pb-6 space-y-3">
-                  {/* Signup agreements: apply to Google and email sign-up alike */}
-                  {tab === "signup" && (
-                    <div className="space-y-2.5 pb-1">
-                      <label className="flex items-start gap-2.5 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={agree}
-                          onChange={(e) => { setAgree(e.target.checked); setError(null) }}
-                          required
-                          className="mt-0.5 size-3.5 shrink-0 accent-(--ollie-cyan)"
-                        />
-                        <span className="text-white/55 text-xs leading-relaxed">
-                          18 or older, and agree to the{" "}
-                          <a href="/terms" target="_blank" className="underline hover:text-white/80">Terms of Service</a>
-                          {" "}and{" "}
-                          <a href="/privacy" target="_blank" className="underline hover:text-white/80">Privacy Policy</a>.
-                          <span className="text-white/60"> (required)</span>
-                        </span>
-                      </label>
-                      <label className="flex items-start gap-2.5 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={emailOptIn}
-                          onChange={(e) => setEmailOptIn(e.target.checked)}
-                          className="mt-0.5 size-3.5 shrink-0 accent-(--ollie-cyan)"
-                        />
-                        <span className="text-white/55 text-xs leading-relaxed">
-                          Send emails about new Ollie features and updates. Unsubscribe any time.
-                          <span className="text-white/60"> (optional)</span>
-                        </span>
-                      </label>
-                    </div>
-                  )}
-
                   {/* Google */}
                   <button
                     type="button"
@@ -224,6 +253,46 @@ export function AuthModal() {
                       </button>
                     </div>
 
+                    {tab === "signup" ? (
+                      <div className="space-y-2.5 py-1">
+                        <label className="flex cursor-pointer items-start gap-2.5">
+                          <input
+                            type="checkbox"
+                            checked={agree}
+                            onChange={(e) => { setAgree(e.target.checked); setError(null) }}
+                            required
+                            className="mt-0.5 size-3.5 shrink-0 accent-(--ollie-cyan)"
+                          />
+                          <span className="text-xs leading-relaxed text-white/55">
+                            18 or older, and agree to the{" "}
+                            <a href="/terms" target="_blank" className="underline hover:text-white/80">Terms of Service</a>
+                            {" "}and{" "}
+                            <a href="/privacy" target="_blank" className="underline hover:text-white/80">Privacy Policy</a>.
+                            <span className="text-white/60"> (required)</span>
+                          </span>
+                        </label>
+                        <label className="flex cursor-pointer items-start gap-2.5">
+                          <input
+                            type="checkbox"
+                            checked={emailOptIn}
+                            onChange={(e) => setEmailOptIn(e.target.checked)}
+                            className="mt-0.5 size-3.5 shrink-0 accent-(--ollie-cyan)"
+                          />
+                          <span className="text-xs leading-relaxed text-white/55">
+                            Send emails about new Ollie features and updates. Unsubscribe any time.
+                            <span className="text-white/60"> (optional)</span>
+                          </span>
+                        </label>
+                      </div>
+                    ) : (
+                      <p className="py-1 text-center text-[10px] leading-relaxed text-white/60">
+                        By continuing you agree to our{" "}
+                        <a href="/terms" className="underline hover:text-white/35">Terms</a>
+                        {" "}&amp;{" "}
+                        <a href="/privacy" className="underline hover:text-white/35">Privacy Policy</a>
+                      </p>
+                    )}
+
                     {error && (
                       <div className="flex items-start gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/15">
                         <AlertCircle size={13} className="text-red-400 shrink-0 mt-0.5" />
@@ -232,8 +301,11 @@ export function AuthModal() {
                     )}
 
                     {success && (
-                      <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/15">
+                      <div className="space-y-3 rounded-xl border border-green-500/15 bg-green-500/10 p-3">
                         <p className="text-green-300 text-xs leading-relaxed">{success}</p>
+                        <Link href="/match" onClick={closeModal} className="inline-flex min-h-9 items-center rounded-lg bg-(--ollie-cyan) px-3 text-xs font-bold text-black">
+                          Go to Match
+                        </Link>
                       </div>
                     )}
 
@@ -248,15 +320,9 @@ export function AuthModal() {
                     </button>
                   </form>
 
-                  {tab === "signin" && (
-                    <p className="text-white/60 text-[10px] text-center leading-relaxed">
-                      By continuing you agree to our{" "}
-                      <a href="/terms" className="underline hover:text-white/35 transition-colors">Terms</a>
-                      {" "}&amp;{" "}
-                      <a href="/privacy" className="underline hover:text-white/35 transition-colors">Privacy Policy</a>
-                    </p>
-                  )}
                 </div>
+                </>
+                )}
               </div>
             </motion.div>
           </div>

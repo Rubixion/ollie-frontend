@@ -266,7 +266,7 @@ export function NeuralViz() {
   ]
 
   return (
-    <section id="how-it-works" className="py-24 md:py-32 px-6 border-t border-white/5">
+    <section id="how-it-works" className="py-24 md:py-32 px-6">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

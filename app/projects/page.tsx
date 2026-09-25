@@ -203,7 +203,7 @@ export default function ProjectsPage() {
           </div>
         </section>
 
-        <div className="border-t border-white/5 mb-20" aria-hidden="true" />
+        <div className="mb-20" aria-hidden="true" />
 
         {/* Non-ML section */}
         <section aria-labelledby="other-heading">

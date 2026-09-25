@@ -5,12 +5,13 @@ export const postsC: BlogPost[] = [
     slug: "aging-face-recognition",
     title: "How Aging Affects Face Recognition Accuracy Over Time",
     excerpt: "Your face changes significantly over decades, but AI can still match photos taken 30 years apart. Here is how modern systems handle the aging challenge.",
+    summary: "Facial recognition does work as you age, but accuracy drops as the gap between photos grows. Skin, fat and muscle change over decades while bone structure stays largely the same after early adulthood, and the network relies mostly on that structure. Photos a few years apart usually match well; photos decades apart, much less reliably.",
     date: "March 2026",
     isoDate: "2026-03-08",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["aging face recognition", "cross-age matching", "face recognition accuracy", "age invariant", "bone structure aging"],
+    keywords: ["does facial recognition work as you age", "aging face recognition", "face recognition accuracy", "cross-age", "bone structure", "facial aging"],
     sections: [
       {
         h2: "What Changes and What Doesn't",
@@ -37,12 +38,13 @@ export const postsC: BlogPost[] = [
     slug: "photo-angle-celebrity-match",
     title: "The Best Angle for a Celebrity Face Match (According to the AI)",
     excerpt: "Camera angle changes how your facial features appear at the pixel level. Here is what the research says about which angles produce the most accurate results, and why.",
+    summary: "The best angle for a face picture, for AI matching, is straight on, within about 15 degrees in any direction, with the camera at eye level. Turning, tilting or shooting from above or below changes how your 3D face projects into a 2D photo, which changes the features the network reads. Face the camera for the most accurate celebrity match.",
     date: "March 2026",
     isoDate: "2026-03-06",
     readTime: "4 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["photo angle face recognition", "yaw pitch roll", "face alignment", "pose variation", "best selfie angle"],
+    keywords: ["best angle for face picture", "face recognition angle", "camera angle", "head pose", "celebrity match", "face recognition"],
     sections: [
       {
         h2: "How Angle Affects Embedding Accuracy",
@@ -69,13 +71,14 @@ export const postsC: BlogPost[] = [
     slug: "group-photo-matching",
     title: "Why Group Photos Usually Give Poor Celebrity Match Results",
     excerpt: "Cropping your face from a group photo might seem convenient, but it rarely works well for face matching. Here is why and what to do instead.",
+    summary: "Group photos give poor face recognition and celebrity match results because each face takes up only a small part of the picture, so it has too few pixels. Cropping does not add detail back, and group shots also bring bad angles and uneven light; Ollie also matches only the largest face in a photo. Use a photo of just you, with your face filling a good part of the frame.",
     date: "March 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-03-04",
     readTime: "3 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["group photo face recognition", "face crop quality", "image resolution", "face matching tips"],
+    keywords: ["group photo face recognition", "group photo", "image resolution", "celebrity match", "face detection", "photo tips"],
     sections: [
       {
         h2: "The Resolution Problem",
@@ -101,25 +104,26 @@ export const postsC: BlogPost[] = [
     slug: "celebrity-doppelgangers-throughout-history",
     title: "Celebrity Doppelgängers Throughout History: When Faces Repeat Across Centuries",
     excerpt: "The same facial archetypes appear in royal portraits, ancient sculpture, and modern celebrities. Here is what repeated historical face types tell us about facial geometry.",
+    summary: "Historical doppelgangers exist because the same facial proportions recur across centuries: the genes behind them stay in the population, so similar faces appear in Roman busts, Renaissance portraits and today's celebrities. Face recognition measures that structure, not the era, so a modern face can closely resemble a centuries-old one.",
     date: "February 2026",
     isoDate: "2026-02-28",
     readTime: "5 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["historical celebrity lookalike", "facial archetype", "historical portraits", "face type", "classic Hollywood", "historical similarity"],
+    keywords: ["historical doppelgangers", "celebrity doppelgangers from history", "famous doppelgangers", "facial archetype", "historical portraits", "face recognition"],
     sections: [
       {
         h2: "The Recurring Face Archetype",
         paragraphs: [
           "Historians of portraiture have long noted that certain facial types recur across centuries and cultures, the same strong jaw and prominent brow appears in Roman busts, in Renaissance portraits, and in contemporary celebrities. These recurring types are not coincidences or artistic conventions. They reflect the underlying population genetics: certain facial proportion combinations are common enough that they appear across historical eras and diverse populations.",
-          "The deep structure of these archetypes is what the face recognition embedding captures. When you receive a match with a historical celebrity whose era precedes yours by decades, the match is an archetype match, your facial proportions belong to a type that has existed throughout recorded history.",
+          "The deep structure of these archetypes is what the face recognition embedding captures. When you match a celebrity who became famous decades before you were born, the match is an archetype match, your facial proportions belong to a type that has existed throughout recorded history.",
         ],
       },
       {
-        h2: "Why Classic Hollywood Is Overrepresented in Historical Comparisons",
+        h2: "Seeing Archetypes in Your Own Results",
         paragraphs: [
-          "Golden Age Hollywood studios created extensive, carefully controlled photographic archives of their stars. These archives provide ideal training material: many photos per identity, controlled studio lighting, varied poses. This over-documentation means that the clearest example of a particular facial archetype in the database may be a classic Hollywood star, even if contemporary celebrities also possess those proportions.",
-          "When a modern user's face matches a classic Hollywood star at high confidence, it reveals membership in one of these well-documented archetype clusters. The match is no less real for being historical.",
+          "Ollie's database holds living celebrities, so it will not show you a Roman emperor. But the same archetypes run through it: a match with an actor who became famous in the 1970s and a match with a new star can both reflect the type your face belongs to.",
+          "When a match seems to come from another generation, you share proportions with a well-known example of that type. The match is no less real for spanning decades.",
         ],
       },
     ],
@@ -132,12 +136,13 @@ export const postsC: BlogPost[] = [
     slug: "face-shape-guide",
     title: "Face Shapes Explained: What 'Oval', 'Square', and 'Heart' Actually Mean for AI",
     excerpt: "Traditional face shape categories describe the overall outline. AI face recognition measures something more detailed. Here is how the two relate, and how each predicts your celebrity match.",
+    summary: "The main face shapes are oval, round, square, heart, diamond and oblong, defined by the outline of your hairline, cheekbones and jaw. They are useful for choosing haircuts and glasses but too coarse for AI. Face recognition encodes much finer proportions in 512 numbers, which is why two square faces can match different celebrities.",
     date: "February 2026",
     isoDate: "2026-02-26",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["face shape", "oval face", "square face", "heart face", "facial geometry", "face type", "celebrity match"],
+    keywords: ["face shapes", "what face shape do i have", "face shape chart", "oval face", "square face", "face recognition"],
     sections: [
       {
         h2: "What Traditional Face Shapes Measure",
@@ -163,12 +168,13 @@ export const postsC: BlogPost[] = [
     slug: "celebrity-face-evolution",
     title: "How Celebrity Beauty Standards Have Changed Over 50 Years",
     excerpt: "The faces that became famous in 1970 differ systematically from those that became famous in 2020. Here is how beauty standards have shifted, and what it means for face matching.",
+    summary: "Beauty standards have changed over time: classic Hollywood favoured strong symmetry and sharp cheekbones, the 1970s more natural looks, and the 1990s and 2000s large eyes and particular jaw shapes. Each era's celebrity beauty standards reflect its culture, its cameras and its entertainment industry, and the shift shows in which faces became famous.",
     date: "February 2026",
     isoDate: "2026-02-24",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["celebrity beauty standards", "face trends", "historical celebrities", "face types", "beauty history"],
+    keywords: ["beauty standards over time", "celebrity beauty standards", "beauty ideals", "face types", "celebrity culture", "facial features"],
     sections: [
       {
         h2: "The Shifting Face of Fame",
@@ -181,7 +187,7 @@ export const postsC: BlogPost[] = [
         h2: "What Era Clustering Means for Your Match",
         paragraphs: [
           "If your matches consistently come from a particular era, you share facial proportions with the type favoured by that era's celebrity culture. This is aesthetically interesting, it identifies which visual archetype your face most closely resembles. It does not mean your face belongs to that era, only that the clearest examples of your facial type in the database happened to achieve prominence during that period.",
-          "Era clustering also reflects data availability: celebrities from the 1940s who were photographed extensively by major studios have richer embedding representations than equally famous celebrities from periods with fewer available digitised photographs.",
+          "Era clustering in Ollie's database is loose, because it holds living celebrities only: older eras are represented by stars who became famous young and are still well known today.",
         ],
       },
     ],
@@ -194,12 +200,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-in-art",
     title: "Face Recognition in Art: From Portrait Conventions to AI Identification",
     excerpt: "Artists have been encoding identity in faces for thousands of years. Here is how artistic traditions of face representation relate to modern computational face recognition.",
+    summary: "Portrait painting was the first face recognition technology: before photography, portraits recorded identity so a specific person could be recognised across distance and time. Portrait conventions like a controlled pose and lighting still shape ID photos today. Art history also warns against physiognomy, the false idea that faces reveal character.",
     date: "February 2026",
     isoDate: "2026-02-22",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["face recognition art", "portrait history", "physiognomy", "face representation", "art history"],
+    keywords: ["face recognition art", "portrait art", "portraiture", "identity", "physiognomy", "art history"],
     sections: [
       {
         h2: "The Portrait as Identity Document",
@@ -225,12 +232,13 @@ export const postsC: BlogPost[] = [
     slug: "golden-ratio-face",
     title: "The Golden Ratio and Facial Attractiveness: Myth vs Reality",
     excerpt: "The golden ratio has been claimed to explain facial beauty for centuries. Here is what the actual research shows, and how it relates to facial geometry in AI.",
+    summary: "The golden ratio face theory, that the most attractive faces follow the 1.618 ratio, is mostly a myth: controlled research finds weak or inconsistent links. Averageness, symmetry and signs of health and youth predict attractiveness far better. Golden ratio face tests and calculators are entertainment, not science.",
     date: "February 2026",
     isoDate: "2026-02-20",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["golden ratio", "facial attractiveness", "beauty standards", "face proportions", "attractiveness research"],
+    keywords: ["golden ratio face", "golden ratio face test", "facial attractiveness", "1.618", "symmetry", "beauty myth"],
     sections: [
       {
         h2: "The Claim and the Evidence",
@@ -257,12 +265,13 @@ export const postsC: BlogPost[] = [
     slug: "face-attractiveness-research",
     title: "What 50 Years of Attractiveness Research Tells Us About Face Perception",
     excerpt: "Attractiveness is partly universal and partly cultural. Here is what the research consensus actually says, and how it relates to face recognition technology.",
+    summary: "What makes a face attractive? Fifty years of research point to averageness, symmetry and signs of health and youth: composite average faces are rated more attractive than most real ones, across cultures. Agreement is strongest for the extremes; individual taste and culture explain the rest.",
     date: "February 2026",
     isoDate: "2026-02-18",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["facial attractiveness", "beauty research", "averageness", "sexual dimorphism", "face perception", "cross-cultural"],
+    keywords: ["what makes a face attractive", "facial attractiveness", "attractiveness research", "average faces", "symmetry", "face perception"],
     sections: [
       {
         h2: "The Universality of Attractiveness",
@@ -288,12 +297,13 @@ export const postsC: BlogPost[] = [
     slug: "celebrity-resemblance-and-self-image",
     title: "What Your Celebrity Match Says About How You See Yourself",
     excerpt: "People react very differently to their celebrity matches, with delight, scepticism, or surprise. Here is the psychology of self-image and how it filters your reaction to AI results.",
+    summary: "Your reaction to a celebrity resemblance often says more about how you see yourself than about the match. People accept matches with celebrities they admire and doubt equally strong matches with ones they don't. The AI only measures facial proportions; the meaning comes from you.",
     date: "February 2026",
     isoDate: "2026-02-16",
     readTime: "4 min read",
     category: "Wellness",
     author: "Ollie Research Team",
-    keywords: ["celebrity match self-image", "appearance psychology", "self-perception", "face perception", "celebrity lookalike reaction"],
+    keywords: ["celebrity resemblance", "celebrity lookalike", "self-image", "motivated reasoning", "celebrity match", "face perception"],
     sections: [
       {
         h2: "Why Reactions Vary So Much",
@@ -319,12 +329,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-in-dating",
     title: "Face Recognition in Dating Apps: How Match-by-Face Technology Works",
     excerpt: "Some dating apps let you search for partners who resemble celebrities or even specific people. Here is how this works technically, and what the ethical considerations are.",
+    summary: "Dating app face recognition works like celebrity matching: a reference face, such as a type you like, is turned into an embedding and compared with embeddings of profile photos to find the closest faces. It raises consent questions, because people in the pool never agreed to be searched by face. Ollie only compares your face with celebrity photos.",
     date: "February 2026",
     isoDate: "2026-02-14",
     readTime: "4 min read",
     category: "Culture",
     author: "Ollie Research Team",
-    keywords: ["dating apps face recognition", "celebrity lookalike dating", "face similarity dating", "dating technology", "matching algorithm"],
+    keywords: ["dating app face recognition", "face recognition dating", "dating apps", "face embedding", "consent", "privacy"],
     sections: [
       {
         h2: "How Face-Based Dating Search Works",
@@ -350,12 +361,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-genealogy",
     title: "Face Recognition and Genealogy: Finding Family Resemblances Across Generations",
     excerpt: "Researchers are using face recognition to identify ancestors in historical photos and trace inherited facial features across family trees. Here is the emerging science.",
+    summary: "Family resemblance is real and measurable: twin studies show much of face shape is inherited, and relatives' face embeddings sit closer together than strangers'. Face comparison can help spot likely relatives in old family photos. It can suggest a link but cannot prove one; records and DNA do that.",
     date: "February 2026",
     isoDate: "2026-02-12",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["genealogy face recognition", "family resemblance", "inherited features", "historical photo matching", "ancestry"],
+    keywords: ["family resemblance", "face comparison family", "genealogy", "heritability", "old photos", "face recognition"],
     sections: [
       {
         h2: "Inherited Facial Features",
@@ -381,12 +393,13 @@ export const postsC: BlogPost[] = [
     slug: "face-reading-pseudoscience",
     title: "Face Reading and Physiognomy: Why Your Personality Is Not in Your Face",
     excerpt: "Claims that facial features reveal personality, intelligence, or criminal tendency have a long history, and no scientific support. Here is why the claims persist and why they are wrong.",
+    summary: "Face reading, or physiognomy, the idea that personality can be read from facial features, is a pseudoscience. It was popular from ancient Greece to the 19th century and was used to justify racism, and modern research finds no reliable link between face shape and character. AI tools that claim to read personality or criminality from faces repeat the same mistake.",
     date: "February 2026",
     isoDate: "2026-02-10",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["physiognomy", "face reading", "facial features personality", "pseudoscience", "scientific debunking", "AI ethics"],
+    keywords: ["face reading", "physiognomy", "face reading personality", "pseudoscience", "Lombroso", "AI ethics"],
     sections: [
       {
         h2: "The History of Physiognomy",
@@ -413,12 +426,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-mental-health",
     title: "Face Recognition and Body Image: Using AI Results Mindfully",
     excerpt: "Celebrity comparison can be a fun experience or a source of self-criticism. Here is how to engage with face matching tools in a way that is genuinely enjoyable and not harmful.",
+    summary: "Comparing your face with celebrities can hurt body image when it turns into a judgment of your looks. A celebrity lookalike result measures similarity, not attractiveness, and says nothing about your worth. Use it for fun, and step away if it starts making you feel worse about how you look.",
     date: "February 2026",
     isoDate: "2026-02-08",
     readTime: "4 min read",
     category: "Wellness",
     author: "Ollie Research Team",
-    keywords: ["face matching mental health", "celebrity comparison", "body image", "self-esteem", "healthy use", "wellness"],
+    keywords: ["body image", "celebrity comparison", "celebrity lookalike", "mental health", "self-esteem", "social comparison"],
     sections: [
       {
         h2: "The Celebrity Comparison Trap",
@@ -444,12 +458,13 @@ export const postsC: BlogPost[] = [
     slug: "future-of-face-recognition",
     title: "The Future of Face Recognition: What Comes After Deep Embeddings",
     excerpt: "Deep embedding models have dominated face recognition for a decade. Here is what the research frontier looks like, from 3D modelling to privacy-preserving biometrics.",
+    summary: "The future of facial recognition technology includes 3D face recognition that reads depth directly, privacy-preserving matching that compares faces without exposing them, and defences against AI-generated faces. Each tackles a limit of today's 2D embedding models. Rules on consent and surveillance will shape it as much as the technology.",
     date: "February 2026",
     isoDate: "2026-02-06",
     readTime: "5 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["future face recognition", "3D face recognition", "privacy biometrics", "face recognition research", "next generation AI"],
+    keywords: ["future of facial recognition", "future of facial recognition technology", "3D face recognition", "privacy-preserving face recognition", "deepfakes", "face recognition"],
     sections: [
       {
         h2: "3D Face Recognition",
@@ -483,12 +498,13 @@ export const postsC: BlogPost[] = [
     slug: "what-makes-a-face-memorable",
     title: "What Makes a Face Memorable? The Science of Facial Distinctiveness",
     excerpt: "Some faces stick in memory immediately; others fade after minutes. Research reveals that memorability is a consistent, measurable property of faces, here is what makes it happen.",
+    summary: "What makes a face memorable is mostly the face itself: people agree strongly on which faces they remember. Distinctive faces, those far from average, are remembered best, while average faces are easily forgotten. The same distinctiveness sets a face apart in face recognition embedding space.",
     date: "February 2026",
     isoDate: "2026-02-04",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["face memorability", "distinctive face", "average face", "memory face recognition", "face perception"],
+    keywords: ["what makes a face memorable", "memorable face", "facial distinctiveness", "face memory", "face perception", "face recognition"],
     sections: [
       {
         h2: "Memorability Is Consistent Across People",
@@ -522,12 +538,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-surveillance",
     title: "Face Recognition Surveillance: How It Differs From Consumer Applications",
     excerpt: "Public space surveillance using face recognition raises fundamentally different questions than a celebrity matching app. Here is the distinction, and why it matters.",
+    summary: "Facial recognition surveillance differs from consumer apps in consent and control: cameras in public identify people who never agreed to it and often never know, while in an app like Ollie you choose to upload your own photo. Scale and who holds the power differ too. That is why public surveillance is far more controversial and more tightly regulated.",
     date: "January 2026",
     isoDate: "2026-01-30",
     readTime: "5 min read",
     category: "Ethics",
     author: "Ollie Research Team",
-    keywords: ["face recognition surveillance", "public surveillance", "civil liberties", "facial recognition ethics", "CCTV", "government"],
+    keywords: ["facial recognition surveillance", "facial recognition cameras in public", "surveillance", "consent", "privacy", "face recognition"],
     sections: [
       {
         h2: "Consent and Context",
@@ -554,12 +571,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-animals",
     title: "How Face Recognition Technology Is Being Used on Animals",
     excerpt: "The same AI architecture that matches human faces is being adapted to identify individual animals. Here is how face recognition is being applied to wildlife conservation and animal welfare.",
+    summary: "Animal facial recognition works, but models trained on human faces do not transfer directly: they have to be retrained or fine-tuned for each species. It is used to identify pets, livestock such as cattle, and wild animals for conservation, without tags. Each species needs its own training data.",
     date: "January 2026",
     isoDate: "2026-01-28",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["animal face recognition", "wildlife AI", "leopard recognition", "cattle ID", "biometric animals", "conservation technology"],
+    keywords: ["animal facial recognition", "pet facial recognition", "face recognition for animals", "cattle", "conservation", "transfer learning"],
     sections: [
       {
         h2: "The Challenge of Cross-Species Application",
@@ -585,12 +603,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-in-medicine",
     title: "Face Recognition in Medicine: Diagnosing Genetic Conditions From Facial Features",
     excerpt: "Certain genetic conditions cause distinctive facial changes that doctors are trained to recognise. AI is now learning to detect these patterns from photos with remarkable accuracy.",
+    summary: "Facial recognition can help diagnose genetic disorders: many conditions, such as Down, Noonan and Turner syndromes, have characteristic facial features, and tools like Face2Gene suggest likely conditions from a photo. They support clinicians, especially with rare disorders, but do not replace genetic testing.",
     date: "January 2026",
     isoDate: "2026-01-26",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["medical face recognition", "genetic conditions", "facial dysmorphology", "diagnostic AI", "Down syndrome", "clinical AI"],
+    keywords: ["facial recognition genetic disorders", "Face2Gene", "genetic disorders facial features", "medical AI", "dysmorphology", "face recognition"],
     sections: [
       {
         h2: "Facial Dysmorphology as a Diagnostic Tool",
@@ -616,12 +635,13 @@ export const postsC: BlogPost[] = [
     slug: "face-symmetry-and-genetics",
     title: "Face Symmetry and Genetics: What Your Bilateral Symmetry Tells You",
     excerpt: "Facial symmetry reflects developmental stability, which in turn reflects genetic and environmental quality. Here is the science of what symmetry actually signals.",
+    summary: "Facial symmetry is partly genetic, but most asymmetry comes from stress and random noise during development, known as fluctuating asymmetry. Low asymmetry is read as a sign of healthy development, though its link to actual health is weak. Small asymmetries are normal, and everyone has them.",
     date: "January 2026",
     isoDate: "2026-01-24",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["facial symmetry", "genetics", "developmental stability", "fluctuating asymmetry", "health signals", "face biology"],
+    keywords: ["is facial symmetry genetic", "facial symmetry genetics", "facial asymmetry", "fluctuating asymmetry", "health", "facial symmetry"],
     sections: [
       {
         h2: "Why Symmetry Is a Health Signal",
@@ -647,12 +667,13 @@ export const postsC: BlogPost[] = [
     slug: "face-memory-psychology",
     title: "Face Memory: How the Brain Stores and Retrieves Thousands of Faces",
     excerpt: "The average person can recognise roughly 5,000 faces. Here is how the brain manages this remarkable database, and how it compares to what Ollie's AI does.",
+    summary: "How many faces can we remember? About 5,000 for most people, according to a 2018 study by Jenkins and colleagues, with individuals ranging from about 1,000 to over 10,000. We build this store over a lifetime of meeting people and seeing celebrities. The brain indexes faces by their overall configuration, not as a list of features.",
     date: "January 2026",
     isoDate: "2026-01-22",
     readTime: "4 min read",
     category: "Psychology",
     author: "Ollie Research Team",
-    keywords: ["face memory", "brain face database", "facial recognition memory", "episodic memory", "familiarity", "neuroscience"],
+    keywords: ["how many faces can we remember", "face memory", "how many faces can you recognize", "face recognition", "memory", "psychology"],
     sections: [
       {
         h2: "How Many Faces Do We Know?",
@@ -678,12 +699,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-aging-brain",
     title: "How Face Recognition Changes as the Brain Ages",
     excerpt: "Face recognition ability peaks in young adulthood and gradually declines with age. Here is what changes in the aging brain, and what this means for human-AI comparison.",
+    summary: "Face recognition changes with aging: the ability peaks between the late teens and mid-20s, then declines slowly, and faster after 60. The loss mostly affects unfamiliar faces; familiar faces stay well recognised into old age. Sudden trouble recognising faces is different and worth raising with a doctor. AI face recognition, by contrast, does not change with age.",
     date: "January 2026",
     isoDate: "2026-01-20",
     readTime: "4 min read",
     category: "Psychology",
     author: "Ollie Research Team",
-    keywords: ["face recognition aging", "cognitive aging", "fusiform face area", "age-related decline", "face memory older adults"],
+    keywords: ["face recognition aging", "face blindness age", "aging brain", "memory", "face perception", "older adults"],
     sections: [
       {
         h2: "The Developmental Arc of Face Recognition",
@@ -709,12 +731,13 @@ export const postsC: BlogPost[] = [
     slug: "baby-face-recognition-development",
     title: "When Do Babies Learn to Recognise Faces?",
     excerpt: "Newborns can already distinguish faces from non-faces. Here is the remarkable developmental timeline of face recognition from birth through early childhood.",
+    summary: "Babies respond to faces from birth: newborns prefer face-like patterns within hours and can recognise their mother's face within days. Reliable recognition of familiar faces develops over the first months, and face skills keep improving into adolescence.",
     date: "January 2026",
     isoDate: "2026-01-18",
     readTime: "4 min read",
     category: "Psychology",
     author: "Ollie Research Team",
-    keywords: ["baby face recognition", "infant development", "newborn", "face perception development", "FFA development"],
+    keywords: ["when do babies recognize faces", "when do babies recognize mom", "newborn vision", "infant development", "face perception", "face recognition"],
     sections: [
       {
         h2: "Face Recognition from Birth",
@@ -740,12 +763,13 @@ export const postsC: BlogPost[] = [
     slug: "culture-and-face-recognition",
     title: "How Culture Shapes the Way We Process Faces",
     excerpt: "East Asian and Western observers process faces differently at a neural level. Here is what cross-cultural face recognition research reveals about the interaction of experience and perception.",
+    summary: "Culture affects face recognition and face perception: Western observers tend to focus on individual features like the eyes and mouth, while East Asian observers take in the face more as a whole, looking near the nose. Both recognise faces well; they just gather information differently. For AI, it is a reminder that training data reflects who collected it.",
     date: "January 2026",
     isoDate: "2026-01-16",
     readTime: "4 min read",
     category: "Science",
     author: "Ollie Research Team",
-    keywords: ["culture face recognition", "holistic processing", "eye tracking", "cultural variation", "face perception cross-cultural"],
+    keywords: ["how culture affects face recognition", "culture face perception", "holistic processing", "eye tracking", "cross-cultural psychology", "face recognition"],
     sections: [
       {
         h2: "Holistic vs Analytic Processing",
@@ -771,17 +795,18 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-with-mask",
     title: "Face Recognition With Masks: How COVID Changed the Field",
     excerpt: "The COVID-19 pandemic forced face recognition systems to work with masked faces, driving rapid advances in partial face recognition. Here is what was learned.",
+    summary: "Face recognition with a mask got much worse at first: NIST's 2020 tests found even the best algorithms failed on 5% to 50% of masked photos. Systems adapted by training on masked faces and relying more on the eyes and brows, and Apple added Face ID with a mask in 2022. Accuracy is still best without one.",
     date: "January 2026",
     isoDate: "2026-01-14",
     readTime: "4 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["masked face recognition", "partial face", "COVID face recognition", "occlusion handling", "periocular recognition"],
+    keywords: ["face recognition with mask", "face ID with mask", "facial recognition masks", "NIST", "COVID", "face recognition"],
     sections: [
       {
         h2: "The Masking Challenge",
         paragraphs: [
-          "Face masks occlude approximately the lower half of the face, the nose and mouth region. For face recognition systems trained primarily on unmasked faces, this was a significant performance degradation: NIST testing in 2020 found that surgical masks increased error rates by 5–50 times across different systems, depending on mask type and coverage.",
+          "Face masks occlude approximately the lower half of the face, the nose and mouth region. For face recognition systems trained primarily on unmasked faces, this was a significant performance degradation: NIST testing in 2020 found that even the best algorithms failed to match 5% to 50% of masked photos, depending on mask type and coverage.",
           "The primary issue was that many systems had learned to weight lower-face features significantly. The lower face, particularly mouth width and shape, chin configuration, and jaw profile, contains substantial identity information. Occluding this region removed information that many systems had relied on heavily.",
         ],
       },
@@ -802,12 +827,13 @@ export const postsC: BlogPost[] = [
     slug: "weight-change-and-matching",
     title: "Does Weight Change Affect Your Celebrity Face Match?",
     excerpt: "Significant weight change alters facial volume and soft tissue distribution. Here is how much this affects face recognition, and whether your match changes after losing or gaining weight.",
+    summary: "Does losing weight change face shape? Somewhat: weight change mostly alters the cheeks, jawline and area around the eyes, while your bone structure stays the same. Moderate weight change usually leaves facial recognition results and your celebrity match much the same; large changes can shift them. Weight loss tends to make bone structure more visible.",
     date: "January 2026",
     isoDate: "2026-01-12",
     readTime: "3 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["weight change face recognition", "facial volume", "face shape change", "recognition accuracy", "body change"],
+    keywords: ["does losing weight change face shape", "weight loss facial recognition", "weight change", "face shape", "celebrity match", "bone structure"],
     sections: [
       {
         h2: "How Weight Changes the Face",
@@ -833,12 +859,13 @@ export const postsC: BlogPost[] = [
     slug: "hair-color-affects-matching",
     title: "Does Hair Colour Affect Your Face Match? The Surprising Answer",
     excerpt: "Hair colour is not encoded in the facial embedding. Here is why, and in what circumstances hairstyle choices can still affect your result.",
+    summary: "Changing your hair colour has almost no effect on your face match, because face recognition crops tightly to the face and mostly leaves the hair out. Hair only matters when it covers the forehead, eyebrows or cheeks. It can change how you look to people, though, which is why a match may feel different after dyeing.",
     date: "January 2026",
     isoDate: "2026-01-10",
     readTime: "3 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["hair color face recognition", "hair style matching", "face recognition accuracy", "hair change"],
+    keywords: ["does hair color change your face", "hair colour face recognition", "hair color", "celebrity match", "face crop", "face recognition"],
     sections: [
       {
         h2: "Why Hair Colour Doesn't Affect Your Embedding",
@@ -865,12 +892,13 @@ export const postsC: BlogPost[] = [
     slug: "beard-affects-matching",
     title: "Does Having a Beard Change Your Celebrity Face Match?",
     excerpt: "A beard covers the lower face, a region that carries real identity information. Here is exactly how much facial hair affects face recognition accuracy and what you can do about it.",
+    summary: "A beard can affect face recognition and Face ID because it hides the jawline and chin, which the network uses for identity. Light stubble changes little, while a full beard can shift your celebrity match. Try a photo with and without the beard to see the difference.",
     date: "January 2026",
     isoDate: "2026-01-08",
     readTime: "3 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["beard face recognition", "facial hair matching", "lower face occlusion", "celebrity match beard"],
+    keywords: ["does beard affect face id", "beard facial recognition", "beard", "facial hair", "celebrity match", "face recognition"],
     sections: [
       {
         h2: "What a Beard Covers",
@@ -897,13 +925,14 @@ export const postsC: BlogPost[] = [
     slug: "ollie-how-it-works",
     title: "How Ollie Works: The Complete Technical Overview",
     excerpt: "From upload to results, here is the complete technical picture of what Ollie does to your photo, every pipeline step explained in plain English.",
+    summary: "Ollie is a celebrity lookalike AI that works in four steps: detect your face and five key points, align it to 112 by 112 pixels, turn it into a 512-number embedding with a neural network trained from scratch, and compare it with thousands of verified celebrity photos. The closest celebrities become your top five matches. Your photo is processed in memory and never stored.",
     date: "January 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-01-06",
     readTime: "6 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["Ollie face matching", "face recognition explained", "how face matching works", "AI celebrity match", "facial embedding"],
+    keywords: ["celebrity lookalike AI", "how does celebrity lookalike app work", "face recognition", "face embedding", "neural network", "Ollie"],
     sections: [
       {
         h2: "The Full Pipeline",
@@ -930,7 +959,7 @@ export const postsC: BlogPost[] = [
         h2: "Comparison and Ranking (Step 4)",
         paragraphs: [
           "Every celebrity photo in the database was run through the same network ahead of time. Your fingerprint is compared with all of them at once, a single matrix calculation that takes milliseconds, and each celebrity is scored by the average of their two closest photos, so people with more photos in the database don't get an unfair edge.",
-          "The distances are rescaled into percentages that are easier to read, and the five closest celebrities come back to you, each with the photo that matched you best. The match score comes from the network alone; there are no hand-made adjustments for skin tone or other features. You can also narrow the results to Male or Female celebrities, using each celebrity's gender as recorded on Wikidata.",
+          "The distances are rescaled into percentages that are easier to read, and the five closest celebrities come back to you, each with the photo that matched you best. The match score comes from the network alone; there are no hand-made adjustments for skin tone or other features. By default the results are limited to celebrities of the gender InsightFace estimates from your face, using each celebrity's gender as recorded on Wikidata; you can pick men or women yourself, and narrow the list to actors, singers or footballers.",
         ],
       },
     ],
@@ -945,12 +974,13 @@ export const postsC: BlogPost[] = [
     slug: "improving-ollie-results",
     title: "Six Ways to Get Better Celebrity Match Results From Ollie",
     excerpt: "A few simple changes to how you take and select photos can dramatically improve your Ollie results. Here are the six highest-impact improvements you can make.",
+    summary: "For the most accurate celebrity lookalike results: use the rear camera, find soft even light, take off glasses, keep a neutral expression, upload the original photo rather than a screenshot, and try more than one photo. The rear camera makes the biggest difference because selfie lenses distort your proportions. Matches that repeat across photos are the most reliable.",
     date: "January 2026",
     isoDate: "2026-01-04",
     readTime: "4 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["improve celebrity match", "better face match results", "Ollie tips", "face matching guide", "accuracy tips"],
+    keywords: ["most accurate celebrity lookalike", "celebrity lookalike accurate", "best celebrity lookalike app", "photo tips", "celebrity match", "face recognition"],
     sections: [
       {
         h2: "1. Switch to the Rear Camera",
@@ -999,13 +1029,14 @@ export const postsC: BlogPost[] = [
     slug: "understanding-your-results",
     title: "Understanding Your Ollie Results: What the Scores and Rankings Mean",
     excerpt: "A guide to interpreting everything on your Ollie results page, what the percentages mean, why the ranking matters more than the score, and how to read the top five.",
+    summary: "Your celebrity lookalike percentage on Ollie is a rescaled similarity score: higher means your facial proportions are closer to that celebrity's. It is for ranking, not a probability, so the order of your top five matters more than the exact number. Scores of 90% and above usually mean a resemblance people can see.",
     date: "January 2026",
     updatedIsoDate: "2026-09-23",
     isoDate: "2026-01-02",
     readTime: "4 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["Ollie results guide", "celebrity match score", "similarity percentage", "face matching interpretation", "ranking vs score"],
+    keywords: ["celebrity lookalike percentage", "face match percentage", "similarity score", "celebrity match", "celebrity lookalike results", "face recognition"],
     sections: [
       {
         h2: "The Percentage Score",
@@ -1039,12 +1070,13 @@ export const postsC: BlogPost[] = [
     slug: "cross-age-celebrity-match",
     title: "Matching Across Ages: How Well Does Ollie Handle Photos from Different Periods?",
     excerpt: "A photo from 10 years ago might give you the same match as one from today. Here is how stable face recognition results are across different ages and what affects consistency.",
+    summary: "Face recognition handles old photos of adults well: bone structure changes little between about 20 and 50, so on Ollie, photos 5 to 15 years apart usually give the same top celebrity matches. Consistency breaks down with childhood photos, big weight changes and old, low-quality scans. For the best result, use a recent photo.",
     date: "December 2025",
     isoDate: "2025-12-28",
     readTime: "4 min read",
     category: "Guide",
     author: "Ollie Research Team",
-    keywords: ["cross-age face matching", "age stable matching", "face recognition consistency", "old photo match", "celebrity match stability"],
+    keywords: ["face recognition old photos", "old photo facial recognition", "cross-age matching", "celebrity match", "aging", "face recognition"],
     sections: [
       {
         h2: "How Much Does Your Face Change Between Photos?",
@@ -1070,13 +1102,14 @@ export const postsC: BlogPost[] = [
     slug: "vggface2-explained",
     title: "VGGFace2 Explained: The Dataset That Shaped Modern Face Recognition",
     excerpt: "VGGFace2 packs 3.3 million photos of 9,131 people. Here is what made it important for face recognition, and how it compares with MS1MV2, the dataset Ollie was trained on.",
+    summary: "VGGFace2 is a face recognition dataset from Oxford's Visual Geometry Group, released in 2018, with 3.31 million images of 9,131 people, about 362 per person. It was built for variety in pose, age, lighting and ethnicity. Ollie's model was not trained on VGGFace2; it was trained on MS1MV2.",
     date: "December 2025",
     updatedIsoDate: "2026-09-23",
     isoDate: "2025-12-24",
     readTime: "4 min read",
     category: "Machine Learning",
     author: "Ollie Research Team",
-    keywords: ["VGGFace2", "face recognition dataset", "training data", "Oxford VGG", "deep learning dataset", "celebrity dataset"],
+    keywords: ["VGGFace2", "VGGFace2 dataset", "face recognition dataset", "Visual Geometry Group", "deep learning", "face recognition"],
     sections: [
       {
         h2: "What Is VGGFace2?",
@@ -1103,12 +1136,13 @@ export const postsC: BlogPost[] = [
     slug: "resnet-face-recognition",
     title: "Why ResNet Is the Backbone of Most Modern Face Recognition Systems",
     excerpt: "ResNet solved the vanishing gradient problem in deep neural networks, making 50–100+ layer networks trainable. Here is why it became the standard backbone for face recognition.",
+    summary: "ResNet is the backbone of most modern face recognition because its residual (skip) connections solved the vanishing gradient problem, making very deep networks trainable. Each block learns a small correction that is added to its input, so the training signal flows through dozens or hundreds of layers. Ollie's own 20-layer network uses the same residual idea.",
     date: "December 2025",
     isoDate: "2025-12-20",
     readTime: "4 min read",
     category: "Machine Learning",
     author: "Ollie Research Team",
-    keywords: ["ResNet", "residual network", "deep learning", "vanishing gradient", "face recognition backbone", "He et al 2015"],
+    keywords: ["ResNet face recognition", "ResNet", "residual connections", "vanishing gradient", "deep learning", "face recognition"],
     sections: [
       {
         h2: "The Vanishing Gradient Problem",
@@ -1135,12 +1169,13 @@ export const postsC: BlogPost[] = [
     slug: "arcface-explained",
     title: "ArcFace: The Loss Function That Makes Modern Face Recognition So Accurate",
     excerpt: "ArcFace replaced contrastive and triplet loss in most production face recognition systems. Here is what angular margin loss is and why it produces better-structured embedding spaces.",
+    summary: "ArcFace is a loss function that trains face recognition by adding an angular margin between each face and the wrong identities, which forces tighter, better-separated clusters. It trains like a simple classifier, so it avoids the pair mining that contrastive and triplet loss need. Ollie's model uses CosFace, a close relative that applies the margin to the cosine instead.",
     date: "December 2025",
     isoDate: "2025-12-16",
     readTime: "4 min read",
     category: "Machine Learning",
     author: "Ollie Research Team",
-    keywords: ["ArcFace", "angular margin loss", "face recognition loss", "CosFace", "AM-Softmax", "deep learning"],
+    keywords: ["ArcFace", "ArcFace loss", "angular margin loss", "CosFace", "face recognition", "loss function"],
     sections: [
       {
         h2: "From Contrastive to Angular Margin Loss",
@@ -1167,12 +1202,13 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-benchmark",
     title: "Face Recognition Benchmarks Explained: LFW, IJB-C, and Beyond",
     excerpt: "How do researchers measure whether a face recognition system is good? Here is a guide to the major benchmarks, what they test, and their limitations.",
+    summary: "Face recognition benchmarks measure how accurately models match faces. LFW (Labeled Faces in the Wild, 2007) has 13,233 images of 5,749 people; top models now score above 99.8%, so harder IARPA Janus benchmarks such as IJB-C are used today. Ollie's model scores 98.5% on LFW.",
     date: "December 2025",
     isoDate: "2025-12-12",
     readTime: "4 min read",
     category: "Machine Learning",
     author: "Ollie Research Team",
-    keywords: ["face recognition benchmark", "LFW", "IJB-C", "evaluation dataset", "verification accuracy", "face recognition testing"],
+    keywords: ["face recognition benchmark", "LFW benchmark", "Labeled Faces in the Wild", "IJB-C", "face verification", "accuracy"],
     sections: [
       {
         h2: "LFW: The Classic Standard",
@@ -1199,12 +1235,13 @@ export const postsC: BlogPost[] = [
     slug: "face-hashing-privacy",
     title: "Face Hashing and Privacy-Preserving Matching: How to Compare Faces Without Seeing Them",
     excerpt: "It is technically possible to verify whether two faces match without either party seeing the face data. Here is how cryptographic face matching works.",
+    summary: "Privacy-preserving face recognition compares faces without the server seeing them, using methods such as homomorphic encryption, which runs the match on encrypted data, or face hashing. It protects biometric data even if a server is breached, at the cost of extra computation.",
     date: "December 2025",
     isoDate: "2025-12-08",
     readTime: "4 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["face hashing", "privacy preserving matching", "homomorphic encryption", "biometric privacy", "secure computation"],
+    keywords: ["privacy-preserving face recognition", "face hashing", "homomorphic encryption", "biometric privacy", "face recognition", "encryption"],
     sections: [
       {
         h2: "The Privacy Problem with Standard Face Recognition",
@@ -1231,12 +1268,13 @@ export const postsC: BlogPost[] = [
     slug: "face-spoof-detection",
     title: "Liveness Detection: How AI Knows You're a Real Person, Not a Photo",
     excerpt: "Anti-spoofing, detecting whether a camera is pointed at a real live face or at a photo/screen/3D print, is a separate technical challenge from face recognition itself.",
+    summary: "Liveness detection checks that a real person is in front of the camera, not a printed photo, a screen replay, a mask or a deepfake. It uses cues like depth, texture, reflections and movement such as blinking or head turns. It is essential for face unlock and ID checks; a celebrity lookalike search does not need it.",
     date: "December 2025",
     isoDate: "2025-12-04",
     readTime: "4 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["liveness detection", "anti-spoofing", "face spoof detection", "presentation attack", "3D face", "deep fake"],
+    keywords: ["liveness detection", "face anti-spoofing", "presentation attack", "face recognition security", "deepfake", "face ID"],
     sections: [
       {
         h2: "What Is a Presentation Attack?",
@@ -1262,13 +1300,14 @@ export const postsC: BlogPost[] = [
     slug: "face-recognition-performance-tricks",
     title: "How to Run Face Recognition 10x Faster: Performance Optimisation Techniques",
     excerpt: "Real-time face recognition requires tricks beyond training a good model. Here is how production systems achieve speed, from quantisation to FAISS to GPU batching.",
+    summary: "The fastest face recognition pipelines speed up the embedding network, usually the bottleneck, with 8-bit quantisation, ONNX Runtime or TensorRT and GPU batching, and they compress large search indexes with product quantisation. Real-time systems aim to finish detection, alignment, embedding and search in under 200 ms.",
     date: "November 2025",
     updatedIsoDate: "2026-09-23",
     isoDate: "2025-11-30",
     readTime: "5 min read",
     category: "Machine Learning",
     author: "Ollie Research Team",
-    keywords: ["face recognition speed", "neural network optimization", "quantization", "TensorRT", "ONNX", "inference optimization"],
+    keywords: ["fastest face recognition", "face recognition speed", "quantisation", "ONNX", "TensorRT", "vector search"],
     sections: [
       {
         h2: "The Speed Challenge",
@@ -1295,13 +1334,14 @@ export const postsC: BlogPost[] = [
     slug: "celebrity-database-how-built",
     title: "How Ollie's Celebrity Database Was Built",
     excerpt: "Behind every match is a database of thousands of celebrities, each with verified, freely licensed photos. Here is how the list was chosen and how every photo was checked.",
+    summary: "Ollie's celebrity face database was built from Wikidata and Wikimedia Commons: living adults famous across many languages, ranked by recent Wikipedia views, with only freely licensed photos. Every photo is checked with face recognition to confirm it shows the right person, and fakes, memes, sunglasses and duplicates are removed. Each celebrity keeps 2 to 12 verified photos.",
     date: "November 2025",
     updatedIsoDate: "2026-09-23",
     isoDate: "2025-11-26",
     readTime: "4 min read",
     category: "Technology",
     author: "Ollie Research Team",
-    keywords: ["celebrity database", "face recognition database", "Wikimedia Commons", "celebrity embeddings", "face index"],
+    keywords: ["celebrity face database", "celebrity face dataset", "Wikimedia Commons", "Wikidata", "face recognition", "celebrity lookalike"],
     sections: [
       {
         h2: "Choosing the Celebrities",
@@ -1327,13 +1367,13 @@ export const postsC: BlogPost[] = [
       {
         h2: "Building the Index",
         paragraphs: [
-          "Each celebrity ends up with 3 to 12 verified photos. Every photo is run through Ollie's network once, and the resulting fingerprints are stored side by side, one per photo rather than one averaged fingerprint per person, so a search can show you the exact photo that matched you best.",
+          "Each celebrity ends up with 2 to 12 verified photos. Every photo is run through Ollie's network once, and the resulting fingerprints are stored side by side, one per photo rather than one averaged fingerprint per person, so a search can show you the exact photo that matched you best.",
           "When you search, your fingerprint is compared with every stored one, and each celebrity is scored by their two closest photos.",
         ],
       },
     ],
     faqs: [
-      { q: "How many celebrities are in Ollie's database?", a: "Thousands of the most-viewed living celebrities on Wikipedia, each with 3 to 12 verified photos." },
+      { q: "How many celebrities are in Ollie's database?", a: "Thousands of the most-viewed living celebrities on Wikipedia, each with 2 to 12 verified photos." },
       { q: "Where do the celebrity photos come from?", a: "From Wikimedia Commons, under free licenses such as public domain, CC0, CC BY and CC BY-SA. Every result credits its photographer and links to the original." },
       { q: "How do you make sure every photo shows the right person?", a: "A face-recognition model compares each photo with the person's own Wikidata photo and their other photos, and keeps only clear matches. If the references disagree, the person is skipped." },
     ],

@@ -31,7 +31,7 @@ const ENTRIES = [
 
 export function ChangelogSection() {
   return (
-    <section className="py-24 md:py-32 px-6 border-t border-white/5">
+    <section className="py-24 md:py-32 px-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div

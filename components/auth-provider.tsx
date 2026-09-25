@@ -12,6 +12,7 @@ export interface SignupConsent {
   terms: boolean
   emailOptIn: boolean
 }
+export type AuthTab = "signin" | "signup"
 const PENDING_CONSENT = "ollie_pending_consent"
 
 export function rememberConsent(consent: SignupConsent) {
@@ -51,8 +52,14 @@ interface AuthContextValue {
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<void>
   isModalOpen: boolean
-  openModal: (onSuccess?: () => void) => void
+  openModal: (onSuccess?: () => void, initialTab?: AuthTab) => void
   closeModal: () => void
+  initialAuthTab: AuthTab
+  // Set once a sign-in completes while the modal is open. The modal then shows a "you're signed in" screen and
+  // waits for the person to click through (finishAuth runs the onSuccess passed to openModal), or to close it.
+  signedInInModal: boolean
+  hasAuthCallback: boolean
+  finishAuth: () => void
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
@@ -61,6 +68,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [initialAuthTab, setInitialAuthTab] = useState<AuthTab>("signin")
+  const [signedInInModal, setSignedInInModal] = useState(false)
+  const [hasAuthCallback, setHasAuthCallback] = useState(false)
   const isModalOpenRef = useRef(false)
   const onSuccessRef = useRef<(() => void) | null>(null)
 
@@ -77,12 +87,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         setUser(session?.user ?? null)
         if (session && event === "SIGNED_IN") syncConsent(session)
-        if (session?.user && isModalOpenRef.current) {
-          isModalOpenRef.current = false
-          setIsModalOpen(false)
-          onSuccessRef.current?.()
-          onSuccessRef.current = null
-        }
+        // Don't close the modal or run onSuccess here: no surprise redirect, the person chooses what happens next
+        if (session?.user && isModalOpenRef.current) setSignedInInModal(true)
       })
 
       return () => subscription.unsubscribe()
@@ -135,8 +141,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }
 
-  const openModal = useCallback((onSuccess?: () => void) => {
+  const openModal = useCallback((onSuccess?: () => void, initialTab: AuthTab = "signin") => {
     onSuccessRef.current = onSuccess ?? null
+    setHasAuthCallback(Boolean(onSuccess))
+    setSignedInInModal(false)
+    setInitialAuthTab(initialTab)
     isModalOpenRef.current = true
     setIsModalOpen(true)
   }, [])
@@ -144,11 +153,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const closeModal = useCallback(() => {
     isModalOpenRef.current = false
     setIsModalOpen(false)
+    setSignedInInModal(false)
     onSuccessRef.current = null
   }, [])
 
+  const finishAuth = useCallback(() => {
+    const onSuccess = onSuccessRef.current
+    closeModal()
+    onSuccess?.()
+  }, [closeModal])
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithGoogle, isModalOpen, openModal, closeModal }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithGoogle, isModalOpen, openModal, closeModal, initialAuthTab, signedInInModal, hasAuthCallback, finishAuth }}>
       {children}
     </AuthContext.Provider>
   )

@@ -1,21 +1,22 @@
 # Ollie
 
-> Ollie (https://ollie.ml/match) is a free web app that answers "which celebrity do I look like?". You upload a photo and a face-recognition model, written and trained from scratch by the Ollie team, ranks about 5,000 well-known living people by facial similarity and shows your top five matches.
+> Ollie (https://ollie.ml/match) is a free web app that answers "which celebrity do I look like?". You upload a photo and a face-recognition model, written and trained from scratch by the Ollie team, ranks 5,000+ well-known living people by facial similarity and shows your top five matches.
 
 ## How it works
 
 - InsightFace (an open-source detector) finds and aligns the largest face in the photo.
-- Ollie's own model, a 20-layer convolutional neural network (SphereFace architecture) trained from scratch with CosFace loss on MS1MV2 (about 5.8 million photos of 85,742 people), turns the face into 512 numbers.
-- Those numbers are compared with 3 to 12 photos of each celebrity. Each celebrity is scored by their closest photo.
+- Ollie's own model, a 20-layer convolutional neural network (SphereFace architecture) trained from scratch with CosFace loss on MS1MV2 (a dataset of 5.8 million face photos of 85,742 people), turns the face into 512 numbers.
+- Those numbers are compared with 2 to 12 photos of each celebrity. Each celebrity is scored by their closest photo.
 - The model scores 98.5% on the LFW face-verification benchmark, with all LFW identities removed from its training data.
 - The percentage shown is a similarity score for comparing matches with each other, not a probability.
 
 ## The celebrity index
 
-- Around 5,000 of the most famous living adults, ranked by English Wikipedia readership and the number of Wikipedia language editions. It includes actors, musicians, athletes, politicians, business people and online creators.
+- Over 5,000 of the most famous living adults, ranked by English Wikipedia readership and the number of Wikipedia language editions. It includes actors, musicians, athletes, politicians, business people and online creators.
 - All photos are freely licensed images from Wikimedia Commons, credited next to each match.
 - Known bias: the list leans toward people famous in English-speaking countries, roughly two-thirds of the people on it are men, and the model's training data is mostly lighter-skinned faces.
-- Users can filter matches to female or male celebrities; the default is any gender.
+- By default Ollie estimates from the uploaded photo whether the face looks male or female (InsightFace) and compares it with celebrities of that gender (gender from Wikidata). Users can pick men or women instead.
+- Users can compare with all celebrities (default) or only actors, singers or footballers.
 
 ## Privacy
 
@@ -25,8 +26,18 @@
 
 ## Pages
 
+- [Home](https://ollie.ml/): what Ollie is, in brief
 - [Find your celebrity lookalike](https://ollie.ml/match): the app, how it works, limitations, FAQ
 - [Blog](https://ollie.ml/blog): photo tips and plain-English articles on face recognition
 - [Privacy policy](https://ollie.ml/privacy)
 - [Terms of service](https://ollie.ml/terms)
-- [Contact](https://ollie.ml/contact): the Ollie team, lbrad@student.ubc.ca
+- [Contact](https://ollie.ml/contact): the Ollie team, support@ollie.ml
+
+## Best guides
+
+- [Find your celebrity lookalike: a complete guide](https://ollie.ml/blog/find-your-celebrity-lookalike)
+- [The best photo for celebrity matching](https://ollie.ml/blog/best-photo-celebrity-match)
+- [Understanding your Ollie results](https://ollie.ml/blog/understanding-your-results)
+- [How Ollie works: the technical overview](https://ollie.ml/blog/ollie-how-it-works)
+- [How Ollie's celebrity database was built](https://ollie.ml/blog/celebrity-database-how-built)
+- [Why everyone has a celebrity doppelgänger](https://ollie.ml/blog/why-everyone-has-doppelganger)

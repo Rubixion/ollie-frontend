@@ -1,6 +1,7 @@
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { allPosts, allCategories } from "@/lib/blog-posts"
+import Link from "next/link"
+import { allPosts, allCategories, featuredPosts } from "@/lib/blog-posts"
 import { SITE_URL } from "@/lib/site-config"
 import { BlogList } from "./blog-list"
 import { BGPattern } from "@/components/bg-pattern"
@@ -41,6 +42,18 @@ export default function BlogPage() {
               {" "}{posts.length} articles.
             </p>
           </div>
+          <section aria-labelledby="start-here" className="mb-14 border-y border-white/10 py-8">
+            <h2 id="start-here" className="text-2xl font-black text-white tracking-tight">Start here</h2>
+            <ul className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+              {featuredPosts.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/blog/${p.slug}`} className="text-(--ollie-cyan) underline underline-offset-4 hover:text-white">
+                    {p.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
           <BlogList
             posts={posts.map(({ slug, title, excerpt, date, readTime, category }) => ({ slug, title, excerpt, date, readTime, category }))}
             categories={allCategories}

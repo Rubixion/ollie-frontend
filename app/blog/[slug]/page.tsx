@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { allPosts, getPost } from "@/lib/blog-posts"
+import { allPosts, getPost, type BlogPost } from "@/lib/blog-posts"
 import { SITE_URL } from "@/lib/site-config"
 import { ArrowLeft, ArrowRight, Clock, User, Calendar, ChevronRight } from "lucide-react"
 import { BGPattern } from "@/components/bg-pattern"
@@ -54,7 +54,35 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-function TableOfContents({ headings }: { headings: string[] }) {
+// Readable, shareable section anchors (#best-lighting, not #h-3). A repeated heading gets -2, -3...
+function headingIds(headings: string[]) {
+  const seen = new Map<string, number>()
+  return headings.map((h) => {
+    const base = h.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "section"
+    const n = (seen.get(base) ?? 0) + 1
+    seen.set(base, n)
+    return n === 1 ? base : `${base}-${n}`
+  })
+}
+
+// The first mention of the site's main keyword in a post's body links to /match, so every article passes
+// its topical relevance to the page that should rank. One link per post, and only where the phrase is already used.
+const MATCH_PHRASE = /celebrit(?:y|ies) (?:you )?look[- ]?alikes?|celebrity match(?:es)?|which celebrit(?:y|ies) you look like|celebrity doppelg[aä]ngers?/i
+const bodyLink = "text-(--ollie-cyan) underline underline-offset-4 hover:text-white"
+
+function linkFirstMention(sections: BlogPost["sections"]) {
+  let done = false
+  return sections.map((s) => ({
+    ...s,
+    paragraphs: s.paragraphs.map((p) => {
+      if (done || !MATCH_PHRASE.test(p)) return p
+      done = true
+      return p.replace(MATCH_PHRASE, (m) => `<a href="/match" class="${bodyLink}">${m}</a>`)
+    }),
+  }))
+}
+
+function TableOfContents({ headings, ids }: { headings: string[]; ids: string[] }) {
   if (headings.length < 2) return null
   return (
     <nav aria-label="In this article" className="mb-10 p-5 rounded-xl bg-white/[0.03] border border-white/8">
@@ -63,7 +91,7 @@ function TableOfContents({ headings }: { headings: string[] }) {
         {headings.map((h, i) => (
           <li key={i}>
             <a
-              href={`#h-${i}`}
+              href={`#${ids[i]}`}
               className="text-sm text-white/50 hover:text-(--ollie-cyan) transition-colors leading-snug block"
             >
               {h}
@@ -83,6 +111,9 @@ export default async function BlogPostPage({ params }: Props) {
   const url = `${SITE_URL}/blog/${post.slug}`
   const modified = post.updatedIsoDate ?? post.isoDate
   const h2s = post.sections.filter((s) => s.h2).map((s) => s.h2!)
+  const ids = headingIds(h2s)
+  let h2Index = 0
+  const sections = linkFirstMention(post.sections).map((s) => ({ ...s, id: s.h2 ? ids[h2Index++] : undefined }))
   const relatedPosts = post.relatedSlugs.map((s) => getPost(s)).filter((p) => p !== undefined)
   const words = post.sections
     .flatMap((s) => [s.h2 ?? "", ...s.paragraphs])
@@ -99,6 +130,7 @@ export default async function BlogPostPage({ params }: Props) {
         "@id": `${url}#article`,
         headline: post.title,
         description: post.excerpt,
+        abstract: post.summary,
         image: `${url}/opengraph-image`,
         datePublished: post.isoDate,
         dateModified: modified,
@@ -114,8 +146,9 @@ export default async function BlogPostPage({ params }: Props) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Blog", item: `${SITE_URL}/blog` },
-          { "@type": "ListItem", position: 2, name: post.title, item: url },
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+          { "@type": "ListItem", position: 3, name: post.title, item: url },
         ],
       },
       ...(post.faqs.length > 0
@@ -142,6 +175,8 @@ export default async function BlogPostPage({ params }: Props) {
         <div className="max-w-3xl mx-auto px-6 pt-28 pb-24">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-white/60 mb-10">
+            <Link href="/" className="hover:text-white/70 transition-colors">Home</Link>
+            <ChevronRight size={12} aria-hidden="true" />
             <Link href="/blog" className="hover:text-white/70 transition-colors">Blog</Link>
             <ChevronRight size={12} aria-hidden="true" />
             <span className="text-white/50 truncate max-w-[240px]" aria-current="page">{post.title}</span>
@@ -157,8 +192,8 @@ export default async function BlogPostPage({ params }: Props) {
             <h1 className="text-3xl md:text-4xl font-black text-white leading-tight mb-5 tracking-tight">
               {post.title}
             </h1>
-            <p className="text-white/55 text-lg leading-relaxed mb-6">{post.excerpt}</p>
-            <div className="flex flex-wrap items-center gap-4 text-xs text-white/60 border-t border-white/8 pt-5">
+            <p className="text-white/80 text-lg leading-relaxed mb-6 border-l-2 border-(--ollie-cyan) pl-4">{post.summary}</p>
+            <div className="flex flex-wrap items-center gap-4 text-xs text-white/60 pt-5">
               <span className="flex items-center gap-1.5">
                 <User size={12} aria-hidden="true" />
                 {post.author}
@@ -174,15 +209,15 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </header>
 
-          <TableOfContents headings={h2s} />
+          <TableOfContents headings={h2s} ids={ids} />
 
           {/* Article body */}
           <article>
-            {post.sections.map((section, i) => (
+            {sections.map((section, i) => (
               <section key={i}>
                 {section.h2 && (
                   <h2
-                    id={`h-${h2s.indexOf(section.h2)}`}
+                    id={section.id}
                     className="text-xl font-bold text-white mt-10 mb-4 scroll-mt-24"
                   >
                     {section.h2}
@@ -225,9 +260,10 @@ export default async function BlogPostPage({ params }: Props) {
               href="/match"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-(--ollie-cyan) text-black text-sm font-bold hover:opacity-90 transition-opacity"
             >
-              Find my celebrity match <ArrowRight size={14} aria-hidden="true" />
+              Find my match <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </section>
+
 
           {/* Related posts */}
           {relatedPosts.length > 0 && (
@@ -254,7 +290,7 @@ export default async function BlogPostPage({ params }: Props) {
           )}
 
           {/* Back link */}
-          <div className="mt-14 pt-8 border-t border-white/8">
+          <div className="mt-14 pt-8">
             <Link
               href="/blog"
               className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white/75 transition-colors"

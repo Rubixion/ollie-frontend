@@ -12,6 +12,7 @@ export type BlogPost = {
   slug: string
   title: string
   excerpt: string
+  summary: string // 2-3 sentence answer shown under the title; carries the target keywords in the first 100 words
   date: string
   isoDate: string
   updatedIsoDate?: string // set when the content is revised (dateModified, sitemap lastmod)

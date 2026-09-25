@@ -5,7 +5,7 @@ import { Lock } from "lucide-react"
 
 export function FindPerson() {
   return (
-    <section id="find-person" className="py-24 md:py-32 px-6 border-t border-white/5">
+    <section id="find-person" className="py-24 md:py-32 px-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div

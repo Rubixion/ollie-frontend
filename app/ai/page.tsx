@@ -59,7 +59,7 @@ function Section({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.7 }}
-      className="py-24 px-6 max-w-5xl mx-auto border-t border-white/5 scroll-mt-20"
+      className="py-24 px-6 max-w-5xl mx-auto scroll-mt-20"
     >
       <SectionNum n={num} />
       <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-10">{title}</h2>
@@ -746,7 +746,7 @@ export default function NeuralPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.7 }}
-        className="px-6 pb-4 max-w-6xl mx-auto border-t border-white/5 pt-16"
+        className="px-6 pb-4 max-w-6xl mx-auto pt-16"
       >
         <div className="mb-6">
           <span className="text-(--ollie-cyan) font-mono text-xs tracking-widest font-bold block mb-1">INTERACTIVE</span>

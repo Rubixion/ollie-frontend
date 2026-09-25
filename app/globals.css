@@ -135,8 +135,106 @@
     }
 }
 
+/* Height-aware headlines. The first screen of home, match and contact has to fit short laptops and still look
+   balanced on tall monitors, so the size follows the visible height (svh) as well as the width. */
+.fluid-h1 { font-size: clamp(2.25rem, min(9vw, 8svh), 4.5rem); }
+.fluid-h1-sm { font-size: clamp(1.75rem, min(7vw, 5.5svh), 3rem); }
+
 /* ponytail: Press Start 2P was a render-blocking Google Fonts import on every page for the hidden /info page.
    If /info comes back, load it there with next/font. */
 .retro {
   font-family: 'Press Start 2P', monospace;
+}
+/* A light running round the drop zone's edge while a file is dragged over it
+   (stand-in for the border-beam package: same look, no dependency) */
+@property --beam-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.border-beam::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--beam-angle), transparent 0 65%, var(--ollie-cyan) 82%, white 88%, transparent 94%);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: beam-spin 2.4s linear infinite;
+}
+@keyframes beam-spin {
+  to { --beam-angle: 360deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .border-beam::after { animation: none; }
+}
+
+/* Scroll effects. Scrolling itself is untouched (no smooth-scroll hijacking).
+   - Hero: the headline sinks and fades while the mock /match window, tilted back like a screen lying down, stands
+     up as the page scrolls; scrolling back up reverses it. Native scroll-driven animation; browsers without it
+     (Firefox today) keep a static hero. The fixed dotted background is the far layer.
+   - [data-reveal="1|2|3"]: cards fade up when they scroll into view, and reset once they're fully below the
+     viewport again, so scrolling up and back down replays them (RevealOnScroll toggles .revealed). Deliberately
+     not scroll-linked: a scrubbed fade leaves cards half-transparent wherever you stop scrolling.
+     Higher numbers start lower and land later, so a row arrives column by column. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    /* Longhands on purpose: a minifier may fold these into the `animation` shorthand, which drops the timeline */
+    [data-parallax="near"] {
+      animation-name: parallax-recede;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 60vh;
+    }
+    [data-parallax="rise"] {
+      animation-name: parallax-rise;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 55vh;
+      transform-origin: 50% 0;
+    }
+  }
+
+  .reveal-ready [data-reveal] {
+    transition:
+      opacity 0.7s ease-out var(--reveal-delay, 0s),
+      transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+  }
+  .reveal-ready [data-reveal]:not(.revealed) {
+    opacity: 0;
+    transform: translateY(var(--reveal-y, 40px)) scale(0.97);
+  }
+  /* A tab panel (components/info-tabs.tsx) blurs and rises into place each time it's shown */
+  .tab-panel:not([hidden]) {
+    animation: tab-panel-in 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-reveal="2"] { --reveal-y: 70px; }
+  [data-reveal="3"] { --reveal-y: 100px; }
+  @media (min-width: 768px) {
+    [data-reveal="2"] { --reveal-delay: 0.12s; }
+    [data-reveal="3"] { --reveal-delay: 0.24s; }
+  }
+}
+@keyframes tab-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+}
+@keyframes parallax-rise {
+  from {
+    transform: perspective(1400px) rotateX(28deg) translateY(6vh) scale(0.9);
+    opacity: 0.55;
+  }
+}
+@keyframes parallax-recede {
+  to {
+    transform: translateY(22vh) scale(0.9);
+    opacity: 0;
+  }
 }

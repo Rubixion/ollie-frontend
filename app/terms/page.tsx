@@ -8,7 +8,7 @@ export const metadata = {
   alternates: { canonical: "/terms" },
 }
 
-const EMAIL = "lbrad@student.ubc.ca"
+const EMAIL = "support@ollie.ml"
 const link = "text-(--ollie-cyan) underline underline-offset-2 hover:text-white"
 
 export default function TermsPage() {
