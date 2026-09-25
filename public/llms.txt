@@ -1,6 +1,6 @@
 # Ollie
 
-> Ollie (https://ollie.ml/match) is a free web app that answers "which celebrity do I look like?". You upload a photo and a face-recognition model, written and trained from scratch by the Ollie team, ranks 5,000+ well-known living people by facial similarity and shows your top five matches.
+> Ollie (https://www.ollie.ml/match) is a free web app that answers "which celebrity do I look like?". You upload a photo and a face-recognition model, written and trained from scratch by the Ollie team, ranks 5,000+ well-known living people by facial similarity and shows your top five matches.
 
 ## How it works
 
@@ -26,18 +26,18 @@
 
 ## Pages
 
-- [Home](https://ollie.ml/): what Ollie is, in brief
-- [Find your celebrity lookalike](https://ollie.ml/match): the app, how it works, limitations, FAQ
-- [Blog](https://ollie.ml/blog): photo tips and plain-English articles on face recognition
-- [Privacy policy](https://ollie.ml/privacy)
-- [Terms of service](https://ollie.ml/terms)
-- [Contact](https://ollie.ml/contact): the Ollie team, support@ollie.ml
+- [Home](https://www.ollie.ml/): what Ollie is, in brief
+- [Find your celebrity lookalike](https://www.ollie.ml/match): the app, how it works, limitations, FAQ
+- [Blog](https://www.ollie.ml/blog): photo tips and plain-English articles on face recognition
+- [Privacy policy](https://www.ollie.ml/privacy)
+- [Terms of service](https://www.ollie.ml/terms)
+- [Contact](https://www.ollie.ml/contact): the Ollie team, support@ollie.ml
 
 ## Best guides
 
-- [Find your celebrity lookalike: a complete guide](https://ollie.ml/blog/find-your-celebrity-lookalike)
-- [The best photo for celebrity matching](https://ollie.ml/blog/best-photo-celebrity-match)
-- [Understanding your Ollie results](https://ollie.ml/blog/understanding-your-results)
-- [How Ollie works: the technical overview](https://ollie.ml/blog/ollie-how-it-works)
-- [How Ollie's celebrity database was built](https://ollie.ml/blog/celebrity-database-how-built)
-- [Why everyone has a celebrity doppelgänger](https://ollie.ml/blog/why-everyone-has-doppelganger)
+- [Find your celebrity lookalike: a complete guide](https://www.ollie.ml/blog/find-your-celebrity-lookalike)
+- [The best photo for celebrity matching](https://www.ollie.ml/blog/best-photo-celebrity-match)
+- [Understanding your Ollie results](https://www.ollie.ml/blog/understanding-your-results)
+- [How Ollie works: the technical overview](https://www.ollie.ml/blog/ollie-how-it-works)
+- [How Ollie's celebrity database was built](https://www.ollie.ml/blog/celebrity-database-how-built)
+- [Why everyone has a celebrity doppelgänger](https://www.ollie.ml/blog/why-everyone-has-doppelganger)

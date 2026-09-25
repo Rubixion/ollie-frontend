@@ -259,7 +259,7 @@ const TABS: InfoTab[] = [
         <h2 id="model" className={h2}>About the model</h2>
         <p className={`mt-6 ${body}`}>
           The Ollie team wrote and trained Ollie&apos;s face-recognition model from scratch in PyTorch: {MODEL.summary}, on{" "}
-          {MODEL.trainingSet}. Training took {MODEL.trainingTime}. It scores {MODEL.lfw} on the LFW benchmark, with
+          {MODEL.trainingSet}. Training took {MODEL.trainingTime}. It scores {MODEL.lfw}{" "}on the LFW benchmark, with
           every LFW identity removed from the training data first so the test is fair. InsightFace handles finding
           and aligning the face; everything after that is Ollie&apos;s own model.
         </p>

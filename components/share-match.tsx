@@ -263,7 +263,7 @@ export function ShareMatch({
     if (!result) return
     try {
       const file = new File([result.blob], "ollie-match.png", { type: "image/png" })
-      await navigator.share({ files: [file], text: `My celebrity lookalike is ${match.name}. Find yours at https://ollie.ml/match` })
+      await navigator.share({ files: [file], text: `My celebrity lookalike is ${match.name}. Find yours at https://www.ollie.ml/match` })
     } catch (e) {
       if (!(e instanceof DOMException && e.name === "AbortError")) setError("Couldn't open sharing. Try Download instead.") // AbortError = share sheet closed
     }

@@ -56,6 +56,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("dark antialiased", outfit.variable)}
+      style={{ background: "#000", colorScheme: "dark" }} // inline, so the first paint is dark before the stylesheet arrives (no white flash)
     >
       <body suppressHydrationWarning>
         <a
