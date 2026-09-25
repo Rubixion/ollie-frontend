@@ -23,9 +23,13 @@ const W = 1080, H = 1920
 const BLUE = "rgb(100, 130, 210)" // --ollie-cyan
 
 function loadImage(src: string) {
-  const img = new Image()
-  img.src = src
-  return img.decode().then(() => img)
+  // ponytail: onload, not img.decode(), which iOS Safari rejects for images that aren't in the DOM
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = reject
+    img.src = src
+  })
 }
 
 // Draws `img` into a square, cropped to fill it (like object-fit: cover)
@@ -33,7 +37,8 @@ function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: numb
   const s = Math.min(img.width, img.height)
   ctx.save()
   ctx.beginPath()
-  ctx.roundRect(x, y, size, size, radius)
+  if (ctx.roundRect) ctx.roundRect(x, y, size, size, radius)
+  else ctx.rect(x, y, size, size) // iOS < 16 has no roundRect: square corners there
   ctx.clip()
   ctx.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, x, y, size, size)
   ctx.restore()
@@ -129,7 +134,8 @@ async function drawCard(match: ShareableMatch, runnerUps: ShareableMatch[], user
       const cx = 80 + i * (cw + gap)
       ctx.fillStyle = "rgba(255,255,255,0.06)"
       ctx.beginPath()
-      ctx.roundRect(cx, cy, cw, cardH, 24)
+      if (ctx.roundRect) ctx.roundRect(cx, cy, cw, cardH, 24)
+      else ctx.rect(cx, cy, cw, cardH)
       ctx.fill()
       const t = 100
       const tx = cx + (cw - t) / 2
@@ -139,7 +145,8 @@ async function drawCard(match: ShareableMatch, runnerUps: ShareableMatch[], user
       } else {
         ctx.fillStyle = "rgba(255,255,255,0.08)"
         ctx.beginPath()
-        ctx.roundRect(tx, ty, t, t, 18)
+        if (ctx.roundRect) ctx.roundRect(tx, ty, t, t, 18)
+        else ctx.rect(tx, ty, t, t)
         ctx.fill()
       }
       ctx.fillStyle = "#fff"
