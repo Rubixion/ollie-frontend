@@ -382,10 +382,10 @@ export function CelebrityFinder() {
         {/* Header: static so it's in the server HTML at full opacity (LCP) */}
         <div className="mb-[clamp(0.75rem,3svh,1.75rem)] text-center">
           <h1 className="fluid-h1-sm font-black text-white tracking-[-0.015em] leading-[1.05] text-balance">
-            Which celebrity do you look like?
+            What celebrity do I look like?
           </h1>
           <p className="mt-3 text-white/70 text-base leading-relaxed text-pretty">
-            See the five celebrities you look most like.
+            Find your celebrity look alike: the five actors, actresses and stars you look most like.
           </p>
           <p className="mt-1 text-white/50 text-sm text-balance">
             Best with one clear, front-facing face in even light.

@@ -68,7 +68,7 @@ function headingIds(headings: string[]) {
 
 // The first mention of the site's main keyword in a post's body links to /match, so every article passes
 // its topical relevance to the page that should rank. One link per post, and only where the phrase is already used.
-const MATCH_PHRASE = /celebrit(?:y|ies) (?:you )?look[- ]?alikes?|celebrity match(?:es)?|which celebrit(?:y|ies) you look like|celebrity doppelg[aä]ngers?/i
+const MATCH_PHRASE = /celebrit(?:y|ies) (?:you )?look[- ]?alikes?|celebrity match(?:es)?|which celebrit(?:y|ies) you look like|celebrity doppelg[aä]ngers?|what celebrity (?:do )?i look like/i
 const bodyLink = "text-(--ollie-cyan) underline underline-offset-4 hover:text-white"
 
 function linkFirstMention(sections: BlogPost["sections"]) {
@@ -261,7 +261,7 @@ export default async function BlogPostPage({ params }: Props) {
               href="/match"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-(--ollie-cyan) text-black text-sm font-bold hover:opacity-90 transition-opacity"
             >
-              Find my match <ArrowRight size={14} aria-hidden="true" />
+              Find my celebrity look alike <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </section>
 

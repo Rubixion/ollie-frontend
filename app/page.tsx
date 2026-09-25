@@ -14,7 +14,7 @@ import { INDEX } from "@/lib/facts"
 import { GUEST_LIMIT } from "@/lib/search-quota"
 
 // Distinct from /match's title so the two pages don't compete for the same search.
-const DESCRIPTION = `Ollie is a free celebrity lookalike app. Upload a photo and a face-recognition model built by the Ollie team ranks ${INDEX.celebrities} celebrities by how closely they resemble you. Your photo is never stored.`
+const DESCRIPTION = `Ollie is a free celebrity lookalike app: upload a photo and see which of ${INDEX.celebrities} celebrities you look most like, ranked by face. Your photo is never stored.`
 
 export const metadata: Metadata = {
   title: { absolute: "Ollie: Free Celebrity Lookalike App" },
@@ -168,7 +168,7 @@ export default function Page() {
 
           <div className="mt-10 flex justify-center">
             <Link href="/match" className={primary}>
-              Try a photo now
+              Find your celebrity look alike
               <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform motion-reduce:transition-none" aria-hidden="true" />
             </Link>
           </div>

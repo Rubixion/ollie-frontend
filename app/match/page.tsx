@@ -13,21 +13,23 @@ import { GUEST_LIMIT } from "@/lib/search-quota"
 import { RevealOnScroll } from "@/components/reveal-on-scroll"
 
 
-const DESCRIPTION = `Upload a photo and Ollie's face-recognition model ranks ${INDEX.celebrities} celebrities by how closely they resemble you. Free, and your photo is never stored.`
+// Worded after what people search (2026-09 keyword research): "what celebrity do I look like", "celebrity look alike",
+// "what actor/actress do I look like". This is the page meant to rank for them; the home page links here.
+const DESCRIPTION = `Find your celebrity look alike, free. Upload a photo and Ollie ranks ${INDEX.celebrities} actors, actresses and stars by how much they look like you. Photo never stored.`
 
 export const metadata: Metadata = {
-  title: "Which Celebrity Do You Look Like? Free AI Face Match",
+  title: { absolute: "What Celebrity Do I Look Like? Celebrity Look Alike Finder" },
   description: DESCRIPTION,
   alternates: { canonical: "/match" },
   openGraph: {
     type: "website",
     url: "/match",
-    title: "Which celebrity do you look like?",
+    title: "What celebrity do I look like?",
     description: DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Which celebrity do you look like?",
+    title: "What celebrity do I look like?",
     description: DESCRIPTION,
   },
 }
@@ -94,6 +96,10 @@ const FAQ: [string, string][] = [
   [
     "Does it work for women?",
     "Yes. The celebrity index includes women and men, and the model was trained on photos of both. By default Ollie estimates from your photo whether your face looks male or female and compares you with celebrities of that gender, whose gender comes from Wikidata. The estimate can be wrong. To choose yourself, set the Gender menu above Find my match to Men or Women before you search.",
+  ],
+  [
+    "What actor or actress do I look like?",
+    "Set Compare with to Actors before you search, and Ollie ranks only people best known for acting (on Wikidata), so your top five are all actors and actresses. Leave Gender on Auto to compare you with actors of the gender your face looks, or pick Men or Women yourself. With All celebrities, your matches can also be singers, athletes and other famous people.",
   ],
   [
     "Can I match with only actors, singers or footballers?",

@@ -3,7 +3,8 @@
 // TextEffect, after motion-primitives. Changes from the original:
 // - `inView`: play when scrolled into view instead of on mount, and reverse when scrolled out, so it replays. The text is always rendered, so it's in the
 //   server HTML for search engines, and nothing jumps when it appears.
-// - Screen readers get the whole string once (sr-only); the per-word/char copies are aria-hidden.
+// - Word/line segments are real words, read as-is. Only per="char" (letters in separate spans) adds one sr-only copy and hides the
+//   letters from screen readers; doing that for words too would put the text in the HTML twice ("In seconds.In seconds." to Google).
 // - Reduced motion: plain text.
 import { motion, useReducedMotion, type TargetAndTransition, type Variants } from "framer-motion"
 import React from "react"
@@ -72,8 +73,8 @@ export function TextEffect({
 
   return (
     <Tag className={cn("whitespace-pre-wrap", className)}>
-      <span className="sr-only">{children}</span>
-      <motion.span initial="hidden" {...play} variants={containerVariants} aria-hidden="true">
+      {per === "char" && <span className="sr-only">{children}</span>}
+      <motion.span initial="hidden" {...play} variants={containerVariants} aria-hidden={per === "char" ? true : undefined}>
         {segments.map((segment, i) => (
           <motion.span key={i} variants={item} className={per === "line" ? "block" : "inline-block whitespace-pre"}>
             {segment}
