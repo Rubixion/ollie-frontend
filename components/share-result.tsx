@@ -1,13 +1,14 @@
 "use client"
 
 // Share button for the hidden /kirk-meter and /compare pages: draws a 9:16 story card (same look as the
-// match page's), then opens the share sheet, or downloads it where sharing files isn't supported.
-import { useState } from "react"
-import { Loader2, Share2 } from "lucide-react"
+// match page's), then opens the share sheet (where the browser can share files) or downloads it.
+import { useState, useSyncExternalStore } from "react"
+import { Download, Loader2, Share2 } from "lucide-react"
 import { drawCover, fitFont, loadImage } from "@/components/share-match"
 
 const W = 1080, H = 1920
 const BLUE = "rgb(100, 130, 210)" // --ollie-cyan
+const SHARE_PROBE = typeof File === "undefined" ? null! : new File([""], "x.png", { type: "image/png" }) // "can this browser share a PNG?"
 
 export interface ShareCard {
   intro: string // small line above the photos
@@ -69,15 +70,21 @@ async function drawCard(card: ShareCard): Promise<Blob> {
 }
 
 export function ShareResult({ card, className = "" }: { card: ShareCard; className?: string }) {
-  const [busy, setBusy] = useState(false)
+  const [busy, setBusy] = useState<"share" | "download" | null>(null)
   const [error, setError] = useState<string | null>(null)
+  // Share only where the browser can share image files (most phones); Download works everywhere
+  const canShare = useSyncExternalStore(
+    () => () => {},
+    () => Boolean(navigator.canShare?.({ files: [SHARE_PROBE] })),
+    () => false,
+  )
 
-  const share = async () => {
-    setBusy(true)
+  const run = async (kind: "share" | "download") => {
+    setBusy(kind)
     setError(null)
     try {
       const file = new File([await drawCard(card)], `ollie-${card.path}.png`, { type: "image/png" })
-      if (navigator.canShare?.({ files: [file] })) {
+      if (kind === "share") {
         await navigator.share({ files: [file], text: `${card.text} https://www.ollieml.com/${card.path}` })
       } else {
         const url = URL.createObjectURL(file)
@@ -85,23 +92,27 @@ export function ShareResult({ card, className = "" }: { card: ShareCard; classNa
         setTimeout(() => URL.revokeObjectURL(url), 1000)
       }
     } catch (e) {
-      if (!(e instanceof DOMException && e.name === "AbortError")) setError("Couldn't share the image. Try again.") // AbortError = share sheet closed
+      if (!(e instanceof DOMException && e.name === "AbortError")) setError(`Couldn't ${kind} the image. Try again.`) // AbortError = share sheet closed
     } finally {
-      setBusy(false)
+      setBusy(null)
     }
   }
 
+  const btn = "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-(--ollie-cyan)/50 px-5 text-sm font-bold text-(--ollie-cyan) transition-colors hover:bg-(--ollie-cyan)/10 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ollie-cyan)"
   return (
     <div className={className}>
-      <button
-        type="button"
-        onClick={share}
-        disabled={busy}
-        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-(--ollie-cyan)/50 px-5 text-sm font-bold text-(--ollie-cyan) transition-colors hover:bg-(--ollie-cyan)/10 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ollie-cyan)"
-      >
-        {busy ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <Share2 size={14} aria-hidden="true" />}
-        Share
-      </button>
+      <div className="flex gap-2">
+        {canShare && (
+          <button type="button" onClick={() => run("share")} disabled={busy !== null} className={btn}>
+            {busy === "share" ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <Share2 size={14} aria-hidden="true" />}
+            Share
+          </button>
+        )}
+        <button type="button" onClick={() => run("download")} disabled={busy !== null} className={btn}>
+          {busy === "download" ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <Download size={14} aria-hidden="true" />}
+          Download
+        </button>
+      </div>
       {error && <p role="alert" className="mt-2 text-center text-sm text-red-300">{error}</p>}
     </div>
   )
