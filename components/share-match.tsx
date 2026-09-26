@@ -22,7 +22,7 @@ interface ShareOptions {
 const W = 1080, H = 1920
 const BLUE = "rgb(100, 130, 210)" // --ollie-cyan
 
-function loadImage(src: string) {
+export function loadImage(src: string) {
   // ponytail: onload, not img.decode(), which iOS Safari rejects for images that aren't in the DOM
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image()
@@ -33,7 +33,7 @@ function loadImage(src: string) {
 }
 
 // Draws `img` into a square, cropped to fill it (like object-fit: cover)
-function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, size: number, radius = 28) {
+export function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, size: number, radius = 28) {
   const s = Math.min(img.width, img.height)
   ctx.save()
   ctx.beginPath()
@@ -53,7 +53,7 @@ function fitText(ctx: CanvasRenderingContext2D, text: string, width: number) {
 }
 
 // Largest font size (<= max) at which `text` fits in `width`
-function fitFont(ctx: CanvasRenderingContext2D, text: string, weight: number, max: number, width: number, family: string) {
+export function fitFont(ctx: CanvasRenderingContext2D, text: string, weight: number, max: number, width: number, family: string) {
   let size = max
   ctx.font = `${weight} ${size}px ${family}`
   while (ctx.measureText(text).width > width && size > 40) {
@@ -164,7 +164,7 @@ async function drawCard(match: ShareableMatch, runnerUps: ShareableMatch[], user
 
   ctx.fillStyle = BLUE
   ctx.font = `700 44px ${family}`
-  ctx.fillText("Find yours at ollieml.com", 80, 1470)
+  ctx.fillText("Find yours at ollieml.com/match", 80, 1470)
   ctx.font = `500 24px ${family}`
   ctx.fillStyle = "rgba(255,255,255,0.6)"
   // Licensed photos (the celebrity index) must carry their credit; photos without one print no credit line

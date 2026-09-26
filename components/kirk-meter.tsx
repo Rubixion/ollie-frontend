@@ -10,6 +10,10 @@ import { supabase } from "@/lib/supabase"
 import { scale } from "@/components/celebrity-finder"
 import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { glass, glassOpen } from "@/lib/surfaces"
+import { ShareResult } from "@/components/share-result"
+
+// Kirk-only skew on top of the match page's scale(): nobody gets under 50%, and 60% on the match scale is already 100%.
+const kirkScale = (s: number) => Math.min(100, 50 + (s * 50) / 60)
 
 const PHASES = [
   { at: 0, label: "Uploading your photo…" },
@@ -103,7 +107,7 @@ export function KirkMeter() {
         if (json.code === "guest_limit") openModal(() => measure())
         throw new Error(json.error || "Search failed")
       }
-      setResult({ score: scale(json.score), thumb: json.thumb, faceFound: Boolean(json.face_found) })
+      setResult({ score: kirkScale(scale(json.score)), thumb: json.thumb, faceFound: Boolean(json.face_found) })
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Unknown error")
     } finally {
@@ -236,6 +240,15 @@ export function KirkMeter() {
                     transition={{ duration: 0.8 }}
                   />
                 </div>
+                <ShareResult
+                  card={{
+                    intro: "My Kirk level is",
+                    photos: [{ src: previewUrl ?? imageDataUrl ?? "", label: "Me" }, { src: result.thumb, label: "Kirk" }],
+                    headline: `${result.score.toFixed(1)}% Kirk`,
+                    path: "kirk-meter",
+                    text: `I'm ${result.score.toFixed(1)}% Kirk. How Kirk are you?`,
+                  }}
+                />
                 <button
                   type="button"
                   onClick={clearImage}

@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 })
     }
 
-    const { image, gender, category, kirk } = await req.json()
+    const { image, image2, gender, category, kirk, compare } = await req.json()
     // who to show: "auto" (the finder's default) = same apparent gender as the face, "female"/"male" (Wikidata gender), or "any"
     const genderChoice = ["auto", "female", "male", "any"].includes(gender) ? gender : "any"
     // the "Compare with" buttons: only actors / musicians / footballers (Wikidata description); anything else = everyone
@@ -37,6 +37,12 @@ export async function POST(req: NextRequest) {
     const parsed = image.match(/^data:(image\/[a-z0-9.+-]+);base64,(.+)$/i)
     if (!parsed) {
       return NextResponse.json({ error: "Invalid image format." }, { status: 400 })
+    }
+
+    // compare: the hidden /compare page sends a second photo, checked the same way
+    const parsed2 = compare === true ? (typeof image2 === "string" && image2.length <= MAX_IMAGE_BYTES ? image2.match(/^data:(image\/[a-z0-9.+-]+);base64,(.+)$/i) : null) : undefined
+    if (parsed2 === null) {
+      return NextResponse.json({ error: "Please add a second photo (JPG or PNG, max 5 MB)." }, { status: 400 })
     }
 
     const baseUrl = process.env.INFERENCE_URL
@@ -73,11 +79,16 @@ export async function POST(req: NextRequest) {
     form.append("file", new Blob([bytes], { type: parsed[1] }), "upload")
     form.append("gender", genderChoice)
     form.append("category", categoryChoice)
+    if (parsed2) {
+      const bytes2 = Uint8Array.from(atob(parsed2[2]), (c) => c.charCodeAt(0))
+      form.append("file2", new Blob([bytes2], { type: parsed2[1] }), "upload2")
+    }
 
     let res: Response
     try {
-      // kirk: the hidden /kirk-meter page, scored against the server's kirk/ photos (same quota as a normal search)
-      res = await fetch(`${baseUrl.replace(/\/$/, "")}/${kirk === true ? "kirk" : "search"}`, {
+      // kirk: the hidden /kirk-meter page, scored against the server's kirk/ photos; compare: the hidden /compare page.
+      // Both use the same quota as a normal search.
+      res = await fetch(`${baseUrl.replace(/\/$/, "")}/${parsed2 ? "compare" : kirk === true ? "kirk" : "search"}`, {
         method: "POST",
         headers: {
           "X-Api-Key": apiKey,
