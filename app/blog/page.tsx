@@ -1,13 +1,16 @@
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import Link from "next/link"
-import { allPosts, allCategories, featuredPosts } from "@/lib/blog-posts"
+import { allPosts, allCategories } from "@/lib/blog-posts"
 import { SITE_URL } from "@/lib/site-config"
 import { BlogList } from "./blog-list"
-import { BGPattern } from "@/components/bg-pattern"
+import { DottedSurface } from "@/components/ui/dotted-surface"
+import { blogImages } from "@/lib/blog-images"
 
 // Newest first
 const posts = [...allPosts].sort((a, b) => b.isoDate.localeCompare(a.isoDate))
+
+// Above the fold, so it loads in on its own (same as the contact page)
+const loadIn = "animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-backwards motion-reduce:animate-none"
 
 export default function BlogPage() {
   const schema = {
@@ -25,39 +28,33 @@ export default function BlogPage() {
       url: `${SITE_URL}/blog/${p.slug}`,
       datePublished: p.isoDate,
       dateModified: p.updatedIsoDate ?? p.isoDate,
+      author: { "@type": "Person", name: p.author },
     })),
   }
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <DottedSurface className="motion-reduce:hidden" />
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
-        <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
-        <div className="max-w-4xl mx-auto px-6 pt-32 pb-20">
-          <div className="mb-10">
-            <h1 className="text-4xl font-black text-white mb-3 tracking-tight">The Ollie Blog</h1>
-            <p className="text-white/50 text-base max-w-2xl leading-relaxed">
+        <div className="mx-auto max-w-6xl px-6 pb-24 pt-[clamp(5rem,12svh,8rem)]">
+          <div className="text-center">
+            <h1 className="fluid-h1-sm font-black text-white tracking-[-0.015em] leading-[1.05] text-balance">The Ollie Blog</h1>
+            <p className="mx-auto mt-[clamp(0.5rem,2svh,1rem)] max-w-xl text-base leading-relaxed text-white/70 text-pretty">
               How face recognition works, how to get your best celebrity match, and the science of why people look alike.
-              {" "}{posts.length} articles.
             </p>
           </div>
-          <section aria-labelledby="start-here" className="mb-14 border-y border-white/10 py-8">
-            <h2 id="start-here" className="text-2xl font-black text-white tracking-tight">Start here</h2>
-            <ul className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-              {featuredPosts.map((p) => (
-                <li key={p.slug}>
-                  <Link href={`/blog/${p.slug}`} className="text-(--ollie-cyan) underline underline-offset-4 hover:text-white">
-                    {p.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-          <BlogList
-            posts={posts.map(({ slug, title, excerpt, date, readTime, category }) => ({ slug, title, excerpt, date, readTime, category }))}
-            categories={allCategories}
-          />
+
+          <div className={`mt-[clamp(1.5rem,4svh,2.5rem)] ${loadIn}`}>
+            <BlogList
+              posts={posts.map(({ slug, title, excerpt, date, readTime, category, author }) => {
+                const img = blogImages[slug]
+                return { slug, title, excerpt, date, readTime, category, author, image: img?.thumb }
+              })}
+              categories={allCategories}
+            />
+          </div>
         </div>
       </main>
       <Footer />

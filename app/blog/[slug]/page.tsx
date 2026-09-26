@@ -5,8 +5,12 @@ import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
 import { allPosts, getPost, type BlogPost } from "@/lib/blog-posts"
 import { SITE_URL } from "@/lib/site-config"
-import { ArrowLeft, ArrowRight, Clock, User, Calendar, ChevronRight } from "lucide-react"
+import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react"
 import { BGPattern } from "@/components/bg-pattern"
+import { AuthorBadge } from "@/components/author-badge"
+import { card } from "@/lib/surfaces"
+import Image from "next/image"
+import { blogImages } from "@/lib/blog-images"
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -86,7 +90,7 @@ function linkFirstMention(sections: BlogPost["sections"]) {
 function TableOfContents({ headings, ids }: { headings: string[]; ids: string[] }) {
   if (headings.length < 2) return null
   return (
-    <nav aria-label="In this article" className="mb-10 p-5 rounded-xl bg-white/[0.03] border border-white/8">
+    <nav aria-label="In this article" className={`${card} mb-10 p-6`}>
       <p className="text-[10px] font-bold tracking-widest uppercase text-white/60 mb-3">In this article</p>
       <ol className="space-y-1.5">
         {headings.map((h, i) => (
@@ -115,6 +119,7 @@ export default async function BlogPostPage({ params }: Props) {
   const ids = headingIds(h2s)
   let h2Index = 0
   const sections = linkFirstMention(post.sections).map((s) => ({ ...s, id: s.h2 ? ids[h2Index++] : undefined }))
+  const image = blogImages[post.slug]
   const relatedPosts = post.relatedSlugs.map((s) => getPost(s)).filter((p) => p !== undefined)
   const words = post.sections
     .flatMap((s) => [s.h2 ?? "", ...s.paragraphs])
@@ -132,10 +137,10 @@ export default async function BlogPostPage({ params }: Props) {
         headline: post.title,
         description: post.excerpt,
         abstract: post.summary,
-        image: `${url}/opengraph-image`,
+        image: image ? [`${SITE_URL}${image.src}`, `${url}/opengraph-image`] : `${url}/opengraph-image`,
         datePublished: post.isoDate,
         dateModified: modified,
-        author: { "@type": "Organization", name: post.author, url: SITE_URL },
+        author: { "@type": "Person", name: post.author },
         publisher: { "@id": `${SITE_URL}/#organization` },
         mainEntityOfPage: url,
         isPartOf: { "@id": `${SITE_URL}/blog#blog` },
@@ -193,22 +198,37 @@ export default async function BlogPostPage({ params }: Props) {
             <h1 className="text-3xl md:text-4xl font-black text-white leading-tight mb-5 tracking-tight">
               {post.title}
             </h1>
-            <p className="text-white/80 text-lg leading-relaxed mb-6 border-l-2 border-(--ollie-cyan) pl-4">{post.summary}</p>
-            <div className="flex flex-wrap items-center gap-4 text-xs text-white/60 pt-5">
-              <span className="flex items-center gap-1.5">
-                <User size={12} aria-hidden="true" />
-                {post.author}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Calendar size={12} aria-hidden="true" />
-                <time dateTime={post.isoDate}>{post.date}</time>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Clock size={12} aria-hidden="true" />
-                {post.readTime}
-              </span>
-            </div>
+            <p className="text-white/80 text-lg leading-relaxed mb-6">{post.summary}</p>
+            <AuthorBadge
+              name={post.author}
+              detail={`${post.date} · ${post.readTime}`}
+            />
+            <time dateTime={post.isoDate} className="sr-only">{post.date}</time>
           </header>
+
+          {image && (
+            <figure className="mb-10">
+              {/* pre-sized WebP in public/, so no runtime optimisation needed */}
+              <Image
+                src={image.src}
+                width={image.width}
+                height={image.height}
+                alt={image.alt}
+                priority
+                unoptimized
+                className="max-h-[28rem] w-full rounded-3xl bg-white/[0.03] object-contain"
+              />
+              <figcaption className="mt-2 text-[11px] text-white/50">
+                Image: <a href={image.sourceUrl} className="underline underline-offset-2 hover:text-white" rel="nofollow noopener" target="_blank">{image.credit}</a>
+                {", "}
+                {image.licenseUrl
+                  ? <a href={image.licenseUrl} className="underline underline-offset-2 hover:text-white" rel="nofollow noopener license" target="_blank">{image.license}</a>
+                  : image.license}
+                {/* CC licences ask you to say when an image was changed; ours are resized and re-encoded */}
+                , via Wikimedia Commons{image.license !== "Public domain" && image.license !== "CC0" ? " (resized)" : ""}
+              </figcaption>
+            </figure>
+          )}
 
           <TableOfContents headings={h2s} ids={ids} />
 
@@ -241,7 +261,7 @@ export default async function BlogPostPage({ params }: Props) {
               <h2 className="text-xl font-bold text-white mb-6">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 {post.faqs.map((faq, i) => (
-                  <div key={i} className="p-5 rounded-xl bg-white/[0.03] border border-white/8">
+                  <div key={i} className={`${card} p-5`}>
                     <h3 className="text-sm font-semibold text-white mb-2">{faq.q}</h3>
                     <p className="text-white/55 text-sm leading-relaxed">{faq.a}</p>
                   </div>
@@ -251,7 +271,7 @@ export default async function BlogPostPage({ params }: Props) {
           )}
 
           {/* CTA */}
-          <section className="mt-14 p-7 rounded-2xl bg-(--ollie-cyan)/5 border border-(--ollie-cyan)/20">
+          <section className={`${card} mt-14 p-7`}>
             <p className="text-[10px] font-bold tracking-widest uppercase text-(--ollie-cyan) mb-2">Try it yourself</p>
             <h2 className="text-xl font-bold text-white mb-2">Find your celebrity lookalike</h2>
             <p className="text-white/55 text-sm mb-5">
@@ -275,7 +295,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <Link
                     key={related.slug}
                     href={`/blog/${related.slug}`}
-                    className="block p-5 rounded-xl bg-white/[0.02] border border-white/8 hover:border-white/20 hover:bg-white/[0.04] transition-all group"
+                    className={`${card} group block p-5 transition-transform duration-300 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0`}
                   >
                     <span className="text-[9px] font-bold tracking-widest uppercase text-(--ollie-cyan) block mb-2">
                       {related.category}

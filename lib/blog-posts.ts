@@ -5,25 +5,15 @@ import { postsC } from "./blog-posts-c"
 
 export type { BlogPost }
 
-export const allPosts: BlogPost[] = [...postsA, ...postsB, ...postsC]
+// Shown date is the full day from isoDate ("January 14, 2026"), so the two can't disagree.
+const fullDate = (iso: string) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })
+
+export const allPosts: BlogPost[] = [...postsA, ...postsB, ...postsC].map((p) => ({ ...p, date: fullDate(p.isoDate) }))
 
 export function getPost(slug: string): BlogPost | undefined {
   return allPosts.find((p) => p.slug === slug)
 }
-
-// The best guides, linked from the homepage, blog index and footer. Order = link order.
-export const featuredPosts: BlogPost[] = [
-  "find-your-celebrity-lookalike",
-  "best-photo-celebrity-match",
-  "understanding-your-results",
-  "ollie-how-it-works",
-  "celebrity-database-how-built",
-  "why-everyone-has-doppelganger",
-].map((slug) => {
-  const post = getPost(slug)
-  if (!post) throw new Error(`featuredPosts: no post with slug "${slug}"`) // fail the build, not a page
-  return post
-})
 
 export const allCategories: string[] = [
   "All",
