@@ -3,14 +3,29 @@
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Eye, EyeOff, Mail, Lock, AlertCircle, Check } from "lucide-react"
-import Link from "next/link"
+import type { ComponentProps } from "react"
 import { rememberConsent, useAuth } from "@/components/auth-provider"
 
 type Tab = "signin" | "signup"
 
+const LINK = "text-white underline decoration-white/30 underline-offset-2 transition-colors hover:decoration-white"
+
+// Native checkbox restyled: keeps keyboard, focus and form validation for free.
+function Checkbox(props: ComponentProps<"input">) {
+  return (
+    <span className="relative grid size-4 shrink-0 place-items-center">
+      <input
+        type="checkbox"
+        {...props}
+        className="peer size-4 cursor-pointer appearance-none rounded-[5px] border border-white/25 bg-white/[0.04] transition-colors checked:border-(--ollie-cyan) checked:bg-(--ollie-cyan) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ollie-cyan)"
+      />
+      <Check size={11} strokeWidth={3.5} aria-hidden="true" className="pointer-events-none absolute text-black opacity-0 transition-opacity peer-checked:opacity-100" />
+    </span>
+  )
+}
+
 export function AuthModal() {
-  const { user, isModalOpen, closeModal, signIn, signUp, signInWithGoogle, initialAuthTab, signedInInModal, hasAuthCallback, finishAuth } = useAuth()
-  const signedIn = signedInInModal && Boolean(user)
+  const { isModalOpen, closeModal, signIn, signUp, signInWithGoogle, initialAuthTab } = useAuth()
   const [tab, setTab] = useState<Tab>(initialAuthTab)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -18,7 +33,7 @@ export function AuthModal() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [agree, setAgree] = useState(false)         // required: 18+ and Terms/Privacy
+  const [agree, setAgree] = useState(false)         // required: Terms (which set the 18+ rule) and Privacy
   const [emailOptIn, setEmailOptIn] = useState(false) // optional: email list (never pre-ticked)
 
   useEffect(() => {
@@ -41,7 +56,7 @@ export function AuthModal() {
 
   const needsAgreement = () => {
     if (tab === "signup" && !agree) {
-      setError("Please confirm you're 18 or older and agree to the Terms and Privacy Policy.")
+      setError("Please agree to the Terms and Privacy Policy.")
       return true
     }
     return false
@@ -74,7 +89,10 @@ export function AuthModal() {
     if (err) {
       setError(err)
     } else if (tab === "signup") {
-      setSuccess("Check your email to confirm your account, then sign in.")
+      // straight to Sign In with the email kept, so they can log in once they've confirmed
+      setTab("signin")
+      setPassword("")
+      setSuccess(`We sent a confirmation link to ${email}. Click it, then sign in below.`)
     }
 
     setLoading(false)
@@ -110,14 +128,10 @@ export function AuthModal() {
                 <div className="flex items-start justify-between px-6 pt-6 pb-4">
                   <div>
                     <h2 className="text-lg font-black text-white tracking-tight">
-                      {signedIn ? "You're signed in" : tab === "signin" ? "Welcome back" : "Join Ollie"}
+                      {tab === "signin" ? "Welcome back" : "Join Ollie"}
                     </h2>
                     <p className="text-white/60 text-xs mt-1 leading-relaxed">
-                      {signedIn
-                        ? "You can keep searching."
-                        : tab === "signin"
-                          ? "Sign in to keep searching."
-                          : "Free. Sign up for more searches."}
+                      {tab === "signin" ? "Sign in to keep searching." : "Free. Sign up for more searches."}
                     </p>
                   </div>
                   <button
@@ -129,46 +143,6 @@ export function AuthModal() {
                   </button>
                 </div>
 
-                {signedIn ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-4 px-6 pb-6 pt-2"
-                  >
-                    <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] p-3">
-                      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-(--ollie-cyan)/15 text-(--ollie-cyan)">
-                        <Check size={16} aria-hidden="true" />
-                      </span>
-                      <p className="min-w-0 truncate text-xs text-white/70">{user?.email}</p>
-                    </div>
-                    {hasAuthCallback ? (
-                      <button
-                        type="button"
-                        onClick={finishAuth}
-                        className="w-full min-h-11 rounded-xl bg-(--ollie-cyan) text-sm font-bold text-black transition-all hover:opacity-90 active:scale-[0.98]"
-                      >
-                        Search again
-                      </button>
-                    ) : (
-                      <Link
-                        href="/match"
-                        onClick={closeModal}
-                        className="flex w-full min-h-11 items-center justify-center rounded-xl bg-(--ollie-cyan) text-sm font-bold text-black transition-all hover:opacity-90 active:scale-[0.98]"
-                      >
-                        Go to Match
-                      </Link>
-                    )}
-                    <button
-                      type="button"
-                      onClick={closeModal}
-                      className="w-full min-h-11 rounded-xl text-sm font-semibold text-white/60 transition-colors hover:bg-white/5 hover:text-white"
-                    >
-                      Close
-                    </button>
-                  </motion.div>
-                ) : (
-                <>
                 {/* Tabs */}
                 <div className="px-6 pb-4">
                   <div className="flex gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/8">
@@ -194,6 +168,16 @@ export function AuthModal() {
                 </div>
 
                 <div className="px-6 pb-6 space-y-3">
+                  {success && (
+                    <div role="status" className="flex items-start gap-2.5 rounded-xl border border-green-500/20 bg-green-500/10 p-3">
+                      <Mail size={14} aria-hidden="true" className="mt-0.5 shrink-0 text-green-300" />
+                      <p className="text-xs leading-relaxed text-green-200">
+                        <span className="block font-bold text-green-300">Check your email</span>
+                        {success}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Google */}
                   <button
                     type="button"
@@ -254,33 +238,25 @@ export function AuthModal() {
                     </div>
 
                     {tab === "signup" ? (
-                      <div className="space-y-2.5 py-1">
-                        <label className="flex cursor-pointer items-start gap-2.5">
-                          <input
-                            type="checkbox"
+                      <div className="space-y-3 py-1">
+                        <label className="flex cursor-pointer items-center gap-3">
+                          <Checkbox
                             checked={agree}
                             onChange={(e) => { setAgree(e.target.checked); setError(null) }}
                             required
-                            className="mt-0.5 size-3.5 shrink-0 accent-(--ollie-cyan)"
                           />
-                          <span className="text-xs leading-relaxed text-white/55">
-                            18 or older, and agree to the{" "}
-                            <a href="/terms" target="_blank" className="underline hover:text-white/80">Terms of Service</a>
+                          <span className="text-xs leading-snug text-white/70">
+                            I agree to the{" "}
+                            <a href="/terms" target="_blank" className={LINK}>Terms</a>
                             {" "}and{" "}
-                            <a href="/privacy" target="_blank" className="underline hover:text-white/80">Privacy Policy</a>.
-                            <span className="text-white/60"> (required)</span>
+                            <a href="/privacy" target="_blank" className={LINK}>Privacy Policy</a>
                           </span>
                         </label>
-                        <label className="flex cursor-pointer items-start gap-2.5">
-                          <input
-                            type="checkbox"
-                            checked={emailOptIn}
-                            onChange={(e) => setEmailOptIn(e.target.checked)}
-                            className="mt-0.5 size-3.5 shrink-0 accent-(--ollie-cyan)"
-                          />
-                          <span className="text-xs leading-relaxed text-white/55">
-                            Send emails about new Ollie features and updates. Unsubscribe any time.
-                            <span className="text-white/60"> (optional)</span>
+                        <label className="flex cursor-pointer items-center gap-3">
+                          <Checkbox checked={emailOptIn} onChange={(e) => setEmailOptIn(e.target.checked)} />
+                          <span className="text-xs leading-snug text-white/70">
+                            Email me about new features
+                            <span className="block text-[11px] text-white/50">Optional · unsubscribe any time</span>
                           </span>
                         </label>
                       </div>
@@ -300,14 +276,6 @@ export function AuthModal() {
                       </div>
                     )}
 
-                    {success && (
-                      <div className="space-y-3 rounded-xl border border-green-500/15 bg-green-500/10 p-3">
-                        <p className="text-green-300 text-xs leading-relaxed">{success}</p>
-                        <Link href="/match" onClick={closeModal} className="inline-flex min-h-9 items-center rounded-lg bg-(--ollie-cyan) px-3 text-xs font-bold text-black">
-                          Go to Match
-                        </Link>
-                      </div>
-                    )}
 
                     <button
                       type="submit"
@@ -321,8 +289,6 @@ export function AuthModal() {
                   </form>
 
                 </div>
-                </>
-                )}
               </div>
             </motion.div>
           </div>

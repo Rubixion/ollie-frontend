@@ -55,12 +55,11 @@ interface AuthContextValue {
   openModal: (onSuccess?: () => void, initialTab?: AuthTab) => void
   closeModal: () => void
   initialAuthTab: AuthTab
-  // Set once a sign-in completes while the modal is open. The modal then shows a "you're signed in" screen and
-  // waits for the person to click through (finishAuth runs the onSuccess passed to openModal), or to close it.
-  signedInInModal: boolean
-  hasAuthCallback: boolean
-  finishAuth: () => void
 }
+
+// Where OAuth and email-confirmation links land: the page the person signed in from.
+// Needs `https://<domain>/**` in Supabase's Redirect URLs allowlist.
+const hereUrl = () => (typeof window !== "undefined" ? window.location.origin + window.location.pathname + window.location.search : undefined)
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
@@ -69,8 +68,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [initialAuthTab, setInitialAuthTab] = useState<AuthTab>("signin")
-  const [signedInInModal, setSignedInInModal] = useState(false)
-  const [hasAuthCallback, setHasAuthCallback] = useState(false)
   const isModalOpenRef = useRef(false)
   const onSuccessRef = useRef<(() => void) | null>(null)
 
@@ -87,8 +84,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         setUser(session?.user ?? null)
         if (session && event === "SIGNED_IN") syncConsent(session)
-        // Don't close the modal or run onSuccess here: no surprise redirect, the person chooses what happens next
-        if (session?.user && isModalOpenRef.current) setSignedInInModal(true)
+        // Signed in from the modal: close it and stay on this page, then run what the caller asked for (e.g. retry the search)
+        if (session?.user && isModalOpenRef.current) {
+          const onSuccess = onSuccessRef.current
+          isModalOpenRef.current = false
+          onSuccessRef.current = null
+          setIsModalOpen(false)
+          // deferred: Supabase deadlocks if its own calls run inside this callback
+          if (onSuccess) setTimeout(onSuccess, 0)
+        }
       })
 
       return () => subscription.unsubscribe()
@@ -115,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
         // also saved on the account, in case they confirm their email on another device
         options: {
+          emailRedirectTo: hereUrl(),
           data: {
             terms_accepted: consent.terms,
             terms_version: TERMS_VERSION,
@@ -133,18 +138,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
-    // ponytail: pin to one stable URL (not window.location.href) so it always matches a fixed
-    // entry in Supabase's Redirect URLs allowlist, instead of a different exact URL per tab/query.
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: typeof window !== "undefined" ? `${window.location.origin}/match` : undefined },
-    })
+    await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: hereUrl() } })
   }
 
   const openModal = useCallback((onSuccess?: () => void, initialTab: AuthTab = "signin") => {
     onSuccessRef.current = onSuccess ?? null
-    setHasAuthCallback(Boolean(onSuccess))
-    setSignedInInModal(false)
     setInitialAuthTab(initialTab)
     isModalOpenRef.current = true
     setIsModalOpen(true)
@@ -153,18 +151,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const closeModal = useCallback(() => {
     isModalOpenRef.current = false
     setIsModalOpen(false)
-    setSignedInInModal(false)
     onSuccessRef.current = null
   }, [])
 
-  const finishAuth = useCallback(() => {
-    const onSuccess = onSuccessRef.current
-    closeModal()
-    onSuccess?.()
-  }, [closeModal])
-
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithGoogle, isModalOpen, openModal, closeModal, initialAuthTab, signedInInModal, hasAuthCallback, finishAuth }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithGoogle, isModalOpen, openModal, closeModal, initialAuthTab }}>
       {children}
     </AuthContext.Provider>
   )
