@@ -1,7 +1,7 @@
 // Tells Bing, Yandex and other IndexNow engines that the site changed. Runs after `npm run deploy`.
 // Bing's index also feeds ChatGPT search and Copilot. Never fails the deploy: it only logs.
 // ponytail: submits every sitemap URL each deploy (fine under IndexNow's 10,000-URL limit); send only changed URLs if the site grows.
-const SITE = "https://ollie.ml"
+const SITE = "https://www.ollieml.com" // must match SITE_URL in lib/site-config.ts
 const KEY = "459105cf78d8c99b9e584a4fd3aac94a" // public/<KEY>.txt must contain exactly this
 
 try {

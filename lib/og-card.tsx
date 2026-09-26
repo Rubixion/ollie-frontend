@@ -26,7 +26,7 @@ export function ogCard(title: string, subtitle: string) {
         <div style={{ fontSize: 84, fontWeight: 900, lineHeight: 1.02, letterSpacing: "-0.02em", maxWidth: 1040 }}>{title}</div>
         <div style={{ fontSize: 32, color: "rgba(255,255,255,0.72)", maxWidth: 900, lineHeight: 1.35 }}>{subtitle}</div>
       </div>
-      <div style={{ display: "flex", fontSize: 28, color: BLUE, fontWeight: 700 }}>ollie.ml</div>
+      <div style={{ display: "flex", fontSize: 28, color: BLUE, fontWeight: 700 }}>ollieml.com</div>
     </div>,
     OG_SIZE
   )

@@ -66,7 +66,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
       </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
         <div style={{ display: "flex", fontSize: 34, fontWeight: 900, color: "#ffffff", letterSpacing: "0.15em" }}>OLLIE</div>
-        <div style={{ display: "flex", fontSize: 24, color: "rgba(255,255,255,0.45)" }}>ollie.ml/blog</div>
+        <div style={{ display: "flex", fontSize: 24, color: "rgba(255,255,255,0.45)" }}>ollieml.com/blog</div>
       </div>
     </div>,
     size,

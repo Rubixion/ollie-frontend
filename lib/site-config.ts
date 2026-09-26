@@ -6,8 +6,8 @@ export const COMING_SOON = false
 export const MATCH_ONLY = true
 
 // The live domain. Every canonical URL, sitemap entry and JSON-LD id is built from this.
-// Hard-coded on purpose: www.ollie.ml is the canonical domain (Cloudflare redirects the bare ollie.ml to it). An old NEXT_PUBLIC_SITE_URL build variable must not override it.
-export const SITE_URL = "https://www.ollie.ml"
+// Hard-coded on purpose: www.ollieml.com is the canonical domain (middleware 308s ollie.ml, www.ollie.ml and bare ollieml.com to it). An old NEXT_PUBLIC_SITE_URL build variable must not override it.
+export const SITE_URL = "https://www.ollieml.com"
 
 // Last real content change to / and /match. Used by the sitemap and the /match dateModified schema.
 export const HOME_UPDATED = "2026-09-24"
