@@ -132,9 +132,11 @@ const TILES = [
 ]
 
 // Raw server scores are compressed (a same-person photo tops out ~62%, unrelated faces sit ~40%).
-// Linear stretch of [RAW_LO, RAW_HI] -> [OUT_LO, 100]; ranking is unchanged. Tune the three constants.
-const RAW_LO = 30, RAW_HI = 65, OUT_LO = 40
-export const scale = (raw: number) => Math.max(0, Math.min(100, OUT_LO + ((raw - RAW_LO) * (100 - OUT_LO)) / (RAW_HI - RAW_LO)))
+// Linear stretch of [RAW_LO, RAW_HI] -> [OUT_LO, OUT_HI], clamped to 0-100; ranking is unchanged. Tune the four constants.
+// Most faces land at raw 30-42, so that band is spread over 20-80%; a same-person photo (raw ~47+) hits 100%.
+const RAW_LO = 30, RAW_HI = 41.7, OUT_LO = 20, OUT_HI = 80
+export const scale = (raw: number) =>
+  Math.max(0, Math.min(100, OUT_LO + ((raw - RAW_LO) * (OUT_HI - OUT_LO)) / (RAW_HI - RAW_LO)))
 
 // One scoring mode now; take whichever the server sends first (older servers sent two).
 function parseResponse(data: SearchResponse): Match[] {
