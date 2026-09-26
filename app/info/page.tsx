@@ -13,27 +13,27 @@ import { BGPattern } from "@/components/bg-pattern"
 const FAQ_ITEMS = [
   {
     q: "WHAT IS OLLIE?",
-    a: "Ollie uses a custom-trained Siamese Neural Network to find faces that look like yours in a curated dataset.",
+    a: "Ollie uses its own face-recognition neural network, trained from scratch, to find which of 5,000+ celebrities look most like you.",
   },
   {
     q: "HOW ACCURATE IS IT?",
-    a: "The model is trained on LFW and VGGFace2 datasets. Accuracy improves continuously with user feedback.",
+    a: "The model scores 98.5% on the LFW face-verification benchmark. The percentage on a match is a similarity score for comparing results, not a probability.",
   },
   {
     q: "IS MY PHOTO STORED?",
-    a: "No. Your image is processed locally and never stored on our servers.",
+    a: "No. Your photo is sent to our matching server, used for the search in memory, then discarded. It is never stored, logged or used for training.",
   },
   {
-    q: "WHAT SEARCH MODES ARE THERE?",
-    a: "CNN + Features (best), CNN Only (faster), Features Only (geometric matching only).",
+    q: "WHO CAN I BE COMPARED WITH?",
+    a: "All celebrities (default), or only actors, singers or footballers. Ollie estimates whether to compare you with men or women, or you can choose.",
   },
   {
     q: "CAN I SEARCH THE INTERNET?",
     a: "Not yet. Internet search is in development under 'Face Search' â€” check back soon.",
   },
   {
-    q: "HOW DO I HELP IMPROVE IT?",
-    a: "Use the Feedback section to correct bad matches. Every submission makes the model smarter.",
+    q: "A MATCH LOOKS WRONG. WHAT CAN I DO?",
+    a: "Try a clear, front-facing, evenly lit photo. If something still looks broken, tell us on the Contact page.",
   },
 ]
 
@@ -41,11 +41,19 @@ const FAQ_ITEMS = [
 
 const ENTRIES = [
   {
+    date: "Sep 2026",
+    version: "v3.0",
+    title: "Trained From Scratch",
+    desc: "20-layer SphereFace network trained from scratch on MS1MV2: 98.5% on LFW. 5,000+ celebrities from Wikimedia Commons.",
+    badge: "LATEST",
+    accent: "cyan" as const,
+  },
+  {
     date: "Jun 2026",
     version: "v2.0",
     title: "VGGFace2 + GPU Features",
     desc: "Added 3.3M training images, InsightFace GPU extraction, age/gender penalties. Major quality jump.",
-    badge: "LATEST",
+    badge: null,
     accent: "cyan" as const,
   },
   {
@@ -215,23 +223,23 @@ function AboutTab() {
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-12">
         <h2 className="retro text-lg md:text-xl text-white mb-3">ABOUT OLLIE</h2>
-        <p className="retro text-[10px] text-white/30 tracking-widest">OPEN SOURCE FACE RECOGNITION</p>
+        <p className="retro text-[10px] text-white/30 tracking-widest">FACE RECOGNITION, BUILT FROM SCRATCH</p>
       </div>
 
       <div className="flex flex-col gap-6">
         <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
           <p className="text-white/70 text-sm leading-relaxed">
-            Ollie is an open-source face recognition project built with PyTorch, trained on LFW and VGGFace2.
-            It uses a custom Siamese ResNet backbone to learn face embeddings in a 256-dimensional space,
-            then performs similarity search to match faces across a curated celebrity dataset.
+            Ollie is a face recognition project built with PyTorch. Its 20-layer SphereFace network was trained
+            from scratch on MS1MV2 (5.8 million photos of 85,742 people) and turns each face into 512 numbers,
+            which are compared with 40,000+ photos of 5,000+ celebrities.
           </p>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Accuracy", value: "83.5%", sub: "LFW test set" },
-            { label: "Identities", value: "9,131", sub: "in dataset" },
-            { label: "Embeddings", value: "256-dim", sub: "L2 normalized" },
+            { label: "Accuracy", value: "98.5%", sub: "LFW benchmark" },
+            { label: "Celebrities", value: "5,000+", sub: "in the index" },
+            { label: "Embeddings", value: "512-dim", sub: "L2 normalized" },
           ].map((stat) => (
             <div key={stat.label} className="p-4 rounded-xl bg-white/[0.03] border border-white/10 text-center">
               <div className="text-(--ollie-cyan) font-black text-xl mb-1">{stat.value}</div>
@@ -244,7 +252,7 @@ function AboutTab() {
         <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
           <h3 className="text-white font-bold text-sm mb-3">Stack</h3>
           <div className="flex flex-wrap gap-2">
-            {["PyTorch", "FAISS", "InsightFace", "MediaPipe", "Next.js", "Three.js", "Framer Motion"].map((tech) => (
+            {["PyTorch", "NumPy", "InsightFace", "MediaPipe", "Next.js", "Three.js", "Framer Motion"].map((tech) => (
               <span key={tech} className="px-3 py-1 rounded-full border border-white/10 text-white/50 text-xs font-mono">
                 {tech}
               </span>

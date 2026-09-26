@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Minus, ArrowRight, Zap, Search, Star } from "lucide-react"
+import { Plus, Minus, ArrowRight, Zap, Search, Star, Brain } from "lucide-react"
 import Link from "next/link"
 import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline"
 import { Nav } from "@/components/nav"
@@ -12,7 +12,7 @@ import { BGPattern } from "@/components/bg-pattern"
 const FAQ_ITEMS = [
   {
     q: "How does the matching actually work?",
-    a: "Your photo gets converted into a 256-number fingerprint by a custom neural network — a compact summary of your face's structure, proportions, and features. Ollie then finds the celebrities whose fingerprints are mathematically closest to yours. The whole process takes under 2 seconds.",
+    a: "Your photo gets converted into a 512-number fingerprint by Ollie's own neural network — a compact summary of your face's structure, proportions, and features. Ollie then finds the celebrities whose fingerprints are mathematically closest to yours. The whole process takes under 2 seconds.",
   },
   {
     q: "Is my photo stored or shared?",
@@ -34,13 +34,24 @@ const FAQ_ITEMS = [
 
 const changelogData = [
   {
+    id: 4,
+    title: "v3.0",
+    date: "Sep 2026",
+    content: "New 20-layer SphereFace network trained from scratch on MS1MV2 with CosFace loss: 98.5% on LFW. Celebrity index rebuilt from 40,000+ freely licensed Wikimedia Commons photos of 5,000+ people.",
+    category: "Major Release",
+    icon: Brain,
+    relatedIds: [1],
+    status: "completed" as const,
+    energy: 100,
+  },
+  {
     id: 1,
     title: "v2.0",
     date: "Jun 2026",
     content: "Scaled training to 3.3M images using VGGFace2. InsightFace GPU-accelerated feature extraction. Age and gender weighting added for better match relevance. Biggest quality jump so far.",
     category: "Major Release",
     icon: Zap,
-    relatedIds: [2],
+    relatedIds: [2, 4],
     status: "completed" as const,
     energy: 100,
   },
@@ -126,8 +137,9 @@ function AboutUsTab() {
             way people do — not by memorising specific celebrities, but by learning what makes any face unique?
           </p>
           <p>
-            The answer turned out to be yes. The model is now trained on 3.3 million faces across 9,131
-            celebrity identities, and it keeps improving with every training run.
+            The answer turned out to be yes. The model was trained from scratch on MS1MV2, 5.8 million photos
+            of 85,742 people, and scores 98.5% on the LFW benchmark. It then compares your face with 5,000+
+            celebrities, using 40,000+ freely licensed photos from Wikimedia Commons.
           </p>
           <p>
             Every match you get comes from that model running directly on your upload. No third-party APIs,
@@ -138,9 +150,9 @@ function AboutUsTab() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
         {[
-          { value: "83%+", label: "Accuracy", sub: "on benchmarks" },
-          { value: "3.3M", label: "Training faces", sub: "VGGFace2 + LFW" },
-          { value: "9,131", label: "Celebrities", sub: "in the dataset" },
+          { value: "98.5%", label: "Accuracy", sub: "LFW benchmark" },
+          { value: "5.8M", label: "Training faces", sub: "MS1MV2" },
+          { value: "5,000+", label: "Celebrities", sub: "in the index" },
           { value: "0", label: "Photos stored", sub: "ever" },
         ].map((stat) => (
           <div key={stat.label} className="p-4 rounded-2xl bg-white/[0.03] border border-white/8 text-center">
@@ -154,7 +166,7 @@ function AboutUsTab() {
       <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/8 mb-8">
         <p className="text-white/40 text-xs font-bold tracking-widest uppercase mb-4">Stack</p>
         <div className="flex flex-wrap gap-2">
-          {["PyTorch", "FAISS", "InsightFace", "MediaPipe", "Next.js", "Three.js", "Framer Motion"].map((tech) => (
+          {["PyTorch", "NumPy", "InsightFace", "MediaPipe", "Next.js", "Three.js", "Framer Motion"].map((tech) => (
             <span key={tech} className="px-3 py-1 rounded-full border border-white/10 text-white/50 text-xs font-mono">
               {tech}
             </span>

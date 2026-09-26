@@ -16,101 +16,102 @@ interface LayerDef {
   isDistance?: boolean
 }
 
+// Mirrors SphereFaceNet (sphere20) in hf_space/lfw_pytorch.py: 4 stride-2 stages with [1, 2, 4, 1] blocks, 7x7x512 -> FC 512.
 const TOP_LAYERS: LayerDef[] = [
   {
     x: -6, count: 1, label: "Your photo",
-    simple: "This is your photo - just a grid of colour numbers that the AI reads one small region at a time.",
-    detail: "96x96x3 RGB tensor, pixel values normalised to [-1,1]. Input shape: [1, 3, 96, 96]. Each pixel is a float32 triple.",
-    sectionId: "s-backbone", isInput: true,
+    simple: "Your face, found and lined up so the eyes and mouth always sit in the same place, then shrunk to 112 by 112 pixels.",
+    detail: "112x112x3 RGB tensor, aligned with InsightFace's 5-point landmarks, pixel values normalised to [-1,1]. Input shape: [1, 3, 112, 112].",
+    sectionId: "s-pipeline", isInput: true,
   },
   {
     x: -4, count: 4, label: "Edge detector",
-    simple: "The first layer slides a tiny window across your face picking up edges, corners, and colour changes.",
-    detail: "Conv2d(3→64, kernel=3, stride=1, padding=1) + BatchNorm2d + ReLU. Detects low-level gradients. Output: [1, 64, 96, 96].",
+    simple: "The first stage slides a tiny window across your face picking up edges, corners and changes in shade.",
+    detail: "Stage 1: stride-2 Conv2d(3→64) + PReLU, then 1 residual block. Output: [1, 64, 56, 56].",
     sectionId: "s-backbone",
   },
   {
     x: -2, count: 4, label: "Shape finder",
-    simple: "A deeper layer that starts assembling edges into shapes - eye corners, nose bridges, jaw lines.",
-    detail: "ResBlock(64→128, stride=2) with 1x1 projection shortcut. Skip connection prevents vanishing gradients. Output: [1, 128, 48, 48].",
+    simple: "A deeper stage that starts assembling edges into shapes - eye corners, nose bridges, jaw lines.",
+    detail: "Stage 2: stride-2 Conv2d(64→128) + PReLU, then 2 residual blocks. Output: [1, 128, 28, 28].",
     sectionId: "s-backbone",
   },
   {
     x: 0, count: 6, label: "Feature mapper",
     simple: "By here the network notices whole facial regions - eye spacing, nose width, forehead height.",
-    detail: "ResBlock(128→256, stride=2). Receptive field ~40px of original image. Mid-level facial structure. Output: [1, 256, 24, 24].",
+    detail: "Stage 3: stride-2 Conv2d(128→256) + PReLU, then 4 residual blocks (the deepest stage). Output: [1, 256, 14, 14].",
     sectionId: "s-backbone",
   },
   {
     x: 2, count: 6, label: "Identity layer",
-    simple: "The deepest layer - it now picks up high-level traits unique to one person, not just any face.",
-    detail: "ResBlock(256→512, stride=2). Receptive field ~80px. High-level identity features emerge. Output: [1, 512, 12, 12].",
+    simple: "The last stage picks up high-level traits that tell one person from another, not just any face.",
+    detail: "Stage 4: stride-2 Conv2d(256→512) + PReLU, then 1 residual block. Output: [1, 512, 7, 7].",
     sectionId: "s-backbone",
   },
   {
     x: 4, count: 3, label: "Summariser",
-    simple: "Compresses everything into a single flat summary - like turning a detailed report into one line.",
-    detail: "Adaptive average pool 12x12 → 1x1. Spatial translation invariance. Output: [1, 512]. No learned parameters.",
+    simple: "Lays everything out as one long list of numbers, keeping track of where on the face each feature was.",
+    detail: "Flatten 7x7x512 → 25,088 values. No pooling, so position information survives. No learned parameters.",
     sectionId: "s-backbone",
   },
   {
     x: 6, count: 2, label: "Face fingerprint",
-    simple: "Your face is now 256 numbers. This is your unique fingerprint - similar faces land close together.",
-    detail: "Linear(512→256) + L2 normalisation. Projects onto unit hypersphere in R^256. ||e||_2 = 1.0 by construction. Cosine distance is equivalent to half squared L2.",
-    sectionId: "s-siamese",
+    simple: "Your face is now 512 numbers. This is its fingerprint - similar faces land close together.",
+    detail: "Linear(25,088→512) + BatchNorm1d + L2 normalisation. Projects onto the unit hypersphere in R^512, so ||e||_2 = 1.",
+    sectionId: "s-backbone",
   },
 ]
 
 const BOTTOM_LAYERS: LayerDef[] = [
   {
     x: -6, count: 1, label: "Celebrity photo",
-    simple: "A celebrity photo runs through an identical copy of the same network at the same time.",
-    detail: "Second face - Siamese twin input. Same preprocessing pipeline. All weights W and biases b are shared with the top network.",
-    sectionId: "s-siamese", isInput: true,
+    simple: "Every celebrity photo went through this exact same network ahead of time.",
+    detail: "Same alignment and preprocessing. The 40,000+ celebrity fingerprints are computed once and stored in the search index, not recomputed for each search.",
+    sectionId: "s-pipeline", isInput: true,
   },
   {
     x: -4, count: 4, label: "Edge detector",
     simple: "Same first step - scanning for edges using the same patterns the network already learned.",
-    detail: "Exact same Conv2d weights as the top network. Weight sharing is the defining property of a Siamese architecture.",
-    sectionId: "s-siamese",
+    detail: "Exact same stage-1 weights as the top row: it is one network, used twice.",
+    sectionId: "s-backbone",
   },
   {
     x: -2, count: 4, label: "Shape finder",
-    simple: "Same layer, same learned rules - both faces are measured using identical criteria.",
-    detail: "Same ResBlock(64→128) weights. Ensures both embeddings live in the same geometric space. Any transformation applied to face 1 applies equally to face 2.",
-    sectionId: "s-siamese",
+    simple: "Same stage, same learned rules - both faces are measured using identical criteria.",
+    detail: "Same stage-2 weights, so both fingerprints live in the same space.",
+    sectionId: "s-backbone",
   },
   {
     x: 0, count: 6, label: "Feature mapper",
-    simple: "The second face's regions are mapped out using the exact same rules as the first face.",
-    detail: "Same ResBlock(128→256) weights. No separate learning path for input 2. Symmetry enforced by architecture, not training.",
-    sectionId: "s-siamese",
+    simple: "The celebrity's facial regions are mapped out using the exact same rules as yours.",
+    detail: "Same stage-3 weights.",
+    sectionId: "s-backbone",
   },
   {
     x: 2, count: 6, label: "Identity layer",
-    simple: "High-level identity features of the celebrity face come out here, measured identically to yours.",
-    detail: "Same ResBlock(256→512) weights. Both faces processed through identical computational graph. Shared gradient flow during training.",
-    sectionId: "s-siamese",
+    simple: "High-level identity features of the celebrity face come out here, measured the same way as yours.",
+    detail: "Same stage-4 weights.",
+    sectionId: "s-backbone",
   },
   {
     x: 4, count: 3, label: "Summariser",
-    simple: "Same compression step - the celebrity face becomes a single summary ready to compare with yours.",
-    detail: "Same adaptive average pool 12x12 → 1x1. Output vectors are directly comparable because the same transformation was applied.",
-    sectionId: "s-siamese",
+    simple: "Same flattening step - the celebrity face becomes one long list, ready to compare with yours.",
+    detail: "Same 25,088-value flatten.",
+    sectionId: "s-backbone",
   },
   {
     x: 6, count: 2, label: "Face fingerprint",
-    simple: "The celebrity gets their 256-number fingerprint. Now both fingerprints are in the same space.",
-    detail: "Same Linear(512→256) + L2 normalisation. Distance between unit vectors is geometrically meaningful - cos(e1,e2) = 1 - d^2/2.",
-    sectionId: "s-siamese",
+    simple: "The celebrity's 512-number fingerprint. Now both fingerprints are in the same space.",
+    detail: "Same Linear(25,088→512) + BatchNorm + L2 normalisation. For unit vectors, cos(e1,e2) = 1 - d^2/2.",
+    sectionId: "s-backbone",
   },
 ]
 
 const DISTANCE_LAYER: LayerDef = {
   x: 8.5, count: 1, label: "Similarity score",
-  simple: "The gap between the two fingerprints - small gap means the same person, large gap means different people.",
-  detail: "L2 distance ||f(x1) - f(x2)||_2, range [0,2] on unit sphere. Threshold ~0.5. BCE head: sigmoid(|e1-e2| * W + b) -> similarity in [0,1].",
-  sectionId: "s-contrastive",
+  simple: "How close the two fingerprints are. Each celebrity is scored by their closest photo, and the top five are shown.",
+  detail: "Cosine similarity between unit vectors. The percentage shown is that similarity stretched onto 0-100% for readability: a way to compare matches, not a probability.",
+  sectionId: "s-pipeline",
   isDistance: true,
 }
 

@@ -31,16 +31,6 @@ function Pill({ children }: { children: React.ReactNode }) {
   )
 }
 
-function FeatureRow({ index, name, plain }: { index: string; name: string; plain: string }) {
-  return (
-    <div className="flex gap-4 py-2.5 border-b border-white/5 last:border-0 text-xs">
-      <span className="text-(--ollie-cyan) font-mono w-7 shrink-0">{index}</span>
-      <span className="text-white/70 font-mono w-36 shrink-0">{name}</span>
-      <span className="text-white/40">{plain}</span>
-    </div>
-  )
-}
-
 function Section({
   id,
   num,
@@ -265,8 +255,8 @@ function ArchitectureScroll() {
 
         <p className="text-white/60 text-base leading-relaxed mb-6">
           One full pass over all training data is called an <Pill>epoch</Pill>.
-          Ollie trains for 35 epochs over 5.8 million photos — that&apos;s about 400 million individual forward passes.
-          The <Pill>learning rate</Pill> starts at 0.1 and drops by 10× at epochs 10, 20, and 25,
+          Ollie&apos;s training schedule runs 35 epochs over 5.8 million photos — about 200 million individual forward passes.
+          The <Pill>learning rate</Pill> starts at 0.01 and drops by 10× at epochs 10, 20, and 25,
           so the network makes big corrections early and tiny fine-tuning corrections at the end.
         </p>
 
@@ -411,49 +401,21 @@ function ArchitectureScroll2() {
       {/* 05 ── What it physically measures */}
       <Section id="s-features" num="05" title="What does it physically measure on your face?">
         <p className="text-white/60 text-base leading-relaxed mb-6">
-          Alongside the 512-d neural embedding, Ollie extracts 32 direct geometric measurements.
-          These are the same things a forensic artist or biometric researcher would measure — ratios and distances
-          between specific facial landmarks, not abstract neural activations.
+          Nothing by hand. Ollie doesn&apos;t measure eye distance, jaw width or skin tone with a ruler.
+          The network learned for itself which patterns tell faces apart, and it packs them into the 512-number
+          fingerprint. Nobody chose those features, and no single number means &quot;nose width&quot;.
         </p>
         <p className="text-white/60 text-base leading-relaxed mb-6">
-          On GPU, this uses <strong className="text-white/85">InsightFace</strong> — Meta&apos;s open-source face analysis library,
-          which runs a separate detection model to find your face and place 68 landmark points on it.
-          On CPU (when no GPU is available), it falls back to
-          <strong className="text-white/85"> MediaPipe</strong> (Google&apos;s face mesh model), which places 478 points.
-          More points = more precise measurements.
+          Landmarks are only used to line your face up first. <strong className="text-white/85">InsightFace</strong>,
+          an open-source face analysis library, finds the largest face in your photo and five points on it
+          (both eyes, the nose tip and the mouth corners), then rotates and crops it to 112×112 so every face
+          reaches the network in the same pose. If InsightFace can&apos;t run, <strong className="text-white/85">MediaPipe</strong>{" "}
+          (Google&apos;s face mesh model) does the same job.
         </p>
-        <p className="text-white/60 text-base leading-relaxed mb-6">
-          All measurements are ratios — distance divided by face width, for example — so they&apos;re independent
-          of how close you were to the camera or how large your photo is.
-        </p>
-
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden mb-6">
-          <div className="px-5 py-3 border-b border-white/5 flex gap-4 text-xs text-white/25 font-mono">
-            <span className="w-7">#</span>
-            <span className="w-36">name</span>
-            <span>what it means in plain English</span>
-          </div>
-          <div className="px-5 pb-2">
-            <FeatureRow index="0"     name="eye_dist"     plain="Distance between your eyes, relative to face width" />
-            <FeatureRow index="1–2"   name="ear_L / ear_R" plain="Eye aspect ratio — how open each eye is" />
-            <FeatureRow index="3–8"   name="iris_*"        plain="Iris colour and texture: hue, saturation, lightness, variance per eye" />
-            <FeatureRow index="9"     name="face_ratio"    plain="Face height ÷ face width — oval vs round" />
-            <FeatureRow index="10"    name="jaw_w"         plain="Jaw width relative to face width" />
-            <FeatureRow index="12–13" name="nose_w / nose_h" plain="Width and height of nose relative to face" />
-            <FeatureRow index="14–16" name="lip_*"         plain="Mouth width, lip height, and openness" />
-            <FeatureRow index="17–19" name="hair_H/S/V"    plain="Hair colour — hue, saturation, brightness (HSV)" />
-            <FeatureRow index="20–22" name="skin_L/a/b"    plain="Skin tone in LAB colour space (perceptually uniform)" />
-            <FeatureRow index="23–27" name="*_ratio"       plain="Proportions between forehead, eyes, nose, lips, and chin" />
-            <FeatureRow index="28"    name="age_norm"      plain="Estimated age scaled 0–1" />
-            <FeatureRow index="29"    name="gender_score"  plain="Predicted gender from facial structure" />
-          </div>
-        </div>
-
         <p className="text-white/60 text-base leading-relaxed">
-          These 32 values are used for <strong className="text-white/85">re-ranking</strong>.
-          After FAISS returns the 200 nearest neural embeddings, anything with a very different age,
-          gender, or skin tone gets pushed down the list. The neural network finds candidates;
-          the geometric check filters out obvious errors.
+          InsightFace also estimates whether the face looks male or female. Unless you pick &quot;Men&quot; or
+          &quot;Women&quot; yourself, that estimate only decides which celebrities you&apos;re compared with.
+          It never changes a score.
         </p>
       </Section>
 
@@ -481,14 +443,14 @@ function ArchitectureScroll2() {
             {
               lib: "InsightFace",
               pkg: "pip install insightface",
-              role: "GPU face detection",
-              desc: "Detects and crops the face region, places 68 landmark points on it (eyes, nose, mouth, jaw), and extracts a pre-aligned 112×112 crop. Runs on GPU when available.",
+              role: "Face detection + alignment",
+              desc: "Finds the largest face, places 5 landmark points on it (eyes, nose tip, mouth corners) and uses them to cut out an aligned 112×112 crop. Also estimates male/female for the default celebrity filter.",
             },
             {
               lib: "MediaPipe",
               pkg: "pip install mediapipe",
-              role: "CPU face detection fallback",
-              desc: "Google's lightweight face mesh model. Places 478 landmark points. Used automatically when no GPU is available. Slightly slower but runs on any machine.",
+              role: "Face detection fallback",
+              desc: "Google's lightweight face mesh model. Used automatically if InsightFace can't run, to find and align the face the same way.",
             },
             {
               lib: "PyTorch (torch)",
@@ -518,13 +480,7 @@ function ArchitectureScroll2() {
               lib: "NumPy",
               pkg: "pip install numpy",
               role: "Array operations + evaluation",
-              desc: "LFW 10-fold cross-validation runs entirely in NumPy — threshold search, accuracy calculation, fold splitting. Also used for handling FAISS search results.",
-            },
-            {
-              lib: "FAISS",
-              pkg: "pip install faiss-gpu",
-              role: "Vector similarity search",
-              desc: "Meta's library for searching billions of vectors fast. Stores all celebrity face embeddings as a flat index. When you upload a photo, your 512-d vector is compared against every stored vector in ~10ms.",
+              desc: "LFW 10-fold cross-validation runs entirely in NumPy — threshold search, accuracy calculation, fold splitting. It also runs the search itself: your fingerprint against every stored celebrity fingerprint in one matrix multiply.",
             },
             {
               lib: "KaggleHub",
@@ -555,39 +511,33 @@ function ArchitectureScroll2() {
           {[
             {
               step: "1",
-              label: "Face detection",
-              detail: "InsightFace (GPU) or MediaPipe (CPU) locates your face in the image and crops it to a 112×112 aligned patch.",
+              label: "Face detection and alignment",
+              detail: "InsightFace (or MediaPipe as a fallback) finds the largest face and five landmarks, then rotates and crops it to a 112×112 aligned patch.",
               tech: "insightface / mediapipe",
             },
             {
               step: "2",
-              label: "Geometric feature extraction",
-              detail: "32 ratios and measurements are computed from 68–478 landmark points: eye distance, jaw width, nose proportions, iris colour, skin tone, estimated age.",
-              tech: "numpy + custom geometry",
-            },
-            {
-              step: "3",
               label: "Neural embedding",
               detail: "The 112×112 crop is normalised to [-1,1], run through SphereFaceNet's 20 layers, flattened, FC-projected to 512 dimensions, BN-normalised, and L2-projected onto the unit sphere.",
               tech: "torch + SphereFaceNet",
             },
             {
+              step: "3",
+              label: "Compare with every celebrity photo",
+              detail: "Your 512-number fingerprint is compared with all 40,000+ stored celebrity fingerprints by cosine similarity, limited to the gender you chose (or the estimated one).",
+              tech: "numpy",
+            },
+            {
               step: "4",
-              label: "FAISS nearest-neighbour search",
-              detail: "Your 512-d vector is compared against every celebrity embedding in the FAISS index. The 200 closest are returned in ~10ms.",
-              tech: "faiss",
+              label: "Score each celebrity",
+              detail: "Each celebrity gets the score of their single closest photo, so one great match isn't diluted by their other photos.",
+              tech: "numpy",
             },
             {
               step: "5",
-              label: "Geometric re-ranking",
-              detail: "The 200 candidates are re-scored by combining neural distance with geometric feature distance. Large discrepancies in age, gender, or skin tone reduce the score.",
-              tech: "numpy weighted scoring",
-            },
-            {
-              step: "6",
               label: "Top 5 returned",
-              detail: "The 5 best-scoring matches are shown with a similarity percentage. 95%+ means the embeddings are very close on the unit sphere; 60% means they share broad features but differ in detail.",
-              tech: "gradio frontend",
+              detail: "The 5 best-scoring celebrities are shown with the photo that matched and a percentage. The percentage is the similarity stretched onto 0–100% for readability: useful for comparing matches, not a probability.",
+              tech: "Next.js frontend",
             },
           ].map(({ step, label, detail, tech }) => (
             <div key={step} className="flex gap-4 p-5 rounded-2xl bg-white/[0.03] border border-white/8">
@@ -619,16 +569,15 @@ function ArchitectureScroll2() {
           to make good embeddings.
         </p>
         <p className="text-white/60 text-base leading-relaxed mb-6">
-          With AMP (Automatic Mixed Precision) on a GeForce RTX 4060 Ti, a full 35-epoch run takes roughly
-          1.2 days. On a GTX 1650 (no Tensor Cores, 4GB VRAM) it would take approximately 10–12 days.
+          With AMP (Automatic Mixed Precision) on one GeForce RTX 4060 Ti, Ollie&apos;s training took about 10 days.
           After training, the model is evaluated on <strong className="text-white/85">LFW</strong> —
           6,000 face pairs split into 10 folds, with the threshold tuned on 9 folds and tested on the remaining 1.
-          The reference benchmark for sphere20 on MS1MV2 is <strong className="text-white/85">~99% LFW accuracy</strong>.
+          Ollie scores <strong className="text-white/85">98.5% on LFW</strong>, with every LFW identity removed from its training data.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: "Target LFW accuracy", value: "~99%",   sub: "sphere20 + MS1MV2 reference" },
+            { label: "LFW accuracy",        value: "98.5%",  sub: "LFW identities held out" },
             { label: "Training identities",  value: "85,742", sub: "MS1MV2 dataset" },
             { label: "Training photos",      value: "5.8M",   sub: "per epoch, reshuffled" },
             { label: "Fingerprint size",     value: "512-d",  sub: "unit-sphere embedding" },
@@ -659,7 +608,7 @@ function ArchitectureScroll2() {
             {
               slug: "siamese-neural-networks-explained",
               title: "Siamese Networks Explained",
-              desc: "Why Ollie uses two identical networks in parallel, and how shared weights enable similarity learning.",
+              desc: "How two copies of one network, sharing weights, learn to compare faces.",
             },
             {
               slug: "contrastive-loss-explained",
@@ -669,7 +618,7 @@ function ArchitectureScroll2() {
             {
               slug: "vggface2-explained",
               title: "VGGFace2 Explained",
-              desc: "The training dataset behind Ollie, with 3.3 million images across 9,131 identities.",
+              desc: "A widely used face dataset: 3.3 million images across 9,131 identities.",
             },
             {
               slug: "resnet-face-recognition",
@@ -684,7 +633,7 @@ function ArchitectureScroll2() {
             {
               slug: "transfer-learning-explained",
               title: "Transfer Learning Explained",
-              desc: "How pre-training on millions of faces gives Ollie a head start on new tasks.",
+              desc: "How a model trained on one task can be reused for another. (Ollie was trained from scratch.)",
             },
           ].map(({ slug, title, desc }) => (
             <Link

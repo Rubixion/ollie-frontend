@@ -1,6 +1,6 @@
 import type { ComponentType } from "react"
 import Link from "next/link"
-import { ArrowRight, Users, Search, Map, MessageSquare, Star, Zap, Brain } from "lucide-react"
+import { ArrowRight, Users, Search, Map, Star, Zap, Brain } from "lucide-react"
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
 import { BGPattern } from "@/components/bg-pattern"
@@ -26,7 +26,7 @@ const ML_PROJECTS: Project[] = [
     name: "Match",
     tagline: "Celebrity face matching",
     icon: Users,
-    desc: "Upload a photo and get five ranked celebrity matches based on facial geometry. Each face is compressed to a 256-dimensional embedding, then compared against 10,177 celebrities from CelebA.",
+    desc: "Upload a photo and get your five closest celebrity lookalikes. Your face becomes a 512-number fingerprint, compared with 40,000+ photos of 5,000+ celebrities from Wikimedia Commons.",
     status: "live",
     href: "/match",
   },
@@ -35,8 +35,8 @@ const ML_PROJECTS: Project[] = [
     tagline: "Internet-scale face search",
     icon: Search,
     desc: "Search for a person by face across a broader public index. Upload any photo and the model finds who matches — beyond just celebrities.",
-    status: "live",
-    href: "/search",
+    status: "coming-soon",
+    href: null,
   },
   {
     name: "Maps",
@@ -47,18 +47,10 @@ const ML_PROJECTS: Project[] = [
     href: null,
   },
   {
-    name: "Feedback",
-    tagline: "Improve the model",
-    icon: MessageSquare,
-    desc: "Submit a correction when a match is wrong. Every flagged result is added to the next training batch as a hard negative pair, making the model more accurate for everyone.",
-    status: "live",
-    href: "/feedback",
-  },
-  {
     name: "How It Works",
     tagline: "Architecture and benchmarks",
     icon: Brain,
-    desc: "A full breakdown of the SphereFaceNet architecture, ArcFace loss function, training data, and accuracy results on LFW and other standard benchmarks.",
+    desc: "A full breakdown of the SphereFaceNet architecture, CosFace loss function, training data, and accuracy on the LFW benchmark.",
     status: "live",
     href: "/ai",
   },
@@ -194,7 +186,7 @@ export default function ProjectsPage() {
           <SectionHeader
             id="ml-heading"
             label="Ollie's model"
-            description="These tools are all powered by the same SphereFaceNet — a convolutional neural network that converts any face into a 256-dimensional embedding."
+            description="These tools are all powered by the same SphereFaceNet — a convolutional neural network that converts any face into a 512-dimensional embedding."
           />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {ML_PROJECTS.map((project) => (
