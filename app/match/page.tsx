@@ -8,7 +8,7 @@ import { InfoTabs, type InfoTab } from "@/components/info-tabs"
 import { TextEffect } from "@/components/ui/text-effect"
 import { card } from "@/lib/surfaces"
 import { INDEX, MODEL, OWNER, SEARCH_LOG_DAYS } from "@/lib/facts"
-import { SITE_URL } from "@/lib/site-config"
+import { HOME_UPDATED, SITE_URL } from "@/lib/site-config"
 import { GUEST_LIMIT } from "@/lib/search-quota"
 import { RevealOnScroll } from "@/components/reveal-on-scroll"
 
@@ -20,7 +20,7 @@ const DESCRIPTION = `Find your celebrity look alike, free. Upload a photo and Ol
 export const metadata: Metadata = {
   title: { absolute: "What Celebrity Do I Look Like? Celebrity Look Alike Finder" },
   description: DESCRIPTION,
-  alternates: { canonical: "/match" },
+  alternates: { canonical: "/match", types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "The Ollie Blog" }] } },
   openGraph: {
     type: "website",
     url: "/match",
@@ -139,6 +139,7 @@ const jsonLd = [
       "Shareable result image made on your device",
     ],
     creator: { "@type": "Organization", name: "Ollie" },
+    dateModified: HOME_UPDATED,
     publisher: { "@id": `${SITE_URL}/#organization` },
     isPartOf: { "@id": `${SITE_URL}/#website` },
   },

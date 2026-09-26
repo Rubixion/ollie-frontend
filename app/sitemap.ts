@@ -1,10 +1,9 @@
 import type { MetadataRoute } from "next"
 import { allPosts } from "@/lib/blog-posts"
-import { SITE_URL } from "@/lib/site-config"
+import { HOME_UPDATED, SITE_URL } from "@/lib/site-config"
 
 // Only URLs that return 200 (under MATCH_ONLY the other pages redirect to /match).
 // Fixed dates: bump one when that page's content really changes, so crawlers can trust lastModified.
-const HOME_UPDATED = "2026-09-24"
 const LEGAL_UPDATED = "2026-09-24"
 
 export default function sitemap(): MetadataRoute.Sitemap {

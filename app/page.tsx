@@ -19,7 +19,7 @@ const DESCRIPTION = `Ollie is a free celebrity lookalike app: upload a photo and
 export const metadata: Metadata = {
   title: { absolute: "Ollie: Free Celebrity Lookalike App" },
   description: DESCRIPTION,
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "The Ollie Blog" }] } },
   openGraph: { type: "website", url: "/", title: "Ollie: Free Celebrity Lookalike App", description: DESCRIPTION },
   twitter: { card: "summary_large_image", title: "Ollie: Free Celebrity Lookalike App", description: DESCRIPTION },
 }

@@ -9,6 +9,9 @@ export const MATCH_ONLY = true
 // Hard-coded on purpose: www.ollie.ml is the canonical domain (Cloudflare redirects the bare ollie.ml to it). An old NEXT_PUBLIC_SITE_URL build variable must not override it.
 export const SITE_URL = "https://www.ollie.ml"
 
+// Last real content change to / and /match. Used by the sitemap and the /match dateModified schema.
+export const HOME_UPDATED = "2026-09-24"
+
 // Version of the Terms + Privacy Policy a user agrees to at signup (their "Last updated" date).
 // Bump it whenever either page changes materially; it's stored with each user's consent.
 export const TERMS_VERSION = "2026-09-24"
