@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 })
     }
 
-    const { image, gender, category } = await req.json()
+    const { image, gender, category, kirk } = await req.json()
     // who to show: "auto" (the finder's default) = same apparent gender as the face, "female"/"male" (Wikidata gender), or "any"
     const genderChoice = ["auto", "female", "male", "any"].includes(gender) ? gender : "any"
     // the "Compare with" buttons: only actors / musicians / footballers (Wikidata description); anything else = everyone
@@ -76,7 +76,8 @@ export async function POST(req: NextRequest) {
 
     let res: Response
     try {
-      res = await fetch(`${baseUrl.replace(/\/$/, "")}/search`, {
+      // kirk: the hidden /kirk-meter page, scored against the server's kirk/ photos (same quota as a normal search)
+      res = await fetch(`${baseUrl.replace(/\/$/, "")}/${kirk === true ? "kirk" : "search"}`, {
         method: "POST",
         headers: {
           "X-Api-Key": apiKey,
