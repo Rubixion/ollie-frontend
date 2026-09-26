@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAuthUser } from "@/lib/auth-server"
 import { checkRateLimit, getIp } from "@/lib/rate-limit"
-import { GUEST_LIMIT, USER_LIMIT, consumeSearch, guestId, refundSearch } from "@/lib/search-quota"
+import { GUEST_LIMIT, GUEST_WINDOW, USER_LIMIT, consumeSearch, guestId, refundSearch } from "@/lib/search-quota"
 
 const MAX_IMAGE_BYTES = 7 * 1024 * 1024
 
 export async function POST(req: NextRequest) {
   try {
-    // No token = guest (GUEST_LIMIT free search per IP). A token that doesn't check out is an expired
+    // No token = guest (GUEST_LIMIT free searches per IP per GUEST_WINDOW). A token that doesn't check out is an expired
     // session, not a guest: don't let it quietly burn the guest search.
     const user = await getAuthUser(req)
     if (!user && req.headers.get("authorization")) {
@@ -54,14 +54,14 @@ export async function POST(req: NextRequest) {
 
     // Everything above is free; only a valid, ready-to-run search counts against the user's allowance.
     const limit = user ? USER_LIMIT : GUEST_LIMIT
-    const quota = await consumeSearch(user?.id ?? (await guestId(ip)), ip, limit)
+    const quota = user ? await consumeSearch(user.id, ip, limit) : await consumeSearch(await guestId(ip), ip, limit, GUEST_WINDOW)
     if (!quota.ok) {
       if (quota.reason === "user_limit") {
         return NextResponse.json(
           // Don't quote USER_LIMIT here — it's a token-cost guard, not a real cap, and not worth advertising.
           user
             ? { error: "Search is temporarily unavailable for your account. Please try again later.", code: "user_limit" }
-            : { error: "You've used your free searches. Sign in to keep searching.", code: "guest_limit" },
+            : { error: "You've used today's free searches. Sign in to keep searching.", code: "guest_limit" },
           { status: 429 }
         )
       }

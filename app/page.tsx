@@ -149,7 +149,7 @@ export default function Page() {
             <TextEffect as="span" per="word" preset="blur" inView>From photo to lookalike</TextEffect>
           </h2>
           <p className="mt-3 mb-[clamp(1.5rem,5svh,3rem)] mx-auto text-center text-white/60 text-base max-w-lg text-pretty">
-            Three steps, a few seconds. No account needed for your first {GUEST_LIMIT} searches.
+            Three steps, a few seconds. No account needed for {GUEST_LIMIT} searches a day.
           </p>
 
           <ol className="grid md:grid-cols-3 gap-3">

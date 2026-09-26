@@ -83,7 +83,7 @@ const FAQ: [string, string][] = [
   ],
   [
     "Is Ollie free?",
-    `Yes. You get ${GUEST_LIMIT} free searches without an account. After that, sign in with email or Google to keep searching; accounts are free too. There are no ads and nothing to buy. The limits exist because every search runs a neural network on a paid server.`,
+    `Yes. You get ${GUEST_LIMIT} free searches a day without an account. After that, sign in with email or Google to keep searching; accounts are free too. There are no ads and nothing to buy. The limits exist because every search runs a neural network on a paid server.`,
   ],
   [
     "Do you keep my photo?",
