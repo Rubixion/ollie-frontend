@@ -27,7 +27,9 @@
 ## Pages
 
 - [Home](https://www.ollieml.com/): what Ollie is, in brief
-- [Find your celebrity lookalike](https://www.ollieml.com/match): the app, how it works, limitations, FAQ
+- [Find your celebrity lookalike](https://www.ollieml.com/match): the app
+- [Same person?](https://www.ollieml.com/compare): upload two photos to see if they show the same person, and how alike they look
+- [FAQ](https://www.ollieml.com/faq): how it works, photo tips, limitations, privacy, FAQ
 - [Blog](https://www.ollieml.com/blog): photo tips and plain-English articles on face recognition
 - [Privacy policy](https://www.ollieml.com/privacy)
 - [Terms of service](https://www.ollieml.com/terms)

@@ -10,7 +10,7 @@ export const MATCH_ONLY = true
 export const SITE_URL = "https://www.ollieml.com"
 
 // Last real content change to / and /match. Used by the sitemap and the /match dateModified schema.
-export const HOME_UPDATED = "2026-09-24"
+export const HOME_UPDATED = "2026-09-26"
 
 // Version of the Terms + Privacy Policy a user agrees to at signup (their "Last updated" date).
 // Bump it whenever either page changes materially; it's stored with each user's consent.

@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid image format." }, { status: 400 })
     }
 
-    // compare: the hidden /compare page sends a second photo, checked the same way
+    // compare: the /compare page sends a second photo, checked the same way
     const parsed2 = compare === true ? (typeof image2 === "string" && image2.length <= MAX_IMAGE_BYTES ? image2.match(/^data:(image\/[a-z0-9.+-]+);base64,(.+)$/i) : null) : undefined
     if (parsed2 === null) {
       return NextResponse.json({ error: "Please add a second photo (JPG or PNG, max 5 MB)." }, { status: 400 })
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
 
     let res: Response
     try {
-      // kirk: the hidden /kirk-meter page, scored against the server's kirk/ photos; compare: the hidden /compare page.
+      // kirk: the hidden /kirk-meter page, scored against the server's kirk/ photos; compare: the /compare page.
       // Both use the same quota as a normal search.
       res = await fetch(`${baseUrl.replace(/\/$/, "")}/${parsed2 ? "compare" : kirk === true ? "kirk" : "search"}`, {
         method: "POST",

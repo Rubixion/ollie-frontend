@@ -4,10 +4,11 @@ import { Footer } from "@/components/footer"
 import { DottedSurface } from "@/components/ui/dotted-surface"
 import { FaceCompare } from "@/components/face-compare"
 
-// Hidden page: not linked anywhere, not in the sitemap, kept out of search results.
+// Linked from the nav and footer, and in the sitemap
 export const metadata: Metadata = {
-  title: "Same Person?",
-  robots: { index: false, follow: false },
+  title: "Same Person? Compare Two Faces",
+  description: "Upload two photos and Ollie tells you whether they show the same person, and how alike the two faces look. Free, photos never stored.",
+  alternates: { canonical: "/compare" },
 }
 
 export default function ComparePage() {

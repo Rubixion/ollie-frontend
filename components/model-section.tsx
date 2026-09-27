@@ -34,7 +34,7 @@ export function ModelSection() {
         The network was written and trained from scratch 
       </p>
       <Link
-        href="/match#how"
+        href="/faq#how"
         className="group mt-4 inline-flex items-center gap-2 text-(--ollie-cyan) text-sm font-semibold underline-offset-4 hover:underline"
       >
         How Ollie works, in detail

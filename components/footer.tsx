@@ -6,6 +6,7 @@ const nav = MATCH_ONLY
       { label: "Home", href: "/" },
       { label: "Match", href: "/match" },
       { label: "Compare", href: "/compare" },
+      { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
     ]
@@ -42,7 +43,8 @@ export function Footer() {
           <div className="flex gap-16">
             <div>
               <p className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-4">Pages</p>
-              <ul className="flex flex-col gap-3">
+              {/* Two columns, filled top to bottom, so the list doesn't stack into one tall column */}
+              <ul className="grid grid-flow-col grid-rows-3 gap-x-12 gap-y-3">
                 {nav.map((l) => (
                   <li key={l.href}>
                     <PageLink href={l.href} className="text-white/60 hover:text-white/70 text-sm transition-colors">

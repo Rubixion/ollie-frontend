@@ -4,7 +4,7 @@
 import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Upload, X, Users, Loader2, AlertCircle, User, RotateCcw } from "lucide-react"
+import { Upload, X, Users, Loader2, AlertCircle, User, RotateCcw, ArrowRight } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { scale } from "@/components/celebrity-finder"
@@ -185,10 +185,14 @@ export function FaceCompare() {
         <div className="mb-[clamp(0.75rem,3svh,1.75rem)] text-center">
           <h1 className="fluid-h1-sm font-black text-white tracking-[-0.015em] leading-[1.05] text-balance">Same Person?</h1>
           <p className="mt-3 text-white/70 text-base leading-relaxed text-pretty">Upload two photos to see if they&apos;re the same person, and how alike they look.</p>
+          <Link href="/faq" className="group mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-(--ollie-cyan) underline-offset-4 hover:underline">
+            How it works and what happens to your photo
+            <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform motion-reduce:transition-none" aria-hidden="true" />
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:min-h-[clamp(26rem,calc(100svh-17rem),54rem)] md:grid-cols-2 md:items-stretch">
-          <div className={`${glassOpen} flex flex-col gap-4 p-5 md:p-6`}>
+          <div className={`${glassOpen} flex flex-col gap-4 p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-backwards motion-reduce:animate-none`}>
             <Slot photo={photos[0]} label="First photo" onFile={(f) => loadFile(0, f)} onClear={() => setPhoto(0, null)} />
             <Slot photo={photos[1]} label="Second photo" onFile={(f) => loadFile(1, f)} onClear={() => setPhoto(1, null)} />
 
@@ -209,7 +213,7 @@ export function FaceCompare() {
             </p>
           </div>
 
-          <div className={`${glass} flex flex-col justify-center p-5 md:p-6`} style={{ minHeight: "clamp(16rem, 40svh, 24rem)" }} aria-live="polite" aria-busy={loading}>
+          <div className={`${glass} flex flex-col justify-center p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150 fill-mode-backwards motion-reduce:animate-none`} style={{ minHeight: "clamp(16rem, 40svh, 24rem)" }} aria-live="polite" aria-busy={loading}>
             {!loading && !result && !error && (
               <div className="flex flex-col items-center gap-4 py-16 text-center">
                 <User size={32} className="text-white/25" aria-hidden="true" />

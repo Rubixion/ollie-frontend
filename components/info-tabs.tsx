@@ -5,18 +5,18 @@ import { MotionConfig, motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 export interface InfoTab {
-  id: string // also the id of the heading inside the panel, so /match#faq opens the FAQ tab
+  id: string // also the id of the heading inside the panel, so /faq#faq opens the FAQ tab
   label: string
   content: ReactNode
 }
 
-// Tabs for the "good to know" section under the finder. Every panel is in the server HTML (the inactive ones just
+// Tabs on the /faq page. Every panel is in the server HTML (the inactive ones just
 // have `hidden`), so crawlers and AI answer engines still read all of it. With JavaScript off the tabs can't be
 // clicked, so the <noscript> style below shows every panel instead.
 export function InfoTabs({ tabs, panelClassName }: { tabs: InfoTab[]; panelClassName?: string }) {
   const [active, setActive] = useState(tabs[0].id)
 
-  // Links like /match#how or /match#faq open the matching tab. The timeout keeps setState out of the effect body.
+  // Links like /faq#how or /faq#faq open the matching tab. The timeout keeps setState out of the effect body.
   useEffect(() => {
     const openFromHash = () => {
       const id = decodeURIComponent(window.location.hash.slice(1))

@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect, useMemo, DragEvent, ChangeEvent } from "react"
 import Link from "next/link"
 import { AnimatePresence, MotionConfig, motion } from "framer-motion"
-import { Upload, X, Search, Loader2, AlertCircle, User, Camera, ChevronDown, RotateCcw, ImageIcon, ScanFace } from "lucide-react"
+import { Upload, X, Search, Loader2, AlertCircle, User, Camera, ChevronDown, RotateCcw, ImageIcon, ScanFace, ArrowRight } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { MATCH_ONLY } from "@/lib/site-config"
@@ -379,7 +379,7 @@ export function CelebrityFinder() {
   return (
     <section ref={finderRef} id="finder" className={`scroll-mt-20 px-6 ${MATCH_ONLY ? "flex min-h-svh flex-col pt-[clamp(5rem,11svh,7rem)] pb-[clamp(1rem,4svh,3rem)]" : "py-24 md:py-32"}`}>
       {/* One screen tall: the uploader and results share whatever height is left under the title, so the whole tool
-          shows on a short laptop and fills a tall monitor (the "Good to know" section starts below the fold). */}
+          shows on a short laptop and fills a tall monitor. */}
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
         {/* Header: static so it's in the server HTML at full opacity (LCP) */}
         <div className="mb-[clamp(0.75rem,3svh,1.75rem)] text-center">
@@ -392,6 +392,10 @@ export function CelebrityFinder() {
           <p className="mt-1 text-white/50 text-sm text-balance">
             Best with one clear, front-facing face in even light.
           </p>
+          <Link href="/faq" className="group mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-(--ollie-cyan) underline-offset-4 hover:underline">
+            How it works and what happens to your photo
+            <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform motion-reduce:transition-none" aria-hidden="true" />
+          </Link>
         </div>
 
         <div className={`grid grid-cols-1 gap-6 md:min-h-[clamp(26rem,calc(100svh-17rem),54rem)] md:grid-cols-2 ${matches ? "md:items-start" : "md:items-stretch"}`}>

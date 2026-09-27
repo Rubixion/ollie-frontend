@@ -41,7 +41,7 @@ Owner's call, 2026-09-24: `/`, `/match` and `/contact` use the same look, so mov
 - A centred headline that drifts back and fades as you scroll (`data-parallax="near"`). On home the last words are `text-white/50` and blur in (`TextEffect`); on /match and /contact the title is plain white and static (owner's call), and /match keeps its subtitles short so the uploader and results fit on the first screen of a 1366×768 laptop.
 - Borderless lit cards from `lib/surfaces.ts` (`card`, or `cardOpen` when the card holds a dropdown menu that must not be clipped), with recessed `bg-black/35` wells inside. No outlined boxes. The match tool uses the see-through `glass` / `glassOpen` version instead, so the dotted background shows through and the tool feels lighter.
 - The first screen's cards load in with `animate-in fade-in slide-in-from-bottom-6` (staggered with `delay-150`). Cards further down use `data-reveal` and `RevealOnScroll`.
-- On /match the explanations under the finder are tabs (`components/info-tabs.tsx`), not a long scroll. Every panel stays in the server HTML, so crawlers and no-JS visitors still get all of it. `/match#faq` etc. open the matching tab.
+- The explanations (how it works, tips, limitations, privacy, FAQ) live on their own page, /faq, as tabs (`components/info-tabs.tsx`), not a long scroll. Every panel stays in the server HTML, so crawlers and no-JS visitors still get all of it. `/faq#faq` etc. open the matching tab. /match, /compare and /kirk-meter link to it under their titles.
 - Clicking a nav or footer link to the page you're already on glides back to the top (`components/page-link.tsx`).
 
 ## Sizing for every screen

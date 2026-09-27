@@ -809,13 +809,16 @@ function parsePubChemData(data, fallbackName) {
   return {formula, mw, atoms, bonds}
 }
 
+// fetch that tags network failures (offline, ad blocker, blocked network) so the error can say so
+const pcFetch = (url, signal) => fetch(url, {signal}).catch(e => { if (e.name !== 'AbortError') e.offline = true; throw e })
+
 async function fetchRecord(base, fallbackName, signal) {
   // Try 3D conformer first; fall back to 2D layout (z=0) if unavailable
-  let res = await fetch(base + '?record_type=3d', {signal})
+  let res = await pcFetch(base + '?record_type=3d', signal)
   if (res.ok) {
     try { return parsePubChemData(await res.json(), fallbackName) } catch(_) {}
   }
-  res = await fetch(base, {signal})
+  res = await pcFetch(base, signal)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return parsePubChemData(await res.json(), fallbackName)
 }
@@ -828,9 +831,9 @@ async function fetchByName(name, signal) {
 }
 
 async function fetchByFormula(formula, signal) {
-  const cidRes = await fetch(
+  const cidRes = await pcFetch(
     `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/fastformula/${encodeURIComponent(formula)}/cids/JSON`,
-    {signal}
+    signal
   )
   if (!cidRes.ok) throw new Error(`formula ${cidRes.status}`)
   const cids = (await cidRes.json()).IdentifierList?.CID
@@ -852,9 +855,12 @@ async function fetchMolecule(input) {
   const upper      = input.trim().toUpperCase()
   const mapped     = FORMULA_NAME[upper] ?? null
   const save       = m => { molCache[key] = m; return m }
-  const notAbort   = e => e.name !== 'AbortError'
+  let   offline    = false
+  const notAbort   = e => { if (e.offline) offline = true; return e.name !== 'AbortError' }
   const parsedAtoms = parseFormula(input.trim())
-  const ionicName   = parsedAtoms.length ? nameIonicCompound(parsedAtoms) : null
+  // Only a real formula (every letter is an element symbol) gets the ionic path: "caffeine" parses as Ca+F+Fe+In
+  const isFormula   = parsedAtoms.map(({el,n}) => el+(n>1?n:'')).join('').toLowerCase() === input.replace(/\s/g,'').toLowerCase()
+  const ionicName   = isFormula && parsedAtoms.length ? nameIonicCompound(parsedAtoms) : null
   // Only tag as ionic if the parsed formula elements all appear in the returned molecule,
   // preventing false positives when the input is a name like "water" (which parses as Rb+Te).
   const tagIonic = mol => {
@@ -882,6 +888,7 @@ async function fetchMolecule(input) {
     return save(buildIonicMol(parsedAtoms, ionicName))
   }
 
+  if (offline) throw new Error("Couldn't reach PubChem, the molecule database. Check your connection or turn off your ad blocker for this site.")
   throw new Error(`"${input}" not found — try the full name or a formula like "Na2SO4"`)
 }
 
