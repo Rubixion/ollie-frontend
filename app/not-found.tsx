@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { DottedSurface } from "@/components/ui/dotted-surface"
 
 export const metadata = { title: "Page not found" }
 
@@ -12,7 +11,6 @@ export default function NotFound() {
     <>
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
-        <DottedSurface className="motion-reduce:hidden" />
         <div className="max-w-xl mx-auto px-6 pt-40 pb-24">
           <p className="text-(--ollie-cyan) font-bold tabular-nums">404</p>
           <h1 className="mt-3 text-4xl font-black text-white tracking-tight text-balance">No match for this page</h1>

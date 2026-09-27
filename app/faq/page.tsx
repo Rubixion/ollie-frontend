@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { DottedSurface } from "@/components/ui/dotted-surface"
 import { InfoTabs, type InfoTab } from "@/components/info-tabs"
 import { TextEffect } from "@/components/ui/text-effect"
 import { card } from "@/lib/surfaces"
@@ -182,7 +181,6 @@ const TABS: InfoTab[] = [
 export default function GoodToKnowPage() {
   return (
     <>
-      <DottedSurface className="motion-reduce:hidden" />
       <Nav />
       {/* Server-rendered (inside the tabs) so crawlers, AI answer engines and no-JS visitors get the full explanation */}
       <main id="main" className="relative min-h-screen bg-transparent">

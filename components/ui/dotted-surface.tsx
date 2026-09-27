@@ -16,6 +16,9 @@ export function DottedSurface({ className, ...props }: DottedSurfaceProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
+		// Desktop only: on phones/tablets the animation is distracting and costs ~1 s of CPU, and reduced-motion
+		// users asked for none. They get the plain page background, and three.js is never downloaded.
+		if (window.matchMedia('(max-width: 767px), (pointer: coarse), (prefers-reduced-motion: reduce)').matches) return;
 		// Load three.js and start WebGL once the page is idle: setting it up during load blocked the main
 		// thread for ~1 s on phones (Lighthouse TBT), and the background isn't needed for first paint.
 		let cancelled = false;

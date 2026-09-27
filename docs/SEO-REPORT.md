@@ -52,7 +52,7 @@ Wording rules (also in OpenSEO's project context): say "the Ollie team"; the mat
   - `/match` scored 60 (TBT 1,090 ms)
   - a post scored 73
 
-  Desktop scored 95–99. Measured on the real trace, LCP is 0.5–0.65 s, so the slow mobile scores are simulated main-thread time, not a slow first paint. The cause was the three.js dotted background starting up during page load. It now loads when the browser is idle, without antialias and with the pixel ratio capped at 1.5, and looks the same. In a local build, `/match` went from 60 to 81 on mobile. `/` still has a ~1 s task when three.js starts, and that only goes away by not animating the background on phones.
+  Desktop scored 95–99. Measured on the real trace, LCP is 0.5–0.65 s, so the slow mobile scores are simulated main-thread time, not a slow first paint. The cause was the three.js dotted background starting up during page load. It now loads when the browser is idle, without antialias and with the pixel ratio capped at 1.5, and looks the same. The background now runs only on `/`, `/match` and `/compare`, and only on desktop. Phones, tablets and reduced-motion users get the plain background and never download three.js; reading pages (blog, FAQ, contact, legal, 404) are plain everywhere. In a local build, mobile scores are `/` 88 (was 69) and `/match` 90 (was 60).
 - **Blog images:** already WebP at a sensible size. Re-encoding them saves only 1–4%, so they're left as they are.
 
 ### How a blog post is built for SEO

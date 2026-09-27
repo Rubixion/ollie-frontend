@@ -3,7 +3,6 @@ import { Footer } from "@/components/footer"
 import { allPosts, allCategories } from "@/lib/blog-posts"
 import { SITE_URL } from "@/lib/site-config"
 import { BlogList } from "./blog-list"
-import { DottedSurface } from "@/components/ui/dotted-surface"
 import { blogImages } from "@/lib/blog-images"
 
 // Newest first
@@ -35,7 +34,6 @@ export default function BlogPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <DottedSurface className="motion-reduce:hidden" />
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
         <div className="mx-auto max-w-6xl px-6 pb-24 pt-[clamp(5rem,12svh,8rem)]">

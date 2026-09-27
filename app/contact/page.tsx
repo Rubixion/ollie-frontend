@@ -1,7 +1,6 @@
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
 import { OWNER } from "@/lib/facts"
-import { DottedSurface } from "@/components/ui/dotted-surface"
 import { ContactForm } from "@/components/contact-form"
 import { RevealOnScroll } from "@/components/reveal-on-scroll"
 import { card } from "@/lib/surfaces"
@@ -26,7 +25,6 @@ const loadIn = "animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode
 export default function ContactPage() {
   return (
     <>
-      <DottedSurface className="motion-reduce:hidden" />
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
         <div className="mx-auto max-w-5xl px-6 pb-24 pt-[clamp(5rem,12svh,8rem)]">

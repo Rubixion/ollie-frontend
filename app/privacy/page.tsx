@@ -1,6 +1,5 @@
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { DottedSurface } from "@/components/ui/dotted-surface"
 
 export const metadata = {
   title: "Privacy Policy",
@@ -17,7 +16,6 @@ export default function PrivacyPage() {
     <>
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
-        <DottedSurface className="motion-reduce:hidden" />
         <div className="max-w-3xl mx-auto px-6 pt-32 pb-20">
           <h1 className="text-4xl font-black text-white mb-2 tracking-tight">Privacy Policy</h1>
           <p className="text-white/60 text-sm mb-12">Last updated: September 26, 2026</p>

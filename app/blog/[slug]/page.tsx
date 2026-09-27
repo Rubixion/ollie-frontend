@@ -6,7 +6,6 @@ import { Footer } from "@/components/footer"
 import { allPosts, getPost, type BlogPost } from "@/lib/blog-posts"
 import { SITE_URL } from "@/lib/site-config"
 import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react"
-import { DottedSurface } from "@/components/ui/dotted-surface"
 import { AuthorBadge } from "@/components/author-badge"
 import { card } from "@/lib/surfaces"
 import Image from "next/image"
@@ -202,7 +201,6 @@ export default async function BlogPostPage({ params }: Props) {
 
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
-        <DottedSurface className="motion-reduce:hidden" />
 
         <div className="max-w-3xl mx-auto px-6 pt-28 pb-24">
           {/* Breadcrumb */}
