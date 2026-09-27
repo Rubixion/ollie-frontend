@@ -93,7 +93,7 @@ export default function RootLayout({
                   "@id": `${SITE_URL}/#organization`,
                   name: "Ollie",
                   url: SITE_URL,
-                  logo: `${SITE_URL}/icon.svg`,
+                  logo: `${SITE_URL}/logo.png`, // 512px PNG: Google wants a raster logo of at least 112px
                   description:
                     "Ollie is a celebrity lookalike AI built on its own face-recognition machine learning (ML) model, trained from scratch.",
                   knowsAbout: ["Celebrity lookalike AI", "Machine learning", "Face recognition", "Deep learning", "Convolutional neural networks", "Celebrity look-alikes"],
