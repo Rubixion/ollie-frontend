@@ -57,7 +57,7 @@ export default function ComingSoon02({
   return (
     <section
       data-slot="coming-soon"
-      className="relative isolate flex min-h-svh flex-col items-center justify-center overflow-hidden pt-24"
+      className="relative isolate flex min-h-svh flex-col items-center justify-center overflow-hidden pt-24 pb-40"
     >
       <motion.div
         data-slot="coming-soon-body"
@@ -105,19 +105,20 @@ export default function ComingSoon02({
         )}
       </motion.div>
 
-      {/* Glowing horizon: a huge ellipse whose top edge is the curve, with sparkles rising over it */}
+      {/* Glowing horizon pinned to the bottom of the screen (so the page doesn't scroll into it): a huge ellipse
+          whose top edge is the curve, with sparkles rising over it */}
       <div
         data-slot="coming-soon-horizon"
         aria-hidden="true"
-        className="relative -mt-24 h-96 w-full overflow-hidden [mask-image:radial-gradient(50%_50%,black,transparent)] after:absolute after:-start-1/2 after:top-1/2 after:aspect-[1/0.7] after:w-[200%] after:rounded-[100%] after:border-t after:border-(--ollie-cyan)/40 after:bg-(--ollie-card) after:content-['']"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-96 w-full overflow-hidden [mask-image:radial-gradient(50%_50%,black,transparent)] after:absolute after:-start-1/2 after:top-1/2 after:aspect-[1/0.7] after:w-[200%] after:rounded-[100%] after:border-t after:border-(--ollie-cyan)/40 after:bg-(--ollie-card) after:content-['']"
       >
         <div
           data-slot="coming-soon-horizon-glow"
-          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,color-mix(in_oklch,var(--ollie-cyan)_40%,transparent),transparent_70%)] opacity-40"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,color-mix(in_oklch,var(--ollie-cyan)_40%,transparent),transparent_70%)] opacity-60"
         />
         <Sparkles
-          density={4}
-          size={1.4}
+          density={10}
+          size={1.8}
           color="var(--ollie-cyan)"
           className="[mask-image:radial-gradient(50%_50%,black,transparent_85%)]"
         />

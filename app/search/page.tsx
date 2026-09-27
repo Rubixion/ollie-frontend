@@ -3,7 +3,6 @@ import Link from "next/link"
 import { ArrowRight, ScanFace, Users } from "lucide-react"
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { DottedSurface } from "@/components/ui/dotted-surface"
 import ComingSoon02 from "@/components/ui/coming-soon-02"
 import { MailingListButton } from "@/components/mailing-list-button"
 
@@ -22,7 +21,7 @@ const tool =
 export default function SearchPage() {
   return (
     <>
-      <DottedSurface className="motion-reduce:hidden" />
+      {/* No DottedSurface here: the horizon and its sparkles are this page's background */}
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
         <ComingSoon02
