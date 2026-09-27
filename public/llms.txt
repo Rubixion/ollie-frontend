@@ -43,3 +43,4 @@
 - [How Ollie works: the technical overview](https://www.ollieml.com/blog/ollie-how-it-works)
 - [How Ollie's celebrity database was built](https://www.ollieml.com/blog/celebrity-database-how-built)
 - [Why everyone has a celebrity doppelgänger](https://www.ollieml.com/blog/why-everyone-has-doppelganger)
+- [Celebrities who look alike, according to Ollie's AI](https://www.ollieml.com/blog/celebrities-who-look-alike): original data from comparing more than 17 million celebrity pairs

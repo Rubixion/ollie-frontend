@@ -183,9 +183,17 @@ Everything else is done (SQL files run, facts confirmed, backend deployed). `oll
 3. **HEIC on desktop:** Chrome can't decode HEIC when the file is dragged in. iPhones convert automatically when you pick from Photos.
 4. **The similarity percentage** is a stretched distance (`scale()` in `celebrity-finder.tsx`). Re-tune `RAW_LO/RAW_HI/OUT_LO` on the celebrity index, because the score range will shift.
 
-## Content roadmap (ideas, not written)
+## Content roadmap
 
-Check each against the existing 90 posts first; some overlap.
+Status 2026-09-26:
+- #1 is done: a "Why different lookalike apps give different results" section and FAQ were added to `why-same-person-different-ai-results`.
+- #2 already existed as `celebrity-database-how-built`.
+- #4 is done: the new post `celebrities-who-look-alike` uses original data. It scored all 17.7M celebrity pairs with the site's own scoring (script: `neural network learning/celebrity_pairs.py`, reads `hf_space/index.npz`). It's the main page for "celebrities who look alike" (that keyword was removed from `celebrities-that-fool-ai`) and it's in llms.txt.
+- #3 needs your own photos.
+
+Drafts for Show HN, Reddit and Product Hunt are in `docs/LAUNCH-POSTS.md`.
+
+Check each idea against the existing posts first; some overlap.
 
 1. "Why do lookalike apps give different results?" Explain photo, lighting, dataset and scoring differences. High intent, and it's the most common user question. (Overlaps `why-same-person-different-ai-results`: extend that post rather than duplicating it.)
 2. "How Ollie picked 5,000 celebrities": the Wikipedia fame ranking, licensed photos, exclusions and the gender split. This is original, specific and very citable by AI answer engines.

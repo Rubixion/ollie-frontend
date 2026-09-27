@@ -2,6 +2,71 @@ import type { BlogPost } from "./blog-post-types"
 
 export const postsA: BlogPost[] = [
   {
+    slug: "celebrities-who-look-alike",
+    title: "Celebrities Who Look Alike, According to an AI",
+    excerpt: "Ollie's AI compared 5,000+ celebrities with each other. The famous people it finds most alike, the families it spotted on its own, and where it gets fooled.",
+    summary: "Which celebrities look alike? Ollie's face recognition model compared more than 5,000 celebrities with each other, over 17 million pairs, and ranked the closest. It paired Dakota Fanning with Sadie Sink, Winona Ryder with Rachael Leigh Cook, and Mila Kunis with Camila Mendes. Without being told who is related, it also picked out parents, children and siblings.",
+    date: "September 26, 2026",
+    isoDate: "2026-09-26",
+    readTime: "6 min read",
+    category: "Culture",
+    author: "Liam Bradley",
+    keywords: ["celebrities who look alike", "famous people who look alike", "celebrity look alikes", "celebrities that look alike", "actors who look alike", "celebrity lookalike AI", "face recognition"],
+    sections: [
+      {
+        h2: "How We Compared Every Celebrity With Every Other",
+        paragraphs: [
+          "Ollie's index holds more than 5,000 living celebrities, each with between 2 and 12 verified photos. That makes more than 17 million possible pairs of people. For each pair, the model compares every photo of one person with every photo of the other and averages the two closest photo pairs. It's the same rule the <a href=\"/match\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">celebrity lookalike finder</a> uses when it scores you. A single lucky photo can't win on its own.",
+          "The model has never been told anyone's name. It turns each face into a list of 512 numbers, a <strong>facial embedding</strong>, and the similarity score measures how close two of those lists are. It compares faces. It doesn't judge how famous, attractive or related two people are.",
+          "For scale: two celebrities picked at random score about 33% on Ollie's scale, and only 1 pair in 100 reaches 58%. Every pair below scores in the range two different photos of the same person usually reach.",
+        ],
+      },
+      {
+        h2: "The Closest Celebrity Lookalikes",
+        paragraphs: [
+          "Among Hollywood actresses, the model's closest pairs were <strong>Dakota Fanning and Sadie Sink</strong>, <strong>Amanda Seyfried and Dakota Fanning</strong>, <strong>Winona Ryder and Rachael Leigh Cook</strong>, <strong>Mila Kunis and Camila Mendes</strong>, and <strong>Kate Bosworth and Danielle Panabaker</strong>. <strong>Carrie Underwood and Emily Osment</strong> made the list from music, and <strong>Dakota Johnson and Renate Reinsve</strong> crossed the Atlantic.",
+          "In India, <strong>Katrina Kaif and Zarine Khan</strong> came out as one of the closest pairs, a resemblance the Hindi film press pointed out when Zarine Khan debuted. So did <strong>Kareena Kapoor and Kritika Kamra</strong>, and <strong>Alia Bhatt and Nidhhi Agerwal</strong>. In sport, golfers <strong>Rory McIlroy and Matthew Fitzpatrick</strong> were close, and so were footballers <strong>Dayot Upamecano and Dávinson Sánchez</strong>.",
+          "The closest pair between a man and a woman was tennis players <strong>Alexander Zverev and Aryna Sabalenka</strong>. The model compares face shape, not gender, so strong jawlines and similar proportions can pair a man with a woman.",
+        ],
+      },
+      {
+        h2: "It Found Families Without Being Told",
+        paragraphs: [
+          "The most striking result is how many of the closest pairs are related. The model has no family data, yet near the top of 17 million pairs it put Japan's <strong>Emperor Emeritus Akihito and his son Emperor Naruhito</strong>, and <strong>Naruhito and his brother Crown Prince Fumihito</strong>. Fumihito's children, <strong>Mako Komuro and Prince Hisahito</strong>, were paired as well.",
+          "It did the same for <strong>King Hamad of Bahrain and his son Crown Prince Salman</strong>, for the chess-playing siblings <strong>Praggnanandhaa and Vaishali Rameshbabu</strong>, and for actors <strong>Jonah Hill and his sister Beanie Feldstein</strong>. A model trained only to tell individuals apart still picks up family resemblance, because relatives share much of the bone structure the model relies on. Our post on <a href=\"/blog/identical-twins-different-profiles\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">identical twins</a> covers the extreme case.",
+        ],
+      },
+      {
+        h2: "Where the AI Gets Fooled",
+        paragraphs: [
+          "Not every close pair is a real <strong>resemblance</strong>. The celebrities who turned up in the most close pairs were tennis players (Barbora Krejčíková, Elina Svitolina, Elena Rybakina) and Korean pop and drama stars. Tennis photos taken with long lenses, in similar light and mid-effort, look alike, and so do stage looks with the same styling and make-up. The photos have as much in common as the faces.",
+          "There is also a known weakness. A large share of the closest pairs are East Asian or South Asian celebrities. Ollie's model was trained on MS1MV2, a dataset made up mostly of lighter-skinned faces, so it separates some groups less finely and gives different people higher scores. People show a similar bias, known as the <a href=\"/blog/own-race-effect\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">own-race effect</a>. We disclose this on the match page and cover it in <a href=\"/blog/accuracy-across-demographics\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">accuracy across demographics</a>. Read these pairs as what one model sees, not as a verdict on anyone's face.",
+        ],
+      },
+      {
+        h2: "The Most 'Average' Celebrity Faces",
+        paragraphs: [
+          "Averaging every celebrity's embedding gives the centre of the model's face space, the most typical face in the index. The celebrities closest to it included <strong>Robert Downey Jr.</strong>, <strong>Isabella Rossellini</strong>, <strong>Margaret Qualley</strong>, <strong>Mikey Madison</strong> and <strong>Jeffrey Dean Morgan</strong>.",
+          "'Average' here is a compliment. In face research, faces close to the average of a population tend to be rated as more attractive, as our post on <a href=\"/blog/face-attractiveness-research\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">attractiveness research</a> explains. A face near the centre also resembles many people a little, which is why some celebrities come up as a match more often than others.",
+        ],
+      },
+      {
+        h2: "Find Which Celebrity You Look Like",
+        paragraphs: [
+          "The same model and the same scoring rule are behind the match page. Upload a clear, front-facing photo and Ollie compares it with every celebrity in the index and returns your five closest. The photo is used for the search and then discarded. Like the pairs above, your result shows how close two faces are to this one model. It's a similarity score for comparing results, not a measure of accuracy.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "Which celebrities look alike the most?", a: "Out of more than 17 million celebrity pairs, Ollie's AI rated Dakota Fanning and Sadie Sink, Winona Ryder and Rachael Leigh Cook, Mila Kunis and Camila Mendes, and Katrina Kaif and Zarine Khan among the closest. Family members such as Emperors Akihito and Naruhito scored just as high." },
+      { q: "How does an AI decide two celebrities look alike?", a: "It turns each face into 512 numbers (a facial embedding) and measures the distance between them. Ollie compares every photo of one person with every photo of the other and averages the two closest pairs." },
+      { q: "Can AI tell if two celebrities are related?", a: "Not directly, but relatives often score very high because they share bone structure. Without any family data, Ollie's model paired Akihito with Naruhito, Jonah Hill with Beanie Feldstein, and Praggnanandhaa with his sister Vaishali." },
+      { q: "Why does the AI pair so many K-pop stars or tennis players?", a: "Similar photo conditions and styling make photos look alike, and Ollie's training data under-represents some groups, so it separates them less finely. These pairs show what one model sees, not a fact about anyone's face." },
+      { q: "Which celebrity do I look like?", a: "Upload a clear, front-facing photo on Ollie's match page. It compares your face with more than 5,000 celebrities and returns your five closest matches for free." },
+    ],
+    relatedSlugs: ["why-everyone-has-doppelganger", "celebrities-that-fool-ai", "identical-twins-different-profiles"],
+  },
+  {
     slug: "how-face-recognition-works",
     title: "How Does AI Facial Recognition Actually Work? A Plain-English Guide",
     excerpt: "A plain-English breakdown of how a neural network turns a photo into a unique numerical fingerprint, and how that fingerprint finds your celebrity match.",
@@ -132,14 +197,14 @@ export const postsA: BlogPost[] = [
     slug: "why-same-person-different-ai-results",
     title: "Why Two Photos of the Same Person Can Give Different AI Results",
     excerpt: "Upload two photos of yourself and you might get different celebrity matches. Here is the science behind why that happens and how to get more consistent results from Ollie.",
-    summary: "Two photos of the same person can give different AI face recognition results because lighting, camera angle, lens distortion and compression all change the pixels the network reads. The same reasons explain why you look different in photos. For consistent celebrity matches, use even light, face the camera and take the photo from arm's length or further.",
+    summary: "Two photos of the same person can give different AI face recognition results because lighting, camera angle, lens distortion and compression all change the pixels the network reads. The same reasons explain why you look different in photos. For consistent celebrity matches, use even light, face the camera and take the photo from arm's length or further. Different lookalike apps disagree for another reason: each uses its own model, celebrity list and scoring scale.",
     date: "September 24, 2026",
     updatedIsoDate: "2026-09-26",
     isoDate: "2026-09-24",
-    readTime: "5 min read",
+    readTime: "6 min read",
     category: "Technology",
     author: "Liam Bradley",
-    keywords: ["face recognition results", "why do i look different in photos", "facial recognition accuracy", "photo lighting", "AI face matching", "celebrity match", "compare faces online", "compare two faces", "same person photo comparison"],
+    keywords: ["face recognition results", "why do lookalike apps give different results", "celebrity lookalike app", "why do i look different in photos", "facial recognition accuracy", "photo lighting", "AI face matching", "celebrity match", "compare faces online", "compare two faces", "same person photo comparison"],
     sections: [
       {
         h2: "The Variability Problem in Face Matching",
@@ -170,6 +235,15 @@ export const postsA: BlogPost[] = [
         ],
       },
       {
+        h2: "Why Different Lookalike Apps Give Different Results",
+        paragraphs: [
+          "Even the exact same photo gets a different celebrity match in different lookalike apps. That isn't because one of them is broken. Each app makes four choices that change the answer: the <strong>model</strong>, the <strong>celebrity list</strong>, the <strong>photos of each celebrity</strong>, and the <strong>scoring rule</strong>.",
+          "The model decides which facial features count. Two networks trained on different datasets learn different ideas of what makes faces similar. Ollie's was trained from scratch on MS1MV2, 5.8 million photos of about 85,000 people. Another app's model might weigh hairstyle or skin tone more, or less.",
+          "The celebrity list decides who you can match. An app can only return people it has indexed. One that lists 500 Hollywood actors will never match you with a K-pop star or a footballer. Ollie indexes more than 5,000 living celebrities, and our post on <a href=\"/blog/celebrity-database-how-built\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">how the database was built</a> explains how they were chosen.",
+          "The photos matter too. An app that stores one photo per celebrity matches you against that one image, lighting and angle included. Ollie stores up to 12 checked photos per person and scores each celebrity by the average of their two photos closest to yours, so one lucky photo can't win on its own. Finally, the percentage is each app's own scale. An 85% in one app and a 60% in another can describe the same distance, so compare the ranking of results, not the numbers across apps.",
+        ],
+      },
+      {
         h2: "How to Get Consistent Results",
         paragraphs: [
           "The conditions that produce the most stable <strong>facial embeddings</strong> are: even, diffuse lighting from the front; a front-facing pose with the camera at roughly eye level; rear camera shot from at least 50–60 cm distance; and sufficient image resolution (face at least 200 pixels wide). A photo taken near a window on a bright overcast day checks most of these boxes simultaneously.",
@@ -179,6 +253,7 @@ export const postsA: BlogPost[] = [
     ],
     faqs: [
       { q: "How can I compare two faces online?", a: "Use a face comparison tool such as Ollie's Compare page: upload two photos and it measures how close the two facial fingerprints are. For a fair comparison, use photos with similar lighting and angle, for the reasons in this article." },
+      { q: "Why do lookalike apps give different results for the same photo?", a: "Each app uses its own face model, its own list of celebrities, its own photos of them and its own scoring scale. A celebrity missing from an app's list can never be your match there, and the percentages aren't comparable between apps." },
       { q: "Why do I get different results with different photos of myself?", a: "Different photos vary in lighting, angle, and compression, all of which affect the facial embedding the AI computes. The most consistent results come from front-facing, well-lit photos taken with the rear camera." },
       { q: "Does photo quality really affect face matching results?", a: "Yes significantly. Images below 200px face width, heavy JPEG compression, or extreme lighting conditions can all shift your facial embedding enough to change the top match." },
       { q: "Which type of photo gives the most accurate celebrity match?", a: "Front-facing, well-lit photos with even lighting (no harsh shadows), taken with the rear camera from at least 50cm away, produce the most accurate and stable results." },
@@ -1043,7 +1118,7 @@ export const postsA: BlogPost[] = [
     readTime: "4 min read",
     category: "Culture",
     author: "Wendy Wei",
-    keywords: ["celebrity lookalike results", "AI face matching", "celebrities who look alike", "famous people who look alike", "face recognition", "face embedding"],
+    keywords: ["celebrity lookalike results", "AI face matching", "face recognition", "face embedding"],
     sections: [
       {
         h2: "What 'Fooling' Means in Face Matching",
@@ -1071,7 +1146,7 @@ export const postsA: BlogPost[] = [
       { q: "Why do some celebrities appear in almost everyone's results?", a: "Celebrities with embeddings near the mathematical centroid of the distribution are geometrically close to many faces. This produces high match frequency even without specific strong resemblance." },
       { q: "What should I do if my match seems wrong?", a: "Try uploading a different photo under better lighting from the rear camera. If the match changes significantly, photo quality was the issue. If it stays consistent, the match likely reflects real geometric similarity in dimensions not immediately obvious." },
     ],
-    relatedSlugs: ["most-matched-celebrities", "why-everyone-has-doppelganger", "what-is-similarity-score"],
+    relatedSlugs: ["celebrities-who-look-alike", "why-everyone-has-doppelganger", "what-is-similarity-score"],
   },
   {
     slug: "what-celebrity-match-reveals",
