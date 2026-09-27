@@ -19,6 +19,7 @@ const links = MATCH_ONLY
   ? [
       { label: "Home", href: "/" },
       { label: "Match", href: "/match" },
+      { label: "Compare", href: "/compare" },
       { label: "Contact", href: "/contact" },
     ]
   : [

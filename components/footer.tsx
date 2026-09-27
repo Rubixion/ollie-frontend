@@ -5,6 +5,7 @@ const nav = MATCH_ONLY
   ? [
       { label: "Home", href: "/" },
       { label: "Match", href: "/match" },
+      { label: "Compare", href: "/compare" },
       { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
     ]
