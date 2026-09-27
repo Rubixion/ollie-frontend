@@ -4,12 +4,13 @@
 import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Upload, X, Gauge, Loader2, AlertCircle, User, RotateCcw, ArrowRight } from "lucide-react"
+import { Upload, X, Gauge, Loader2, AlertCircle, RotateCcw, ArrowRight } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { scale } from "@/components/celebrity-finder"
 import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { glass, glassOpen } from "@/lib/surfaces"
+import { PairPreview, PreviewCaption } from "@/components/result-preview"
 import { ShareResult } from "@/components/share-result"
 
 // Kirk-only skew on top of the match page's scale(): nobody gets under 50%, and 60% on the match scale is already 100%.
@@ -140,7 +141,7 @@ export function KirkMeter() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:min-h-[clamp(26rem,calc(100svh-17rem),54rem)] md:grid-cols-2 md:items-stretch">
+        <div className="grid grid-cols-1 gap-6 md:min-h-[clamp(24rem,calc(100svh-19.5rem),54rem)] md:grid-cols-2 md:items-stretch">
           <div className={`${glassOpen} flex flex-col gap-5 p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-backwards motion-reduce:animate-none`}>
             {imageDataUrl ? (
               <div {...dragProps} className={dropZone} style={{ minHeight: "clamp(9rem, 24svh, 15rem)" }}>
@@ -193,16 +194,16 @@ export function KirkMeter() {
 
           <div className={`${glass} flex flex-col justify-center p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150 fill-mode-backwards motion-reduce:animate-none`} style={{ minHeight: "clamp(16rem, 40svh, 24rem)" }} aria-live="polite" aria-busy={loading}>
             {!loading && !result && !error && (
-              <div className="flex flex-col items-center gap-4 py-16 text-center">
-                <User size={32} className="text-white/25" aria-hidden="true" />
-                <p className="text-white/70 font-medium">Your Kirk score will appear here</p>
+              <div className="flex flex-col gap-5">
+                <PreviewCaption title="Your Kirk score will appear here" />
+                <PairPreview labels={["You", "Kirk"]} />
               </div>
             )}
             {loading && (
               <ProgressiveFluxLoader
                 value={Math.min(95, 100 * (1 - Math.exp(-elapsed / 6)))}
                 phases={PHASES}
-                className="gap-3 px-2 [--flux-from:var(--ollie-purple)] [--flux-to:var(--ollie-cyan)]"
+                className="gap-3 px-2 [--flux-from:var(--ollie-cyan)] [--flux-to:var(--ollie-cyan)]"
                 barClassName="h-2 bg-white/10 shadow-none"
                 textClassName="text-base sm:text-lg font-medium text-white/70"
               />
@@ -238,7 +239,7 @@ export function KirkMeter() {
                 </div>
                 <div className="h-2 rounded-full bg-white/10 overflow-hidden">
                   <motion.div
-                    className="h-full bg-linear-to-r from-(--ollie-purple) to-(--ollie-cyan)"
+                    className="h-full bg-(--ollie-cyan)"
                     initial={{ width: 0 }}
                     animate={{ width: `${result.score}%` }}
                     transition={{ duration: 0.8 }}

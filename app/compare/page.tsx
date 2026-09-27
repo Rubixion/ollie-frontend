@@ -6,8 +6,8 @@ import { FaceCompare } from "@/components/face-compare"
 
 // Linked from the nav and footer, and in the sitemap
 export const metadata: Metadata = {
-  title: "Same Person? AI Face Comparison",
-  description: "Upload two photos and Ollie's face-recognition AI tells you whether they show the same person, and how alike the two faces look. Free, photos never stored.",
+  title: "Compare Faces Online: Are They the Same Person?",
+  description: "Compare two faces online, free. Upload two photos and Ollie's face-recognition AI shows how alike they are and if they're the same person. Photos never stored.",
   alternates: { canonical: "/compare" },
 }
 

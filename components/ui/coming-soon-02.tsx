@@ -8,15 +8,13 @@
 import { Fragment, type ReactNode } from "react"
 import { motion, useReducedMotion } from "motion/react"
 
-import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles } from "@/components/ui/coming-soon-02-utils/sparkles"
+import { Sparkles } from "@/components/ui/sparkles"
 
-// First half of the words dimmed, second half bright, each word rising in turn
+// Each word rising in turn (one color: the dimmed-first-half look read as template filler)
 function Headline({ text }: { text: string }) {
   const reduce = useReducedMotion()
   const words = text.split(" ")
-  const half = Math.floor(words.length / 2)
 
   return (
     <h1
@@ -27,7 +25,7 @@ function Headline({ text }: { text: string }) {
         // The space sits outside the inline-block span, where it collapses to nothing
         <Fragment key={`${word}-${i}`}>
           <motion.span
-            className={cn("inline-block", i < half ? "text-white/50" : "text-white")}
+            className="inline-block text-white"
             initial={reduce ? false : { opacity: 0, y: 16, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 + i * 0.08 }}
@@ -59,6 +57,8 @@ export default function ComingSoon02({
       data-slot="coming-soon"
       className="relative isolate flex min-h-svh flex-col items-center justify-center overflow-hidden pt-24 pb-40"
     >
+      {/* The text stays still and sharp while scrolling; only the horizon behind it moves (data-parallax="horizon") */}
+      <div className="relative z-10 w-full">
       <motion.div
         data-slot="coming-soon-body"
         className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center gap-5 px-6 text-center md:px-10"
@@ -74,7 +74,7 @@ export default function ComingSoon02({
           <Badge
             variant="outline"
             data-slot="coming-soon-badge"
-            className="rounded-full border-(--ollie-cyan)/40 bg-(--ollie-cyan)/10 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-(--ollie-cyan) backdrop-blur-sm"
+            className="rounded-full border-(--ollie-cyan)/30 bg-(--ollie-cyan)/10 px-3.5 py-1 text-sm font-semibold text-(--ollie-cyan)"
           >
             {badge}
           </Badge>
@@ -104,11 +104,13 @@ export default function ComingSoon02({
           </motion.div>
         )}
       </motion.div>
+      </div>
 
       {/* Glowing horizon pinned to the bottom of the screen (so the page doesn't scroll into it): a huge ellipse
           whose top edge is the curve, with sparkles rising over it */}
       <div
         data-slot="coming-soon-horizon"
+        data-parallax="horizon"
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-96 w-full overflow-hidden [mask-image:radial-gradient(50%_50%,black,transparent)] after:absolute after:-start-1/2 after:top-1/2 after:aspect-[1/0.7] after:w-[200%] after:rounded-[100%] after:border-t after:border-(--ollie-cyan)/40 after:bg-(--ollie-card) after:content-['']"
       >
@@ -117,10 +119,11 @@ export default function ComingSoon02({
           className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,color-mix(in_oklch,var(--ollie-cyan)_40%,transparent),transparent_70%)] opacity-60"
         />
         <Sparkles
-          density={10}
-          size={1.8}
-          color="var(--ollie-cyan)"
-          className="[mask-image:radial-gradient(50%_50%,black,transparent_85%)]"
+          density={600}
+          size={1.4}
+          speed={0.6}
+          color="rgb(100, 130, 210)" // --ollie-cyan; tsParticles needs a literal color, not var()
+          className="absolute inset-0 size-full [mask-image:radial-gradient(50%_50%,black,transparent_85%)]"
         />
       </div>
     </section>

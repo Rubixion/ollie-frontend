@@ -6,11 +6,14 @@ import { Footer } from "@/components/footer"
 import { allPosts, getPost, type BlogPost } from "@/lib/blog-posts"
 import { SITE_URL } from "@/lib/site-config"
 import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react"
-import { BGPattern } from "@/components/bg-pattern"
+import { DottedSurface } from "@/components/ui/dotted-surface"
 import { AuthorBadge } from "@/components/author-badge"
 import { card } from "@/lib/surfaces"
 import Image from "next/image"
 import { blogImages } from "@/lib/blog-images"
+import SocialButton from "@/components/ui/social-button"
+import PostPagination from "@/components/ui/post-pagination"
+import NewsletterForm from "@/components/ui/newsletter-form"
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -75,17 +78,34 @@ function headingIds(headings: string[]) {
 const MATCH_PHRASE = /celebrit(?:y|ies) (?:you )?look[- ]?alikes?|celebrity match(?:es)?|which celebrit(?:y|ies) you look like|celebrity doppelg[aä]ngers?|what celebrity (?:do )?i look like/i
 const bodyLink = "text-(--ollie-cyan) underline underline-offset-4 hover:text-white"
 
-function linkFirstMention(sections: BlogPost["sections"]) {
-  let done = false
+// Same idea for /compare and the key guides: each target gets one link, at its first mention, in order of priority
+const LINK_RULES: [href: string, phrase: RegExp][] = [
+  ["/match", MATCH_PHRASE],
+  ["/compare", /compar(?:e|ing) (?:two |2 )?faces|face comparison/i],
+  ["/blog/why-everyone-has-doppelganger", /doppelg[aä]ngers?|resemblances?/i],
+  ["/blog/what-is-similarity-score", /similarity scores?/i],
+  ["/blog/why-same-person-different-ai-results", /(?:two )?photos of the same person/i],
+]
+
+function linkFirstMention(sections: BlogPost["sections"], slug: string) {
+  const todo = LINK_RULES.filter(([href]) => href !== `/blog/${slug}`)
   return sections.map((s) => ({
     ...s,
     paragraphs: s.paragraphs.map((p) => {
-      if (done || !MATCH_PHRASE.test(p)) return p
-      done = true
-      return p.replace(MATCH_PHRASE, (m) => `<a href="/match" class="${bodyLink}">${m}</a>`)
+      for (let i = 0; i < todo.length; i++) {
+        const [href, phrase] = todo[i]
+        // skip paragraphs that already hold a link, so the phrase is never nested inside another <a>
+        if (p.includes("<a ") || !phrase.test(p)) continue
+        p = p.replace(phrase, (m) => `<a href="${href}" class="${bodyLink}">${m}</a>`)
+        todo.splice(i--, 1)
+      }
+      return p
     }),
   }))
 }
+
+// Newest first, the same order as the blog list, so "Next" walks toward older posts
+const byDate = [...allPosts].sort((a, b) => b.isoDate.localeCompare(a.isoDate))
 
 function TableOfContents({ headings, ids }: { headings: string[]; ids: string[] }) {
   if (headings.length < 2) return null
@@ -118,9 +138,15 @@ export default async function BlogPostPage({ params }: Props) {
   const h2s = post.sections.filter((s) => s.h2).map((s) => s.h2!)
   const ids = headingIds(h2s)
   let h2Index = 0
-  const sections = linkFirstMention(post.sections).map((s) => ({ ...s, id: s.h2 ? ids[h2Index++] : undefined }))
+  const sections = linkFirstMention(post.sections, post.slug).map((s) => ({ ...s, id: s.h2 ? ids[h2Index++] : undefined }))
   const image = blogImages[post.slug]
   const relatedPosts = post.relatedSlugs.map((s) => getPost(s)).filter((p) => p !== undefined)
+  // "Read more" links inside the article: after the 2nd and 4th sections, one related post each
+  const readMoreAt = new Map([[1, relatedPosts[0]], [3, relatedPosts[1]]].filter(([, r]) => r) as [number, BlogPost][])
+  const signupAt = sections.length >= 5 ? Math.floor(sections.length / 2) : -1 // email signup mid-article, long posts only
+  const at = byDate.findIndex((p) => p.slug === post.slug)
+  const newer = byDate[at - 1]
+  const older = byDate[at + 1]
   const words = post.sections
     .flatMap((s) => [s.h2 ?? "", ...s.paragraphs])
     .join(" ")
@@ -176,7 +202,7 @@ export default async function BlogPostPage({ params }: Props) {
 
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
-        <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
+        <DottedSurface className="motion-reduce:hidden" />
 
         <div className="max-w-3xl mx-auto px-6 pt-28 pb-24">
           {/* Breadcrumb */}
@@ -199,10 +225,13 @@ export default async function BlogPostPage({ params }: Props) {
               {post.title}
             </h1>
             <p className="text-white/80 text-lg leading-relaxed mb-6">{post.summary}</p>
-            <AuthorBadge
-              name={post.author}
-              detail={`${post.date} · ${post.readTime}`}
-            />
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <AuthorBadge
+                name={post.author}
+                detail={`${post.date} · ${post.readTime}`}
+              />
+              <SocialButton url={url} title={post.title} />
+            </div>
             <time dateTime={post.isoDate} className="sr-only">{post.date}</time>
           </header>
 
@@ -251,6 +280,17 @@ export default async function BlogPostPage({ params }: Props) {
                     dangerouslySetInnerHTML={{ __html: p }}
                   />
                 ))}
+                {readMoreAt.has(i) && (
+                  <p className="mb-4 text-white/65">
+                    <strong className="text-white/85">Read more:</strong>{" "}
+                    <Link href={`/blog/${readMoreAt.get(i)!.slug}`} className={bodyLink}>{readMoreAt.get(i)!.title}</Link>
+                  </p>
+                )}
+                {i === signupAt && (
+                  <div className="my-10">
+                    <NewsletterForm source="blog" title="Get new guides by email" />
+                  </div>
+                )}
               </section>
             ))}
           </article>
@@ -286,6 +326,18 @@ export default async function BlogPostPage({ params }: Props) {
           </section>
 
 
+          {/* About the author */}
+          <section className={`${card} mt-14 p-7`} aria-labelledby="about-author">
+            <p id="about-author" className="text-[10px] font-bold tracking-widest uppercase text-(--ollie-cyan) mb-4">About the author</p>
+            <AuthorBadge name={post.author} detail="Writes for Ollie, a free celebrity lookalike AI" />
+            <p className="mt-4 text-white/60 text-sm leading-relaxed">
+              The Ollie team wrote and trained Ollie&apos;s own face-recognition model from scratch, and writes these guides to
+              explain how face matching works in plain English. Questions or corrections are welcome on the{" "}
+              <Link href="/contact" className={bodyLink}>contact page</Link>, and the{" "}
+              <Link href="/faq" className={bodyLink}>FAQ</Link> covers how Ollie works and what happens to your photo.
+            </p>
+          </section>
+
           {/* Related posts */}
           {relatedPosts.length > 0 && (
             <section className="mt-14">
@@ -309,6 +361,14 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
             </section>
           )}
+
+          {/* Previous / next article */}
+          <div className="mt-14">
+            <PostPagination
+              prev={newer ? { href: `/blog/${newer.slug}`, title: newer.title } : null}
+              next={older ? { href: `/blog/${older.slug}`, title: older.title } : null}
+            />
+          </div>
 
           {/* Back link */}
           <div className="mt-14 pt-8">

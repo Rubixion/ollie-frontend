@@ -19,6 +19,15 @@ const nav = MATCH_ONLY
       { label: "Contact", href: "/contact" },
     ]
 
+// Key guides linked from every page: the footer is a strong internal-linking spot for the posts that target the
+// biggest searches (celebrity look alike finder, best photo, results, how the AI works)
+const guides = [
+  { label: "Celebrity lookalike finder guide", href: "/blog/find-your-celebrity-lookalike" },
+  { label: "Best photo for a match", href: "/blog/best-photo-celebrity-match" },
+  { label: "Understanding your results", href: "/blog/understanding-your-results" },
+  { label: "How face recognition works", href: "/blog/how-face-recognition-works" },
+]
+
 const legal = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
@@ -41,12 +50,24 @@ export function Footer() {
           </div>
 
           {/* Links */}
-          <div className="flex gap-16">
+          <div className="flex flex-wrap gap-x-16 gap-y-10">
             <div>
               <p className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-4">Pages</p>
               {/* Two columns, filled top to bottom: the tools on the left, the rest on the right */}
               <ul className="grid grid-flow-col grid-rows-4 gap-x-12 gap-y-3">
                 {nav.map((l) => (
+                  <li key={l.href}>
+                    <PageLink href={l.href} className="text-white/60 hover:text-white/70 text-sm transition-colors">
+                      {l.label}
+                    </PageLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-4">Guides</p>
+              <ul className="flex flex-col gap-3">
+                {guides.map((l) => (
                   <li key={l.href}>
                     <PageLink href={l.href} className="text-white/60 hover:text-white/70 text-sm transition-colors">
                       {l.label}

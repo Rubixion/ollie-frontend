@@ -28,10 +28,10 @@ export function ModelSection() {
   return (
     <section className="px-6 pt-16 pb-24 md:pt-20 md:pb-32 max-w-6xl mx-auto flex flex-col items-center text-center" aria-labelledby="tech-heading">
       <h2 id="tech-heading" className="text-3xl md:text-4xl font-black text-white tracking-tight leading-tight text-balance">
-        <TextEffect as="span" per="word" preset="blur" inView>Not a wrapper. A real machine learning model.</TextEffect>
+        <TextEffect as="span" per="word" preset="blur" inView>Our own face-recognition model</TextEffect>
       </h2>
       <p className="mt-3 text-white/70 text-base max-w-xl text-pretty">
-        Ollie&apos;s face-recognition ML model was written and trained from scratch, not rented from a big-tech AI service.
+        Written and trained from scratch in PyTorch on {MODEL.trainingSet}, instead of calling a big-tech AI service.
       </p>
       <Link
         href="/faq#how"

@@ -102,15 +102,16 @@ export const postsC: BlogPost[] = [
   },
   {
     slug: "celebrity-doppelgangers-throughout-history",
-    title: "Celebrity Doppelgängers Throughout History: When Faces Repeat Across Centuries",
+    title: "Celebrity Doppelgangers Throughout History: Faces That Repeat",
     excerpt: "The same facial archetypes appear in royal portraits, ancient sculpture, and modern celebrities. Here is what repeated historical face types tell us about facial geometry.",
     summary: "Historical doppelgangers exist because the same facial proportions recur across centuries: the genes behind them stay in the population, so similar faces appear in Roman busts, Renaissance portraits and today's celebrities. Face recognition measures that structure, not the era, so a modern face can closely resemble a centuries-old one.",
     date: "July 23, 2026",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-07-23",
     readTime: "5 min read",
     category: "Culture",
     author: "Wendy Wei",
-    keywords: ["historical doppelgangers", "celebrity doppelgangers from history", "famous doppelgangers", "facial archetype", "historical portraits", "face recognition"],
+    keywords: ["historical doppelgangers", "celebrity doppelgangers from history", "famous doppelgangers", "facial archetype", "historical portraits", "face recognition", "celebrity doppelganger"],
     sections: [
       {
         h2: "The Recurring Face Archetype",
@@ -923,16 +924,16 @@ export const postsC: BlogPost[] = [
   },
   {
     slug: "ollie-how-it-works",
-    title: "How Ollie Works: The Complete Technical Overview",
+    title: "How Ollie's Celebrity Lookalike AI Works: A Technical Overview",
     excerpt: "From upload to results, here is the complete technical picture of what Ollie does to your photo, every pipeline step explained in plain English.",
     summary: "Ollie is a celebrity lookalike AI that works in four steps: detect your face and five key points, align it to 112 by 112 pixels, turn it into a 512-number embedding with a neural network trained from scratch, and compare it with thousands of verified celebrity photos. The closest celebrities become your top five matches. Your photo is processed in memory and never stored.",
     date: "June 22, 2026",
-    updatedIsoDate: "2026-09-23",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-06-22",
     readTime: "6 min read",
     category: "Technology",
     author: "Liam Bradley",
-    keywords: ["celebrity lookalike AI", "how does celebrity lookalike app work", "face recognition", "face embedding", "neural network", "Ollie"],
+    keywords: ["celebrity lookalike AI", "how does celebrity lookalike app work", "face recognition", "face embedding", "neural network", "Ollie", "ai celebrity look alike", "celebrity lookalike app", "celebrity look alike finder"],
     sections: [
       {
         h2: "The Full Pipeline",
@@ -964,6 +965,7 @@ export const postsC: BlogPost[] = [
       },
     ],
     faqs: [
+      { q: "Is Ollie a celebrity lookalike app?", a: "Ollie is a celebrity lookalike AI that runs in your browser, so there is nothing to install. It works on phones and computers, and uses its own face-recognition model trained from scratch by the Ollie team." },
       { q: "How many steps does Ollie's face matching pipeline have?", a: "Four: face detection, face alignment, embedding extraction, and comparison against every celebrity photo." },
       { q: "What neural network does Ollie use?", a: "A 20-layer SphereFace-style convolutional network trained from scratch on MS1MV2 with the CosFace loss. Its fingerprints have 512 numbers and it scores 98.5% on LFW." },
       { q: "How does Ollie search the celebrity database so fast?", a: "Celebrity fingerprints are computed ahead of time, so a search only runs your photo through the network once and then compares one fingerprint with the stored ones, which takes milliseconds." },
@@ -1031,12 +1033,12 @@ export const postsC: BlogPost[] = [
     excerpt: "A guide to interpreting everything on your Ollie results page, what the percentages mean, why the ranking matters more than the score, and how to read the top five.",
     summary: "Your celebrity lookalike percentage on Ollie is a rescaled similarity score: higher means your facial proportions are closer to that celebrity's. It is for ranking, not a probability, so the order of your top five matters more than the exact number. Scores of 90% and above usually mean a resemblance people can see.",
     date: "June 20, 2026",
-    updatedIsoDate: "2026-09-23",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-06-20",
     readTime: "4 min read",
     category: "Guide",
     author: "Wendy Wei",
-    keywords: ["celebrity lookalike percentage", "face match percentage", "similarity score", "celebrity match", "celebrity lookalike results", "face recognition"],
+    keywords: ["celebrity lookalike percentage", "face match percentage", "similarity score", "celebrity match", "celebrity lookalike results", "face recognition", "celebrity lookalike test", "celebrity look alike results"],
     sections: [
       {
         h2: "The Percentage Score",
@@ -1061,6 +1063,7 @@ export const postsC: BlogPost[] = [
       },
     ],
     faqs: [
+      { q: "Is a celebrity lookalike test accurate?", a: "It measures real facial proportions, but there is no single right answer to who you look like. Treat the percentage as a way to compare your five matches with each other, not as a verdict, and try a few photos to see which names repeat." },
       { q: "What does the percentage score mean on Ollie results?", a: "A rescaled similarity score based on embedding distance, useful for ranking. Above 90% is very strong resemblance; 70–89% is meaningful similarity; below 70% the match is present but may not be visually obvious." },
       { q: "Should I focus on the #1 result or look at all five?", a: "Both. Your #1 is the closest geometric match, but looking across the top five for shared features is more informative about what specifically characterises your face's position in embedding space." },
     ],

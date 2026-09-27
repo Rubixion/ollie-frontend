@@ -5,7 +5,6 @@ import { DottedSurface } from "@/components/ui/dotted-surface"
 import { CelebrityFinder } from "@/components/celebrity-finder"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { TextEffect } from "@/components/ui/text-effect"
 import { RevealOnScroll } from "@/components/reveal-on-scroll"
 import { card } from "@/lib/surfaces"
 import { INDEX } from "@/lib/facts"
@@ -78,7 +77,7 @@ export default function MatchPage() {
         <section aria-labelledby="how-heading" className="relative mx-auto max-w-3xl px-6 pb-24 pt-8">
           <div data-reveal="1" className={`${card} p-6 md:p-10`}>
             <h2 id="how-heading" className="text-2xl font-black text-white tracking-tight text-balance">
-              <TextEffect as="span" per="word" preset="blur" inView>How Ollie matches your face</TextEffect>
+              How Ollie matches your face
             </h2>
             <ol className="mt-6 space-y-5">
               {STEPS.map(([title, text], i) => (

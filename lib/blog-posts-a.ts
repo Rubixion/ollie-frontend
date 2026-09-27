@@ -134,11 +134,12 @@ export const postsA: BlogPost[] = [
     excerpt: "Upload two photos of yourself and you might get different celebrity matches. Here is the science behind why that happens and how to get more consistent results from Ollie.",
     summary: "Two photos of the same person can give different AI face recognition results because lighting, camera angle, lens distortion and compression all change the pixels the network reads. The same reasons explain why you look different in photos. For consistent celebrity matches, use even light, face the camera and take the photo from arm's length or further.",
     date: "September 24, 2026",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-09-24",
     readTime: "5 min read",
     category: "Technology",
     author: "Liam Bradley",
-    keywords: ["face recognition results", "why do i look different in photos", "facial recognition accuracy", "photo lighting", "AI face matching", "celebrity match"],
+    keywords: ["face recognition results", "why do i look different in photos", "facial recognition accuracy", "photo lighting", "AI face matching", "celebrity match", "compare faces online", "compare two faces", "same person photo comparison"],
     sections: [
       {
         h2: "The Variability Problem in Face Matching",
@@ -177,6 +178,7 @@ export const postsA: BlogPost[] = [
       },
     ],
     faqs: [
+      { q: "How can I compare two faces online?", a: "Use a face comparison tool such as Ollie's Compare page: upload two photos and it measures how close the two facial fingerprints are. For a fair comparison, use photos with similar lighting and angle, for the reasons in this article." },
       { q: "Why do I get different results with different photos of myself?", a: "Different photos vary in lighting, angle, and compression, all of which affect the facial embedding the AI computes. The most consistent results come from front-facing, well-lit photos taken with the rear camera." },
       { q: "Does photo quality really affect face matching results?", a: "Yes significantly. Images below 200px face width, heavy JPEG compression, or extreme lighting conditions can all shift your facial embedding enough to change the top match." },
       { q: "Which type of photo gives the most accurate celebrity match?", a: "Front-facing, well-lit photos with even lighting (no harsh shadows), taken with the rear camera from at least 50cm away, produce the most accurate and stable results." },
@@ -717,12 +719,12 @@ export const postsA: BlogPost[] = [
     excerpt: "When Ollie says you are 87% similar to a celebrity, what does that number actually mean? It is not a probability. It is a rescaled distance. Here is the difference.",
     summary: "A face similarity score shows how close two face embeddings are. Ollie measures the distance between your 512-number embedding and each celebrity's (for unit-length vectors this ranks faces the same way as cosine similarity), then rescales it to a percentage that is easier to read. The percentage is for ranking matches; it is not a probability that you look alike.",
     date: "September 10, 2026",
-    updatedIsoDate: "2026-09-23",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-09-10",
     readTime: "4 min read",
     category: "Deep Dive",
     author: "Liam Bradley",
-    keywords: ["face similarity score", "face match score", "cosine similarity face recognition", "similarity score", "face recognition", "celebrity match percentage"],
+    keywords: ["face similarity score", "face match score", "cosine similarity face recognition", "similarity score", "face recognition", "celebrity match percentage", "compare faces", "compare two faces for similarity", "compare faces similarity"],
     sections: [
       {
         h2: "From Distance to Percentage",
@@ -747,6 +749,7 @@ export const postsA: BlogPost[] = [
       },
     ],
     faqs: [
+      { q: "Can I compare two faces for similarity?", a: "Yes. Ollie's Compare page takes two photos, turns each face into a 512-number fingerprint and shows how alike they are as a percentage, plus whether they are likely the same person. Neither photo is stored." },
       { q: "What does a 90% similarity score mean on Ollie?", a: "It means your fingerprint is very close to that celebrity's compared with the rest of the database. It is a rescaled distance for ranking, not a probability of being that person." },
       { q: "Why does my similarity score change between photos?", a: "Different photos produce slightly different embeddings due to lighting, angle, and image quality variations. The score reflects the embedding distance for that specific photo, not a fixed biological similarity." },
       { q: "Is a higher score always a better match?", a: "Higher scores indicate closer embedding proximity, which generally correlates with more visible similarity. However, the ranking (who is #1 vs #2) is often more informative than the absolute score values." },
@@ -755,16 +758,16 @@ export const postsA: BlogPost[] = [
   },
   {
     slug: "find-your-celebrity-lookalike",
-    title: "Find Your Celebrity Lookalike: A Complete Guide",
+    title: "Celebrity Look Alike Finder: How to Find Yours Free",
     excerpt: "Everything you need to know about getting the best celebrity match results, lighting, angles, photo quality, and why some photos work better than others.",
-    summary: "To find your celebrity lookalike, upload a clear, front-facing photo to Ollie: it turns your face into a 512-number fingerprint and shows the five celebrities whose faces are closest. It is free to try online. Soft light, a neutral expression and the rear camera give the most accurate celebrity look alike results.",
+    summary: "The quickest way to answer \"what celebrity do I look like?\" is a celebrity look alike finder. Upload a clear, front-facing photo to Ollie, a free celebrity lookalike AI: it turns your face into a 512-number fingerprint and shows the five celebrities whose faces are closest. Soft light, a neutral expression and the rear camera give the most reliable celebrity look alike results.",
     date: "August 30, 2026",
-    updatedIsoDate: "2026-09-23",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-08-30",
     readTime: "4 min read",
     category: "Guide",
     author: "Wendy Wei",
-    keywords: ["celebrity lookalike", "celebrity look alike finder", "what celebrity do i look like", "celebrity lookalike ai", "upload photo", "face match"],
+    keywords: ["celebrity lookalike", "celebrity look alike finder", "what celebrity do i look like", "celebrity lookalike ai", "upload photo", "face match", "celebrity look alike", "find my celebrity lookalike", "who is my celebrity look alike", "what actor do i look like", "what actress do i look like"],
     sections: [
       {
         h2: "How Ollie Finds Your Lookalike",
@@ -813,6 +816,9 @@ export const postsA: BlogPost[] = [
       },
     ],
     faqs: [
+      { q: "What celebrity do I look like?", a: "Upload a clear, front-facing photo to a celebrity look alike finder such as Ollie. It compares your face with 5,000+ well-known people and shows your five closest matches, with the photo of each celebrity that matched you best." },
+      { q: "Is there a free celebrity look alike finder?", a: "Yes. Ollie is free: you get 5 searches a day without an account, and a free account gives you more. There are no ads, and your photo is never stored." },
+      { q: "What actor or actress do I look like?", a: "Set the \"Compare with\" menu to Actors before you search, and Ollie ranks only people best known for acting, so your top five are all actors and actresses." },
       { q: "What kind of photo gives the best celebrity match?", a: "A clear, front-facing photo of just your face, in soft and even light, without sunglasses or heavy filters." },
       { q: "Why do I get different matches with different photos?", a: "Lighting, angle, expression and image quality all change the facial fingerprint the network computes. Try a few photos and look for the names that repeat." },
       { q: "Can I choose which gender I am matched with?", a: "Yes. By default the Gender menu under the upload box is set to Auto-detect, which shows celebrities of the gender Ollie estimates from your photo. Set it to Men or Women to choose yourself." },
@@ -823,16 +829,16 @@ export const postsA: BlogPost[] = [
   },
   {
     slug: "why-everyone-has-doppelganger",
-    title: "Why Everyone Has a Celebrity Doppelgänger (According to Science)",
+    title: "Why Everyone Has a Celebrity Doppelganger (According to Science)",
     excerpt: "There are only so many ways to arrange eyes, a nose, and a jaw within biological constraints. Here is why the mathematics of facial geometry virtually guarantees you have a famous lookalike.",
     summary: "Does everyone have a doppelganger? Probably not an exact copy, but close lookalikes are common. Faces vary along a limited number of features within biological limits, so among eight billion people many faces land near yours, and among thousands of celebrities Ollie can nearly always find one whose face is close.",
     date: "September 9, 2026",
-    updatedIsoDate: "2026-09-23",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-09-09",
     readTime: "4 min read",
     category: "Culture",
     author: "Wendy Wei",
-    keywords: ["does everyone have a doppelganger", "doppelganger", "celebrity doppelganger", "lookalike", "facial similarity", "face recognition"],
+    keywords: ["does everyone have a doppelganger", "doppelganger", "celebrity doppelganger", "lookalike", "facial similarity", "face recognition", "celebrity doppelganger finder", "find my doppelganger"],
     sections: [
       {
         h2: "Finite Face Space",
@@ -857,6 +863,7 @@ export const postsA: BlogPost[] = [
       },
     ],
     faqs: [
+      { q: "How do I find my celebrity doppelganger?", a: "Upload a clear, front-facing photo to Ollie. It turns your face into a 512-number fingerprint and shows the five celebrities whose fingerprints are closest to yours. Try two or three photos: the names that keep coming back are your most reliable doppelgangers." },
       { q: "Does everyone really have a celebrity lookalike?", a: "Mathematically, yes, given a large enough database. With thousands of celebrities in Ollie's database covering many different face types, most people find at least one strong match." },
       { q: "Why might my match be from a different ethnic group?", a: "Facial geometry, bone structure and proportions, is partly independent of ethnicity. Two people from different backgrounds can share very similar skeletal proportions and receive strong similarity scores." },
       { q: "What does a strong celebrity match actually mean?", a: "A strong match means the geometric proportions of your face, inter-feature distances, ratios, and structural relationships, closely resemble those of the matched celebrity." },
@@ -869,11 +876,12 @@ export const postsA: BlogPost[] = [
     excerpt: "Some celebrities appear in far more Ollie results than others. This is not about fame, it is about where their face sits in mathematical space.",
     summary: "The most common celebrity lookalikes are celebrities with average facial proportions: their faces sit near the middle of face space, so they are close to many people. Celebrities with unusual features match fewer people, but those matches tend to look stronger. Any celebrity lookalike app that ranks faces by distance shows this effect.",
     date: "September 8, 2026",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-09-08",
     readTime: "4 min read",
     category: "Culture",
     author: "Wendy Wei",
-    keywords: ["most common celebrity lookalikes", "celebrity lookalike app", "averageness", "face embedding", "celebrity match", "facial geometry"],
+    keywords: ["most common celebrity lookalikes", "celebrity lookalike app", "averageness", "face embedding", "celebrity match", "facial geometry", "actor look alike", "celebrity look alike"],
     sections: [
       {
         h2: "Why Some Celebrities Match More People",
@@ -898,6 +906,7 @@ export const postsA: BlogPost[] = [
       },
     ],
     faqs: [
+      { q: "Which actor do I look like?", a: "Set Ollie's \"Compare with\" menu to Actors and upload a clear, front-facing photo. You get the five actors and actresses whose facial proportions are closest to yours." },
       { q: "Why do some celebrities appear in so many people's results?", a: "Celebrities with facial proportions close to the mathematical average of the population sit near the centroid of the embedding space, making them geometrically close to more people than celebrities with unusual proportions." },
       { q: "Does a commonly matched celebrity mean I have a generic face?", a: "Not exactly, it means your proportions fall in the most populated region of face space, which most people do by definition. It reflects mathematical position in the distribution, not any personal characteristic." },
     ],
@@ -1146,15 +1155,16 @@ export const postsA: BlogPost[] = [
   },
   {
     slug: "science-of-you-look-like",
-    title: "The Science of the \"You Look Just Like...\" Compliment",
+    title: "Who Do I Look Like? The Science of \"You Look Just Like...\"",
     excerpt: "When someone says you look like a famous person, they are making an automatic geometric comparison. Here is what the psychology research says about how that works.",
     summary: "People say you look like a celebrity because the brain automatically compares every new face with faces it already knows, and celebrities are faces almost everyone knows. Humans lean on hair, expression and overall impression, so people often disagree about lookalikes. AI measures facial proportions instead, which is why its matches can differ from your friends'.",
     date: "August 29, 2026",
+    updatedIsoDate: "2026-09-26",
     isoDate: "2026-08-29",
     readTime: "4 min read",
     category: "Culture",
     author: "Wendy Wei",
-    keywords: ["why do people say i look like a celebrity", "you look like", "celebrity lookalike", "face perception", "fusiform face area", "face recognition"],
+    keywords: ["why do people say i look like a celebrity", "you look like", "celebrity lookalike", "face perception", "fusiform face area", "face recognition", "who do i look like", "my celebrity look alike", "who is my celebrity look alike"],
     sections: [
       {
         h2: "Why Humans Compare Faces Spontaneously",
@@ -1179,6 +1189,7 @@ export const postsA: BlogPost[] = [
       },
     ],
     faqs: [
+      { q: "Who do I look like?", a: "Friends usually judge by hair, expression and overall impression, so their answers vary. A celebrity lookalike AI like Ollie measures your facial proportions instead and ranks the 5,000+ celebrities in its index by how close their faces are to yours." },
       { q: "Why do people's opinions about my celebrity match often differ?", a: "Different people weight facial features differently based on their experience and cultural exposure, and can only make comparisons to celebrities they know. AI uses consistent mathematical weighting, producing the same result for the same photo." },
       { q: "Does the AI find the same matches a human would?", a: "Not always. AI embeddings weight different features than humans typically do, particularly favouring stable midface geometry. This can produce matches that humans might not spontaneously notice but that reflect genuine structural similarity." },
     ],

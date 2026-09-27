@@ -1,6 +1,95 @@
 # Ollie SEO, performance and accessibility report
 
-Date: 2026-09-24. Companion to `docs/AUDIT.md` (findings) and `docs/DESIGN.md` (design rules).
+## How SEO works on the site (current, 2026-09-26)
+
+This section is the up-to-date picture. The dated report further down (2026-09-24) is kept for history; where it says `ollie.ml`, read `www.ollieml.com`.
+
+### Domain and redirects
+- **Canonical site:** `https://www.ollieml.com`, hard-coded as `SITE_URL` in `lib/site-config.ts`.
+- **Redirects:** `ollie.ml`, `www.ollie.ml` and bare `ollieml.com` all 308 to the same path on www.ollieml.com. Cloudflare Redirect Rules on both zones do this for every path, including files in `public/` such as `/chemistry` and `/llms.txt`. The middleware (`middleware.ts`) repeats it as a backup.
+- **Search Console:** both `sc-domain:ollieml.com` and `sc-domain:ollie.ml` are verified. Filing the Change of Address from ollie.ml to ollieml.com is still to do.
+
+### Which page targets which search
+Keyword numbers are US monthly searches and keyword difficulty (KD) from OpenSEO (project "ollie"; saved keywords are listed there).
+
+| Page | Main searches | Title |
+|---|---|---|
+| `/` | celebrity lookalike AI | Ollie: Free Celebrity Lookalike AI |
+| `/match` (the money page) | what celebrity do I look like (14.8k, KD 10), celebrity look alike (60.5k, KD 7), what actor / actress / famous person do I look like (14.8k each) | What Celebrity Do I Look Like? Free Celebrity Lookalike AI |
+| `/compare` | compare faces (2.4k, KD 18), compare 2 faces online (140, KD 0), compare two faces for similarity (70, KD 3) | Compare Faces Online: Are They the Same Person? |
+| `/faq` | how the celebrity lookalike AI works; long-tail questions | FAQ: How Ollie's Celebrity Lookalike AI Works |
+| `/blog/find-your-celebrity-lookalike` | celebrity look alike finder (12.1k, KD 6), find my celebrity lookalike (2.9k) | Celebrity Look Alike Finder: How to Find Yours Free |
+| `/blog/science-of-you-look-like` | who do I look like (9.9k), my / who is my celebrity look alike (9.9k / 6.6k) | Who Do I Look Like? The Science of "You Look Just Like..." |
+| `/blog/why-everyone-has-doppelganger` | celebrity doppelganger (3.6k, KD 8) | Why Everyone Has a Celebrity Doppelganger (According to Science) |
+| `/blog/ollie-how-it-works` | ai celebrity look alike (1k), celebrity lookalike app (1.9k) | How Ollie's Celebrity Lookalike AI Works: A Technical Overview |
+| `/blog/most-matched-celebrities` | actor look alike (2.9k) | (unchanged) |
+| `/blog/understanding-your-results` | celebrity lookalike test (390) | (unchanged) |
+| `/blog/what-is-similarity-score`, `/blog/why-same-person-different-ai-results` | compare faces / compare two faces (supporting /compare) | (unchanged) |
+
+Wording rules (also in OpenSEO's project context): say "the Ollie team"; the match percentage is a similarity score for comparing results, never accuracy or a probability; plain English, no hype. `/search` (coming soon) and `/kirk-meter` are `noindex` and not in the sitemap.
+
+### Technical pieces (all automatic)
+- **Sitemap:** `app/sitemap.ts` lists `/`, `/match`, `/compare`, `/faq`, `/blog`, every post, `/contact`, `/privacy` and `/terms`. A post's `lastmod` is its `updatedIsoDate` (or `isoDate`). Bump `HOME_UPDATED` / `LEGAL_UPDATED` only when those pages really change.
+- **robots.txt:** `app/robots.ts` allows everything except `/api/` and points at the sitemap.
+- **Structured data (JSON-LD):**
+  - site-wide Organization and WebSite in `app/layout.tsx`, with `alternateName` ["Ollie ML", "ollieml.com"] so Google shows "Ollie" as the site name
+  - WebApplication on `/match`
+  - FAQPage on `/faq`
+  - BlogPosting, BreadcrumbList and FAQPage on every post
+- **og:site_name "Ollie":** set on every page that overrides the Open Graph settings, because a page's openGraph replaces the layout's instead of merging with it.
+- **AI answer engines (GEO):**
+  - `public/llms.txt` summarises the product, the model, the pages and the best guides.
+  - Every post has a keyword-led `summary` under the title, which AI engines tend to quote.
+  - Every post ends with FAQ entries phrased as real searches.
+- **IndexNow:** `npm run deploy` pings Bing and Yandex (`scripts/indexnow.mjs`). Bing's index also feeds ChatGPT search and Copilot.
+- **GA4 events** (`track()` in `lib/analytics.ts`): `match_found`, `compare_done`, `newsletter_signup`, `sign_up` and `share`. Mark the first three as key events in GA4 (Admin → Events).
+- **AI crawlers:** they stay allowed on purpose (decided 2026-09-26), so AI answers can cite Ollie.
+
+### Health check (2026-09-26)
+- **Crawl of the live site:** 100 URLs, with no 404s, no redirect chains (old domains redirect in one hop), and nothing more than 3 clicks from `/`. The FAQ meta description was shortened to fit within 160 characters. About 50 post titles run past 60 characters and Google will cut them off in results. Change those only when Search Console shows a low CTR (see step 3 of the workflow), not all at once.
+- **Lighthouse on the live site, mobile:**
+  - `/` scored 69 (TBT 480 ms)
+  - `/match` scored 60 (TBT 1,090 ms)
+  - a post scored 73
+
+  Desktop scored 95–99. Measured on the real trace, LCP is 0.5–0.65 s, so the slow mobile scores are simulated main-thread time, not a slow first paint. The cause was the three.js dotted background starting up during page load. It now loads when the browser is idle, without antialias and with the pixel ratio capped at 1.5, and looks the same. In a local build, `/match` went from 60 to 81 on mobile. `/` still has a ~1 s task when three.js starts, and that only goes away by not animating the background on phones.
+- **Blog images:** already WebP at a sensible size. Re-encoding them saves only 1–4%, so they're left as they are.
+
+### How a blog post is built for SEO
+Posts are data in `lib/blog-posts-{a,b,c}.ts` (type in `lib/blog-post-types.ts`), rendered by `app/blog/[slug]/page.tsx`. Each post has:
+- **Head:** title, meta description (the `excerpt`, cut to 160 characters), canonical URL, Open Graph article tags and the `keywords` list.
+- **Top of the page:** a breadcrumb, a category badge, and the `summary` answering the search in the first 100 words. Then the author, date and read time, and a Share button (X, LinkedIn, Facebook, Reddit, copy link).
+- **Table of contents:** built from the H2s, with readable anchors (`#best-lighting`).
+- **Automatic internal links** (`LINK_RULES` in `app/blog/[slug]/page.tsx`; one link per target, at its first mention, never to the post itself):
+  - the first mention of a lookalike phrase links to `/match`
+  - the first "compare (two) faces" / "face comparison" links to `/compare`
+  - "doppelganger" / "resemblance" links to the doppelganger post, "similarity score" to `what-is-similarity-score`, "photos of the same person" to `why-same-person-different-ai-results`. Add a rule here when a new key post needs internal links.
+  - "Read more" links to related posts after the 2nd and 4th sections
+- **Email signup:** mid-article, on posts with 5+ sections (`newsletter_signups`, source "blog").
+- **After the article:** the FAQ (with FAQPage schema), a "Find your celebrity lookalike" call to action, an About-the-author box, related articles, and previous/next post links.
+- **Footer (every page):** a "Guides" column linking the four key posts.
+
+To refresh a post: edit its `title`, `summary`, `keywords` or `faqs` and set `updatedIsoDate` to today. The sitemap and `dateModified` follow automatically.
+
+### Workflow with the tools
+1. **Search Console** (MCP `gscServer`): check impressions, queries and pages for `sc-domain:ollieml.com`. As of 2026-09-26 there's no data yet (2 impressions), because the domain is one day old.
+2. **OpenSEO** (MCP `openseo`, project "ollie"):
+   - `list_saved_keywords` is free.
+   - `research_keywords` / `get_keyword_metrics` cost credits. The account ran out on 2026-09-26: only "compare faces" was researched, and "look alike ai", "doppelganger" and "how does face recognition work" still need doing.
+   - Log every purchase in the project's research log.
+3. **When Search Console shows queries at positions 5–20** ("striking distance"): put the exact query in that page's title, summary or an FAQ, and set `updatedIsoDate`.
+4. **After each deploy:** resubmit `sitemap.xml` in Search Console, and Request indexing for any page whose title changed.
+
+### Still to do
+- File the Search Console **Change of Address** from ollie.ml to ollieml.com.
+- Add the site to **Bing Webmaster Tools** (import from Search Console).
+- In GA4, mark `match_found`, `newsletter_signup` and `sign_up` as **key events** once they've fired after the deploy.
+- **Buy OpenSEO credits** and research the remaining seeds; then check which posts are in striking distance once Search Console has data (2–4 weeks).
+- **Off-site mentions** (Show HN, Reddit, Product Hunt; see the roadmap below). With no backlinks, ranking against starbyface.com is hard.
+
+---
+
+Date of the report below: 2026-09-24. Companion to `docs/AUDIT.md` (findings) and `docs/DESIGN.md` (design rules).
 
 - **"Before"** = the live site (www.ollie.ml) on 2026-09-23.
 - **"After"** = a local production build (`next build && next start`) of branch `dev` on 2026-09-24. It isn't deployed yet, so re-run these on the live site after deploying.
@@ -131,5 +220,5 @@ Not legal advice.
   - The celebrity list follows English Wikipedia, so it leans toward US/UK fame, and roughly two-thirds of the people are men.
   - The training data (MS1MV2) is mostly lighter-skinned faces.
   - Both are disclosed on /match. Measure accuracy per group when possible and publish the result.
-- **.ml domain:** Mali's ccTLD had years of free-registration spam, and some filters still treat it with suspicion. If Ollie grows, consider moving to a mainstream TLD with 301s and a Search Console change of address.
+- **.ml domain:** done. The site moved to www.ollieml.com on 2026-09-26 with 308 redirects; the Search Console change of address is still to file.
 - **Old claims on hidden pages:** /about and /ai still contain false v1 claims (83% accuracy, 9,131 celebrities, VGGFace2, Siamese). They're hidden and 308 to /match, but rewrite them before ever unhiding them.

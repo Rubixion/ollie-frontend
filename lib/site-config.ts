@@ -14,7 +14,7 @@ export const HOME_UPDATED = "2026-09-26"
 
 // Version of the Terms + Privacy Policy a user agrees to at signup (their "Last updated" date).
 // Bump it whenever either page changes materially; it's stored with each user's consent.
-export const TERMS_VERSION = "2026-09-24"
+export const TERMS_VERSION = "2026-09-26"
 
 // Google Analytics 4. Loaded on every page from app/layout.tsx (and by hand in public/chemistry.html).
 export const GA_ID = "G-Y0XQVZLSTL"

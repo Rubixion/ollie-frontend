@@ -197,6 +197,15 @@
       animation-range: 0 55vh;
       transform-origin: 50% 0;
     }
+    /* /search: the glowing horizon lifts and swells toward you as the page scrolls (the text recedes with "near") */
+    [data-parallax="horizon"] {
+      animation-name: parallax-horizon;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 40vh;
+      transform-origin: 50% 100%;
+    }
   }
 
   .reveal-ready [data-reveal] {
@@ -206,14 +215,14 @@
   }
   .reveal-ready [data-reveal]:not(.revealed) {
     opacity: 0;
-    transform: translateY(var(--reveal-y, 40px)) scale(0.97);
+    transform: translateY(var(--reveal-y, 20px)) scale(0.99);
   }
   /* A tab panel (components/info-tabs.tsx) blurs and rises into place each time it's shown */
   .tab-panel:not([hidden]) {
     animation: tab-panel-in 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  [data-reveal="2"] { --reveal-y: 70px; }
-  [data-reveal="3"] { --reveal-y: 100px; }
+  [data-reveal="2"] { --reveal-y: 28px; }
+  [data-reveal="3"] { --reveal-y: 36px; }
   @media (min-width: 768px) {
     [data-reveal="2"] { --reveal-delay: 0.12s; }
     [data-reveal="3"] { --reveal-delay: 0.24s; }
@@ -230,6 +239,11 @@
   from {
     transform: perspective(1400px) rotateX(28deg) translateY(6vh) scale(0.9);
     opacity: 0.55;
+  }
+}
+@keyframes parallax-horizon {
+  to {
+    transform: translateY(-14vh) scale(1.25);
   }
 }
 @keyframes parallax-recede {

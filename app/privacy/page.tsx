@@ -1,6 +1,6 @@
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { BGPattern } from "@/components/bg-pattern"
+import { DottedSurface } from "@/components/ui/dotted-surface"
 
 export const metadata = {
   title: "Privacy Policy",
@@ -17,10 +17,10 @@ export default function PrivacyPage() {
     <>
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
-        <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
+        <DottedSurface className="motion-reduce:hidden" />
         <div className="max-w-3xl mx-auto px-6 pt-32 pb-20">
           <h1 className="text-4xl font-black text-white mb-2 tracking-tight">Privacy Policy</h1>
-          <p className="text-white/60 text-sm mb-12">Last updated: September 24, 2026</p>
+          <p className="text-white/60 text-sm mb-12">Last updated: September 26, 2026</p>
 
           <div className="prose prose-invert max-w-none space-y-10 text-white/60 leading-relaxed">
 
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
               <p>When you upload a photo, it is sent through our website to our matching server. There it is used to find your face and turn it into a numerical &quot;fingerprint&quot;, which is compared with the fingerprints of the celebrity photos in our database. <strong className="text-white/80">We do not store, save, log, or retain your photo, your face fingerprint, or your results.</strong> The photo is held in memory only while your search runs and is discarded when it finishes. We do not use your photos to train or improve our model.</p>
               <p className="mt-3">A face fingerprint can count as biometric data under the laws of some places. By uploading a photo you consent to this processing, for the sole purpose of showing you your matches. If you do not consent, please do not upload a photo. Only upload photos of yourself, or of people who have agreed to it.</p>
               <p className="mt-3"><strong className="text-white/80">Gender estimate:</strong> unless you choose &quot;Men&quot; or &quot;Women&quot; in the &quot;Gender&quot; menu, the matching server also estimates from your photo whether the face looks male or female, using the open-source InsightFace model, and uses that estimate only to pick which celebrities to compare you with. The estimate is made in memory, is not stored, and is discarded with your photo. It can be wrong; if you choose &quot;Men&quot; or &quot;Women&quot; instead, no estimate is used.</p>
-              <p className="mt-3"><strong className="text-white/80">Share cards:</strong> if you make a card to share your match, it is created entirely in your browser. Nothing is uploaded to us or stored. Your own photo appears on the card next to your match unless you untick "Include my photo". The card only leaves your device if you share it.</p>
+              <p className="mt-3"><strong className="text-white/80">Share cards:</strong> if you make a card to share your match, it is created entirely in your browser. Nothing is uploaded to us or stored. Your own photo appears on the card next to your match unless you untick &ldquo;Include my photo&rdquo;. The card only leaves your device if you share it.</p>
             </section>
 
             <section>
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
               <ul className="list-disc list-inside space-y-2">
                 <li><strong className="text-white/80">Account data:</strong> If you create an account, we receive your email address and, if you use Google sign-in, the basic profile details Google shares with us (such as your name). Accounts are managed by our provider Supabase.</li>
                 <li><strong className="text-white/80">Your signup choices:</strong> When you sign up, we record that you agreed to our Terms of Service (which require you to be 18 or older) and this Privacy Policy, with the date and the version you agreed to, and whether you chose to receive emails from us.</li>
-                <li><strong className="text-white/80">Email list:</strong> Only if you tick the box to receive emails, we keep your email address on our email list with the date you subscribed, and the date you unsubscribe if you do.</li>
+                <li><strong className="text-white/80">Email list:</strong> Only if you tick the box to receive emails when you sign up, or enter your email address in our mailing-list form (no account needed), we keep your email address on our email list with the date you subscribed, the wording you agreed to, and the date you unsubscribe if you do.</li>
                 <li><strong className="text-white/80">Search records:</strong> To enforce free-search limits and prevent abuse, we record each search with the time, your account ID (or, for visitors without an account, an identifier derived from your IP address) and your IP address. We do not record the photo or the result. Search records are deleted automatically after 90 days.</li>
                 <li><strong className="text-white/80">Website analytics:</strong> We use Cloudflare Web Analytics, which does not use cookies or track you across sites. It records the page you visited, the page that linked you there, your browser and device type, your country, and how fast the page loaded. We also use Google Analytics, which records the pages you visit, how you arrived, your approximate location (from your IP address), your browser and device, and how you use the site, so we can see which pages are useful. We do not use it for advertising.</li>
                 <li><strong className="text-white/80">Server logs:</strong> Our hosting provider may log standard technical data (IP address, browser type, pages requested) for security and performance.</li>
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-xl font-bold text-white mb-3">5. Emails and Unsubscribing</h2>
-              <p>Joining the email list is optional and is never pre-selected. If you join, we may send occasional emails about new Ollie features and updates. Every email will include a way to unsubscribe, and you can also unsubscribe at any time by emailing us at <a href={`mailto:${EMAIL}`} className={link}>{EMAIL}</a>. We will act on your request within 10 business days. If we use an email delivery service to send them, it receives your email address only for that purpose.</p>
+              <p>Joining the email list is optional and is never pre-selected. You can join by ticking the box when you sign up, or through the mailing-list form, which doesn&apos;t need an account. If you join, we may send occasional emails about new Ollie features and updates. Every email includes an unsubscribe link that takes you off the list straight away, and you can also unsubscribe at any time by emailing us at <a href={`mailto:${EMAIL}`} className={link}>{EMAIL}</a>. We will act on your request within 10 business days. If we use an email delivery service to send them, it receives your email address only for that purpose.</p>
             </section>
 
             <section>
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-xl font-bold text-white mb-3">8. Legal Basis</h2>
-              <p>Where privacy law such as the GDPR applies, we process your photo and face data based on your consent (by uploading it), and your email address for our email list based on your consent (by ticking the box). We process account data and your signup choices to provide the service you asked for and to keep a record of your agreement, and search records, logs and website analytics based on our legitimate interest in preventing abuse, keeping the service secure and understanding how the site is used. You can withdraw consent at any time: stop uploading photos (we keep none to delete), or unsubscribe from emails.</p>
+              <p>Where privacy law such as the GDPR applies, we process your photo and face data based on your consent (by uploading it), and your email address for our email list based on your consent (by ticking the box at signup or submitting the mailing-list form). We process account data and your signup choices to provide the service you asked for and to keep a record of your agreement, and search records, logs and website analytics based on our legitimate interest in preventing abuse, keeping the service secure and understanding how the site is used. You can withdraw consent at any time: stop uploading photos (we keep none to delete), or unsubscribe from emails.</p>
             </section>
 
             <section>

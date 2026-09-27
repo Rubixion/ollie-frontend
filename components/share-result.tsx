@@ -5,6 +5,7 @@
 import { useState, useSyncExternalStore } from "react"
 import { Download, Loader2, Share2 } from "lucide-react"
 import { drawCover, fitFont, loadImage } from "@/components/share-match"
+import { track } from "@/lib/analytics"
 
 const W = 1080, H = 1920
 const BLUE = "rgb(100, 130, 210)" // --ollie-cyan
@@ -85,6 +86,7 @@ export function ShareResult({ card, className = "" }: { card: ShareCard; classNa
       const file = new File([await drawCard(card)], `ollie-${card.path}.png`, { type: "image/png" })
       if (kind === "share") {
         await navigator.share({ files: [file], text: `${card.text} https://www.ollieml.com/${card.path}` })
+        track("share", { content_type: card.path })
       } else {
         const url = URL.createObjectURL(file)
         Object.assign(document.createElement("a"), { href: url, download: file.name }).click()

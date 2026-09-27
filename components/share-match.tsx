@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Download, Loader2, Share2, X } from "lucide-react"
+import { track } from "@/lib/analytics"
 
 interface ShareableMatch {
   name: string
@@ -266,6 +267,7 @@ export function ShareMatch({
     try {
       const file = new File([result.blob], "ollie-match.png", { type: "image/png" })
       await navigator.share({ files: [file], text: `My celebrity lookalike is ${match.name}. Find yours at https://www.ollieml.com/match` })
+      track("share", { content_type: "match" })
     } catch (e) {
       if (!(e instanceof DOMException && e.name === "AbortError")) setError("Couldn't open sharing. Try Download instead.") // AbortError = share sheet closed
     }

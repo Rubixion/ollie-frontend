@@ -4,13 +4,15 @@
 import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Upload, X, Users, Loader2, AlertCircle, User, RotateCcw, ArrowRight } from "lucide-react"
+import { Upload, X, Users, Loader2, AlertCircle, RotateCcw, ArrowRight } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
+import { track } from "@/lib/analytics"
 import { scale } from "@/components/celebrity-finder"
 import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { ShareResult } from "@/components/share-result"
 import { glass, glassOpen } from "@/lib/surfaces"
+import { PairPreview, PreviewCaption } from "@/components/result-preview"
 
 // ponytail: raw server score at or above this = same person. Same-person photos land ~47+, strangers ~40
 // (see scale() in celebrity-finder); tune here if it calls twins "same" or misses real matches.
@@ -172,6 +174,7 @@ export function FaceCompare() {
         same: json.score >= SAME_RAW,
         facesFound: Array.isArray(json.face_found) && json.face_found.every(Boolean),
       })
+      track("compare_done")
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Unknown error")
     } finally {
@@ -184,14 +187,14 @@ export function FaceCompare() {
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col">
         <div className="mb-[clamp(0.75rem,3svh,1.75rem)] text-center">
           <h1 className="fluid-h1-sm font-black text-white tracking-[-0.015em] leading-[1.05] text-balance">Same Person?</h1>
-          <p className="mt-3 text-white/70 text-base leading-relaxed text-pretty">Upload two photos to see if they&apos;re the same person, and how alike they look.</p>
+          <p className="mt-3 text-white/70 text-base leading-relaxed text-pretty">Compare two faces: upload two photos to see if they&apos;re the same person, and how alike they look.</p>
           <Link href="/faq" className="group mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-(--ollie-cyan) underline-offset-4 hover:underline">
             How it works and what happens to your photo
             <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform motion-reduce:transition-none" aria-hidden="true" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:min-h-[clamp(26rem,calc(100svh-17rem),54rem)] md:grid-cols-2 md:items-stretch">
+        <div className="grid grid-cols-1 gap-6 md:min-h-[clamp(24rem,calc(100svh-19.5rem),54rem)] md:grid-cols-2 md:items-stretch">
           <div className={`${glassOpen} flex flex-col gap-4 p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-backwards motion-reduce:animate-none`}>
             <Slot photo={photos[0]} label="First photo" onFile={(f) => loadFile(0, f)} onClear={() => setPhoto(0, null)} />
             <Slot photo={photos[1]} label="Second photo" onFile={(f) => loadFile(1, f)} onClear={() => setPhoto(1, null)} />
@@ -215,16 +218,16 @@ export function FaceCompare() {
 
           <div className={`${glass} flex flex-col justify-center p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150 fill-mode-backwards motion-reduce:animate-none`} style={{ minHeight: "clamp(16rem, 40svh, 24rem)" }} aria-live="polite" aria-busy={loading}>
             {!loading && !result && !error && (
-              <div className="flex flex-col items-center gap-4 py-16 text-center">
-                <User size={32} className="text-white/25" aria-hidden="true" />
-                <p className="text-white/70 font-medium">The result will appear here</p>
+              <div className="flex flex-col gap-5">
+                <PreviewCaption title="The result will appear here" />
+                <PairPreview labels={["Photo 1", "Photo 2"]} />
               </div>
             )}
             {loading && (
               <ProgressiveFluxLoader
                 value={Math.min(95, 100 * (1 - Math.exp(-elapsed / 6)))}
                 phases={PHASES}
-                className="gap-3 px-2 [--flux-from:var(--ollie-purple)] [--flux-to:var(--ollie-cyan)]"
+                className="gap-3 px-2 [--flux-from:var(--ollie-cyan)] [--flux-to:var(--ollie-cyan)]"
                 barClassName="h-2 bg-white/10 shadow-none"
                 textClassName="text-base sm:text-lg font-medium text-white/70"
               />
@@ -258,7 +261,7 @@ export function FaceCompare() {
                 </div>
                 <div className="h-2 rounded-full bg-white/10 overflow-hidden">
                   <motion.div
-                    className="h-full bg-linear-to-r from-(--ollie-purple) to-(--ollie-cyan)"
+                    className="h-full bg-(--ollie-cyan)"
                     initial={{ width: 0 }}
                     animate={{ width: `${result.score}%` }}
                     transition={{ duration: 0.8 }}

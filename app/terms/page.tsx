@@ -1,6 +1,6 @@
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
-import { BGPattern } from "@/components/bg-pattern"
+import { DottedSurface } from "@/components/ui/dotted-surface"
 
 export const metadata = {
   title: "Terms of Service",
@@ -16,7 +16,7 @@ export default function TermsPage() {
     <>
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
-        <BGPattern variant="grid" mask="fade-edges" fill="rgba(255,255,255,0.04)" size={32} className="fixed" />
+        <DottedSurface className="motion-reduce:hidden" />
         <div className="max-w-3xl mx-auto px-6 pt-32 pb-20">
           <h1 className="text-4xl font-black text-white mb-2 tracking-tight">Terms of Service</h1>
           <p className="text-white/60 text-sm mb-12">Last updated: September 23, 2026</p>

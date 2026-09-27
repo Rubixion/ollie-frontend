@@ -8,6 +8,7 @@ import { StepIcon } from "@/components/step-icon"
 import { ModelSection, card } from "@/components/model-section"
 import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { ScrollButton } from "@/components/scroll-button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { TextEffect } from "@/components/ui/text-effect"
 import { RevealOnScroll } from "@/components/reveal-on-scroll"
 import { INDEX } from "@/lib/facts"
@@ -87,8 +88,6 @@ const HERO_PHASES = [
   { at: 90, label: "Your top five are ready" },
 ]
 
-const btn = "group inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-6 text-sm font-bold transition-all active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ollie-cyan)"
-const primary = `${btn} bg-(--ollie-cyan) text-black hover:opacity-90`
 
 export default function Page() {
   return (
@@ -111,11 +110,13 @@ export default function Page() {
             </p>
 
             <div className="mt-[clamp(1rem,4svh,2.5rem)] flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link href="/match" className={`${primary} w-full sm:w-auto`}>
-                Find my match
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform motion-reduce:transition-none" aria-hidden="true" />
-              </Link>
-              <ScrollButton to="how" className={`${btn} w-full sm:w-auto border border-white/15 text-white hover:bg-white/[0.05] font-semibold`}>
+              <Button asChild variant="brand" size="cta" className="group w-full sm:w-auto">
+                <Link href="/match">
+                  Find my match
+                  <ArrowRight className="-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" size={16} strokeWidth={2} aria-hidden="true" />
+                </Link>
+              </Button>
+              <ScrollButton to="how" className={buttonVariants({ variant: "brandOutline", size: "cta", className: "w-full sm:w-auto" })}>
                 How it works
               </ScrollButton>
             </div>
@@ -149,7 +150,7 @@ export default function Page() {
             isn't peeking in at the bottom. On phones the stacked cards are taller than the screen anyway. */}
         <section id="how" className="px-6 py-[clamp(2.5rem,7svh,5rem)] max-w-6xl mx-auto scroll-mt-16 md:min-h-[calc(100svh-4rem)] md:flex md:flex-col md:justify-center" aria-labelledby="how-heading">
           <h2 id="how-heading" className="text-center text-3xl md:text-4xl font-black text-white tracking-tight text-balance">
-            <TextEffect as="span" per="word" preset="blur" inView>From photo to lookalike</TextEffect>
+            From photo to lookalike
           </h2>
           <p className="mt-3 mb-[clamp(1.5rem,5svh,3rem)] mx-auto text-center text-white/60 text-base max-w-lg text-pretty">
             Three steps, a few seconds. No account needed for {GUEST_LIMIT} searches a day.
@@ -170,10 +171,12 @@ export default function Page() {
           </ol>
 
           <div className="mt-10 flex justify-center">
-            <Link href="/match" className={primary}>
-              Find your celebrity look alike
-              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform motion-reduce:transition-none" aria-hidden="true" />
-            </Link>
+            <Button asChild variant="brand" size="cta" className="group">
+              <Link href="/match">
+                Find your celebrity look alike
+                <ArrowRight className="-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" size={16} strokeWidth={2} aria-hidden="true" />
+              </Link>
+            </Button>
           </div>
         </section>
 

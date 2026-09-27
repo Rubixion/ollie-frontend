@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X, Eye, EyeOff, Mail, Lock, AlertCircle, Check } from "lucide-react"
 import type { ComponentProps } from "react"
 import { rememberConsent, useAuth } from "@/components/auth-provider"
+import { track } from "@/lib/analytics"
 
 type Tab = "signin" | "signup"
 
@@ -89,6 +90,7 @@ export function AuthModal() {
     if (err) {
       setError(err)
     } else if (tab === "signup") {
+      track("sign_up", { method: "email" })
       // straight to Sign In with the email kept, so they can log in once they've confirmed
       setTab("signin")
       setPassword("")

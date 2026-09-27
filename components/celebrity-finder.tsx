@@ -8,9 +8,11 @@ import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { MATCH_ONLY } from "@/lib/site-config"
 import { INDEX } from "@/lib/facts"
+import { track } from "@/lib/analytics"
 import { ShareMatch } from "@/components/share-match"
 import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { glass, glassOpen } from "@/lib/surfaces"
+import { MatchPreview, PreviewCaption } from "@/components/result-preview"
 
 // Who took the photo and under which license: CC BY / BY-SA require this next to every photo shown.
 interface Credit {
@@ -184,7 +186,7 @@ function SearchProgress({ elapsed, className = "" }: { elapsed: number; classNam
       <ProgressiveFluxLoader
         value={pct}
         phases={SEARCH_PHASES}
-        className="gap-3 [--flux-from:var(--ollie-purple)] [--flux-to:var(--ollie-cyan)]"
+        className="gap-3 [--flux-from:var(--ollie-cyan)] [--flux-to:var(--ollie-cyan)]"
         barClassName="h-2 bg-white/10 shadow-none"
         textClassName="text-base sm:text-lg font-medium text-white/70"
       />
@@ -345,6 +347,7 @@ export function CelebrityFinder() {
         setError("No matches found. Try a different photo.")
       } else {
         setMatches(parsed)
+        track("match_found")
         setFaceFound(Boolean(data.face_found))
         setGenderUsed(gender === "auto" ? data.gender_used ?? null : null)
         setRemaining(data.remaining ?? null)
@@ -398,7 +401,7 @@ export function CelebrityFinder() {
           </Link>
         </div>
 
-        <div className={`grid grid-cols-1 gap-6 md:min-h-[clamp(26rem,calc(100svh-17rem),54rem)] md:grid-cols-2 ${matches ? "md:items-start" : "md:items-stretch"}`}>
+        <div className={`grid grid-cols-1 gap-6 md:min-h-[clamp(24rem,calc(100svh-19.5rem),54rem)] md:grid-cols-2 ${matches ? "md:items-start" : "md:items-stretch"}`}>
           {/* LEFT: Uploader */}
           <div className={`${glassOpen} flex flex-col gap-5 p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-backwards motion-reduce:animate-none`}>
             {/* Drop zone: a label around the file input, so it works with the keyboard and screen readers */}
@@ -520,14 +523,9 @@ export function CelebrityFinder() {
             <div className={`${glass} flex-1 p-5 md:p-6`} style={{ minHeight: "clamp(16rem, 40svh, 24rem)" }} aria-live="polite" aria-busy={loading}>
               {/* Placeholder: same footprint as the results so nothing jumps */}
               {!loading && !matches && !error && (
-                <div className="h-full flex flex-col items-center justify-center gap-4 py-16 text-center">
-                  <User size={32} className="text-white/25" aria-hidden="true" />
-                  <div>
-                    <p className="text-white/70 font-medium">Your top 5 matches will appear here</p>
-                    <p className="text-white/50 text-sm mt-1.5 max-w-xs mx-auto leading-relaxed">
-                      Your closest celebrity first, then four runners-up
-                    </p>
-                  </div>
+                <div className="flex flex-col gap-5">
+                  <PreviewCaption title="Your top 5 matches will appear here" sub="Your closest celebrity first, then four runners-up" />
+                  <MatchPreview />
                 </div>
               )}
 
