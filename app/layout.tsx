@@ -103,6 +103,7 @@ export default function RootLayout({
                   "@type": "WebSite",
                   "@id": `${SITE_URL}/#website`,
                   name: "Ollie",
+                  alternateName: ["Ollie ML", "ollieml.com"], // Google's site-name hints: show "Ollie", not the domain
                   url: SITE_URL,
                   inLanguage: "en",
                   publisher: { "@id": `${SITE_URL}/#organization` },

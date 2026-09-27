@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/match", types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "The Ollie Blog" }] } },
   openGraph: {
     type: "website",
+    siteName: "Ollie",
     url: "/match",
     title: "What celebrity do I look like?",
     description: DESCRIPTION,

@@ -14,14 +14,17 @@ import { INDEX } from "@/lib/facts"
 import { GUEST_LIMIT } from "@/lib/search-quota"
 
 // Distinct from /match's title so the two pages don't compete for the same search.
-const DESCRIPTION = `Ollie is a free celebrity lookalike app: upload a photo and see which of ${INDEX.celebrities} celebrities you look most like, ranked by face. Your photo is never stored.`
+// Under ~155 characters so Google shows all of it
+const DESCRIPTION = `Which celebrity do you look like? Upload a selfie and Ollie's AI finds your top 5 lookalikes from ${INDEX.celebrities} stars in seconds. Free, photo never stored.`
+const TITLE = "Ollie: Free AI Celebrity Lookalike Finder"
 
 export const metadata: Metadata = {
-  title: { absolute: "Ollie: Free Celebrity Lookalike App" },
+  title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: "/", types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "The Ollie Blog" }] } },
-  openGraph: { type: "website", url: "/", title: "Ollie: Free Celebrity Lookalike App", description: DESCRIPTION },
-  twitter: { card: "summary_large_image", title: "Ollie: Free Celebrity Lookalike App", description: DESCRIPTION },
+  // siteName repeated: a page's openGraph replaces the layout's instead of merging, and Google reads og:site_name for the site name
+  openGraph: { type: "website", url: "/", siteName: "Ollie", title: TITLE, description: DESCRIPTION },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 }
 
 // Decorative: the look of 512 numbers, not real output
