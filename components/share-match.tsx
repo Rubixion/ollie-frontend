@@ -165,10 +165,6 @@ async function drawCard(match: ShareableMatch, runnerUps: ShareableMatch[], user
   ctx.fillStyle = BLUE
   ctx.font = `700 44px ${family}`
   ctx.fillText("Find yours at ollieml.com/match", 80, 1470)
-  ctx.font = `500 24px ${family}`
-  ctx.fillStyle = "rgba(255,255,255,0.6)"
-  // Licensed photos (the celebrity index) must carry their credit; photos without one print no credit line
-  if (celeb && match.credit) ctx.fillText(`Photo of ${match.name}: ${match.credit.author}, ${match.credit.license} (cropped), via Wikimedia Commons`, 80, 1520, W - 160)
 
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png"))
 }
