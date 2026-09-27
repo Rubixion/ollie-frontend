@@ -46,3 +46,6 @@ next-env.d.ts
 !.env.example
 
 *.code-workspace
+
+# private launch drafts
+docs/LAUNCH-POSTS.md
