@@ -165,6 +165,12 @@ async function drawCard(match: ShareableMatch, runnerUps: ShareableMatch[], user
   ctx.fillStyle = BLUE
   ctx.font = `700 44px ${family}`
   ctx.fillText("Find yours at ollieml.com/match", 80, 1470)
+  // Credit every celebrity photo on the card whose license asks for attribution (CC0 / public domain don't)
+  const credited = [...(celeb ? [match] : []), ...rows.filter((r) => r.image)]
+    .filter((m) => m.credit && !/^(cc0|public domain|pd\b)/i.test(m.credit.license))
+  ctx.font = `500 20px ${family}`
+  ctx.fillStyle = "rgba(255,255,255,0.4)"
+  credited.forEach((m, i) => ctx.fillText(fitText(ctx, `${m.name}: ${m.credit!.author}, ${m.credit!.license}`, W - 160), 80, 1512 + i * 26))
 
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png"))
 }

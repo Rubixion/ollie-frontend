@@ -65,7 +65,6 @@ async function drawCard(card: ShareCard): Promise<Blob> {
   ctx.fillStyle = BLUE
   ctx.font = `700 44px ${family}`
   ctx.fillText(`Try it at ollieml.com/${card.path}`, 80, 1470, W - 160)
-
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png"))
 }
 
