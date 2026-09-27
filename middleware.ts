@@ -9,8 +9,8 @@ const OLD_HOSTS = ["ollie.ml", "www.ollie.ml", "ollieml.com"]
 const ALLOWED_PREFIXES = ["/chemistry", "/api", "/robots.txt", "/sitemap.xml", "/opengraph-image", "/icon", "/favicon.ico"]
 // Pages that exist but aren't live in the match-only release: permanently redirected to /match.
 // Anything not listed here and not a real route falls through to the 404 page (no soft 404s).
-// Live: /, /match, /blog, /contact, /privacy, /terms.
-const HIDDEN_PAGES = ["/ai", "/about", "/projects", "/info", "/search", "/chemistry"]
+// Live: /, /match, /compare, /search, /faq, /blog, /contact, /privacy, /terms.
+const HIDDEN_PAGES = ["/ai", "/about", "/projects", "/info", "/chemistry"]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl

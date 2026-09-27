@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
   const meta = user.user_metadata ?? {}
   const terms = body?.terms === true || meta.terms_accepted === true
   const emailOptIn = body?.emailOptIn === true || meta.email_opt_in === true
-  if (!terms) return NextResponse.json({ error: "Terms not accepted" }, { status: 400 })
   const termsVersion =
     typeof body?.termsVersion === "string" ? body.termsVersion.slice(0, 20)
     : typeof meta.terms_version === "string" ? meta.terms_version.slice(0, 20)
@@ -40,6 +39,9 @@ export async function POST(req: NextRequest) {
     console.error("consent read failed:", readError.message)
     return NextResponse.json({ error: "Could not save" }, { status: 500 })
   }
+  // Already on record counts too: Google sign-ups carry no metadata, so a later opt-in (the /search page's
+  // "Join the mailing list") only sends emailOptIn
+  if (!terms && !existing?.terms_accepted_at) return NextResponse.json({ error: "Terms not accepted" }, { status: 400 })
 
   const now = new Date().toISOString()
   const subscribe = emailOptIn && !existing?.email_opt_in && !existing?.email_opt_out_at

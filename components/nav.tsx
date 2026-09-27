@@ -20,6 +20,7 @@ const links = MATCH_ONLY
       { label: "Home", href: "/" },
       { label: "Match", href: "/match" },
       { label: "Compare", href: "/compare" },
+      { label: "Search", href: "/search" },
       { label: "Contact", href: "/contact" },
     ]
   : [
