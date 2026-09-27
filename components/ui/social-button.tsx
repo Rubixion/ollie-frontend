@@ -1,13 +1,14 @@
 // Social Share Button from 21st.dev (Shatlyk1011/social-button): https://21st.dev/Shatlyk1011/social-button
 // Ollie: the buttons now share `url` for real (X, LinkedIn, Facebook, Reddit; Instagram has no link sharing),
 // copy link uses the clipboard, brand logos from svgl.app (lucide dropped brand icons), dark colors only,
-// the site's cn(), and an aria-label on each button.
+// the site's cn(), and an aria-label on each button. Share opens the native share sheet first (handleShare).
 'use client'
 
 import { useState, FC, ReactNode, useRef, useEffect, type RefObject } from 'react'
 import { Check, Copy, Share2 } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { track } from '@/lib/analytics'
 
 function useClickOutside(ref: RefObject<HTMLElement | null>, handler: () => void) {
   useEffect(() => {
@@ -38,6 +39,17 @@ export default function SocialButton({ url, title, className }: { url: string; t
     } catch {} // clipboard blocked: nothing to do
   }
 
+  // The device's own share sheet (every app installed) where the browser has one; the icon row is the fallback
+  const handleShare = async () => {
+    if (!navigator.share) return setIsExpanded(true)
+    try {
+      await navigator.share({ url, title })
+      track('share', { content_type: 'article' })
+    } catch (e) {
+      if (!(e instanceof DOMException && e.name === 'AbortError')) setIsExpanded(true) // AbortError = sheet closed
+    }
+  }
+
   const u = encodeURIComponent(url)
   const t = encodeURIComponent(title)
 
@@ -54,7 +66,7 @@ export default function SocialButton({ url, title, className }: { url: string; t
             'cursor-pointer rounded-full'
           )}
           initial={false}
-          onClick={() => !isExpanded && setIsExpanded(true)}
+          onClick={() => !isExpanded && handleShare()}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         >
           <AnimatePresence mode='sync'>
