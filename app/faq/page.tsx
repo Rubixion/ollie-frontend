@@ -9,10 +9,10 @@ import { card } from "@/lib/surfaces"
 import { MODEL, OWNER, SEARCH_LOG_DAYS } from "@/lib/facts"
 import { FAQ, STEPS } from "@/lib/faq"
 
-const DESCRIPTION = "How Ollie matches your face, how to get a better match, what it gets wrong, what happens to your photo, and answers to common questions."
+const DESCRIPTION = "How Ollie's celebrity lookalike AI matches your face, how to get a better match, what it gets wrong, what happens to your photo, and answers to common questions."
 
 export const metadata: Metadata = {
-  title: "FAQ: How Ollie Works",
+  title: "FAQ: How Ollie's Celebrity Lookalike AI Works",
   description: DESCRIPTION,
   alternates: { canonical: "/faq" },
   openGraph: { type: "website", siteName: "Ollie", url: "/faq", title: "Ollie FAQ", description: DESCRIPTION },

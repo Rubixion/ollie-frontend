@@ -15,8 +15,8 @@ import { GUEST_LIMIT } from "@/lib/search-quota"
 
 // Distinct from /match's title so the two pages don't compete for the same search.
 // Under ~155 characters so Google shows all of it
-const DESCRIPTION = `Which celebrity do you look like? Upload a selfie and Ollie's AI finds your top 5 lookalikes from ${INDEX.celebrities} stars in seconds. Free, photo never stored.`
-const TITLE = "Ollie: Free AI Celebrity Lookalike Finder"
+const DESCRIPTION = `Which celebrity do you look like? Ollie's celebrity lookalike AI finds your top 5 matches from ${INDEX.celebrities} stars in seconds. Free, photo never stored.`
+const TITLE = "Ollie: Free Celebrity Lookalike AI"
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
@@ -102,12 +102,12 @@ export default function Page() {
         <section className="relative flex min-h-svh flex-col items-center px-6 pt-[clamp(5rem,13svh,9rem)] pb-[clamp(1rem,4svh,2.5rem)]">
           <div className="w-full max-w-4xl mx-auto text-center" data-parallax="near">
             <h1 className="fluid-h1 font-black text-white tracking-[-0.015em] leading-[1.05] text-balance">
-              Find your celebrity lookalike.{" "}
+              Find your celebrity lookalike with AI.{" "}
               <TextEffect as="span" per="word" preset="blur" delay={0.3} className="text-white/50">In seconds.</TextEffect>
             </h1>
             <p className="mt-[clamp(0.75rem,2.5svh,1.5rem)] text-white/70 text-base sm:text-lg leading-relaxed max-w-xl mx-auto text-pretty">
-              Upload a photo and see the five celebrities whose faces are closest to yours. Free, and your photo is
-              never stored.
+              Upload a photo and Ollie&apos;s machine learning model finds the five celebrities whose faces are closest
+              to yours. Free, and your photo is never stored.
             </p>
 
             <div className="mt-[clamp(1rem,4svh,2.5rem)] flex flex-col sm:flex-row items-center justify-center gap-3">

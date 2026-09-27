@@ -2,7 +2,7 @@ import { INDEX } from "@/lib/facts"
 import { OG_SIZE, ogCard } from "@/lib/og-card"
 
 // Static (no request data), so it's rendered once at build time. Also used for twitter:image.
-export const alt = "Ollie: which celebrity do you look like?"
+export const alt = "Ollie: celebrity lookalike AI. Which celebrity do you look like?"
 export const size = OG_SIZE
 export const contentType = "image/png"
 

@@ -34,7 +34,7 @@ export function Footer() {
               OLLIE
             </PageLink>
             <p className="text-white/60 text-xs leading-relaxed mt-3 max-w-[220px]">
-              Celebrity lookalike search. Upload a photo and see who you look like.
+              Celebrity lookalike AI. Upload a photo and see who you look like.
             </p>
             <p className="text-white/60 text-xs mt-3">&copy; 2026 Ollie</p>
           </div>

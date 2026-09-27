@@ -19,10 +19,10 @@ const TOP_QUESTIONS = ["How accurate is Ollie?", "What actor or actress do I loo
 
 // Worded after what people search (2026-09 keyword research): "what celebrity do I look like", "celebrity look alike",
 // "what actor/actress do I look like". This is the page meant to rank for them; the home page links here.
-const DESCRIPTION = `Find your celebrity look alike, free. Upload a photo and Ollie ranks ${INDEX.celebrities} actors, actresses and stars by how much they look like you. Photo never stored.`
+const DESCRIPTION = `Find your celebrity look alike with AI. Upload a photo and Ollie's ML model ranks ${INDEX.celebrities} actors, actresses and stars by likeness. Free, photo never stored.`
 
 export const metadata: Metadata = {
-  title: { absolute: "What Celebrity Do I Look Like? Celebrity Look Alike Finder" },
+  title: { absolute: "What Celebrity Do I Look Like? Free Celebrity Lookalike AI" },
   description: DESCRIPTION,
   alternates: { canonical: "/match", types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "The Ollie Blog" }] } },
   openGraph: {
@@ -51,6 +51,7 @@ const jsonLd = [
     browserRequirements: "Requires JavaScript",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     featureList: [
+      "Celebrity lookalike AI built on Ollie's own face-recognition machine learning model",
       `Ranks ${INDEX.celebrities} celebrities by facial similarity`,
       "Top five matches with credited, openly licensed photos",
       "Detects your gender from the photo by default, or lets you pick men or women",

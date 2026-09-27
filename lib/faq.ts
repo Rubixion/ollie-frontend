@@ -9,7 +9,7 @@ export const STEPS = [
   ],
   [
     "The model turns it into numbers.",
-    "Ollie's own neural network reads the aligned face and outputs 512 numbers that describe its structure. Photos of the same person land close together, and different people land further apart.",
+    "Ollie's own machine learning (ML) model, a neural network, reads the aligned face and outputs 512 numbers that describe its structure. Photos of the same person land close together, and different people land further apart.",
   ],
   [
     "Celebrities are ranked by closeness.",
@@ -55,7 +55,7 @@ export const FAQ: [string, string][] = [
     "You can, but Ollie only matches the largest face in the photo. If someone else's face is bigger or closer to the camera, you'll get their matches instead of yours. Crop the photo to just your face first. It takes a few seconds and gives a cleaner result.",
   ],
   [
-    "How is Ollie different from other lookalike apps?",
+    "How is Ollie different from other lookalike AI apps?",
     `The face-recognition model behind Ollie was written and trained from scratch by the Ollie team, instead of calling a commercial face-recognition service. Every celebrity photo is openly licensed and credited, and your photo is never stored. It's a small project, so the celebrity list is smaller than a big company's would be, and its limitations are listed on this page.`,
   ],
 ]

@@ -18,12 +18,12 @@ const outfit = Outfit({
 })
 
 const description =
-  "Upload a photo and see which celebrities you look like. Ollie's face-recognition network compares your face with thousands of celebrity photos. Free to try."
+  "Celebrity lookalike AI: upload a photo and Ollie's own machine learning model finds which of 5,000+ celebrities you look like. Free, photo never stored."
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Ollie: Which Celebrity Do You Look Like?",
+    default: "Ollie: Celebrity Lookalike AI",
     template: "%s | Ollie",
   },
   description,
@@ -31,14 +31,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Ollie",
-    title: "Ollie: Which Celebrity Do You Look Like?",
+    title: "Ollie: Celebrity Lookalike AI",
     description,
     url: SITE_URL,
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ollie: Which Celebrity Do You Look Like?",
+    title: "Ollie: Celebrity Lookalike AI",
     description,
   },
   // one directive for every crawler; each page sets its own canonical (none is inherited from here)
@@ -95,8 +95,8 @@ export default function RootLayout({
                   url: SITE_URL,
                   logo: `${SITE_URL}/icon.svg`,
                   description:
-                    "Ollie is a celebrity lookalike search built on a facial recognition neural network trained from scratch.",
-                  knowsAbout: ["Face recognition", "Deep learning", "Convolutional neural networks", "Celebrity look-alikes"],
+                    "Ollie is a celebrity lookalike AI built on its own face-recognition machine learning (ML) model, trained from scratch.",
+                  knowsAbout: ["Celebrity lookalike AI", "Machine learning", "Face recognition", "Deep learning", "Convolutional neural networks", "Celebrity look-alikes"],
                   contactPoint: { "@type": "ContactPoint", contactType: "customer support", url: `${SITE_URL}/contact` },
                 },
                 {
