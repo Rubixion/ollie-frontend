@@ -17,10 +17,12 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^1.0.1",
     "@opennextjs/cloudflare": "^1.19.11",
     "@radix-ui/react-label": "^2.1.9",
     "@radix-ui/react-separator": "^1.1.9",
     "@radix-ui/react-slot": "^1.2.5",
+    "@shadcn/react": "^0.3.1",
     "@splinetool/react-spline": "^4.1.0",
     "@splinetool/runtime": "^1.12.97",
     "@supabase/supabase-js": "^2.107.0",
