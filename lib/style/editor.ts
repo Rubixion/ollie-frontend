@@ -1,4 +1,4 @@
-// The /style editor: which cards each tab shows (best picks first), and how a chosen look becomes the
+// The /ai-stylist editor: which cards each tab shows (best picks first), and how a chosen look becomes the
 // image-edit instruction. The server rebuilds the instruction from option ids, so no client text reaches the model.
 import type { ShapeResult } from "./face-shape"
 import {

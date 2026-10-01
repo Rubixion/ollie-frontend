@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     console.error("consent read failed:", readError.message)
     return NextResponse.json({ error: "Could not save" }, { status: 500 })
   }
-  // Already on record counts too: Google sign-ups carry no metadata, so a later opt-in (the /search page's
+  // Already on record counts too: Google sign-ups carry no metadata, so a later opt-in (the /face-search page's
   // "Join the mailing list") only sends emailOptIn
   if (!terms && !existing?.terms_accepted_at) return NextResponse.json({ error: "Terms not accepted" }, { status: 400 })
 

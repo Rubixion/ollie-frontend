@@ -1,5 +1,6 @@
 // Self-check for the style logic. Run:
 //   npx esbuild lib/style/style.check.ts --bundle --platform=node --outfile=%TEMP%/style-check.cjs && node %TEMP%/style-check.cjs
+import { chooseOutfit, layers } from "./model"
 import assert from "node:assert/strict"
 import { NORMS, classify, type Ratios } from "./face-shape"
 import { grooming, heightClass, rankCuts, type Answers } from "./recommend"
@@ -45,5 +46,17 @@ assert.equal(heightClass({ ...base, gender: "male", height: 168 }), "short")
 assert.equal(heightClass({ ...base, gender: "female", height: 168 }), undefined)
 assert.equal(heightClass({ ...base, gender: "female", height: 175 }), "tall")
 assert.equal(heightClass({ ...base, gender: "male", height: 180 }), undefined)
+
+// the free model: layers stack bottom-up, a jacket over a hoodie uses its hood version, tops get the jacket's clip mask
+const have = ["champion-rw-hoodie", "uniqlo-u-tee", "levis-trucker", "levis-trucker@hood", "levis-501", "converse-chuck-70", "patagonia-torrentshell", "alpha-ma1"]
+const stack = layers("male", "athletic", { top: "champion-rw-hoodie", outer: "levis-trucker", bottom: "levis-501", shoes: "converse-chuck-70" }, have)
+assert.deepEqual(stack.map((l) => l.slot), ["shoes", "bottom", "top", "outer"])
+assert.ok(stack[3].src.includes("/male-athletic/") && stack[3].src.endsWith("levis-trucker@hood.webp") && stack[2].mask?.endsWith("levis-trucker@hood.clip.webp"))
+assert.ok(layers("male", "athletic", { top: "uniqlo-u-tee", outer: "levis-trucker" }, have)[1].src.endsWith("levis-trucker.webp"))
+assert.equal(layers("male", "athletic", { bottom: "dickies-874" }, have).length, 0, "no layer, nothing drawn")
+// choose for me: style first, plus bodies lean to longer layers, items without a layer are never picked
+assert.equal(chooseOutfit("techwear", "male", have).outfit.outer, "patagonia-torrentshell")
+assert.equal(chooseOutfit("minimal", "male", have).outfit.outer, undefined, "no minimal jacket has a layer here, so none")
+for (const id of Object.values(chooseOutfit("workwear", "female", have, "plus").outfit)) assert.ok(have.includes(id!))
 
 console.log("style checks passed")

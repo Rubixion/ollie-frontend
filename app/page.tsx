@@ -14,7 +14,7 @@ import { RevealOnScroll } from "@/components/reveal-on-scroll"
 import { INDEX } from "@/lib/facts"
 import { GUEST_LIMIT } from "@/lib/search-quota"
 
-// Distinct from /match's title so the two pages don't compete for the same search.
+// Distinct from /celebrity-lookalike's title so the two pages don't compete for the same search.
 // Under ~155 characters so Google shows all of it
 const DESCRIPTION = `Which celebrity do you look like? Ollie's celebrity lookalike AI finds your top 5 matches from ${INDEX.celebrities} stars in seconds. Free, photo never stored.`
 const TITLE = "Ollie: Free Celebrity Lookalike AI"
@@ -111,7 +111,7 @@ export default function Page() {
 
             <div className="mt-[clamp(1rem,4svh,2.5rem)] flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button asChild variant="brand" size="cta" className="group w-full sm:w-auto">
-                <Link href="/match">
+                <Link href="/celebrity-lookalike">
                   Find my match
                   <ArrowRight className="-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" size={16} strokeWidth={2} aria-hidden="true" />
                 </Link>
@@ -122,7 +122,7 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Mock /match window: the search loader plays on a loop in place of a screenshot */}
+          {/* Mock /celebrity-lookalike window: the search loader plays on a loop in place of a screenshot */}
           <div className="mt-[clamp(1.25rem,5svh,4rem)] flex min-h-48 w-full max-w-4xl flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#050505] max-h-[clamp(16rem,42svh,30rem)]" data-parallax="rise" aria-hidden="true">
             <div className="relative flex items-center justify-center border-b border-white/10 bg-white/[0.02] px-4 py-3">
               <div className="absolute left-4 flex gap-1.5">
@@ -172,7 +172,7 @@ export default function Page() {
 
           <div className="mt-10 flex justify-center">
             <Button asChild variant="brand" size="cta" className="group">
-              <Link href="/match">
+              <Link href="/celebrity-lookalike">
                 Find your celebrity look alike
                 <ArrowRight className="-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" size={16} strokeWidth={2} aria-hidden="true" />
               </Link>

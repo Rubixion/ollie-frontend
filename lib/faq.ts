@@ -1,7 +1,7 @@
 import { INDEX, MODEL, SEARCH_LOG_DAYS } from "@/lib/facts"
 import { GUEST_LIMIT } from "@/lib/search-quota"
 
-// Shared by /faq (all of it) and /match (the steps and a few questions, so the page people land on still explains itself)
+// Shared by /faq (all of it) and /celebrity-lookalike (the steps and a few questions, so the page people land on still explains itself)
 export const STEPS = [
   [
     "Ollie finds your face.",

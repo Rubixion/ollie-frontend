@@ -19,7 +19,7 @@ export default function NotFound() {
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Button asChild variant="brand" size="cta" className="group">
-              <Link href="/match">
+              <Link href="/celebrity-lookalike">
                 Find my match
                 <ArrowRight className="-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" size={16} strokeWidth={2} aria-hidden="true" />
               </Link>

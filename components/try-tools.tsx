@@ -9,7 +9,7 @@ import { UsersIcon, type UsersIconHandle } from "@/components/ui/users-icon"
 
 const arrow = "-me-1 ms-2 opacity-60 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
 
-// Match and Compare buttons for the /search coming-soon page. The icons play once as the buttons fade in
+// Match and Compare buttons for the /face-search coming-soon page. The icons play once as the buttons fade in
 // (ComingSoon02 shows its actions ~1s after load), then only when the button is hovered or focused.
 export function TryTools() {
   const scan = useRef<ScanFaceIconHandle>(null)
@@ -26,7 +26,7 @@ export function TryTools() {
   return (
     <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
       <Button asChild variant="brand" size="cta" className="group flex-1">
-        <Link href="/match" onMouseEnter={() => scan.current?.startAnimation()} onFocus={() => scan.current?.startAnimation()}>
+        <Link href="/celebrity-lookalike" onMouseEnter={() => scan.current?.startAnimation()} onFocus={() => scan.current?.startAnimation()}>
           <ScanFaceIcon ref={scan} appear size={18} className="-ms-1 me-2" aria-hidden="true" />
           Match
           <ArrowRight className={arrow} size={16} strokeWidth={2} aria-hidden="true" />
@@ -34,7 +34,7 @@ export function TryTools() {
       </Button>
       <Button asChild variant="brandOutline" size="cta" className="group flex-1">
         <Link
-          href="/compare"
+          href="/compare-faces"
           onMouseEnter={() => users.current?.startAnimation()}
           onFocus={() => users.current?.startAnimation()}
           onMouseLeave={() => users.current?.stopAnimation()}

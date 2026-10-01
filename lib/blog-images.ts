@@ -24,17 +24,6 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Face_Recognition_3252983.png"
   },
-  "what-is-a-facial-fingerprint": {
-    "src": "/blog/img/what-is-a-facial-fingerprint.webp",
-    "thumb": "/blog/img/what-is-a-facial-fingerprint-sm.webp",
-    "width": 1280,
-    "height": 853,
-    "alt": "Close-up of the ridges of a human fingertip",
-    "credit": "Zephyris",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fingerprint.jpg"
-  },
   "why-same-person-different-ai-results": {
     "src": "/blog/img/why-same-person-different-ai-results.webp",
     "thumb": "/blog/img/why-same-person-different-ai-results-sm.webp",
@@ -46,7 +35,7 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Canon_EF-M_32mm_F1.4_STM_lens-aperture_blades_PNr%C2%B00803.jpg"
   },
-  "math-behind-your-face": {
+  "face-recognition-math": {
     "src": "/blog/img/math-behind-your-face.webp",
     "thumb": "/blog/img/math-behind-your-face-sm.webp",
     "width": 1280,
@@ -112,17 +101,6 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:PhotoSEL_LS21E52_Softbox_Studio_Lighting_Kit_(2).jpg"
   },
-  "inside-ai-face-matching": {
-    "src": "/blog/img/inside-ai-face-matching.webp",
-    "thumb": "/blog/img/inside-ai-face-matching-sm.webp",
-    "width": 1280,
-    "height": 850,
-    "alt": "Rows of servers lit blue in a data centre",
-    "credit": "BalticServers.com",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:BalticServers_data_center.jpg"
-  },
   "siamese-neural-networks-explained": {
     "src": "/blog/img/siamese-neural-networks-explained.webp",
     "thumb": "/blog/img/siamese-neural-networks-explained-sm.webp",
@@ -134,18 +112,7 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Artificial_Neural_Network_with_Chip.png"
   },
-  "why-two-networks": {
-    "src": "/blog/img/why-two-networks.webp",
-    "thumb": "/blog/img/why-two-networks-sm.webp",
-    "width": 1280,
-    "height": 591,
-    "alt": "Diagram of a feed-forward neural network with weighted layers",
-    "credit": "QuantuMechaniX8",
-    "license": "CC0",
-    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Neural_Network.svg"
-  },
-  "siamese-versatility": {
+  "siamese-network-applications": {
     "src": "/blog/img/siamese-versatility.webp",
     "thumb": "/blog/img/siamese-versatility-sm.webp",
     "width": 900,
@@ -266,18 +233,7 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Human_skull_at_human_anatomy_museum_(Pisa_university).jpg"
   },
-  "twins-different-celebrity": {
-    "src": "/blog/img/twins-different-celebrity.webp",
-    "thumb": "/blog/img/twins-different-celebrity-sm.webp",
-    "width": 1280,
-    "height": 852,
-    "alt": "The Petronas Twin Towers seen from below",
-    "credit": "Jorge Láscar from Melbourne, Australia",
-    "license": "CC BY 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Petronas_Towers,_the_tallest_twin_towers_of_the_world_(18793138848).jpg"
-  },
-  "science-of-you-look-like": {
+  "why-people-say-you-look-like-someone": {
     "src": "/blog/img/science-of-you-look-like.webp",
     "thumb": "/blog/img/science-of-you-look-like-sm.webp",
     "width": 1200,
@@ -695,17 +651,6 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chimpanzee_female_Twycross.jpg"
   },
-  "face-symmetry-and-genetics": {
-    "src": "/blog/img/face-symmetry-and-genetics.webp",
-    "thumb": "/blog/img/face-symmetry-and-genetics-sm.webp",
-    "width": 1280,
-    "height": 721,
-    "alt": "Diagram of the 23 pairs of human chromosomes",
-    "credit": "National Human Genome Research Institute (NHGRI)",
-    "license": "Public domain",
-    "licenseUrl": "",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Human_karyotype_diagram_showing_autosomes_and_sex_chromosomes_-_NHGRI.jpg"
-  },
   "face-memory-psychology": {
     "src": "/blog/img/face-memory-psychology.webp",
     "thumb": "/blog/img/face-memory-psychology-sm.webp",
@@ -826,17 +771,6 @@ export const blogImages: Record<string, BlogImage> = {
     "license": "CC0",
     "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:United_States_presidential_election_ordinal_results_bar_graph_(Expanded).png"
-  },
-  "cross-age-celebrity-match": {
-    "src": "/blog/img/cross-age-celebrity-match.webp",
-    "thumb": "/blog/img/cross-age-celebrity-match-sm.webp",
-    "width": 673,
-    "height": 900,
-    "alt": "A 19th-century family portrait photograph",
-    "credit": "Conrad L'Allemand",
-    "license": "Public domain",
-    "licenseUrl": "",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Family_George_V_of_Hanover.jpg"
   },
   "vggface2-explained": {
     "src": "/blog/img/vggface2-explained.webp",

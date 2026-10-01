@@ -4,15 +4,15 @@ import { MATCH_ONLY } from "@/lib/site-config"
 const nav = MATCH_ONLY
   ? [
       { label: "Home", href: "/" },
-      { label: "Match", href: "/match" },
-      { label: "Compare", href: "/compare" },
-      { label: "Search", href: "/search" },
+      { label: "Match", href: "/celebrity-lookalike" },
+      { label: "Compare", href: "/compare-faces" },
+      { label: "Search", href: "/face-search" },
       { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
     ]
   : [
-      { label: "Match", href: "/match" },
+      { label: "Match", href: "/celebrity-lookalike" },
       { label: "How It Works", href: "/ai" },
       { label: "Blog", href: "/blog" },
       { label: "About", href: "/about" },

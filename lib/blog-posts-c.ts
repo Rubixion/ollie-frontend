@@ -8,10 +8,11 @@ export const postsC: BlogPost[] = [
     summary: "Facial recognition does work as you age, but accuracy drops as the gap between photos grows. Skin, fat and muscle change over decades while bone structure stays largely the same after early adulthood, and the network relies mostly on that structure. Photos a few years apart usually match well; photos decades apart, much less reliably.",
     date: "July 27, 2026",
     isoDate: "2026-07-27",
+    updatedIsoDate: "2026-10-01",
     readTime: "4 min read",
     category: "Science",
     author: "Wendy Wei",
-    keywords: ["does facial recognition work as you age", "aging face recognition", "face recognition accuracy", "cross-age", "bone structure", "facial aging"],
+    keywords: ["does facial recognition work as you age", "aging face recognition", "face recognition accuracy", "cross-age", "bone structure", "facial aging", "face recognition old photos", "old photo facial recognition", "cross-age matching", "celebrity match", "aging", "face recognition"],
     sections: [
       {
         h2: "What Changes and What Doesn't",
@@ -27,12 +28,20 @@ export const postsC: BlogPost[] = [
           "For Ollie, cross-age robustness means that a photo taken a decade ago will typically return the same top celebrity matches as a recent photo, the stable geometry signal dominates the changing surface signal. Photos from adolescence or early adulthood may diverge, because the face structure may not yet have fully developed.",
         ],
       },
+      {
+        h2: "When Consistency Breaks Down",
+        paragraphs: [
+          "Three scenarios produce meaningful shifts across age: <strong>adolescent photos</strong> (face proportions change substantially during puberty), <strong>very large weight changes</strong> (which alter soft tissue geometry significantly), and <strong>medical conditions</strong> that affect facial structure. Outside these scenarios, adult photos across a 20-year span will typically produce consistent top matches.",
+          "To test your own consistency, try uploading a photo from 5+ years ago alongside a recent one and compare the rankings. Where they agree, the similarity is robustly structural. Where they differ, the difference reflects photo condition variation or genuine facial change.",
+        ],
+      },
     ],
     faqs: [
       { q: "Does aging affect my celebrity match results?", a: "Moderately. Deep embedding systems are robust to aging because they capture bone structure rather than surface texture. Photos from the same adult period will produce consistent results; childhood photos may differ." },
       { q: "Can face recognition match photos taken 20 years apart?", a: "Usually yes with good photo quality. State-of-the-art cross-age systems achieve over 90% accuracy on 20-year gaps. Larger gaps or childhood-to-adult pairs are harder." },
+      { q: "Will my celebrity match change as I get older?", a: "Slowly, if at all, for adults. Bone structure is stable, keeping the embedding in the same region of face space. Large weight changes or photos from adolescence can produce more noticeable shifts." },
     ],
-    relatedSlugs: ["celebrity-match-different-era", "math-behind-your-face", "what-is-a-facial-fingerprint"],
+    relatedSlugs: ["celebrity-match-different-era", "face-recognition-math", "what-is-facial-embedding"],
   },
   {
     slug: "photo-angle-celebrity-match",
@@ -163,7 +172,7 @@ export const postsC: BlogPost[] = [
     faqs: [
       { q: "What is my face shape and how does it affect my celebrity match?", a: "Traditional face shapes (oval, square, heart) describe the overall silhouette. AI matches on many more dimensions simultaneously, two people with the same shape category can receive very different matches due to differences in feature proportions." },
     ],
-    relatedSlugs: ["what-celebrity-match-reveals", "math-behind-your-face", "why-everyone-has-doppelganger"],
+    relatedSlugs: ["what-celebrity-match-reveals", "face-recognition-math", "why-everyone-has-doppelganger"],
   },
   {
     slug: "celebrity-face-evolution",
@@ -260,7 +269,7 @@ export const postsC: BlogPost[] = [
       { q: "Does the golden ratio really determine facial attractiveness?", a: "The evidence is weak. Averageness (closeness to the population mean on many dimensions) is a more robust predictor of attractiveness than golden ratio proportions." },
       { q: "Does Ollie's face recognition measure attractiveness?", a: "No. The embedding captures identity-relevant geometry, features that distinguish individuals. Attractiveness is not encoded as a dimension." },
     ],
-    relatedSlugs: ["symmetrical-faces", "what-celebrity-match-reveals", "science-of-you-look-like"],
+    relatedSlugs: ["symmetrical-faces", "what-celebrity-match-reveals", "why-people-say-you-look-like-someone"],
   },
   {
     slug: "face-attractiveness-research",
@@ -324,7 +333,7 @@ export const postsC: BlogPost[] = [
     faqs: [
       { q: "What does my reaction to my celebrity match reveal?", a: "Reactions are strongly shaped by how the match comparison makes you feel about yourself, not just by accuracy. The AI's result is emotionally neutral; the emotional charge comes from self-image filters." },
     ],
-    relatedSlugs: ["your-own-face", "science-of-you-look-like", "what-celebrity-match-reveals"],
+    relatedSlugs: ["your-own-face", "why-people-say-you-look-like-someone", "what-celebrity-match-reveals"],
   },
   {
     slug: "face-recognition-in-dating",
@@ -388,7 +397,7 @@ export const postsC: BlogPost[] = [
     faqs: [
       { q: "Can face recognition detect family resemblance?", a: "Statistically yes. Family members produce facial embeddings that are closer together than unrelated people's embeddings, reflecting the substantial heritability of facial geometry." },
     ],
-    relatedSlugs: ["twins-different-celebrity", "math-behind-your-face", "why-everyone-has-doppelganger"],
+    relatedSlugs: ["identical-twins-different-profiles", "face-recognition-math", "why-everyone-has-doppelganger"],
   },
   {
     slug: "face-reading-pseudoscience",
@@ -598,7 +607,7 @@ export const postsC: BlogPost[] = [
     faqs: [
       { q: "Can the same AI technology recognise animal faces?", a: "Yes, with species-specific training. The same embedding-and-similarity-search architecture works for animals, but requires retraining on species-specific data rather than human face data." },
     ],
-    relatedSlugs: ["siamese-versatility", "training-data-matters", "how-face-recognition-works"],
+    relatedSlugs: ["siamese-network-applications", "training-data-matters", "how-face-recognition-works"],
   },
   {
     slug: "face-recognition-in-medicine",
@@ -630,39 +639,7 @@ export const postsC: BlogPost[] = [
     faqs: [
       { q: "Can AI diagnose medical conditions from face photos?", a: "For some genetic conditions with characteristic facial features, yes. Systems like Face2Gene have been validated for hundreds of genetic syndromes. They are decision-support tools, not autonomous diagnostics." },
     ],
-    relatedSlugs: ["how-cnns-see-faces", "siamese-versatility", "math-behind-your-face"],
-  },
-  {
-    slug: "face-symmetry-and-genetics",
-    title: "Face Symmetry and Genetics: What Your Bilateral Symmetry Tells You",
-    excerpt: "Facial symmetry reflects developmental stability, which in turn reflects genetic and environmental quality. Here is the science of what symmetry actually signals.",
-    summary: "Facial symmetry is partly genetic, but most asymmetry comes from stress and random noise during development, known as fluctuating asymmetry. Low asymmetry is read as a sign of healthy development, though its link to actual health is weak. Small asymmetries are normal, and everyone has them.",
-    date: "July 3, 2026",
-    isoDate: "2026-07-03",
-    readTime: "4 min read",
-    category: "Science",
-    author: "Wendy Wei",
-    keywords: ["is facial symmetry genetic", "facial symmetry genetics", "facial asymmetry", "fluctuating asymmetry", "health", "facial symmetry"],
-    sections: [
-      {
-        h2: "Why Symmetry Is a Health Signal",
-        paragraphs: [
-          "Bilateral symmetry in bilateral organisms (like humans) is the developmental ideal: both sides of the face should, in principle, develop identically under genetically identical instruction. Departures from perfect symmetry, called <strong>fluctuating asymmetry</strong>, arise when developmental processes are disrupted by genetic or environmental stressors during growth.",
-          "The connection to health runs through this logic: a face that developed with minimal asymmetry experienced minimal developmental disruption, which implies a robust genetic programme and a relatively benign developmental environment. This is why symmetry is a reliable (if weak) signal of genetic quality and early-life health, not because symmetry itself is valuable, but because it is an indicator of things that are.",
-        ],
-      },
-      {
-        h2: "The Magnitude of the Effect",
-        paragraphs: [
-          "The symmetry-attractiveness relationship, while real, is smaller than popular treatments suggest. In most studies, symmetry manipulations explain 5–15% of the variance in attractiveness ratings, meaningful but not dominant. When symmetry is statistically controlled for, other variables (averageness, sexual dimorphism, skin quality signals) continue to explain most of the variance in attractiveness.",
-          "For face recognition, the relevant point is that natural levels of facial asymmetry in the normal range have minimal effect on matching accuracy. Asymmetry becomes relevant for recognition only at clinical levels, pathological facial asymmetry resulting from developmental conditions or injuries.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "Does facial symmetry reflect genetic health?", a: "Weakly yes. Facial symmetry is a signal of developmental stability, minimal disruption during growth. But it accounts for only a small fraction of variation in attractiveness or health, and is one signal among many." },
-    ],
-    relatedSlugs: ["symmetrical-faces", "golden-ratio-face", "baby-face-features"],
+    relatedSlugs: ["how-cnns-see-faces", "siamese-network-applications", "face-recognition-math"],
   },
   {
     slug: "face-memory-psychology",
@@ -854,7 +831,7 @@ export const postsC: BlogPost[] = [
     faqs: [
       { q: "Will my celebrity match change if I lose or gain significant weight?", a: "Possibly. Small weight changes have minimal effect. Large weight changes alter soft tissue geometry enough to shift the facial embedding, potentially changing top matches." },
     ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "aging-face-recognition", "best-photo-celebrity-match"],
+    relatedSlugs: ["what-is-facial-embedding", "aging-face-recognition", "best-photo-celebrity-match"],
   },
   {
     slug: "hair-color-affects-matching",
@@ -887,7 +864,7 @@ export const postsC: BlogPost[] = [
       { q: "Does changing my hair colour affect my celebrity face match?", a: "No. Hair colour is not encoded in the facial embedding. The face crop excludes most hair, so colour changes have essentially no effect on matching results." },
       { q: "Can long hair covering my face affect my match?", a: "Yes. Hair that falls across the face region can degrade face alignment and embedding quality. Pull hair back for best results." },
     ],
-    relatedSlugs: ["glasses-hats-hair", "best-photo-celebrity-match", "what-is-a-facial-fingerprint"],
+    relatedSlugs: ["glasses-hats-hair", "best-photo-celebrity-match", "what-is-facial-embedding"],
   },
   {
     slug: "beard-affects-matching",
@@ -970,7 +947,7 @@ export const postsC: BlogPost[] = [
       { q: "What neural network does Ollie use?", a: "A 20-layer SphereFace-style convolutional network trained from scratch on MS1MV2 with the CosFace loss. Its fingerprints have 512 numbers and it scores 98.5% on LFW." },
       { q: "How does Ollie search the celebrity database so fast?", a: "Celebrity fingerprints are computed ahead of time, so a search only runs your photo through the network once and then compares one fingerprint with the stored ones, which takes milliseconds." },
     ],
-    relatedSlugs: ["inside-ai-face-matching", "siamese-neural-networks-explained", "what-is-facial-embedding"],
+    relatedSlugs: ["how-face-recognition-works", "siamese-neural-networks-explained", "what-is-facial-embedding"],
   },
   {
     slug: "improving-ollie-results",
@@ -1068,38 +1045,6 @@ export const postsC: BlogPost[] = [
       { q: "Should I focus on the #1 result or look at all five?", a: "Both. Your #1 is the closest geometric match, but looking across the top five for shared features is more informative about what specifically characterises your face's position in embedding space." },
     ],
     relatedSlugs: ["what-is-similarity-score", "confidence-vs-accuracy", "what-celebrity-match-reveals"],
-  },
-  {
-    slug: "cross-age-celebrity-match",
-    title: "Matching Across Ages: How Well Does Ollie Handle Photos from Different Periods?",
-    excerpt: "A photo from 10 years ago might give you the same match as one from today. Here is how stable face recognition results are across different ages and what affects consistency.",
-    summary: "Face recognition handles old photos of adults well: bone structure changes little between about 20 and 50, so on Ollie, photos 5 to 15 years apart usually give the same top celebrity matches. Consistency breaks down with childhood photos, big weight changes and old, low-quality scans. For the best result, use a recent photo.",
-    date: "June 19, 2026",
-    isoDate: "2026-06-19",
-    readTime: "4 min read",
-    category: "Guide",
-    author: "Wendy Wei",
-    keywords: ["face recognition old photos", "old photo facial recognition", "cross-age matching", "celebrity match", "aging", "face recognition"],
-    sections: [
-      {
-        h2: "How Much Does Your Face Change Between Photos?",
-        paragraphs: [
-          "For adults in the 20–50 age range, the bone structure of the face, the geometric foundation that dominates the facial embedding, is remarkably stable. Photos taken 5, 10, or 15 years apart will typically produce embeddings that land in the same region of face space and generate the same top celebrity matches.",
-          "Surface changes, skin texture, wrinkles, minor fat redistribution, do shift the embedding slightly but do not typically displace it from the neighbourhood of the same celebrities. The embedding's anchor in stable bone geometry preserves the match quality across moderate time spans.",
-        ],
-      },
-      {
-        h2: "When Consistency Breaks Down",
-        paragraphs: [
-          "Three scenarios produce meaningful shifts across age: <strong>adolescent photos</strong> (face proportions change substantially during puberty), <strong>very large weight changes</strong> (which alter soft tissue geometry significantly), and <strong>medical conditions</strong> that affect facial structure. Outside these scenarios, adult photos across a 20-year span will typically produce consistent top matches.",
-          "To test your own consistency, try uploading a photo from 5+ years ago alongside a recent one and compare the rankings. Where they agree, the similarity is robustly structural. Where they differ, the difference reflects photo condition variation or genuine facial change.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "Will my celebrity match change as I get older?", a: "Slowly, if at all, for adults. Bone structure is stable, keeping the embedding in the same region of face space. Large weight changes or photos from adolescence can produce more noticeable shifts." },
-    ],
-    relatedSlugs: ["aging-face-recognition", "celebrity-match-different-era", "what-is-a-facial-fingerprint"],
   },
   {
     slug: "vggface2-explained",
@@ -1331,7 +1276,7 @@ export const postsC: BlogPost[] = [
       { q: "How fast can face recognition run?", a: "With optimisation (quantisation, ONNX/TensorRT, FAISS), a full pipeline can run in under 50ms on GPU and 100–150ms on optimised CPU,well within real-time budget." },
       { q: "What is model quantisation?", a: "Converting neural network weights from 32-bit float to 8-bit integer, reducing model size by 4× and speeding up inference by 2–4× with negligible accuracy loss." },
     ],
-    relatedSlugs: ["inside-ai-face-matching", "ollie-how-it-works", "resnet-face-recognition"],
+    relatedSlugs: ["how-face-recognition-works", "ollie-how-it-works", "resnet-face-recognition"],
   },
   {
     slug: "celebrity-database-how-built",
@@ -1380,6 +1325,6 @@ export const postsC: BlogPost[] = [
       { q: "Where do the celebrity photos come from?", a: "From Wikimedia Commons, under free licenses such as public domain, CC0, CC BY and CC BY-SA. Every result credits its photographer and links to the original." },
       { q: "How do you make sure every photo shows the right person?", a: "A face-recognition model compares each photo with the person's own Wikidata photo and their other photos, and keeps only clear matches. If the references disagree, the person is skipped." },
     ],
-    relatedSlugs: ["vggface2-explained", "inside-ai-face-matching", "what-is-facial-embedding"],
+    relatedSlugs: ["vggface2-explained", "how-face-recognition-works", "what-is-facial-embedding"],
   },
 ]

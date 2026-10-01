@@ -6,22 +6,45 @@ import { COMING_SOON, MATCH_ONLY, SITE_URL } from "@/lib/site-config"
 // ponytail: Worker handles it so it works whatever Cloudflare rules exist; keep until Google has moved the index (~6+ months).
 const OLD_HOSTS = ["ollie.ml", "www.ollie.ml", "ollieml.com"]
 
+// Renamed URLs (2026-10-01, keyword slugs). Keep forever: old links, shares and the share card's printed /match use them.
+// Exact paths only: public/style/* assets keep their folder name and must not redirect.
+const MOVED: Record<string, string> = {
+  "/match": "/celebrity-lookalike",
+  "/compare": "/compare-faces",
+  "/search": "/face-search",
+  "/style": "/ai-stylist",
+  // merged into the stronger post on the same topic
+  "/blog/inside-ai-face-matching": "/blog/how-face-recognition-works",
+  "/blog/what-is-a-facial-fingerprint": "/blog/what-is-facial-embedding",
+  "/blog/cross-age-celebrity-match": "/blog/aging-face-recognition",
+  "/blog/twins-different-celebrity": "/blog/identical-twins-different-profiles",
+  "/blog/face-symmetry-and-genetics": "/blog/symmetrical-faces",
+  "/blog/why-two-networks": "/blog/siamese-neural-networks-explained",
+  // renamed
+  "/blog/siamese-versatility": "/blog/siamese-network-applications",
+  "/blog/math-behind-your-face": "/blog/face-recognition-math",
+  "/blog/science-of-you-look-like": "/blog/why-people-say-you-look-like-someone",
+}
+
 const ALLOWED_PREFIXES = ["/chemistry", "/api", "/robots.txt", "/sitemap.xml", "/opengraph-image", "/icon", "/favicon.ico"]
-// Pages that exist but aren't live in the match-only release: permanently redirected to /match.
+// Pages that exist but aren't live in the match-only release: permanently redirected to /celebrity-lookalike.
 // Anything not listed here and not a real route falls through to the 404 page (no soft 404s).
-// Live: /, /match, /compare, /search, /faq, /blog, /contact, /privacy, /terms.
+// Live: /, /celebrity-lookalike, /compare-faces, /face-search, /faq, /blog, /contact, /privacy, /terms.
 const HIDDEN_PAGES = ["/ai", "/about", "/projects", "/info", "/chemistry"]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (OLD_HOSTS.includes(request.headers.get("host") ?? "")) {
-    return NextResponse.redirect(new URL(pathname + request.nextUrl.search, SITE_URL), 308)
+  // One hop for both cases: an old host and a renamed path go straight to the final URL.
+  const target = MOVED[pathname.replace(/\/+$/, "")]
+  const oldHost = OLD_HOSTS.includes(request.headers.get("host") ?? "")
+  if (target || oldHost) {
+    return NextResponse.redirect(new URL((target ?? pathname) + request.nextUrl.search, oldHost ? SITE_URL : request.url), 308)
   }
 
   if (MATCH_ONLY) {
     const path = pathname.replace(/\/+$/, "") || "/"
-    if (HIDDEN_PAGES.includes(path)) return NextResponse.redirect(new URL("/match", request.url), 308)
+    if (HIDDEN_PAGES.includes(path)) return NextResponse.redirect(new URL("/celebrity-lookalike", request.url), 308)
     return NextResponse.next()
   }
 

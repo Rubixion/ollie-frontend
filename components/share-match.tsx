@@ -165,6 +165,7 @@ async function drawCard(match: ShareableMatch, runnerUps: ShareableMatch[], user
 
   ctx.fillStyle = BLUE
   ctx.font = `700 44px ${family}`
+  // ponytail: the short /match on purpose; it 308s to /celebrity-lookalike and the long URL overflows the card at 44px
   ctx.fillText("Find yours at ollieml.com/match", 80, 1470)
   // Credit every celebrity photo on the card whose license asks for attribution (CC0 / public domain don't)
   const credited = [...(celeb ? [match] : []), ...rows.filter((r) => r.image)]
@@ -266,7 +267,7 @@ export function ShareMatch({
     if (!result) return
     try {
       const file = new File([result.blob], "ollie-match.png", { type: "image/png" })
-      await navigator.share({ files: [file], text: `My celebrity lookalike is ${match.name}. Find yours at https://www.ollieml.com/match` })
+      await navigator.share({ files: [file], text: `My celebrity lookalike is ${match.name}. Find yours at https://www.ollieml.com/celebrity-lookalike` })
       track("share", { content_type: "match" })
     } catch (e) {
       if (!(e instanceof DOMException && e.name === "AbortError")) setError("Couldn't open sharing. Try Download instead.") // AbortError = share sheet closed

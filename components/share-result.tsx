@@ -1,6 +1,6 @@
 "use client"
 
-// Share button for the /compare and hidden /kirk-meter pages: draws a 9:16 story card (same look as the
+// Share button for the /compare-faces and hidden /kirk-meter pages: draws a 9:16 story card (same look as the
 // match page's), then opens the share sheet (where the browser can share files) or downloads it.
 import { useState, useSyncExternalStore } from "react"
 import { Download, Loader2, Share2 } from "lucide-react"

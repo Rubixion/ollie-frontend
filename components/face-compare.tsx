@@ -1,6 +1,6 @@
 "use client"
 
-// The hidden /compare page: two photos in, "same person or not" plus a lookalike percentage out.
+// The hidden /compare-faces page: two photos in, "same person or not" plus a lookalike percentage out.
 import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"

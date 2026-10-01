@@ -17,7 +17,7 @@ export const INDEX = {
   photos: "40,000+",
   photosPerPerson: "2 to 12",
   source: "Wikimedia Commons",
-  // Gender (Wikidata), v2 index: 62% men, 37% women. /match and llms.txt say "about three in five ... are men".
+  // Gender (Wikidata), v2 index: 62% men, 37% women. /celebrity-lookalike and llms.txt say "about three in five ... are men".
 }
 
 // Must match the purge job in supabase/search_limits.sql.

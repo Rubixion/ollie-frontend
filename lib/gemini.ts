@@ -1,43 +1,19 @@
-// Gemini image generation/editing (Interactions API), shared by the /style try-on routes.
-const MODEL = process.env.STYLE_IMAGE_MODEL ?? "gemini-3.1-flash-image"
+// Gemini image generation/editing, shared by the /ai-stylist try-on routes. The API call itself is in lib/image-gen.mjs
+// (Vertex AI when VERTEX_API_KEY is set, so the Google Cloud credits pay; otherwise AI Studio with GEMINI_API_KEY).
+import { generateImage } from "./image-gen.mjs"
 export type Img = { mime_type: string; data: string } // base64
 
-// The Interactions API nests the image under steps[].content[] (or output_image); find it wherever it is.
-function findImage(x: unknown): { data?: string; uri?: string; mime_type?: string } | null {
-  if (!x || typeof x !== "object") return null
-  const o = x as Record<string, unknown>
-  if (o.type === "image" && (typeof o.data === "string" || typeof o.uri === "string")) return o
-  for (const v of Object.values(o)) {
-    const hit = findImage(v)
-    if (hit) return hit
-  }
-  return null
-}
-
-/** Text + images in, one JPEG out. Throws with a user-safe message on failure. store:false = Google keeps nothing. */
+/** Text + images in, one image out. Throws with a user-safe message on failure. */
 export async function geminiImage(text: string, images: Img[]): Promise<Img> {
-  const key = process.env.GEMINI_API_KEY
-  if (!key) throw new Error("Previews are not configured yet.")
-  const res = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
-    method: "POST",
-    headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      store: false,
-      input: [{ type: "text", text }, ...images.map((i) => ({ type: "image", ...i }))],
-      response_format: { type: "image", mime_type: "image/jpeg" },
-    }),
-    signal: AbortSignal.timeout(120_000),
-  })
-  if (!res.ok) {
-    console.error("gemini:", res.status, (await res.text()).slice(0, 500))
-    throw new Error("The preview failed. Please try again.")
+  if (!process.env.VERTEX_API_KEY && !process.env.GEMINI_API_KEY) throw new Error("Previews are not configured yet.")
+  try {
+    return await generateImage({ text, images })
+  } catch (e) {
+    console.error("gemini:", (e as Error).message)
+    throw new Error((e as Error).message === "no image returned"
+      ? "The model didn't return an image. Try a different combination."
+      : "The preview failed. Please try again.")
   }
-  const img = findImage(await res.json())
-  if (!img) throw new Error("The model didn't return an image. Try a different combination.")
-  let data = img.data
-  if (!data && img.uri) data = Buffer.from(await (await fetch(img.uri, { headers: { "x-goog-api-key": key } })).arrayBuffer()).toString("base64")
-  return { mime_type: img.mime_type ?? "image/jpeg", data: data! }
 }
 
 /** A file from /public as a model input (product photos, model photos). null if it isn't there. */

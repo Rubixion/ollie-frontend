@@ -1,6 +1,6 @@
 # Ollie
 
-> Ollie (https://www.ollieml.com/match) is a free celebrity lookalike AI that answers "which celebrity do I look like?". You upload a photo and a face-recognition machine learning (ML) model, written and trained from scratch by the Ollie team, ranks 5,000+ well-known living people by facial similarity and shows your top five matches.
+> Ollie (https://www.ollieml.com/celebrity-lookalike) is a free celebrity lookalike AI that answers "which celebrity do I look like?". You upload a photo and a face-recognition machine learning (ML) model, written and trained from scratch by the Ollie team, ranks 5,000+ well-known living people by facial similarity and shows your top five matches.
 
 ## How it works
 
@@ -27,8 +27,8 @@
 ## Pages
 
 - [Home](https://www.ollieml.com/): what Ollie is, in brief
-- [Find your celebrity lookalike](https://www.ollieml.com/match): the celebrity lookalike AI
-- [Compare faces](https://www.ollieml.com/compare): compare two faces online; upload two photos to see if they show the same person, and how alike they look
+- [Find your celebrity lookalike](https://www.ollieml.com/celebrity-lookalike): the celebrity lookalike AI
+- [Compare faces](https://www.ollieml.com/compare-faces): compare two faces online; upload two photos to see if they show the same person, and how alike they look
 - [FAQ](https://www.ollieml.com/faq): how it works, photo tips, limitations, privacy, FAQ
 - [Blog](https://www.ollieml.com/blog): photo tips and plain-English articles on face recognition
 - [Privacy policy](https://www.ollieml.com/privacy)

@@ -204,7 +204,7 @@ export const postsB: BlogPost[] = [
       { q: "Why do I not recognise myself in photos?", a: "Most people are more familiar with their mirror image than their photographed face. The mirror flips left and right, so your photo looks unfamiliar even though it accurately shows what others see." },
       { q: "Why might I disagree with my celebrity match?", a: "The AI processes geometric proportions in your photo; your subjective judgment compares the result to a mental self-image, which may be based on your mirror image and your habitual self-presentation. Comparing structural features directly is more informative." },
     ],
-    relatedSlugs: ["selfie-vs-passport-match", "what-celebrity-match-reveals", "science-of-you-look-like"],
+    relatedSlugs: ["selfie-vs-passport-match", "what-celebrity-match-reveals", "why-people-say-you-look-like-someone"],
   },
   {
     slug: "baby-face-features",
@@ -244,7 +244,7 @@ export const postsB: BlogPost[] = [
       { q: "What are baby face features?", a: "Baby face features include large eyes relative to face size, a small upturned nose, a rounded chin, full lips, and a high forehead. They are neotenic traits that signal youth and approachability." },
       { q: "How do baby face features affect celebrity matching?", a: "Users with strongly baby-faced proportions tend to receive matches from celebrities who share these features, as they cluster together in face embedding space." },
     ],
-    relatedSlugs: ["what-celebrity-match-reveals", "math-behind-your-face", "symmetrical-faces"],
+    relatedSlugs: ["what-celebrity-match-reveals", "face-recognition-math", "symmetrical-faces"],
   },
   {
     slug: "symmetrical-faces",
@@ -253,10 +253,11 @@ export const postsB: BlogPost[] = [
     summary: "Facial symmetry helps face recognition only a little: symmetrical faces give slightly more stable results across angles, but lighting, image quality and alignment matter far more. Symmetry matters more to how attractive and healthy a face looks. No face is perfectly symmetrical, and a well-lit photo of an asymmetric face matches better than a poor photo of a symmetrical one.",
     date: "August 20, 2026",
     isoDate: "2026-08-20",
+    updatedIsoDate: "2026-10-01",
     readTime: "4 min read",
     category: "Psychology",
     author: "Wendy Wei",
-    keywords: ["facial symmetry", "symmetrical face", "face symmetry", "face recognition accuracy", "attractiveness", "celebrity match"],
+    keywords: ["facial symmetry", "symmetrical face", "face symmetry", "face recognition accuracy", "attractiveness", "celebrity match", "is facial symmetry genetic", "facial symmetry genetics", "facial asymmetry", "fluctuating asymmetry", "health"],
     sections: [
       {
         h2: "The Biology of Facial Symmetry",
@@ -272,12 +273,20 @@ export const postsB: BlogPost[] = [
           "However, symmetry is far from the dominant factor in recognition accuracy. Image quality, lighting consistency, and face alignment quality each have larger effects on embedding stability. A highly asymmetric face photographed well will produce more accurate results than a symmetric face photographed under poor conditions.",
         ],
       },
+      {
+        h2: "Why Symmetry Is a Health Signal",
+        paragraphs: [
+          "Bilateral symmetry in bilateral organisms (like humans) is the developmental ideal: both sides of the face should, in principle, develop identically under genetically identical instruction. Departures from perfect symmetry, called <strong>fluctuating asymmetry</strong>, arise when developmental processes are disrupted by genetic or environmental stressors during growth.",
+          "The connection to health runs through this logic: a face that developed with minimal asymmetry experienced minimal developmental disruption, which implies a robust genetic programme and a relatively benign developmental environment. This is why symmetry is a reliable (if weak) signal of genetic quality and early-life health, not because symmetry itself is valuable, but because it is an indicator of things that are.",
+        ],
+      },
     ],
     faqs: [
       { q: "Does facial symmetry improve face recognition accuracy?", a: "Slightly. More symmetric faces produce more stable embeddings across photo variations, but image quality and lighting have larger effects on overall accuracy." },
       { q: "Does having an asymmetric face reduce my celebrity match quality?", a: "Not significantly in practice. Minor asymmetries are within the normal range that face recognition systems handle well. Only pronounced asymmetries can measurably affect matching." },
+      { q: "Does facial symmetry reflect genetic health?", a: "Weakly yes. Facial symmetry is a signal of developmental stability, minimal disruption during growth. But it accounts for only a small fraction of variation in attractiveness or health, and is one signal among many." },
     ],
-    relatedSlugs: ["math-behind-your-face", "baby-face-features", "what-celebrity-match-reveals"],
+    relatedSlugs: ["face-recognition-math", "baby-face-features", "what-celebrity-match-reveals"],
   },
   {
     slug: "resting-face",
@@ -661,7 +670,7 @@ export const postsB: BlogPost[] = [
       { q: "Is facial data more sensitive than other personal data?", a: "Yes. Facial data is biometric, permanently linked to your biological identity. Unlike a password, it cannot be changed if compromised. Regulations like GDPR classify it as a special category of sensitive personal data." },
       { q: "What is biometric data minimisation?", a: "Data minimisation means collecting only the biometric data needed for the immediate function, retaining nothing beyond what is necessary, and deleting data as soon as the purpose is served." },
     ],
-    relatedSlugs: ["bias-in-face-recognition", "accuracy-across-demographics", "inside-ai-face-matching"],
+    relatedSlugs: ["bias-in-face-recognition", "accuracy-across-demographics", "how-face-recognition-works"],
   },
   {
     slug: "history-of-face-recognition",
@@ -882,7 +891,7 @@ export const postsB: BlogPost[] = [
       { q: "What does a 95% similarity score mean in Ollie?", a: "It means the distance between your facial embedding and the celebrity's is in the range corresponding to strong geometric similarity. It is not a probability of being the same person; it is a rescaled similarity score for ranking." },
       { q: "What is AI confidence calibration?", a: "Calibration is the property that confidence scores accurately reflect actual accuracy. A calibrated model's 80% confidence matches are correct 80% of the time." },
     ],
-    relatedSlugs: ["what-is-similarity-score", "what-overfitting-means", "inside-ai-face-matching"],
+    relatedSlugs: ["what-is-similarity-score", "what-overfitting-means", "how-face-recognition-works"],
   },
   {
     slug: "identical-twins-different-profiles",
@@ -891,10 +900,11 @@ export const postsB: BlogPost[] = [
     summary: "Can facial recognition tell identical twins apart? Modern systems often can in good, controlled photos, but twins remain one of the hardest cases, and errors are far more common than with unrelated people. The differences systems rely on, like small asymmetries and marks, come from development rather than DNA.",
     date: "July 30, 2026",
     isoDate: "2026-07-30",
+    updatedIsoDate: "2026-10-01",
     readTime: "4 min read",
     category: "Science",
     author: "Wendy Wei",
-    keywords: ["can facial recognition tell identical twins apart", "identical twins face recognition", "identical twins face ID", "twins", "face recognition accuracy", "facial differences"],
+    keywords: ["can facial recognition tell identical twins apart", "identical twins face recognition", "identical twins face ID", "twins", "face recognition accuracy", "facial differences", "twins face ID", "identical twins", "celebrity match", "face embedding"],
     sections: [
       {
         h2: "The Challenge of Twins",
@@ -910,12 +920,20 @@ export const postsB: BlogPost[] = [
           "Over time, these differences accumulate: different sun exposure, different muscle use patterns, and different life experiences leave different traces on the face. Twins who are difficult to distinguish in childhood often become easier to distinguish in middle age as these accumulated differences become more pronounced.",
         ],
       },
+      {
+        h2: "How Small Differences Produce Different Matches",
+        paragraphs: [
+          "The embedding space is high-dimensional and the celebrity distribution is not uniform. A small shift in embedding position, caused by a minor developmental difference, can move a face from the neighbourhood of one celebrity cluster to the neighbourhood of a different one. This does not require a large biological difference; it requires only that the shift crosses an invisible boundary between two celebrity clusters.",
+          "Photo conditions also amplify the effect. If twin A's available photos show more profile views and twin B's show mainly frontal shots, their embeddings will reflect both biological differences and the different distribution of photo angles. The most informative comparison uses well-controlled, matched photos from both twins.",
+        ],
+      },
     ],
     faqs: [
       { q: "Can face recognition tell identical twins apart?", a: "Usually yes, under good photo conditions. Identical twins have measurably different faces due to epigenetic and developmental variation despite sharing nearly identical genomes." },
       { q: "Why are twins the hardest test for face recognition?", a: "Because they have the smallest biological distance between faces of any two different people, leaving the system the least margin to distinguish between them." },
+      { q: "Why might identical twins get different celebrity matches?", a: "Minor developmental differences in feature placement, combined with different photo conditions, can shift their embeddings into the neighbourhoods of different celebrity clusters in the 512-dimensional space." },
     ],
-    relatedSlugs: ["twins-different-celebrity", "what-is-a-facial-fingerprint", "math-behind-your-face"],
+    relatedSlugs: ["what-is-facial-embedding", "face-recognition-math"],
   },
   {
     slug: "expression-affects-matching",

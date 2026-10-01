@@ -172,7 +172,7 @@
 }
 
 /* Scroll effects. Scrolling itself is untouched (no smooth-scroll hijacking).
-   - Hero: the headline sinks and fades while the mock /match window, tilted back like a screen lying down, stands
+   - Hero: the headline sinks and fades while the mock /celebrity-lookalike window, tilted back like a screen lying down, stands
      up as the page scrolls; scrolling back up reverses it. Native scroll-driven animation; browsers without it
      (Firefox today) keep a static hero. The fixed dotted background is the far layer.
    - [data-reveal="1|2|3"]: cards fade up when they scroll into view, and reset once they're fully below the
@@ -197,7 +197,7 @@
       animation-range: 0 55vh;
       transform-origin: 50% 0;
     }
-    /* /search: the glowing horizon lifts and swells toward you as the page scrolls (the text recedes with "near") */
+    /* /face-search: the glowing horizon lifts and swells toward you as the page scrolls (the text recedes with "near") */
     [data-parallax="horizon"] {
       animation-name: parallax-horizon;
       animation-timing-function: linear;

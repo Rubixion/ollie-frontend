@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAuthUser } from "@/lib/auth-server"
 import { isPro } from "@/lib/pro"
-import { PLANS } from "@/lib/style/plans"
+import { PLANS, currencyFor } from "@/lib/style/plans"
 
-// GET: does the signed-in user have Pro?  POST {plan}: a Stripe Checkout link for that plan.
+// GET: does the signed-in user have Pro, and which currency to show prices in (Cloudflare's country header).
+// POST {plan}: a Stripe Checkout link for that plan, in the same currency.
+const currency = (req: NextRequest) => currencyFor(req.headers.get("cf-ipcountry"))
 export async function GET(req: NextRequest) {
-  return NextResponse.json({ pro: isPro(await getAuthUser(req)) })
+  return NextResponse.json({ pro: isPro(await getAuthUser(req)), currency: currency(req) })
 }
 
 export async function POST(req: NextRequest) {
@@ -22,10 +24,11 @@ export async function POST(req: NextRequest) {
   const origin = req.nextUrl.origin
   const form = new URLSearchParams({
     mode: plan.mode,
+    currency: currency(req).toLowerCase(), // needs currency_options on the Stripe Price, see lib/style/plans.ts
     "line_items[0][price]": price,
     "line_items[0][quantity]": "1",
-    success_url: `${origin}/style?pro=thanks`,
-    cancel_url: `${origin}/style`,
+    success_url: `${origin}/ai-stylist?pro=thanks`,
+    cancel_url: `${origin}/ai-stylist`,
     client_reference_id: user.id, // the webhook (still to add, see lib/pro.ts) uses this to unlock the account
     "metadata[plan]": plan.id,
     ...(user.email ? { customer_email: user.email } : {}),

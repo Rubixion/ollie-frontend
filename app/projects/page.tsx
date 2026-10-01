@@ -28,7 +28,7 @@ const ML_PROJECTS: Project[] = [
     icon: Users,
     desc: "Upload a photo and get your five closest celebrity lookalikes. Your face becomes a 512-number fingerprint, compared with 40,000+ photos of 5,000+ celebrities from Wikimedia Commons.",
     status: "live",
-    href: "/match",
+    href: "/celebrity-lookalike",
   },
   {
     name: "Search",

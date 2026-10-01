@@ -16,7 +16,7 @@ export const postsA: BlogPost[] = [
       {
         h2: "How We Compared Every Celebrity With Every Other",
         paragraphs: [
-          "Ollie's index holds more than 5,000 living celebrities, each with between 2 and 12 verified photos. That makes more than 17 million possible pairs of people. For each pair, the model compares every photo of one person with every photo of the other and averages the two closest photo pairs. It's the same rule the <a href=\"/match\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">celebrity lookalike finder</a> uses when it scores you. A single lucky photo can't win on its own.",
+          "Ollie's index holds more than 5,000 living celebrities, each with between 2 and 12 verified photos. That makes more than 17 million possible pairs of people. For each pair, the model compares every photo of one person with every photo of the other and averages the two closest photo pairs. It's the same rule the <a href=\"/celebrity-lookalike\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">celebrity lookalike finder</a> uses when it scores you. A single lucky photo can't win on its own.",
           "The model has never been told anyone's name. It turns each face into a list of 512 numbers, a <strong>facial embedding</strong>, and the similarity score measures how close two of those lists are. It compares faces. It doesn't judge how famous, attractive or related two people are.",
           "For scale: two celebrities picked at random score about 33% on Ollie's scale, and only 1 pair in 100 reaches 58%. Every pair below scores in the range two different photos of the same person usually reach.",
         ],
@@ -73,10 +73,11 @@ export const postsA: BlogPost[] = [
     summary: "Facial recognition works in three steps: find the face, turn it into numbers, and compare those numbers. A neural network converts the aligned face into a 512-number facial fingerprint (an embedding), and two faces match when their fingerprints are close. Ollie uses this to compare your photo with thousands of celebrity photos and show the five closest.",
     date: "September 26, 2026",
     isoDate: "2026-09-26",
+    updatedIsoDate: "2026-10-01",
     readTime: "6 min read",
     category: "Technology",
     author: "Liam Bradley",
-    keywords: ["how does facial recognition work", "how does face recognition work", "facial recognition", "face embedding", "neural network", "celebrity lookalike"],
+    keywords: ["how does facial recognition work", "how does face recognition work", "facial recognition", "face embedding", "neural network", "celebrity lookalike", "how does face matching work", "face matching AI", "face recognition process", "face alignment", "similarity search"],
     sections: [
       {
         h2: "The Short Version",
@@ -134,64 +135,10 @@ export const postsA: BlogPost[] = [
       { q: "How many numbers are in a facial fingerprint?", a: "Ollie's fingerprints have 512 numbers. None of them stands for a single feature like eye spacing; together they describe the face's identity." },
       { q: "Is the similarity percentage a probability?", a: "No. It is a rescaled distance between two fingerprints. It is useful for ranking matches, but it isn't a calibrated probability and can't confirm that two photos show the same person." },
       { q: "Does Ollie keep my photo?", a: "No. Your photo is used only in memory to run the search and is discarded when the search finishes." },
+      { q: "How long does Ollie take to find a celebrity match?", a: "Usually a few seconds. If the matching server has been idle, it can take up to about 15 seconds to wake up first." },
+      { q: "Does Ollie compare my face with every celebrity?", a: "Yes. Your fingerprint is compared with the fingerprint of every celebrity photo in the database, which takes milliseconds. Each celebrity is then scored by their two best-matching photos." },
     ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "siamese-neural-networks-explained", "what-is-facial-embedding"],
-  },
-  {
-    slug: "what-is-a-facial-fingerprint",
-    title: "What Is a Facial Fingerprint, and Why Is Yours Unique?",
-    excerpt: "Every face can be reduced to 512 numbers. Here is what those numbers represent, how they are generated, and why they make accurate celebrity matching possible at Ollie.",
-    summary: "A facial fingerprint, or faceprint, is a list of numbers a neural network produces from a photo of a face; Ollie's has 512. Photos of the same person give nearly the same numbers even in different lighting, while different people give distant ones. That is what makes face matching and celebrity lookalike search possible.",
-    date: "September 25, 2026",
-    isoDate: "2026-09-25",
-    readTime: "5 min read",
-    category: "Technology",
-    author: "Liam Bradley",
-    keywords: ["facial fingerprint", "faceprint", "face embedding", "facial recognition", "biometric", "celebrity lookalike"],
-    sections: [
-      {
-        h2: "Faces Are More Than Pixels",
-        paragraphs: [
-          "When you look at a digital photo, you see a face. When a computer looks at the same image, it sees a grid of millions of numbers representing colour intensities. The fundamental challenge for any <strong>facial recognition</strong> system is that the same face produces completely different pixel values depending on lighting, angle, or the camera used. A photo taken in bright sunlight has entirely different pixel data to one taken indoors, even if both show the same person clearly. Raw pixels are therefore useless as a basis for identity comparison.",
-          "A <strong>facial fingerprint</strong> solves this by discarding pixels and extracting something more fundamental: a compact mathematical representation of the structural identity of the face. This representation is invariant to superficial conditions, the same bone structure, the same geometric proportions, the same inter-feature relationships will produce a fingerprint that stays recognisably similar across many different photographs.",
-        ],
-      },
-      {
-        h2: "What the 512 Numbers Actually Represent",
-        paragraphs: [
-          "A <strong>neural network</strong> processes your photo through a series of convolutional layers, each one extracting progressively higher-level features. Early layers detect edges and gradients. Middle layers combine these into shapes, nose bridges, eye socket curves, jaw contours. The final layers produce a 512-dimensional embedding: a list of 512 numbers that encodes the structural identity of the face in a format optimised for comparison. This is the facial fingerprint.",
-          "The network does not explicitly measure any single feature. It discovers, through training on millions of face photos, which combinations of measurements best predict whether two photos show the same person. The result is a representation more discriminative than any hand-designed feature set, one that captures subtle relationships between features that no human would think to measure explicitly.",
-        ],
-      },
-      {
-        h2: "L2 Normalisation and Similarity Search",
-        paragraphs: [
-          "The 512-number vector is <strong>L2-normalised</strong>, meaning it is scaled so that all values together have a length of exactly 1. This places every facial fingerprint on the surface of a unit hypersphere in 512-dimensional space. The practical consequence is that comparing two fingerprints reduces to measuring the angle between two points on this sphere, a clean, efficient operation known as cosine similarity.",
-          "Ollie computes a fingerprint for every celebrity photo in its database ahead of time. When you upload a photo, your fingerprint is computed once and compared with every stored celebrity fingerprint, a single matrix calculation that takes milliseconds. The result is a ranked list of the closest matches in that 512-dimensional space: your celebrity lookalike results.",
-        ],
-      },
-      {
-        h2: "Why Your Fingerprint Is Unique",
-        paragraphs: [
-          "The uniqueness of a facial fingerprint comes from the geometry of trained embedding space. The network is optimised so that same-identity face pairs land in tight clusters, while different-identity pairs are pushed to distant regions of the space. Even <strong>identical twins</strong> tend to produce fingerprints that are close but measurably distinct, reflecting small differences in feature placement that develop even from an identical genetic starting point.",
-          "Unlike raw pixel comparison, a facial fingerprint is largely invariant to lighting variation, small angle changes, and minor expressions. The underlying bone structure and geometric proportions remain consistent, and those are what the fingerprint captures. This is why you can upload photos taken years apart and still receive consistent top matches, the geometry of your face has not changed.",
-        ],
-      },
-      {
-        h2: "Practical Tips for Better Matches",
-        paragraphs: [
-          "Understanding what a facial fingerprint captures helps explain how to get the best results. Because the fingerprint encodes bone structure and feature geometry, photos that show your face clearly and at natural proportions produce the most accurate results. Avoid extreme angles that distort apparent nose width or jaw shape, and avoid heavy makeup that changes apparent facial proportions.",
-          "Front-facing, well-lit photos without strong shadows across the face produce the most stable fingerprints, meaning you will receive more consistent results across multiple uploads. The fingerprint approach also means that a photo from ten years ago may produce the same top match as a recent one: your <strong>biometric</strong> geometry changes slowly if at all.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "What is a facial fingerprint?", a: "A facial fingerprint is a list of 512 numbers produced by a neural network that encodes the structural geometry of a face. It is used to compare two faces mathematically without relying on raw pixel comparison." },
-      { q: "How is a facial fingerprint different from a regular photo?", a: "A photo encodes colour and texture information that changes with lighting and angle. A facial fingerprint encodes geometric structure, bone proportions and feature relationships, that stays consistent across different photos of the same person." },
-      { q: "Can two different people have the same facial fingerprint?", a: "In practice, no. While two fingerprints can be very close (for example, twins or people who genuinely look very similar), the 512-dimensional space is large enough that identical fingerprints are effectively impossible for different people." },
-      { q: "Is my facial fingerprint stored when I use Ollie?", a: "No. Ollie processes your photo to produce a fingerprint for the matching search, but does not store your image or fingerprint after the session ends." },
-    ],
-    relatedSlugs: ["how-face-recognition-works", "what-is-facial-embedding", "why-same-person-different-ai-results"],
+    relatedSlugs: ["what-is-facial-embedding", "siamese-neural-networks-explained"],
   },
   {
     slug: "why-same-person-different-ai-results",
@@ -258,10 +205,10 @@ export const postsA: BlogPost[] = [
       { q: "Does photo quality really affect face matching results?", a: "Yes significantly. Images below 200px face width, heavy JPEG compression, or extreme lighting conditions can all shift your facial embedding enough to change the top match." },
       { q: "Which type of photo gives the most accurate celebrity match?", a: "Front-facing, well-lit photos with even lighting (no harsh shadows), taken with the rear camera from at least 50cm away, produce the most accurate and stable results." },
     ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "best-photo-celebrity-match", "how-lighting-affects-recognition"],
+    relatedSlugs: ["what-is-facial-embedding", "best-photo-celebrity-match", "how-lighting-affects-recognition"],
   },
   {
-    slug: "math-behind-your-face",
+    slug: "face-recognition-math",
     title: "The Math Behind Your Face: How Machines Read Bone Structure",
     excerpt: "Your skeleton doesn't change with age, lighting, or mood, that's exactly what makes it a reliable basis for AI face recognition. Here's how the math works.",
     summary: "Facial recognition math turns facial geometry, the proportions set by your bone structure, into a point in a 512-dimensional space. Bone structure barely changes with lighting, expression or age, so it is a reliable signal of identity. The face is first lined up using five landmarks, and similarity is the distance between two points.",
@@ -307,7 +254,7 @@ export const postsA: BlogPost[] = [
       { q: "Does aging affect face recognition accuracy?", a: "Age changes soft tissue (skin laxity, volume distribution) but largely preserves bone structure. Modern face recognition systems are trained on age-varied datasets and are robust to moderate aging effects, though very large age gaps can reduce accuracy." },
       { q: "Why is AI more accurate than humans at face matching?", a: "Humans are good at recognising familiar faces but poor at comparing unfamiliar ones. AI applies the same computation to every pair consistently, without fatigue, attention variation, or the biases that affect human face examiners." },
     ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "how-cnns-see-faces", "why-ai-beats-human-eye"],
+    relatedSlugs: ["what-is-facial-embedding", "how-cnns-see-faces", "why-ai-beats-human-eye"],
   },
   {
     slug: "how-cnns-see-faces",
@@ -355,7 +302,7 @@ export const postsA: BlogPost[] = [
       { q: "What are feature maps in face recognition?", a: "Feature maps are the outputs of convolutional filters, grids of activation values showing where in the image each filter's pattern was detected. Hundreds of feature maps are produced at each layer, collectively encoding the facial structure." },
       { q: "Why can't I see which specific features the AI uses to match me?", a: "Deep neural network representations are distributed across all layers and filters simultaneously. There is no single neuron encoding any single feature, identity is encoded collectively, which is what makes it powerful but also opaque to direct inspection." },
     ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "math-behind-your-face", "siamese-neural-networks-explained"],
+    relatedSlugs: ["what-is-facial-embedding", "face-recognition-math", "siamese-neural-networks-explained"],
   },
   {
     slug: "what-is-facial-embedding",
@@ -363,12 +310,12 @@ export const postsA: BlogPost[] = [
     excerpt: "Facial embedding is the technique that makes it possible to compare two faces mathematically. Here is what it means, how it works, and why it enables instant search at Ollie.",
     summary: "A face embedding is a list of numbers (512 at Ollie) that places a face as a point in a high-dimensional space, where photos of the same person land close together and different people land far apart. Comparing two faces then means measuring the distance between two points. That is how thousands of celebrity faces can be searched in milliseconds.",
     date: "September 20, 2026",
-    updatedIsoDate: "2026-09-23",
+    updatedIsoDate: "2026-10-01",
     isoDate: "2026-09-20",
     readTime: "4 min read",
     category: "Technology",
     author: "Liam Bradley",
-    keywords: ["face embedding", "facial embeddings", "face embedding model", "vector space", "similarity search", "face recognition"],
+    keywords: ["face embedding", "facial embeddings", "face embedding model", "vector space", "similarity search", "face recognition", "facial fingerprint", "faceprint", "facial recognition", "biometric", "celebrity lookalike"],
     sections: [
       {
         h2: "Turning Faces into Coordinates",
@@ -398,13 +345,22 @@ export const postsA: BlogPost[] = [
           "The position of your embedding also explains aspects of your results that might otherwise seem surprising. If your top matches are all from a particular era or demographic, it usually means your facial proportions cluster near those celebrities in the embedding space, a reflection of shared geometry, not shared background.",
         ],
       },
+      {
+        h2: "Why Your Facial Fingerprint Is Unique",
+        paragraphs: [
+          "The uniqueness of a facial fingerprint comes from the geometry of trained embedding space. The network is optimised so that same-identity face pairs land in tight clusters, while different-identity pairs are pushed to distant regions of the space. Even <strong>identical twins</strong> tend to produce fingerprints that are close but measurably distinct, reflecting small differences in feature placement that develop even from an identical genetic starting point.",
+          "Unlike raw pixel comparison, a facial fingerprint is largely invariant to lighting variation, small angle changes, and minor expressions. The underlying bone structure and geometric proportions remain consistent, and those are what the fingerprint captures. This is why you can upload photos taken years apart and still receive consistent top matches, the geometry of your face has not changed.",
+        ],
+      },
     ],
     faqs: [
       { q: "What is a facial embedding in simple terms?", a: "A facial embedding is a list of 512 numbers that represents your face as a coordinate in mathematical space. Faces that look similar have embeddings that are close together in this space." },
       { q: "How can Ollie search thousands of faces so quickly?", a: "Every celebrity fingerprint is computed ahead of time, so a search only compares your one new fingerprint with the stored ones. That is a single matrix calculation and takes a few milliseconds." },
       { q: "Is 512 dimensions enough to capture a face uniquely?", a: "Yes, for practical purposes. While the full 512D space can theoretically contain infinitely many points, the network is trained to place different people sufficiently far apart that confusion between distinct individuals is rare at normal similarity thresholds." },
+      { q: "What is a facial fingerprint?", a: "A facial fingerprint is a list of 512 numbers produced by a neural network that encodes the structural geometry of a face. It is used to compare two faces mathematically without relying on raw pixel comparison." },
+      { q: "Can two different people have the same facial fingerprint?", a: "In practice, no. While two fingerprints can be very close (for example, twins or people who genuinely look very similar), the 512-dimensional space is large enough that identical fingerprints are effectively impossible for different people." },
     ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "how-face-recognition-works", "inside-ai-face-matching"],
+    relatedSlugs: ["how-face-recognition-works", "face-recognition-math", "siamese-neural-networks-explained"],
   },
   {
     slug: "why-ai-beats-human-eye",
@@ -453,7 +409,7 @@ export const postsA: BlogPost[] = [
       { q: "Why are humans bad at matching unfamiliar faces?", a: "The human face recognition system evolved for familiar face recognition, not photo-to-photo comparison of strangers. Factors like stress, fatigue, the own-race effect, and inconsistent attention significantly degrade human performance on unfamiliar face matching." },
       { q: "Does AI face recognition work equally well for all demographics?", a: "Not always. Systems trained on imbalanced datasets can show accuracy gaps across demographic groups. Ollie's network was trained on MS1MV2, a large dataset of 85,742 people from many backgrounds, but no system fully eliminates these gaps." },
     ],
-    relatedSlugs: ["math-behind-your-face", "why-humans-bad-at-faces", "accuracy-across-demographics"],
+    relatedSlugs: ["face-recognition-math", "why-humans-bad-at-faces", "accuracy-across-demographics"],
   },
   {
     slug: "face-detection-vs-recognition",
@@ -538,72 +494,30 @@ export const postsA: BlogPost[] = [
     relatedSlugs: ["why-same-person-different-ai-results", "best-photo-celebrity-match", "best-lighting-for-match"],
   },
   {
-    slug: "inside-ai-face-matching",
-    title: "What Happens Inside an AI in the 2 Seconds It Takes to Match Your Face",
-    excerpt: "From the moment you click Search to the moment results appear, your photo travels through several distinct processing stages. Here is exactly what happens at each step.",
-    summary: "How does face matching work? AI face matching takes four steps, all within about two seconds: detect the face and its five key points, align and crop it, turn it into a 512-number embedding, then compare that embedding with every celebrity photo in the database. The closest celebrities are ranked, and their distances are turned into percentage scores.",
-    date: "September 15, 2026",
-    updatedIsoDate: "2026-09-23",
-    isoDate: "2026-09-15",
-    readTime: "5 min read",
-    category: "Technology",
-    author: "Liam Bradley",
-    keywords: ["how does face matching work", "face matching AI", "face recognition process", "face alignment", "face embedding", "similarity search"],
-    sections: [
-      {
-        h2: "Step 1: Face Detection and Alignment",
-        paragraphs: [
-          "The moment your image arrives, Ollie runs a face detection model to locate the face within the photo. This model identifies five key facial landmarks: the positions of both eye centres, the nose tip, and the two mouth corners. Using these five points, a geometric transformation is applied to the image that standardises the face: rotating it so the eyes are horizontal, scaling it so the inter-ocular distance matches the expected value, and cropping to a square region centred on the face.",
-          "This <strong>face alignment</strong> step is not cosmetic, it is functionally critical. The recognition network was trained exclusively on aligned face crops. Providing it with a misaligned crop, even by a small amount, shifts the positions of facial features relative to the patterns the network expects, substantially degrading embedding accuracy.",
-        ],
-      },
-      {
-        h2: "Step 2: Embedding Extraction",
-        paragraphs: [
-          "The aligned crop is passed through the convolutional neural network. The image travels through multiple convolutional blocks, each extracting progressively higher-level features. This <strong>forward pass</strong> is the most computationally intensive step in the pipeline, on Ollie's server it takes a fraction of a second. The final layer produces a 512-number vector, which is then L2-normalised.",
-          "The resulting 512-number vector is your <strong>facial embedding</strong>, the mathematical fingerprint of your face as the network understands it. It encodes the structural geometry of your face in a format optimised for distance computation. This vector is the only thing passed to the next stage; the original image is no longer needed.",
-        ],
-      },
-      {
-        h2: "Step 3: Comparing Against Every Celebrity",
-        paragraphs: [
-          "Your embedding is compared with the pre-computed embedding of every celebrity photo in Ollie's database. There is no shortcut or approximation: for tens of thousands of photos this is one matrix calculation that finishes in milliseconds.",
-          "The comparison gives a distance for each photo: the Euclidean distance between two L2-normalised vectors, which grows with the angle between them. Each celebrity's score comes from their single closest photo, the one that looks most like you.",
-        ],
-      },
-      {
-        h2: "Step 4: Score Conversion and Ranking",
-        paragraphs: [
-          "The distances are turned into percentages in two steps: each distance is mapped onto a 0–100 scale, and then the range where real matches fall is stretched so the differences between your top matches are easier to see. The order of your matches never changes; only the display does. The percentage isn't calibrated against human ratings, so read it as a ranking aid rather than a probability.",
-          "The top five celebrities, with their percentages and the photo of each that matched you best, are sent back to your browser. A search usually takes a few seconds, or up to about 15 seconds when the server has to wake up first.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "How long does Ollie take to find a celebrity match?", a: "Usually a few seconds. If the matching server has been idle, it can take up to about 15 seconds to wake up first." },
-      { q: "Does Ollie compare my face with every celebrity?", a: "Yes. Your fingerprint is compared with the fingerprint of every celebrity photo in the database, which takes milliseconds. Each celebrity is then scored by their two best-matching photos." },
-      { q: "Does Ollie store my photo or embedding after processing?", a: "No. Your image and the resulting embedding are used only during the current session to compute your matches. Neither is retained after the session ends." },
-    ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "what-is-facial-embedding", "face-detection-vs-recognition"],
-  },
-  {
     slug: "siamese-neural-networks-explained",
     title: "Siamese Neural Networks Explained: The Twin-Network Idea Behind Face Matching",
     excerpt: "A Siamese network compares two inputs by running both through the same network. Here is how the idea works, where it is used, and how it relates to the way Ollie compares faces.",
     summary: "A Siamese neural network compares two inputs by passing both through the same network and measuring the distance between the two embeddings: close means similar, far means different. It is a classic approach to face verification and signature checking. Ollie uses the same idea, one shared network that turns every face into comparable numbers, though it was trained with a different loss.",
     date: "August 10, 2026",
-    updatedIsoDate: "2026-09-23",
+    updatedIsoDate: "2026-10-01",
     isoDate: "2026-08-10",
     readTime: "5 min read",
     category: "Deep Dive",
     author: "Liam Bradley",
-    keywords: ["siamese neural network", "siamese network", "siamese network face recognition", "what is a siamese network", "face verification", "embeddings"],
+    keywords: ["siamese neural network", "siamese network", "siamese network face recognition", "what is a siamese network", "face verification", "embeddings", "siamese network architecture", "face recognition", "neural network"],
     sections: [
       {
         h2: "What Is a Siamese Network?",
         paragraphs: [
           "A <strong>Siamese neural network</strong> is built to answer one question: how similar are these two things? It passes both inputs through the same network, turns each into a list of numbers (an embedding), and measures the distance between the two lists. A small distance means similar; a large distance means different.",
           "The name comes from the picture of two identical networks side by side, like twins. In practice there is only one network, used twice. Its two branches share exactly the same weights.",
+        ],
+      },
+      {
+        h2: "Why a Single Network Is Not Enough",
+        paragraphs: [
+          "The intuitive approach to face recognition would be a classifier: a network that takes a face image and outputs the identity of the person. This works when you have a fixed, known set of identities with plenty of training images each. But it breaks down completely for the celebrity matching use case, you want to match against celebrities the network has never seen during training, including people who only became famous after the model was built.",
+          "What is actually needed is a network that learns a general notion of <em>facial similarity</em>, one that transfers to new identities it has never encountered. This requires a completely different training approach: instead of asking the network to name a face, you ask it whether two face photographs show the same person.",
         ],
       },
       {
@@ -646,60 +560,12 @@ export const postsA: BlogPost[] = [
       { q: "Does Ollie use a Siamese network?", a: "Ollie compares faces the Siamese way, with the same network embedding your photo and every celebrity photo. But its network was trained with the CosFace loss on MS1MV2 rather than with pairs." },
       { q: "What is the difference between contrastive loss and triplet loss?", a: "Contrastive loss works on pairs labelled same or different. Triplet loss works on an anchor, a match and a non-match, and asks the match to be closer than the non-match by a margin." },
       { q: "What are Siamese networks used for besides faces?", a: "Signature verification, image retrieval, duplicate detection, product matching and one-shot learning: any task that comes down to how similar two things are." },
-    ],
-    relatedSlugs: ["contrastive-loss-explained", "why-two-networks", "how-face-recognition-works"],
-  },
-  {
-    slug: "why-two-networks",
-    title: "Why Face Matching Uses Two Neural Networks at Once",
-    excerpt: "A Siamese network runs two identical copies of the same network in parallel. Here is why this architecture exists, what problem it solves, and why shared weights are the key insight.",
-    summary: "Face matching uses a Siamese network architecture, one network applied to two faces, because a plain classifier can only recognise the people it was trained on. Comparing embeddings instead lets the system match faces it has never seen, including celebrities who became famous after training. Celebrity embeddings are computed in advance, so each search runs the network only once, on your photo.",
-    date: "September 14, 2026",
-    updatedIsoDate: "2026-09-23",
-    isoDate: "2026-09-14",
-    readTime: "5 min read",
-    category: "Deep Dive",
-    author: "Liam Bradley",
-    keywords: ["siamese network architecture", "siamese network", "face verification", "face recognition", "neural network", "embeddings"],
-    sections: [
-      {
-        h2: "Why a Single Network Is Not Enough",
-        paragraphs: [
-          "The intuitive approach to face recognition would be a classifier: a network that takes a face image and outputs the identity of the person. This works when you have a fixed, known set of identities with plenty of training images each. But it breaks down completely for the celebrity matching use case, you want to match against celebrities the network has never seen during training, including people who only became famous after the model was built.",
-          "What is actually needed is a network that learns a general notion of <em>facial similarity</em>, one that transfers to new identities it has never encountered. This requires a completely different training approach: instead of asking the network to name a face, you ask it whether two face photographs show the same person.",
-        ],
-      },
-      {
-        h2: "The Siamese Architecture",
-        paragraphs: [
-          "A <strong>Siamese network</strong> consists of two identical copies of the same neural network, sharing exactly the same weights, processing two face images simultaneously. Each copy independently produces an embedding for its input. A distance function then measures how far apart the two embeddings are in the embedding space. The network is trained by showing it labelled face pairs: same-identity pairs (the distance should be small) and different-identity pairs (the distance should be large).",
-          "The critical innovation is <strong>shared weights</strong>. Both copies are not just similar, they are literally the same network applied twice. This guarantees that both embeddings live in exactly the same mathematical space, making it meaningful to compute a distance between them. If you trained two separate networks independently, their embeddings would inhabit incompatible spaces and distance computation would be meaningless.",
-        ],
-      },
-      {
-        h2: "Training: Learning General Similarity",
-        paragraphs: [
-          "Training a Siamese network requires constructing pairs of face images with known identity labels. The loss function, typically <strong>contrastive loss</strong> or triplet loss, adjusts the network weights to pull same-identity embeddings together while pushing different-identity embeddings apart by at least a specified margin. Through millions of such pair comparisons, the network learns what makes faces similar at a structural level.",
-          "This pair-based training is what enables generalisation to completely new identities. The network has not learned to recognise any specific celebrity's face. It has learned a general structural notion of similarity, one that transfers immediately to any new face it encounters. When you upload a photo of yourself, the network produces an embedding based on the same learned notion of similarity, placing you in the same space as every celebrity it has ever processed.",
-        ],
-      },
-      {
-        h2: "Pre-computation and Efficient Search",
-        paragraphs: [
-          "The same trick applies to Ollie at inference time, even though its network was trained with the CosFace loss rather than with pairs: because one network embeds every face, celebrity embeddings only need to be computed once and stored. When you upload a photo, only your embedding needs to be computed. The search then compares your single embedding against thousands of pre-computed celebrity embeddings, a much more efficient process than running two networks for each comparison.",
-          "This pre-computation approach is why the search is so fast. The expensive neural network computation runs once (your photo); the subsequent similarity search in the pre-built index is very fast regardless of database size.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "Why is it called a Siamese network?", a: "Because it uses two identical, weight-sharing network copies processing inputs in parallel, like Siamese twins. The shared weights ensure both outputs are in the same mathematical space." },
-      { q: "Do Siamese networks only work for faces?", a: "No. Siamese networks are used for any pairwise similarity problem: signature verification, drug molecule similarity, image retrieval, question answering similarity. The architecture is general; the training data is domain-specific." },
       { q: "How does a Siamese network learn without being told who each celebrity is?", a: "It learns from pairs: photos labelled as same-person or different-person. It does not need to know the identity, only whether two photos match. This weaker supervision is easier to collect and scales to larger datasets." },
     ],
-    relatedSlugs: ["siamese-neural-networks-explained", "contrastive-loss-explained", "siamese-versatility"],
+    relatedSlugs: ["contrastive-loss-explained", "how-face-recognition-works"],
   },
   {
-    slug: "siamese-versatility",
+    slug: "siamese-network-applications",
     title: "What Fraud Detection, Medical Imaging, and Celebrity Lookalikes Have in Common",
     excerpt: "The Siamese network idea behind face matching also detects forged signatures, matches medical images, and verifies product listings. Here is the common thread.",
     summary: "Siamese network applications go far beyond faces: the same compare-two-things design checks signatures for fraud, finds similar medical scans, spots duplicate product listings and helps drug discovery. Any problem that asks whether two things are the same fits. Celebrity lookalike matching is one more example.",
@@ -737,7 +603,7 @@ export const postsA: BlogPost[] = [
       { q: "What other applications use Siamese networks besides face recognition?", a: "Signature verification in fraud detection, medical image similarity for diagnosis support, duplicate detection in e-commerce, drug molecule similarity in pharmaceutical research, and question answering in NLP are all common applications." },
       { q: "Why is the Siamese architecture well-suited to face matching specifically?", a: "Because face matching involves thousands of identities with limited photos each, requires generalising to new identities not in the training set, and involves a complex multi-dimensional similarity criterion that benefits from being learned from data." },
     ],
-    relatedSlugs: ["siamese-neural-networks-explained", "why-two-networks", "contrastive-loss-explained"],
+    relatedSlugs: ["siamese-neural-networks-explained", "contrastive-loss-explained"],
   },
   {
     slug: "contrastive-loss-explained",
@@ -786,7 +652,7 @@ export const postsA: BlogPost[] = [
       { q: "What is the margin in contrastive loss?", a: "The margin M is a minimum distance that different-identity pairs must be separated by. Pairs already further apart than M contribute no loss; pairs closer than M are penalised and pushed apart." },
       { q: "What is the difference between contrastive loss and triplet loss?", a: "Contrastive loss operates on pairs with a binary same/different label. Triplet loss operates on anchor-positive-negative triples, directly comparing same-identity and different-identity distances for the same anchor face." },
     ],
-    relatedSlugs: ["siamese-neural-networks-explained", "why-two-networks", "what-overfitting-means"],
+    relatedSlugs: ["siamese-neural-networks-explained", "what-overfitting-means"],
   },
   {
     slug: "what-is-similarity-score",
@@ -829,20 +695,20 @@ export const postsA: BlogPost[] = [
       { q: "Why does my similarity score change between photos?", a: "Different photos produce slightly different embeddings due to lighting, angle, and image quality variations. The score reflects the embedding distance for that specific photo, not a fixed biological similarity." },
       { q: "Is a higher score always a better match?", a: "Higher scores indicate closer embedding proximity, which generally correlates with more visible similarity. However, the ranking (who is #1 vs #2) is often more informative than the absolute score values." },
     ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "confidence-vs-accuracy", "inside-ai-face-matching"],
+    relatedSlugs: ["what-is-facial-embedding", "confidence-vs-accuracy", "how-face-recognition-works"],
   },
   {
     slug: "find-your-celebrity-lookalike",
-    title: "Celebrity Look Alike Finder: How to Find Yours Free",
-    excerpt: "Everything you need to know about getting the best celebrity match results, lighting, angles, photo quality, and why some photos work better than others.",
-    summary: "The quickest way to answer \"what celebrity do I look like?\" is a celebrity look alike finder. Upload a clear, front-facing photo to Ollie, a free celebrity lookalike AI: it turns your face into a 512-number fingerprint and shows the five celebrities whose faces are closest. Soft light, a neutral expression and the rear camera give the most reliable celebrity look alike results.",
+    title: "How to Find Your Celebrity Lookalike, Step by Step",
+    excerpt: "How to find your celebrity lookalike: the photo to pick, the light and angle that work, and why some photos give better celebrity matches than others.",
+    summary: "To find your celebrity lookalike, upload one clear, front-facing photo to a celebrity lookalike finder such as Ollie, which is free. It turns your face into a 512-number fingerprint and shows the five celebrities whose faces are closest. Soft light, a neutral expression and the rear camera give the most reliable results.",
     date: "August 30, 2026",
-    updatedIsoDate: "2026-09-26",
+    updatedIsoDate: "2026-10-01",
     isoDate: "2026-08-30",
     readTime: "4 min read",
     category: "Guide",
     author: "Wendy Wei",
-    keywords: ["celebrity lookalike", "celebrity look alike finder", "what celebrity do i look like", "celebrity lookalike ai", "upload photo", "face match", "celebrity look alike", "find my celebrity lookalike", "who is my celebrity look alike", "what actor do i look like", "what actress do i look like"],
+    keywords: ["how to find your celebrity lookalike", "how to find my celebrity lookalike", "find my celebrity lookalike", "best photo for celebrity lookalike", "upload photo", "face match"],
     sections: [
       {
         h2: "How Ollie Finds Your Lookalike",
@@ -943,7 +809,7 @@ export const postsA: BlogPost[] = [
       { q: "Why might my match be from a different ethnic group?", a: "Facial geometry, bone structure and proportions, is partly independent of ethnicity. Two people from different backgrounds can share very similar skeletal proportions and receive strong similarity scores." },
       { q: "What does a strong celebrity match actually mean?", a: "A strong match means the geometric proportions of your face, inter-feature distances, ratios, and structural relationships, closely resemble those of the matched celebrity." },
     ],
-    relatedSlugs: ["what-celebrity-match-reveals", "most-matched-celebrities", "science-of-you-look-like"],
+    relatedSlugs: ["what-celebrity-match-reveals", "most-matched-celebrities", "why-people-say-you-look-like-someone"],
   },
   {
     slug: "most-matched-celebrities",
@@ -1186,60 +1052,20 @@ export const postsA: BlogPost[] = [
       { q: "Does my celebrity match tell me my face shape?", a: "Partially. Your match reflects your facial geometry across many dimensions, not just the overall shape silhouette but proportional relationships between features. Look at the shared features between you and your top match for the most informative reading." },
       { q: "Why might I have multiple strong matches that look very different?", a: "If several matches are all within a similar score range, you sit in a region of the embedding space where multiple celebrity embeddings are equidistant. Your face shares some dimensions with each match." },
     ],
-    relatedSlugs: ["what-is-a-facial-fingerprint", "why-everyone-has-doppelganger", "most-matched-celebrities"],
+    relatedSlugs: ["what-is-facial-embedding", "why-everyone-has-doppelganger", "most-matched-celebrities"],
   },
   {
-    slug: "twins-different-celebrity",
-    title: "Why Twins Don't Always Match the Same Celebrity",
-    excerpt: "Identical twins share nearly all their DNA, yet they can receive different top celebrity matches. This reveals something subtle about how face recognition actually works.",
-    summary: "Identical twins can match different celebrities because their faces are not truly identical: small differences in feature position, asymmetry and marks build up during development. Face recognition is sensitive to exactly those small differences, and photo conditions add more. Twins' match lists often overlap, but the top match can differ.",
-    date: "August 31, 2026",
-    isoDate: "2026-08-31",
-    readTime: "4 min read",
-    category: "Culture",
-    author: "Wendy Wei",
-    keywords: ["identical twins face recognition", "twins face ID", "identical twins", "celebrity match", "face embedding", "facial differences"],
-    sections: [
-      {
-        h2: "Identical DNA, Different Faces",
-        paragraphs: [
-          "Identical twins arise from a single fertilised egg and share nearly all their genetic material. Yet anyone who has spent time around twins can tell them apart once familiar with them, minor differences in mole and freckle placement, subtle asymmetries, slight variations in the relative positions of features accumulate during development in ways not genetically determined. Epigenetic differences and random developmental noise produce measurably different faces from the same blueprint.",
-          "From a face recognition perspective, these differences are real and measurable signals. The network does not compare DNA,it compares the actual three-dimensional geometric configuration of the face present in the photograph. If twin A has a fractionally more prominent right cheekbone than twin B, the resulting embedding difference shifts their positions in the 512-dimensional space, potentially placing them in the neighbourhoods of different celebrity embeddings.",
-        ],
-      },
-      {
-        h2: "How Small Differences Produce Different Matches",
-        paragraphs: [
-          "The embedding space is high-dimensional and the celebrity distribution is not uniform. A small shift in embedding position, caused by a minor developmental difference, can move a face from the neighbourhood of one celebrity cluster to the neighbourhood of a different one. This does not require a large biological difference; it requires only that the shift crosses an invisible boundary between two celebrity clusters.",
-          "Photo conditions also amplify the effect. If twin A's available photos show more profile views and twin B's show mainly frontal shots, their embeddings will reflect both biological differences and the different distribution of photo angles. The most informative comparison uses well-controlled, matched photos from both twins.",
-        ],
-      },
-      {
-        h2: "What This Reveals About the System",
-        paragraphs: [
-          "The fact that identical twins can receive different top matches demonstrates that the system is sensitive to genuine micro-differences in facial geometry, not just broad category membership. This sensitivity is what makes <strong>biometric face recognition</strong> viable, it discriminates at a finer level than human observers typically manage for unfamiliar faces.",
-          "Modern deep embedding approaches distinguish twins correctly in most conditions, though their embeddings are closer together than those of unrelated individuals, correctly reflecting the genuine underlying biological similarity. The fact that twins can receive different top results from a celebrity database does not mean the system is confused; it means the system is measuring something real.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "Can face recognition tell identical twins apart?", a: "Modern deep learning face recognition systems can distinguish identical twins with high accuracy when good-quality, well-controlled photos are used. The twins' embeddings are close together but typically not identical." },
-      { q: "Why might identical twins get different celebrity matches?", a: "Minor developmental differences in feature placement, combined with different photo conditions, can shift their embeddings into the neighbourhoods of different celebrity clusters in the 512-dimensional space." },
-    ],
-    relatedSlugs: ["identical-twins-different-profiles", "what-is-a-facial-fingerprint", "why-same-person-different-ai-results"],
-  },
-  {
-    slug: "science-of-you-look-like",
-    title: "Who Do I Look Like? The Science of \"You Look Just Like...\"",
+    slug: "why-people-say-you-look-like-someone",
+    title: "Why Do People Say I Look Like Someone? The Science",
     excerpt: "When someone says you look like a famous person, they are making an automatic geometric comparison. Here is what the psychology research says about how that works.",
     summary: "People say you look like a celebrity because the brain automatically compares every new face with faces it already knows, and celebrities are faces almost everyone knows. Humans lean on hair, expression and overall impression, so people often disagree about lookalikes. AI measures facial proportions instead, which is why its matches can differ from your friends'.",
     date: "August 29, 2026",
-    updatedIsoDate: "2026-09-26",
+    updatedIsoDate: "2026-10-01",
     isoDate: "2026-08-29",
     readTime: "4 min read",
     category: "Culture",
     author: "Wendy Wei",
-    keywords: ["why do people say i look like a celebrity", "you look like", "celebrity lookalike", "face perception", "fusiform face area", "face recognition", "who do i look like", "my celebrity look alike", "who is my celebrity look alike"],
+    keywords: ["why do people say i look like someone", "why do people say i look like a celebrity", "why do i look like someone else", "you look like", "face perception", "fusiform face area", "face recognition"],
     sections: [
       {
         h2: "Why Humans Compare Faces Spontaneously",

@@ -72,15 +72,15 @@ function headingIds(headings: string[]) {
   })
 }
 
-// The first mention of the site's main keyword in a post's body links to /match, so every article passes
+// The first mention of the site's main keyword in a post's body links to /celebrity-lookalike, so every article passes
 // its topical relevance to the page that should rank. One link per post, and only where the phrase is already used.
 const MATCH_PHRASE = /celebrit(?:y|ies) (?:you )?look[- ]?alikes?|celebrity match(?:es)?|which celebrit(?:y|ies) you look like|celebrity doppelg[aä]ngers?|what celebrity (?:do )?i look like/i
 const bodyLink = "text-(--ollie-cyan) underline underline-offset-4 hover:text-white"
 
-// Same idea for /compare and the key guides: each target gets one link, at its first mention, in order of priority
+// Same idea for /compare-faces and the key guides: each target gets one link, at its first mention, in order of priority
 const LINK_RULES: [href: string, phrase: RegExp][] = [
-  ["/match", MATCH_PHRASE],
-  ["/compare", /compar(?:e|ing) (?:two |2 )?faces|face comparison/i],
+  ["/celebrity-lookalike", MATCH_PHRASE],
+  ["/compare-faces", /compar(?:e|ing) (?:two |2 )?faces|face comparison/i],
   ["/blog/why-everyone-has-doppelganger", /doppelg[aä]ngers?|resemblances?/i],
   ["/blog/what-is-similarity-score", /similarity scores?/i],
   ["/blog/why-same-person-different-ai-results", /(?:two )?photos of the same person/i],
@@ -316,7 +316,7 @@ export default async function BlogPostPage({ params }: Props) {
               Upload a photo and see which celebrities you look most like. Free to try, and your photo is never stored.
             </p>
             <Link
-              href="/match"
+              href="/celebrity-lookalike"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-(--ollie-cyan) text-black text-sm font-bold hover:opacity-90 transition-opacity"
             >
               Find my celebrity look alike <ArrowRight size={14} aria-hidden="true" />
