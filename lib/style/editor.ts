@@ -79,9 +79,9 @@ const find = (list: { id: string; render: string }[], id?: string) => (id ? list
 
 /** Look -> the edit instruction for the image model, plus the product pages whose photos go along as
  *  reference images, or null if any id is unknown. */
-export function instruction(look: Look, texture?: Texture): { text: string; refs: { name: string; url: string }[] } | null {
+export function instruction(look: Look, texture?: Texture): { text: string; refs: string[] } | null {
   const lines: string[] = []
-  const refs: { name: string; url: string }[] = []
+  const refs: string[] = [] // product ids, for their photos
   const bad = (id: string | undefined, r: string | undefined) => id !== undefined && r === undefined
   const cut = look.hair ? CUTS.find((c) => c.id === look.hair) : undefined
   if (look.hair && !cut) return null
@@ -100,7 +100,7 @@ export function instruction(look: Look, texture?: Texture): { text: string; refs
     const it = ITEMS.find((i) => i.id === id && i.slot === slot)
     if (!it) return null
     wear.push(slot === "outer" ? `${it.render} worn over the top` : it.render)
-    refs.push({ name: it.render, url: it.url })
+    refs.push(it.id)
   }
   if (wear.length) lines.push(`Clothing: ${wear.join("; ")}.`)
   if (!lines.length) return null

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
-import { Box, Check, Crown, ExternalLink, Eye, Footprints, Glasses, ImageUp, Layers, Scissors, Shirt, ShoppingBag, Smile, WandSparkles } from "lucide-react"
+import { Check, Crown, RefreshCw, ExternalLink, Eye, Footprints, Glasses, ImageUp, Layers, Scissors, Shirt, ShoppingBag, Smile, WandSparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ProductCard, ProductCardBadge, ProductCardContent, ProductCardHeader, ProductCardImage, ProductCardSubtitle, ProductCardTitle } from "@/components/ui/product-card"
@@ -9,17 +9,19 @@ import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { glassOpen } from "@/lib/surfaces"
 import { track } from "@/lib/analytics"
 import { SHAPE_INFO, type ShapeResult } from "@/lib/style/face-shape"
-import { ITEMS, STYLES, type Hairline, type Style } from "@/lib/style/catalog"
-import { DEFAULT_OUTFIT, HAIR_COLORS, SKIN_TONES, headFor, type Outfit, type Source } from "@/lib/style/avatar"
-import { PLANS, PRO_FEATURES, type PlanId } from "@/lib/style/plans"
-import { StyleAvatar } from "@/components/style-avatar"
-import { PricingSection } from "@/components/ui/pricing-4"
+import { STYLES, type Hairline, type Style } from "@/lib/style/catalog"
 import { useAuth } from "@/components/auth-provider"
-import { supabase } from "@/lib/supabase"
+import { authHeaders, usePro } from "@/components/style-plans"
 import { cards, tabsFor, type Card, type Look, type TabId } from "@/lib/style/editor"
 import { fitNotes, grooming, type Answers, type Link } from "@/lib/style/recommend"
 
 const ICON: Record<TabId, typeof Scissors> = { hair: Scissors, brows: Eye, beard: Smile, glasses: Glasses, top: Shirt, outer: Layers, bottom: Shirt, shoes: Footprints }
+const MODEL_PHASES = [
+  { at: 0, label: "Picking up the clothes" },
+  { at: 25, label: "Dressing the model" },
+  { at: 70, label: "Finishing details" },
+]
+const CLOTHES = ["top", "outer", "bottom", "shoes"] as const
 const PHASES = [
   { at: 0, label: "Sending your photo" },
   { at: 20, label: "Trying on your look" },
@@ -54,30 +56,13 @@ async function shrink(file: File, max = 1280): Promise<string> {
   return c.toDataURL("image/jpeg", 0.9)
 }
 
-async function authHeaders(): Promise<Record<string, string>> {
-  const { data: { session } } = await supabase.auth.getSession()
-  return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}
-}
-
-// The look -> what the 3D model wears. Outerwear covers the top (the model has one torso piece).
-function outfitFor(look: Look, skin?: string, hair?: string): Outfit {
-  const pick = (id?: string) => (id ? ITEMS.find((i) => i.id === id) : undefined)
-  const torso = pick(look.outer) ?? pick(look.top), legs = pick(look.bottom), feet = pick(look.shoes)
-  return {
-    head: headFor(look.hair),
-    body: (torso?.part as Source) ?? DEFAULT_OUTFIT.body,
-    legs: (legs?.part as Source) ?? DEFAULT_OUTFIT.legs,
-    feet: (feet?.part as Source) ?? DEFAULT_OUTFIT.feet,
-    colors: { body: torso?.color, legs: legs?.color, feet: feet?.color ?? (feet ? undefined : DEFAULT_OUTFIT.colors.feet), skin, hair },
-  }
-}
-
-export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
+export function StyleEditor({ photo, shape, answers, onRescan, onRetake, onPlans }: {
   photo: string
   shape: ShapeResult
   answers: Answers
   onRescan: () => void
   onRetake: () => void
+  onPlans: (reason?: string) => void // opens the Free / Pro popup
 }) {
   const [base, setBase] = useState(photo)
   const [hairline, setHairline] = useState<Hairline | "">("")
@@ -95,35 +80,41 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const summary = useRef<HTMLElement>(null)
-  const pricing = useRef<HTMLElement>(null)
-  const { user, openModal } = useAuth()
-  const [pro, setPro] = useState(false)
-  const [view, setView] = useState<"3d" | "photo">("3d")
-  const [skin, setSkin] = useState<string>()
-  const [hairColor, setHairColor] = useState<string>()
-  const [buying, setBuying] = useState<PlanId | null>(null)
-  const outfit = useMemo(() => outfitFor(look, skin, hairColor), [look, skin, hairColor])
+  const { openModal } = useAuth()
+  const pro = usePro()
+  const [view, setView] = useState<"model" | "photo">("model")
+  const [modelGender, setModelGender] = useState<"male" | "female">(answers.gender === "female" ? "female" : "male")
+  const [modelUrl, setModelUrl] = useState<string | null>(null) // null = the model in base clothes
+  const [modelBusy, setModelBusy] = useState(false)
+  const [modelError, setModelError] = useState<string | null>(null)
+  const [retry, setRetry] = useState(0)
   const thanks = typeof window !== "undefined" && new URLSearchParams(location.search).get("pro") === "thanks"
+  const showPlans = () => onPlans("Trying looks on your own photo is part of Ollie Pro.")
+  const clothesKey = CLOTHES.map((c) => look[c] ?? "").join("|")
 
+  // dress the model whenever the picked clothes change (cached outfits come back instantly)
   useEffect(() => {
-    authHeaders().then((h) => fetch("/api/pro", { headers: h })).then((r) => r.json()).then((d) => setPro(!!d.pro)).catch(() => {})
-  }, [user])
-
-  const showPlans = () => pricing.current?.scrollIntoView({ behavior: "smooth" })
-
-  async function buy(plan: PlanId) {
-    if (!user) return openModal(() => buy(plan), "signup")
-    setBuying(plan)
-    track("pro_checkout", { plan })
-    try {
-      const res = await fetch("/api/pro", { method: "POST", headers: { "Content-Type": "application/json", ...(await authHeaders()) }, body: JSON.stringify({ plan }) })
-      const d = await res.json().catch(() => ({}))
-      if (d.url) location.href = d.url
-      else setError(d.error || "Checkout failed. Please try again.")
-    } finally {
-      setBuying(null)
-    }
-  }
+    const wear = Object.fromEntries(CLOTHES.filter((c) => look[c]).map((c) => [c, look[c]]))
+    const ctl = new AbortController()
+    const t = setTimeout(async () => {
+      setModelError(null)
+      if (!Object.keys(wear).length) return setModelUrl(null)
+      setModelBusy(true)
+      try {
+        const res = await fetch("/api/style-model", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ gender: modelGender, look: wear }), signal: ctl.signal })
+        const d = await res.json().catch(() => ({}))
+        if (!res.ok || !d.url) throw new Error(d.error || "Couldn't dress the model. Please try again.")
+        setModelUrl(d.url)
+        track("style_model_tryon", { cached: !!d.cached })
+      } catch (e) {
+        if (!ctl.signal.aborted) setModelError((e as Error).message)
+      } finally {
+        if (!ctl.signal.aborted) setModelBusy(false)
+      }
+    }, 600)
+    return () => { clearTimeout(t); ctl.abort() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clothesKey, modelGender, retry])
 
   const picked = tabs.flatMap((t) => {
     const c = look[t.id] ? all[t.id]?.find((x) => x.id === look[t.id]) : undefined
@@ -164,33 +155,45 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
-        {/* ── preview: free 3D try-on, or the AI try-on on their own photo (Pro) ── */}
-        <section className={`${glassOpen} flex flex-col gap-4 p-5 md:p-6`} aria-label="Preview" aria-busy={busy}>
-          <Tabs value={view} onValueChange={(v) => setView(v as "3d" | "photo")} className="flex flex-col gap-4">
+        {/* ── preview: free try-on on a model, or the AI try-on on their own photo (Pro) ── */}
+        <section className={`${glassOpen} flex flex-col gap-4 p-5 md:p-6`} aria-label="Preview" aria-busy={busy || modelBusy}>
+          {thanks && (
+            <p role="status" className="rounded-xl border border-(--ollie-cyan)/30 bg-(--ollie-cyan)/10 p-3 text-sm text-white">
+              Thanks! Your payment went through. Pro unlocks on your account within a minute.
+            </p>
+          )}
+          <Tabs value={view} onValueChange={(v) => (v === "photo" && pro === false ? showPlans() : setView(v as "model" | "photo"))} className="flex flex-col gap-4">
             <TabsList className="grid h-auto w-full grid-cols-2">
-              <TabsTrigger value="3d" className="gap-1.5"><Box size={14} aria-hidden="true" />3D try-on</TabsTrigger>
-              <TabsTrigger value="photo" className="gap-1.5"><Crown size={14} aria-hidden="true" />On your photo{!pro && " · Pro"}</TabsTrigger>
+              <TabsTrigger value="model" className="gap-1.5"><Shirt size={14} aria-hidden="true" />On a model</TabsTrigger>
+              <TabsTrigger value="photo" className="gap-1.5"><Crown size={14} aria-hidden="true" />On you{pro === false && " · Pro"}</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="3d" className="flex flex-col gap-3">
-              <StyleAvatar outfit={outfit} className="h-[min(36rem,62svh)] w-full rounded-2xl bg-black/35" />
-              <div className="grid grid-cols-2 gap-2">
-                <select aria-label="Skin tone" value={skin ?? ""} onChange={(e) => setSkin(e.currentTarget.value || undefined)} className={select}>
-                  <option value="">Skin tone</option>
-                  {SKIN_TONES.map((t) => <option key={t.hex} value={t.hex}>{t.label}</option>)}
-                </select>
-                <select aria-label="Hair colour" value={hairColor ?? ""} onChange={(e) => setHairColor(e.currentTarget.value || undefined)} className={select}>
-                  <option value="">Hair colour</option>
-                  {HAIR_COLORS.map((c) => <option key={c.hex} value={c.hex}>{c.label}</option>)}
-                </select>
+            <TabsContent value="model" className="flex flex-col gap-3">
+              <div className="relative overflow-hidden rounded-2xl bg-black/35">
+                {/* eslint-disable-next-line @next/next/no-img-element -- generated image or a static model photo */}
+                <img src={modelUrl ?? `/style/models/${modelGender}.jpg`} alt="A model wearing your picked clothes" className="mx-auto aspect-[3/4] max-h-[min(36rem,62svh)] w-full object-contain" />
+                {modelBusy && (
+                  <div className="absolute inset-0 flex items-end bg-black/50 p-5">
+                    <ProgressiveFluxLoader phases={MODEL_PHASES} duration={16} loop={false} className="w-full gap-3 [--flux-from:var(--ollie-cyan)] [--flux-to:var(--ollie-cyan)]" />
+                  </div>
+                )}
               </div>
-              <p className="text-xs text-white/50">
-                Drag to turn the model around. It wears each product&apos;s real colour and cut type; see the exact item on your own photo with Pro.
-                {answers.gender === "female" && " A women's 3D model is on the way."}
-              </p>
-              {!pro && (
-                <Button variant="brand" size="cta" onClick={() => { setView("photo"); showPlans() }} className="gap-2">
-                  <WandSparkles size={16} aria-hidden="true" />See it on your own photo
+              <div className="flex items-center justify-between gap-2">
+                <select aria-label="Model" value={modelGender} onChange={(e) => setModelGender(e.currentTarget.value as "male" | "female")} className={select}>
+                  <option value="male">Men&apos;s model</option>
+                  <option value="female">Women&apos;s model</option>
+                </select>
+                <p className="text-xs text-white/50">Pick clothes on the right to dress the model.</p>
+              </div>
+              {modelError && (
+                <p role="alert" className="flex items-center justify-between gap-2 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">
+                  {modelError}
+                  <button type="button" onClick={() => setRetry((r) => r + 1)} className="inline-flex items-center gap-1 font-semibold text-white"><RefreshCw size={13} aria-hidden="true" />Retry</button>
+                </p>
+              )}
+              {pro === false && (
+                <Button variant="brand" size="cta" onClick={showPlans} className="gap-2">
+                  <WandSparkles size={16} aria-hidden="true" />See this look on you
                 </Button>
               )}
             </TabsContent>
@@ -245,7 +248,7 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
                   <p className="text-sm leading-relaxed text-white/70">
                     See the exact haircut, beard and real clothes on <span className="font-semibold text-white">your own face and body</span>, made by AI from the brands&apos; own product photos. Part of Ollie Pro.
                   </p>
-                  <Button variant="brand" size="cta" onClick={showPlans} className="gap-2"><Crown size={16} aria-hidden="true" />See Pro plans</Button>
+                  <Button variant="brand" size="cta" onClick={showPlans} className="gap-2"><Crown size={16} aria-hidden="true" />Upgrade to Pro</Button>
                 </div>
               )}
               {error && <p role="alert" className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">{error}</p>}
@@ -297,8 +300,12 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
                         <button key={c.id} type="button" onClick={() => toggle(t.id, c.id)} aria-pressed={on}
                           className={`rounded-xl text-left ring-2 ${on ? "ring-(--ollie-cyan)" : "ring-transparent"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ollie-cyan)`}>
                           <ProductCard className="max-w-none" size="sm">
-                            <ProductCardImage className="flex aspect-[4/3] items-center justify-center">
+                            <ProductCardImage className="relative flex aspect-[4/3] items-center justify-center">
                               <Icon size={28} className={on ? "text-(--ollie-cyan)" : "text-white/40"} aria-hidden="true" />
+                              {clothes && (
+                                // eslint-disable-next-line @next/next/no-img-element -- local product photo, hidden if missing
+                                <img src={`/style/products/${c.id}.jpg`} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = "none" }} className="absolute inset-0 size-full bg-white object-contain p-2" />
+                              )}
                               {(on || c.best) && <ProductCardBadge isActive={on}>{on ? "Picked" : "Best for you"}</ProductCardBadge>}
                             </ProductCardImage>
                             <ProductCardContent>
@@ -360,28 +367,6 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
         <p className="text-xs text-white/50">Ollie earns a commission from some links. As an Amazon Associate, Ollie earns from qualifying purchases.</p>
       </section>
 
-      {/* ── Ollie Pro ── */}
-      <section ref={pricing} className={`${glassOpen} flex flex-col gap-2 p-2 md:p-4`} aria-label="Ollie Pro plans">
-        {(pro || thanks) && (
-          <p role="status" className="mx-4 mt-3 rounded-xl border border-(--ollie-cyan)/30 bg-(--ollie-cyan)/10 p-3 text-sm text-white">
-            {pro ? "You have Ollie Pro. Open the \u201cOn your photo\u201d tab to try any look on yourself." : "Thanks! Your payment went through. Pro unlocks on your account within a minute."}
-          </p>
-        )}
-        <PricingSection
-          title="Ollie Pro"
-          subtitle="The 3D try-on stays free. Pro puts every look on your own photo, plus Ollie's celebrity lookalike finder and face compare."
-          plans={PLANS.map((p) => ({
-            name: p.name,
-            info: p.note,
-            price: p.price,
-            period: p.period,
-            highlighted: p.highlighted,
-            badge: p.id === "yearly" ? "Save 52%" : p.id === "lifetime" ? "Best value" : undefined,
-            features: PRO_FEATURES,
-            btn: { text: pro ? "You have Pro" : buying === p.id ? "Opening checkout\u2026" : `Get ${p.name}`, onClick: () => buy(p.id), disabled: pro || buying !== null },
-          }))}
-        />
-      </section>
     </div>
   )
 }

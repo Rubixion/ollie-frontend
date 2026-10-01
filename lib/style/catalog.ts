@@ -267,43 +267,43 @@ export const STYLES: Record<Style, { label: string; blurb: string }> = {
 }
 
 export type Slot = "top" | "outer" | "bottom" | "shoes"
-// Real products (found 2026-09-30 on each brand's own site). `part` = which 3D avatar piece shows it
-// (lib/style/avatar.ts), `color` = its main colour on that piece. Prices only where the brand's page showed one.
+// Real products (found 2026-09-30 on each brand's own site). Prices only where the brand's page showed one.
+// Photo for the try-on and the card: public/style/products/<id>.jpg (front-on product shot, plain background).
 // ponytail: plain brand links; swap `url` for affiliate links (Amazon / Awin / Rakuten / Impact) once approved.
-export type Item = Option & { slot: Slot; styles: Style[]; brand: string; url: string; color: string; part: string; price?: string }
-const item = (slot: Slot, id: string, brand: string, name: string, colorName: string, styles: Style[], part: string, color: string, url: string, render: string, price?: string): Item =>
-  ({ slot, id, brand, name: `${brand} ${name}`, styles, part, color, url, render, price, sub: [colorName, price].filter(Boolean).join(" · ") })
+export type Item = Option & { slot: Slot; styles: Style[]; brand: string; url: string; price?: string }
+const item = (slot: Slot, id: string, brand: string, name: string, colorName: string, styles: Style[], url: string, render: string, price?: string): Item =>
+  ({ slot, id, brand, name: `${brand} ${name}`, styles, url, render, price, sub: [colorName, price].filter(Boolean).join(" · ") })
 
 export const ITEMS: Item[] = [
-  item("top", "champion-rw-hoodie", "Champion", "Reverse Weave Hoodie", "Black", ["streetwear", "athleisure"], "casual", "#1f1f21",
+  item("top", "champion-rw-hoodie", "Champion", "Reverse Weave Hoodie", "Black", ["streetwear", "athleisure"],
     "https://www.champion.com/products/champion-reverse-weave-hoodie-black", "a black Champion Reverse Weave heavyweight pullover hoodie"),
-  item("top", "uniqlo-u-tee", "Uniqlo", "U Crew Neck T-Shirt", "White", ["minimal", "classic"], "casual2", "#ecebe6",
+  item("top", "uniqlo-u-tee", "Uniqlo", "U Crew Neck T-Shirt", "White", ["minimal", "classic"],
     "https://www.uniqlo.com/us/en/products/E433028-000/00", "a plain white heavyweight Uniqlo U crew-neck t-shirt"),
-  item("outer", "levis-trucker", "Levi's", "Trucker Jacket", "Medium wash", ["streetwear", "y2k", "workwear"], "suit", "#5d7ea8",
+  item("outer", "levis-trucker", "Levi's", "Trucker Jacket", "Medium wash", ["streetwear", "y2k", "workwear"],
     "https://www.levi.com/US/en_US/clothing/men/outerwear/trucker-jacket/p/723340130", "a Levi's Trucker Jacket in medium-wash blue denim with metal buttons and chest pockets"),
-  item("outer", "alpha-ma1", "Alpha Industries", "MA-1 Bomber (Heritage)", "Sage", ["streetwear", "classic"], "suit", "#5a6345",
+  item("outer", "alpha-ma1", "Alpha Industries", "MA-1 Bomber (Heritage)", "Sage", ["streetwear", "classic"],
     "https://www.alphaindustries.com/products/mjm21000c1-ma-1-bomber-jacket-heritage", "an Alpha Industries MA-1 nylon bomber jacket in sage green with ribbed collar and cuffs", "$200"),
-  item("outer", "carhartt-michigan", "Carhartt WIP", "Michigan Chore Coat", "Hamilton brown", ["workwear", "minimal"], "suit", "#8a5a2b",
+  item("outer", "carhartt-michigan", "Carhartt WIP", "Michigan Chore Coat", "Hamilton brown", ["workwear", "minimal"],
     "https://us.carhartt-wip.com/en-us/collections/men-jackets-michigan-chore-coat", "a Carhartt WIP Michigan chore coat in brown canvas with a corduroy collar and patch pockets"),
-  item("outer", "patagonia-torrentshell", "Patagonia", "Torrentshell 3L Jacket", "Black", ["techwear", "athleisure"], "casual", "#1d1f22",
+  item("outer", "patagonia-torrentshell", "Patagonia", "Torrentshell 3L Jacket", "Black", ["techwear", "athleisure"],
     "https://www.patagonia.com/torrentshell/", "a black Patagonia Torrentshell 3L waterproof rain shell jacket with a hood", "$189"),
-  item("outer", "uniqlo-uld-vest", "Uniqlo", "Ultra Light Down Vest", "Navy", ["minimal", "athleisure"], "worker", "#23283b",
+  item("outer", "uniqlo-uld-vest", "Uniqlo", "Ultra Light Down Vest", "Navy", ["minimal", "athleisure"],
     "https://www.uniqlo.com/us/en/products/E472294-000/00", "a navy Uniqlo Ultra Light Down quilted puffer vest"),
-  item("outer", "jcrew-ludlow", "J.Crew", "Ludlow Unstructured Blazer", "Navy", ["classic", "old-money", "preppy"], "suit", "#22293d",
+  item("outer", "jcrew-ludlow", "J.Crew", "Ludlow Unstructured Blazer", "Navy", ["classic", "old-money", "preppy"],
     "https://www.jcrew.com/p/mens/categories/clothing/blazers/casual-blazers/ludlow-slim-fit-unstructured-blazer-in-italian-wool-blend/AO686", "a navy J.Crew Ludlow slim-fit unstructured wool blazer"),
-  item("bottom", "levis-501", "Levi's", "501 Original Jeans", "Medium wash", ["classic", "minimal", "streetwear"], "casual2", "#4a6a93",
+  item("bottom", "levis-501", "Levi's", "501 Original Jeans", "Medium wash", ["classic", "minimal", "streetwear"],
     "https://www.levi.com/US/en_US/clothing/men/jeans/straight/501-original-mens-jeans/p/005010193", "Levi's 501 straight-leg jeans in medium-wash blue denim"),
-  item("bottom", "levis-501-black", "Levi's", "501 Original Fit Jeans", "Black", ["streetwear", "minimal"], "punk", "#1f1f22",
+  item("bottom", "levis-501-black", "Levi's", "501 Original Fit Jeans", "Black", ["streetwear", "minimal"],
     "https://www.levi.com/US/en_US/clothing/men/jeans/straight/501-original-fit-mens-jeans/p/005013610", "black Levi's 501 straight-leg jeans"),
-  item("bottom", "dickies-874", "Dickies", "874 Work Pants", "Khaki", ["workwear", "streetwear"], "worker", "#b8a07a",
+  item("bottom", "dickies-874", "Dickies", "874 Work Pants", "Khaki", ["workwear", "streetwear"],
     "https://www.dickies.com/en-us/collections/874-work-pants", "khaki Dickies 874 straight-leg twill work pants", "from $29.99"),
-  item("bottom", "uniqlo-chino", "Uniqlo", "Slim-Fit Chino Pants", "Beige", ["classic", "preppy", "old-money"], "suit", "#c8b48f",
+  item("bottom", "uniqlo-chino", "Uniqlo", "Slim-Fit Chino Pants", "Beige", ["classic", "preppy", "old-money"],
     "https://www.uniqlo.com/us/en/products/E422370-000/00", "beige Uniqlo slim-fit chino trousers"),
-  item("shoes", "converse-chuck-70", "Converse", "Chuck 70 High Top", "Black canvas", ["streetwear", "y2k", "classic"], "casual2", "#1c1c1c",
+  item("shoes", "converse-chuck-70", "Converse", "Chuck 70 High Top", "Black canvas", ["streetwear", "y2k", "classic"],
     "https://www.converse.com/shop/p/chuck-70-canvas-unisex-high-top-shoe/162056MP.html", "black canvas Converse Chuck 70 high-top sneakers with white soles", "$95"),
-  item("shoes", "adidas-stan-smith", "adidas", "Stan Smith", "White / green", ["classic", "minimal"], "casual", "#f2f2ef",
+  item("shoes", "adidas-stan-smith", "adidas", "Stan Smith", "White / green", ["classic", "minimal"],
     "https://www.adidas.com/us/men-stan_smith-shoes", "white leather adidas Stan Smith sneakers with a green heel tab", "$100"),
-  item("shoes", "dr-martens-1460", "Dr. Martens", "1460 Boots", "Black smooth leather", ["workwear", "streetwear"], "punk", "#141414",
+  item("shoes", "dr-martens-1460", "Dr. Martens", "1460 Boots", "Black smooth leather", ["workwear", "streetwear"],
     "https://www.drmartens.com/us/en/unisex/originals-boots-and-shoes/boots/1460-lace-up-boots/c/06015600", "black smooth-leather Dr. Martens 1460 8-eye lace-up boots with yellow welt stitching", "$180"),
 ]
 

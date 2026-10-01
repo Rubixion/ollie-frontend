@@ -31,7 +31,7 @@ assert.equal(instruction({}), null)
 const out = instruction({ hair: "textured-crop", beard: "stubble", outer: "jcrew-ludlow" }, "wavy")!
 const txt = out.text
 assert.ok(txt.includes("textured crop") && txt.includes("wavy") && txt.includes("stubble") && txt.includes("Ludlow"))
-assert.equal(out.refs[0]?.url.startsWith("https://www.jcrew.com/"), true, "the real product page goes along as a reference")
+assert.deepEqual(out.refs, ["jcrew-ludlow"], "the real product's photo goes along as a reference")
 
 const coily = rankCuts({ ...base, texture: "coily", direction: "masculine" }, oval)
 for (const r of coily) assert.ok(r.cut.tex.includes("coily"), r.cut.id)

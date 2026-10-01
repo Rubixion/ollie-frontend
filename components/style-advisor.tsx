@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { StyleScanner, type ScanResult } from "@/components/style-scanner"
 import { StyleQuiz } from "@/components/style-quiz"
 import { StyleEditor } from "@/components/style-editor"
+import { StylePlans, usePro } from "@/components/style-plans"
 import { glassOpen } from "@/lib/surfaces"
 import { SHAPE_INFO, classify, type ShapeResult } from "@/lib/style/face-shape"
 import type { Answers } from "@/lib/style/recommend"
@@ -19,6 +20,8 @@ export function StyleAdvisor() {
   const [scan, setScan] = useState<Scan>({ pending: false })
   const [answers, setAnswers] = useState<Answers>()
   const [photo, setPhoto] = useState<string>()
+  const pro = usePro()
+  const [plans, setPlans] = useState<{ open: boolean; reason?: string }>({ open: false })
 
   function scanned({ ratios, frame }: ScanResult) {
     const s = classify(ratios)
@@ -59,13 +62,14 @@ export function StyleAdvisor() {
 
   if (step === "quiz") return (
     <div className={panel}>
-      <StyleQuiz scanAge={scan.age} scanGender={scan.gender} onDone={(a) => { setAnswers(a); setStep("report"); track("style_quiz_done"); window.scrollTo({ top: 0 }) }} />
+      <StyleQuiz scanAge={scan.age} scanGender={scan.gender} onDone={(a) => { setAnswers(a); setStep("report"); track("style_quiz_done"); window.scrollTo({ top: 0 }); if (!pro) setPlans({ open: true }) }} />
     </div>
   )
 
   if (step === "report" && shape && answers && photo) return (
     <div className="mx-auto w-full max-w-6xl">
-      <StyleEditor photo={photo} shape={shape} answers={answers} onRescan={() => setStep("scan")} onRetake={() => setStep("quiz")} />
+      <StyleEditor photo={photo} shape={shape} answers={answers} onRescan={() => setStep("scan")} onRetake={() => setStep("quiz")} onPlans={(reason) => setPlans({ open: true, reason })} />
+      <StylePlans open={plans.open} reason={plans.reason} onOpenChange={(open) => setPlans((p) => ({ ...p, open }))} onFree={() => setPlans({ open: false })} />
     </div>
   )
 
