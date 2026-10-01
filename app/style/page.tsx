@@ -20,12 +20,12 @@ export default function StylePage() {
         <div className="mb-[clamp(0.75rem,3svh,1.75rem)] text-center">
           <h1 className="fluid-h1-sm font-black text-white tracking-[-0.015em] leading-[1.05] text-balance">Find the haircut and style that suit you</h1>
           <p className="mx-auto mt-3 max-w-2xl text-white/70 text-base leading-relaxed text-pretty">
-            A live face scan and five quick questions, then try haircuts, brows, beards, glasses and clothes on your own photo.
+            A live face scan and five quick questions, then try haircuts and real clothes on a 3D model for free, or on your own photo with Ollie Pro.
           </p>
         </div>
         <StyleAdvisor />
         <p className="mx-auto mt-6 max-w-xl text-center text-xs text-white/50 text-pretty">
-          The face scan runs in your browser. One still frame is sent to estimate your age and is deleted straight away. Previews send your photo to Google&apos;s Gemini only after you tick the box. Nothing is saved.
+          The face scan runs in your browser. One still frame is sent to estimate your age and is deleted straight away. The 3D try-on runs in your browser. Pro previews send your photo to Google&apos;s Gemini only after you tick the box. Nothing is saved.
         </p>
       </main>
       <Footer />

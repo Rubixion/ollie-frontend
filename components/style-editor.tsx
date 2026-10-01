@@ -1,7 +1,7 @@
 "use client"
 
-import { useMemo, useRef, useState, type ChangeEvent } from "react"
-import { Check, ExternalLink, Eye, Footprints, Glasses, ImageUp, Layers, Scissors, Shirt, ShoppingBag, Smile, WandSparkles } from "lucide-react"
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
+import { Box, Check, Crown, ExternalLink, Eye, Footprints, Glasses, ImageUp, Layers, Scissors, Shirt, ShoppingBag, Smile, WandSparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ProductCard, ProductCardBadge, ProductCardContent, ProductCardHeader, ProductCardImage, ProductCardSubtitle, ProductCardTitle } from "@/components/ui/product-card"
@@ -9,7 +9,13 @@ import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { glassOpen } from "@/lib/surfaces"
 import { track } from "@/lib/analytics"
 import { SHAPE_INFO, type ShapeResult } from "@/lib/style/face-shape"
-import { STYLES, type Hairline, type Style } from "@/lib/style/catalog"
+import { ITEMS, STYLES, type Hairline, type Style } from "@/lib/style/catalog"
+import { DEFAULT_OUTFIT, HAIR_COLORS, SKIN_TONES, headFor, type Outfit, type Source } from "@/lib/style/avatar"
+import { PLANS, PRO_FEATURES, type PlanId } from "@/lib/style/plans"
+import { StyleAvatar } from "@/components/style-avatar"
+import { PricingSection } from "@/components/ui/pricing-4"
+import { useAuth } from "@/components/auth-provider"
+import { supabase } from "@/lib/supabase"
 import { cards, tabsFor, type Card, type Look, type TabId } from "@/lib/style/editor"
 import { fitNotes, grooming, type Answers, type Link } from "@/lib/style/recommend"
 
@@ -48,6 +54,24 @@ async function shrink(file: File, max = 1280): Promise<string> {
   return c.toDataURL("image/jpeg", 0.9)
 }
 
+async function authHeaders(): Promise<Record<string, string>> {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}
+}
+
+// The look -> what the 3D model wears. Outerwear covers the top (the model has one torso piece).
+function outfitFor(look: Look, skin?: string, hair?: string): Outfit {
+  const pick = (id?: string) => (id ? ITEMS.find((i) => i.id === id) : undefined)
+  const torso = pick(look.outer) ?? pick(look.top), legs = pick(look.bottom), feet = pick(look.shoes)
+  return {
+    head: headFor(look.hair),
+    body: (torso?.part as Source) ?? DEFAULT_OUTFIT.body,
+    legs: (legs?.part as Source) ?? DEFAULT_OUTFIT.legs,
+    feet: (feet?.part as Source) ?? DEFAULT_OUTFIT.feet,
+    colors: { body: torso?.color, legs: legs?.color, feet: feet?.color ?? (feet ? undefined : DEFAULT_OUTFIT.colors.feet), skin, hair },
+  }
+}
+
 export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
   photo: string
   shape: ShapeResult
@@ -71,6 +95,35 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const summary = useRef<HTMLElement>(null)
+  const pricing = useRef<HTMLElement>(null)
+  const { user, openModal } = useAuth()
+  const [pro, setPro] = useState(false)
+  const [view, setView] = useState<"3d" | "photo">("3d")
+  const [skin, setSkin] = useState<string>()
+  const [hairColor, setHairColor] = useState<string>()
+  const [buying, setBuying] = useState<PlanId | null>(null)
+  const outfit = useMemo(() => outfitFor(look, skin, hairColor), [look, skin, hairColor])
+  const thanks = typeof window !== "undefined" && new URLSearchParams(location.search).get("pro") === "thanks"
+
+  useEffect(() => {
+    authHeaders().then((h) => fetch("/api/pro", { headers: h })).then((r) => r.json()).then((d) => setPro(!!d.pro)).catch(() => {})
+  }, [user])
+
+  const showPlans = () => pricing.current?.scrollIntoView({ behavior: "smooth" })
+
+  async function buy(plan: PlanId) {
+    if (!user) return openModal(() => buy(plan), "signup")
+    setBuying(plan)
+    track("pro_checkout", { plan })
+    try {
+      const res = await fetch("/api/pro", { method: "POST", headers: { "Content-Type": "application/json", ...(await authHeaders()) }, body: JSON.stringify({ plan }) })
+      const d = await res.json().catch(() => ({}))
+      if (d.url) location.href = d.url
+      else setError(d.error || "Checkout failed. Please try again.")
+    } finally {
+      setBuying(null)
+    }
+  }
 
   const picked = tabs.flatMap((t) => {
     const c = look[t.id] ? all[t.id]?.find((x) => x.id === look[t.id]) : undefined
@@ -85,10 +138,12 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
     try {
       const res = await fetch("/api/style-render", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(await authHeaders()) },
         body: JSON.stringify({ image: base, look, texture: answers.texture, consent }),
       })
       const d = await res.json().catch(() => ({}))
+      if (d.code === "signin") return openModal(undefined, "signup")
+      if (d.code === "pro_required") return showPlans()
       if (!res.ok || !d.image) throw new Error(d.error || "The preview failed. Please try again.")
       setRenders((r) => [...r, { src: d.image, look }])
       setShown(d.image)
@@ -109,50 +164,93 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
-        {/* ── preview ── */}
+        {/* ── preview: free 3D try-on, or the AI try-on on their own photo (Pro) ── */}
         <section className={`${glassOpen} flex flex-col gap-4 p-5 md:p-6`} aria-label="Preview" aria-busy={busy}>
-          <div className="relative overflow-hidden rounded-2xl bg-black/35">
-            {/* eslint-disable-next-line @next/next/no-img-element -- local data URL */}
-            <img src={shown ?? base} alt={shown ? "You with the new look" : "Your photo"} className="mx-auto max-h-[min(36rem,70svh)] w-full object-contain" />
-            {busy && (
-              <div className="absolute inset-0 flex items-end bg-black/60 p-5">
-                <ProgressiveFluxLoader phases={PHASES} duration={18} loop={false} className="w-full gap-3 [--flux-from:var(--ollie-cyan)] [--flux-to:var(--ollie-cyan)]" />
+          <Tabs value={view} onValueChange={(v) => setView(v as "3d" | "photo")} className="flex flex-col gap-4">
+            <TabsList className="grid h-auto w-full grid-cols-2">
+              <TabsTrigger value="3d" className="gap-1.5"><Box size={14} aria-hidden="true" />3D try-on</TabsTrigger>
+              <TabsTrigger value="photo" className="gap-1.5"><Crown size={14} aria-hidden="true" />On your photo{!pro && " · Pro"}</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="3d" className="flex flex-col gap-3">
+              <StyleAvatar outfit={outfit} className="h-[min(36rem,62svh)] w-full rounded-2xl bg-black/35" />
+              <div className="grid grid-cols-2 gap-2">
+                <select aria-label="Skin tone" value={skin ?? ""} onChange={(e) => setSkin(e.currentTarget.value || undefined)} className={select}>
+                  <option value="">Skin tone</option>
+                  {SKIN_TONES.map((t) => <option key={t.hex} value={t.hex}>{t.label}</option>)}
+                </select>
+                <select aria-label="Hair colour" value={hairColor ?? ""} onChange={(e) => setHairColor(e.currentTarget.value || undefined)} className={select}>
+                  <option value="">Hair colour</option>
+                  {HAIR_COLORS.map((c) => <option key={c.hex} value={c.hex}>{c.label}</option>)}
+                </select>
               </div>
-            )}
-          </div>
+              <p className="text-xs text-white/50">
+                Drag to turn the model around. It wears each product&apos;s real colour and cut type; see the exact item on your own photo with Pro.
+                {answers.gender === "female" && " A women's 3D model is on the way."}
+              </p>
+              {!pro && (
+                <Button variant="brand" size="cta" onClick={() => { setView("photo"); showPlans() }} className="gap-2">
+                  <WandSparkles size={16} aria-hidden="true" />See it on your own photo
+                </Button>
+              )}
+            </TabsContent>
 
-          {renders.length > 0 && (
-            <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Your previews">
-              {[{ src: base, look: {} as Look }, ...renders].map((r, i) => {
-                const active = (i === 0 ? null : r.src) === shown
-                return (
-                  <button key={i} onClick={() => setShown(i === 0 ? null : r.src)} aria-pressed={active}
-                    className={`relative size-16 shrink-0 overflow-hidden rounded-xl border-2 ${active ? "border-(--ollie-cyan)" : "border-transparent"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ollie-cyan)`}>
-                    {/* eslint-disable-next-line @next/next/no-img-element -- local data URL */}
-                    <img src={r.src} alt={i === 0 ? "Original photo" : `Preview ${i}`} className="size-full object-cover" />
-                  </button>
-                )
-              })}
-            </div>
-          )}
+            <TabsContent value="photo" className="flex flex-col gap-4">
+              <div className="relative overflow-hidden rounded-2xl bg-black/35">
+                {/* eslint-disable-next-line @next/next/no-img-element -- local data URL */}
+                <img src={shown ?? base} alt={shown ? "You with the new look" : "Your photo"} className="mx-auto max-h-[min(36rem,62svh)] w-full object-contain" />
+                {busy && (
+                  <div className="absolute inset-0 flex items-end bg-black/60 p-5">
+                    <ProgressiveFluxLoader phases={PHASES} duration={18} loop={false} className="w-full gap-3 [--flux-from:var(--ollie-cyan)] [--flux-to:var(--ollie-cyan)]" />
+                  </div>
+                )}
+              </div>
 
-          <label className="flex items-start gap-2.5 text-sm text-white/70">
-            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.currentTarget.checked)} className="mt-0.5 size-4 accent-(--ollie-cyan)" />
-            <span>Send my photo to Google&apos;s Gemini to create the preview. Ollie doesn&apos;t keep it, and Google is asked not to store it.</span>
-          </label>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button variant="brand" size="cta" onClick={render} disabled={busy || !consent || picked.length === 0} className="gap-2 sm:flex-1">
-              <WandSparkles size={16} aria-hidden="true" />Try this look
-            </Button>
-            <Button variant="brandOutline" size="cta" asChild className="gap-2">
-              <label className="cursor-pointer">
-                <ImageUp size={16} aria-hidden="true" />Use a full-body photo
-                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={upload} className="sr-only" />
-              </label>
-            </Button>
-          </div>
-          <p className="text-xs text-white/50">Tip: your scan photo shows hair, face and tops. Add a full-body photo to see trousers and shoes.</p>
-          {error && <p role="alert" className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">{error}</p>}
+              {renders.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Your previews">
+                  {[{ src: base, look: {} as Look }, ...renders].map((r, i) => {
+                    const active = (i === 0 ? null : r.src) === shown
+                    return (
+                      <button key={i} onClick={() => setShown(i === 0 ? null : r.src)} aria-pressed={active}
+                        className={`relative size-16 shrink-0 overflow-hidden rounded-xl border-2 ${active ? "border-(--ollie-cyan)" : "border-transparent"} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ollie-cyan)`}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- local data URL */}
+                        <img src={r.src} alt={i === 0 ? "Original photo" : `Preview ${i}`} className="size-full object-cover" />
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+
+              {pro ? (
+                <>
+                  <label className="flex items-start gap-2.5 text-sm text-white/70">
+                    <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.currentTarget.checked)} className="mt-0.5 size-4 accent-(--ollie-cyan)" />
+                    <span>Send my photo to Google&apos;s Gemini to create the preview. Ollie doesn&apos;t keep it, and Google is asked not to store it.</span>
+                  </label>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Button variant="brand" size="cta" onClick={render} disabled={busy || !consent || picked.length === 0} className="gap-2 sm:flex-1">
+                      <WandSparkles size={16} aria-hidden="true" />Try this look
+                    </Button>
+                    <Button variant="brandOutline" size="cta" asChild className="gap-2">
+                      <label className="cursor-pointer">
+                        <ImageUp size={16} aria-hidden="true" />Use a full-body photo
+                        <input type="file" accept="image/jpeg,image/png,image/webp" onChange={upload} className="sr-only" />
+                      </label>
+                    </Button>
+                  </div>
+                  <p className="text-xs text-white/50">Tip: your scan photo shows hair, face and tops. Add a full-body photo to see trousers and shoes.</p>
+                </>
+              ) : (
+                <div className="flex flex-col gap-3 rounded-2xl bg-black/35 p-4">
+                  <p className="text-sm leading-relaxed text-white/70">
+                    See the exact haircut, beard and real clothes on <span className="font-semibold text-white">your own face and body</span>, made by AI from the brands&apos; own product photos. Part of Ollie Pro.
+                  </p>
+                  <Button variant="brand" size="cta" onClick={showPlans} className="gap-2"><Crown size={16} aria-hidden="true" />See Pro plans</Button>
+                </div>
+              )}
+              {error && <p role="alert" className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">{error}</p>}
+            </TabsContent>
+          </Tabs>
         </section>
 
         {/* ── catalogue ── */}
@@ -260,6 +358,29 @@ export function StyleEditor({ photo, shape, answers, onRescan, onRetake }: {
           </div>
         ))}
         <p className="text-xs text-white/50">Ollie earns a commission from some links. As an Amazon Associate, Ollie earns from qualifying purchases.</p>
+      </section>
+
+      {/* ── Ollie Pro ── */}
+      <section ref={pricing} className={`${glassOpen} flex flex-col gap-2 p-2 md:p-4`} aria-label="Ollie Pro plans">
+        {(pro || thanks) && (
+          <p role="status" className="mx-4 mt-3 rounded-xl border border-(--ollie-cyan)/30 bg-(--ollie-cyan)/10 p-3 text-sm text-white">
+            {pro ? "You have Ollie Pro. Open the \u201cOn your photo\u201d tab to try any look on yourself." : "Thanks! Your payment went through. Pro unlocks on your account within a minute."}
+          </p>
+        )}
+        <PricingSection
+          title="Ollie Pro"
+          subtitle="The 3D try-on stays free. Pro puts every look on your own photo, plus Ollie's celebrity lookalike finder and face compare."
+          plans={PLANS.map((p) => ({
+            name: p.name,
+            info: p.note,
+            price: p.price,
+            period: p.period,
+            highlighted: p.highlighted,
+            badge: p.id === "yearly" ? "Save 52%" : p.id === "lifetime" ? "Best value" : undefined,
+            features: PRO_FEATURES,
+            btn: { text: pro ? "You have Pro" : buying === p.id ? "Opening checkout\u2026" : `Get ${p.name}`, onClick: () => buy(p.id), disabled: pro || buying !== null },
+          }))}
+        />
       </section>
     </div>
   )

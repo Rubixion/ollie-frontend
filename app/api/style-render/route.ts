@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { checkRateLimit, getIp } from "@/lib/rate-limit"
+import { getAuthUser } from "@/lib/auth-server"
+import { isPro } from "@/lib/pro"
 import { instruction, type Look } from "@/lib/style/editor"
 import type { Texture } from "@/lib/style/catalog"
 
@@ -24,7 +26,30 @@ function findImage(x: unknown): Img | null {
   return null
 }
 
+// The product's own photo (its page's og:image), sent to the model as a reference so the real item is copied.
+// Only ever called with URLs from lib/style/catalog.ts. Best effort: no photo = text description only.
+// ponytail: most brand sites hide og:image from servers (2 of 15 worked on 2026-09-30); use affiliate-feed image URLs once approved.
+async function productPhoto(page: string): Promise<{ mime_type: string; data: string } | null> {
+  try {
+    const html = await (await fetch(page, { headers: { "User-Agent": "Mozilla/5.0 (OllieBot)" }, signal: AbortSignal.timeout(6000) })).text()
+    const src = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)/i)?.[1] ?? html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image/i)?.[1]
+    if (!src) return null
+    const r = await fetch(new URL(src.replace(/&amp;/g, "&"), page), { signal: AbortSignal.timeout(6000) })
+    const mime = r.headers.get("content-type")?.split(";")[0] ?? ""
+    const buf = Buffer.from(await r.arrayBuffer())
+    if (!r.ok || !/^image\/(jpeg|png|webp)$/.test(mime) || buf.length > 3 * 1024 * 1024) return null
+    return { mime_type: mime, data: buf.toString("base64") }
+  } catch {
+    return null
+  }
+}
+
 export async function POST(req: NextRequest) {
+  // AI try-on is the paid part of /style (the 3D try-on is free)
+  const user = await getAuthUser(req)
+  if (!isPro(user)) {
+    return NextResponse.json({ error: "AI try-on on your own photo is part of Ollie Pro.", code: user ? "pro_required" : "signin" }, { status: 402 })
+  }
   const ip = getIp(req)
   // ponytail: per-instance, in-memory limits; move to Supabase (like search-quota) before /style goes public
   if (!checkRateLimit(`render:${ip}`, 3, 60_000) || !checkRateLimit(`render-day:${ip}`, DAILY, 86_400_000)) {
@@ -36,11 +61,13 @@ export async function POST(req: NextRequest) {
   if (!parsed) return NextResponse.json({ error: "Invalid photo." }, { status: 400 })
   const look: Look = body.look && typeof body.look === "object" ? body.look : {}
   const texture = TEXTURES.includes(body.texture) ? (body.texture as Texture) : undefined
-  const prompt = instruction(look, texture)
-  if (!prompt) return NextResponse.json({ error: "Pick at least one thing to try on." }, { status: 400 })
+  const built = instruction(look, texture)
+  if (!built) return NextResponse.json({ error: "Pick at least one thing to try on." }, { status: 400 })
 
   const key = process.env.GEMINI_API_KEY
   if (!key) return NextResponse.json({ error: "Previews are not configured yet." }, { status: 503 })
+
+  const refs = (await Promise.all(built.refs.map((r) => productPhoto(r.url)))).filter((r) => r !== null)
 
   try {
     const res = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
@@ -50,8 +77,10 @@ export async function POST(req: NextRequest) {
         model: MODEL,
         store: false,
         input: [
-          { type: "text", text: prompt },
+          { type: "text", text: refs.length ? `${built.text}
+The extra images after the photo show the exact products: copy their colour, fabric and details.` : built.text },
           { type: "image", mime_type: parsed[1], data: parsed[2] },
+          ...refs.map((r) => ({ type: "image", ...r })),
         ],
         response_format: { type: "image", mime_type: "image/jpeg" },
       }),

@@ -1,5 +1,9 @@
 # Ollie Style Advisor: build plan
 
+> **Update 2026-09-30.** The owner changed the money model. Everything is free except the AI try-on on your own photo, which is now Ollie Pro: Monthly $6.99 / Yearly $39.99 / Lifetime $79.
+> Free users get a 3D try-on instead: a CC0 Quaternius avatar wearing real products.
+> This replaces D3 and §6 below. Current status and to-dos are in `../../notes.md` section 1b.
+
 A free live face scan, followed by a quiz and a personal report: the best haircut, grooming and style for the user, plus affiliate product links. It plugs into the existing site next to the celebrity lookalike tool, and the two tools feed each other.
 
 Money comes from affiliate links in every report (free tier included) and from a premium unlock for the features that cost money to run.

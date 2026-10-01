@@ -22,14 +22,16 @@ assert.ok(!grooming({ ...base, age: 20 }).some((g) => g.title.includes("few nigh
 assert.ok(!tabsFor({ gender: "female" }).some((t) => t.id === "beard"))
 assert.ok(tabsFor({ gender: "male" }).some((t) => t.id === "beard"))
 assert.equal(cards("glasses", base, oval)[0].id, "none")
-assert.ok(cards("top", base, oval, ["old-money"])[0].best, "liked style first")
+assert.ok(cards("outer", base, oval, ["old-money"])[0].best, "liked style first")
 
 // render instruction: built only from known ids
 assert.equal(instruction({ hair: "not-a-cut" }), null)
-assert.equal(instruction({ top: "blazer" }), null, "blazer is outerwear, not a top")
+assert.equal(instruction({ top: "jcrew-ludlow" }), null, "the blazer is outerwear, not a top")
 assert.equal(instruction({}), null)
-const txt = instruction({ hair: "textured-crop", beard: "stubble", outer: "blazer" }, "wavy")!
-assert.ok(txt.includes("textured crop") && txt.includes("wavy") && txt.includes("stubble") && txt.includes("navy unstructured blazer"))
+const out = instruction({ hair: "textured-crop", beard: "stubble", outer: "jcrew-ludlow" }, "wavy")!
+const txt = out.text
+assert.ok(txt.includes("textured crop") && txt.includes("wavy") && txt.includes("stubble") && txt.includes("Ludlow"))
+assert.equal(out.refs[0]?.url.startsWith("https://www.jcrew.com/"), true, "the real product page goes along as a reference")
 
 const coily = rankCuts({ ...base, texture: "coily", direction: "masculine" }, oval)
 for (const r of coily) assert.ok(r.cut.tex.includes("coily"), r.cut.id)

@@ -5,7 +5,7 @@ import {
   BEARD_FOR, BEARD_NOTES, BEARD_STYLES, BROWS, CUTS, GLASSES, GLASSES_FOR, ITEMS,
   type Option, type Slot, type Style, type Texture,
 } from "./catalog"
-import { amazon, product, rankCuts, want, who, type Answers, type Link } from "./recommend"
+import { amazon, product, rankCuts, want, type Answers, type Link } from "./recommend"
 
 export type TabId = "hair" | "brows" | "beard" | "glasses" | Slot
 export type Look = Partial<Record<TabId, string>> // tab -> chosen option id
@@ -70,16 +70,18 @@ export function cards(tab: TabId, a: Answers, s: ShapeResult, styles: Style[] = 
   const inSlot = ITEMS.filter((i) => i.slot === tab)
   const liked = (i: (typeof ITEMS)[number]) => i.styles.some((st) => styles.includes(st))
   return [...inSlot.filter(liked), ...inSlot.filter((i) => !liked(i))].map((i) => ({
-    ...i, best: liked(i), links: [{ label: "Shop similar", href: amazon(who(a) + i.query, "clothes", a.budget) }],
+    ...i, best: liked(i), links: [{ label: `View at ${i.brand}`, href: i.url }],
   }))
 }
 
 // ─── render instruction (server side) ────────────────────────────────────────
 const find = (list: { id: string; render: string }[], id?: string) => (id ? list.find((o) => o.id === id)?.render : undefined)
 
-/** Look -> the edit instruction for the image model, or null if any id is unknown. */
-export function instruction(look: Look, texture?: Texture): string | null {
+/** Look -> the edit instruction for the image model, plus the product pages whose photos go along as
+ *  reference images, or null if any id is unknown. */
+export function instruction(look: Look, texture?: Texture): { text: string; refs: { name: string; url: string }[] } | null {
   const lines: string[] = []
+  const refs: { name: string; url: string }[] = []
   const bad = (id: string | undefined, r: string | undefined) => id !== undefined && r === undefined
   const cut = look.hair ? CUTS.find((c) => c.id === look.hair) : undefined
   if (look.hair && !cut) return null
@@ -98,15 +100,17 @@ export function instruction(look: Look, texture?: Texture): string | null {
     const it = ITEMS.find((i) => i.id === id && i.slot === slot)
     if (!it) return null
     wear.push(slot === "outer" ? `${it.render} worn over the top` : it.render)
+    refs.push({ name: it.render, url: it.url })
   }
   if (wear.length) lines.push(`Clothing: ${wear.join("; ")}.`)
   if (!lines.length) return null
 
-  return [
+  const text = [
     "Edit this photo of a real person. It must still clearly be the same person: keep their face shape, facial features,",
     "skin tone, age, body shape, expression, head angle, lighting and background exactly as they are. Change only the following:",
     ...lines.map((l) => `- ${l}`),
     "The result must look like an unedited photo taken at the same moment. Don't extend, re-crop or zoom the image: if a garment's",
     "area isn't visible in the photo, leave it out. No text, no watermark.",
   ].join("\n")
+  return { text, refs }
 }
