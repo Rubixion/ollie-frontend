@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 const STEPS: [string, string][] = [
   ["Set up your model.", "Pick a gender, one of 6 looks, one of 4 body types and your height. The model is AI-made, so it never uses your photo."],
-  ["Dress it.", "Try real clothes from the catalogue, or tap Choose for me to get a full outfit in one of 8 styles, from clean classic to streetwear."],
+  ["Dress it.", "Try real clothes from the catalogue, or tap Choose for me to get a full outfit in one of 9 styles, from clean classic to streetwear."],
   ["Scan your face.", "In the Hair & face tab, a scan in your browser estimates which of 7 face shapes you have and ranks the haircuts, beards and glasses that suit it."],
   ["Shop the look.", "Every piece links to a shop, so you can buy what you liked."],
 ]
@@ -55,7 +55,7 @@ const jsonLd = [
     ],
     featureList: [
       "Dress a realistic AI model in real clothes, set to your look, body type and height",
-      "Choose for me: full outfits in 8 styles",
+      "Choose for me: full outfits in 9 styles",
       "Face shape scan in the browser with haircut, beard and glasses picks",
       "Shop links for every piece",
       "Ollie Pro: try haircuts and outfits on your own photo",

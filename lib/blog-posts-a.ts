@@ -10,13 +10,13 @@ export const postsA: BlogPost[] = [
     isoDate: "2026-09-26",
     readTime: "6 min read",
     category: "Culture",
-    author: "Liam Bradley",
+    author: "Wendy Wei",
     keywords: ["celebrities who look alike", "famous people who look alike", "celebrity look alikes", "celebrities that look alike", "actors who look alike", "celebrity lookalike AI", "face recognition"],
     sections: [
       {
         h2: "How We Compared Every Celebrity With Every Other",
         paragraphs: [
-          "Ollie's index holds more than 5,000 living celebrities, each with between 2 and 12 verified photos. That makes more than 17 million possible pairs of people. For each pair, the model compares every photo of one person with every photo of the other and averages the two closest photo pairs. It's the same rule the <a href=\"/celebrity-lookalike\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">celebrity lookalike finder</a> uses when it scores you. A single lucky photo can't win on its own.",
+          "Ollie's index holds more than 5,000 living celebrities, each with between 2 and 12 verified photos. That makes more than 17 million possible pairs of people. For each pair, the model compares every photo of one person with every photo of the other and averages the two closest photo pairs. Averaging two pairs means a single lucky photo can't put two celebrities at the top on its own. (The <a href=\"/celebrity-lookalike\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">celebrity lookalike finder</a> scores you a little differently: each celebrity gets the score of their single closest photo to yours.)",
           "The model has never been told anyone's name. It turns each face into a list of 512 numbers, a <strong>facial embedding</strong>, and the similarity score measures how close two of those lists are. It compares faces. It doesn't judge how famous, attractive or related two people are.",
           "For scale: two celebrities picked at random score about 33% on Ollie's scale, and only 1 pair in 100 reaches 58%. Every pair below scores in the range two different photos of the same person usually reach.",
         ],
@@ -112,7 +112,7 @@ export const postsA: BlogPost[] = [
         h2: "Step 4: Comparing Fingerprints",
         paragraphs: [
           "The fingerprints are normalised to the same length, so comparing two faces comes down to measuring the distance between two points. Close together means similar faces; far apart means different faces.",
-          "Your fingerprint is compared with the fingerprint of every celebrity photo in the database. That sounds slow, but it is one matrix calculation over tens of thousands of numbers and finishes in milliseconds. Each celebrity's score is the average of their two best-matching photos, so someone with twelve photos in the database doesn't get an unfair edge over someone with three.",
+          "Your fingerprint is compared with the fingerprint of every celebrity photo in the database. That sounds slow, but it is one matrix calculation over tens of thousands of numbers and finishes in milliseconds. Each celebrity gets the score of their single closest photo, so one great match isn't diluted by their other photos, and you see that photo next to your result.",
         ],
       },
       {
@@ -136,7 +136,7 @@ export const postsA: BlogPost[] = [
       { q: "Is the similarity percentage a probability?", a: "No. It is a rescaled distance between two fingerprints. It is useful for ranking matches, but it isn't a calibrated probability and can't confirm that two photos show the same person." },
       { q: "Does Ollie keep my photo?", a: "No. Your photo is used only in memory to run the search and is discarded when the search finishes." },
       { q: "How long does Ollie take to find a celebrity match?", a: "Usually a few seconds. If the matching server has been idle, it can take up to about 15 seconds to wake up first." },
-      { q: "Does Ollie compare my face with every celebrity?", a: "Yes. Your fingerprint is compared with the fingerprint of every celebrity photo in the database, which takes milliseconds. Each celebrity is then scored by their two best-matching photos." },
+      { q: "Does Ollie compare my face with every celebrity?", a: "Yes. Your fingerprint is compared with the fingerprint of every celebrity photo in the database, which takes milliseconds. Each celebrity is then scored by their single closest photo." },
     ],
     relatedSlugs: ["what-is-facial-embedding", "siamese-neural-networks-explained"],
   },
@@ -652,7 +652,7 @@ export const postsA: BlogPost[] = [
       { q: "What is the margin in contrastive loss?", a: "The margin M is a minimum distance that different-identity pairs must be separated by. Pairs already further apart than M contribute no loss; pairs closer than M are penalised and pushed apart." },
       { q: "What is the difference between contrastive loss and triplet loss?", a: "Contrastive loss operates on pairs with a binary same/different label. Triplet loss operates on anchor-positive-negative triples, directly comparing same-identity and different-identity distances for the same anchor face." },
     ],
-    relatedSlugs: ["siamese-neural-networks-explained", "what-overfitting-means"],
+    relatedSlugs: ["siamese-neural-networks-explained", "training-data-matters"],
   },
   {
     slug: "what-is-similarity-score",

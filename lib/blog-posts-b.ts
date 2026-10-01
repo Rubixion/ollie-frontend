@@ -721,55 +721,6 @@ export const postsB: BlogPost[] = [
     relatedSlugs: ["how-face-recognition-works", "siamese-neural-networks-explained", "why-ai-beats-human-eye"],
   },
   {
-    slug: "what-overfitting-means",
-    title: "What Is Overfitting, and Why It Matters for Your Celebrity Matches",
-    excerpt: "Overfitting is the silent failure mode of machine learning: when a model works brilliantly on training data but generalises poorly to new faces. Here is what it is and how it is prevented.",
-    summary: "Overfitting in machine learning is when a model memorises its training data, noise included, instead of learning patterns that generalise, so it does well on training examples and poorly on new ones. Its opposite, underfitting, is a model too simple to learn the pattern. Face recognition prevents overfitting with lots of varied data, augmentation and tests on faces the model has never seen.",
-    date: "August 4, 2026",
-    updatedIsoDate: "2026-09-23",
-    isoDate: "2026-08-04",
-    readTime: "5 min read",
-    category: "Machine Learning",
-    author: "Liam Bradley",
-    keywords: ["what is overfitting", "overfitting in machine learning", "overfitting and underfitting", "generalisation", "face recognition", "machine learning"],
-    sections: [
-      {
-        h2: "What Is Overfitting?",
-        paragraphs: [
-          "<strong>Overfitting</strong> occurs when a machine learning model learns the training data so thoroughly, including its noise and idiosyncratic patterns, that it loses the ability to generalise to new data. The model has memorised rather than learned. On training examples it performs well; on new examples it performs poorly, because the patterns it has learned are specific to the training set rather than general to the underlying problem.",
-          "In face recognition terms: an overfit model might perfectly match every training celebrity, but when presented with a new user's face, it fails to place the embedding in the correct region of face space because its representation of face identity is too tightly coupled to the specific photos in the training set.",
-        ],
-      },
-      {
-        h2: "Why It Occurs",
-        paragraphs: [
-          "Overfitting becomes more likely as model <strong>capacity</strong> increases relative to training data size. A model with more parameters than training examples can potentially memorise every training example exactly. For face recognition, where models have millions of parameters trained on hundreds of thousands to millions of examples, overfitting is a real risk that requires active countermeasures.",
-          "It is also more likely when training proceeds for too many epochs: the model first learns general patterns (fast, early in training) and then progressively fits to idiosyncratic training data characteristics (slow, late in training). Validation curves typically show training accuracy continuing to increase while validation accuracy plateaus or decreases, a characteristic overfitting signature.",
-        ],
-      },
-      {
-        h2: "How Overfitting Is Prevented",
-        paragraphs: [
-          "Standard techniques include: <strong>Dropout</strong>, randomly zeroing neural activations during training, preventing any single pathway from being relied on exclusively. <strong>Weight decay (L2 regularisation)</strong>, penalising large weights, pushing the model toward simpler representations. <strong>Data augmentation</strong>, artificially expanding the training set by transforming training images (flipping, rotating, colour jitter), making the model learn representations robust to these variations.",
-          "Ollie's training uses <strong>early stopping</strong>, monitoring validation accuracy and stopping when it begins to plateau, before overfitting to training data occurs. The training schedule uses <strong>CosineAnnealingLR</strong> with T_max=150, enabling thorough exploration of the loss landscape while avoiding late-training overfitting. The validation set acts as a held-out proxy for real-world generalisation.",
-        ],
-      },
-      {
-        h2: "Signs of Overfitting in Practice",
-        paragraphs: [
-          "At training time, overfitting is visible in the divergence between training and validation loss, when training loss continues falling while validation loss stops improving or rises. A well-trained model shows these two losses tracking each other closely throughout training.",
-          "In deployment, overfitting shows as poor generalisation: the model works well on photo conditions similar to its training data but degrades more than expected on novel conditions. This is one reason diverse training data is so important, a model trained only on high-quality controlled portraits will overfit to that condition and generalise poorly to real-world selfie photos.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "What is overfitting in machine learning?", a: "Overfitting is when a model learns training data so specifically, including noise, that it fails to generalise to new data. It memorises rather than learns." },
-      { q: "How is overfitting prevented in face recognition training?", a: "Through dropout, weight decay, data augmentation, early stopping, and validation monitoring. Ollie's network was trained from scratch, and the saved model is the epoch that scored best on the LFW benchmark, whose people were kept out of training." },
-      { q: "What are the signs of an overfit face recognition model?", a: "High training accuracy with much lower validation accuracy, and good performance on controlled conditions but unexpectedly poor performance on varied real-world inputs." },
-    ],
-    relatedSlugs: ["contrastive-loss-explained", "training-data-matters", "confidence-vs-accuracy"],
-  },
-  {
     slug: "training-data-matters",
     title: "Why Training Data Is the Most Important Factor in Face Recognition Quality",
     excerpt: "\"Garbage in, garbage out\",but in deep learning, data quantity and diversity are almost more important than architecture. Here is why training data dominates face recognition performance.",
@@ -809,48 +760,7 @@ export const postsB: BlogPost[] = [
       { q: "What dataset does Ollie use for training?", a: "MS1MV2: about 5.8 million photos of 85,742 people. Ollie's network was trained on it from scratch, with no pretrained weights." },
       { q: "What is transfer learning?", a: "Transfer learning starts with a model pre-trained on a large dataset and fine-tunes it for a specific task. This achieves better results than training from scratch on a smaller dataset, while requiring much less compute." },
     ],
-    relatedSlugs: ["what-overfitting-means", "contrastive-loss-explained", "siamese-neural-networks-explained"],
-  },
-  {
-    slug: "transfer-learning-explained",
-    title: "Transfer Learning Explained: How One AI Model Becomes Another",
-    excerpt: "Ollie's face recognition network was not built from scratch. It started life as a model trained on millions of celebrity photos and was then refined. Here is how transfer learning works.",
-    summary: "Transfer learning reuses a model trained on one big task as the starting point for another, so the new model needs far less data and training time. Fine-tuning, the most common form of transfer learning, keeps training the reused model on the new data. It works because early layers learn general features like edges and shapes.",
-    date: "August 2, 2026",
-    updatedIsoDate: "2026-09-23",
-    isoDate: "2026-08-02",
-    readTime: "4 min read",
-    category: "Machine Learning",
-    author: "Liam Bradley",
-    keywords: ["what is transfer learning", "transfer learning", "transfer learning vs fine tuning", "fine-tuning", "deep learning", "machine learning"],
-    sections: [
-      {
-        h2: "The Concept: Borrowed Knowledge",
-        paragraphs: [
-          "<strong>Transfer learning</strong> exploits the fact that neural networks trained on large datasets develop general, reusable representations. A network trained to recognise face identity must learn about edges, shapes, skin texture, facial geometry, and identity-relevant proportions. These representations are useful not just for the specific faces in the training set but for any face recognition task.",
-          "Rather than learning these representations from scratch, which requires enormous amounts of data and compute, transfer learning takes a pre-trained network and adapts it for a new task by fine-tuning on new data. The pre-trained network provides a rich starting point; the fine-tuning adjusts it for the specific target task.",
-        ],
-      },
-      {
-        h2: "How Fine-Tuning Works",
-        paragraphs: [
-          "<strong>Fine-tuning</strong> typically freezes the early layers of the pre-trained network (which encode general low-level features) while allowing the later layers (which encode task-specific high-level features) to update. This preserves the learned general representations while adapting the task-specific representations for the new domain.",
-          "The learning rate for fine-tuning is typically much lower than for initial training, a small adjustment to an already-useful representation rather than large gradient steps from random initialisation. Ollie's own network wasn't fine-tuned: it was trained from scratch on MS1MV2, so its early layers learned their edge and texture detectors from face photos directly.",
-        ],
-      },
-      {
-        h2: "Why It Works So Well",
-        paragraphs: [
-          "Transfer learning works because the representations learned by large-scale pre-trained models are genuinely general. The features a network learns to distinguish millions of face identities turn out to be exactly the features needed to match any new pair of faces, not because of task-specific engineering, but because the same structural information that discriminates between celebrities also discriminates between any two people.",
-          "This generalisation is what allows a model trained entirely on celebrities to work for ordinary user uploads. The model has never seen your face, but the representation it learned from millions of celebrity photos is rich enough to place your face accurately in the same space.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "What is transfer learning in simple terms?", a: "Transfer learning starts with a network already trained on a large task (like recognising millions of celebrity faces) and adapts it to a new task by training further on new data. It borrows learned representations rather than starting from scratch." },
-      { q: "What is the difference between transfer learning and fine-tuning?", a: "They are related. Transfer learning is the general concept of reusing pre-trained representations. Fine-tuning is the specific process of further training a pre-trained model on new data, typically with a low learning rate." },
-    ],
-    relatedSlugs: ["training-data-matters", "what-overfitting-means", "siamese-neural-networks-explained"],
+    relatedSlugs: ["contrastive-loss-explained", "siamese-neural-networks-explained"],
   },
   {
     slug: "confidence-vs-accuracy",
@@ -891,7 +801,7 @@ export const postsB: BlogPost[] = [
       { q: "What does a 95% similarity score mean in Ollie?", a: "It means the distance between your facial embedding and the celebrity's is in the range corresponding to strong geometric similarity. It is not a probability of being the same person; it is a rescaled similarity score for ranking." },
       { q: "What is AI confidence calibration?", a: "Calibration is the property that confidence scores accurately reflect actual accuracy. A calibrated model's 80% confidence matches are correct 80% of the time." },
     ],
-    relatedSlugs: ["what-is-similarity-score", "what-overfitting-means", "how-face-recognition-works"],
+    relatedSlugs: ["what-is-similarity-score", "training-data-matters", "how-face-recognition-works"],
   },
   {
     slug: "identical-twins-different-profiles",

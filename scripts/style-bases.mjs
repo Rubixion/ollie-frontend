@@ -5,7 +5,7 @@
 // Usage (from ollie-frontend): node scripts/style-bases.mjs [male|female] [build]
 // Writes public/style/models/<gender>-<build>-bare.jpg and <gender>-<build>-<look>.jpg. Delete a file to redo it.
 // Then run scripts/style-layers.mjs: it rewrites public/style/layers/index.json, whose version makes browsers reload.
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs"
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from "node:fs"
 import sharp from "sharp"
 sharp.cache(false) // libvips otherwise keeps files open, and Windows then can't replace them
 import { generateImage, scriptEnv } from "../lib/image-gen.mjs"
@@ -143,6 +143,23 @@ async function headMask(px, mask, g, w, h, cut, by, soft, strict = null) {
   return soft ? sharp(grown, { raw: { width: w, height: h, channels: 1 } }).blur(soft).extractChannel(0).raw().toBuffer() : grown
 }
 
+// How far the look's head sits from the base's, in px.
+function offsetOf(bareMask, lookMask, w, h) {
+  const G = geometry(bareMask, w, h), L = geometry(lookMask, w, h)
+  // The look images keep the base's framing and scale (asked for in the prompt; measured within ~1-4%), so only a
+  // shift is needed. Horizontal: the median, over every row from the face's widest row to the neck, of the difference
+  // between the two skin masks' row centres, so a patchy mask can't throw it. Vertical: the face's widest row (the
+  // neck's narrowest row is exactly where a patchy mask goes wrong: one gap read a 70px neck as 33px). Both capped.
+  const rowCentre = (mask, y) => { let l = -1, r = -1; for (let x = 0; x < w; x++) if (mask[y * w + x] > 128) { if (l < 0) l = x; r = x } return l < 0 ? null : (l + r) / 2 }
+  const diffs = []
+  const dy = Math.max(-12, Math.min(12, L.face.y - G.face.y))
+  for (let y = G.face.y; y <= G.neck.y; y++) { const a = rowCentre(bareMask, y), c = rowCentre(lookMask, y + dy); if (a !== null && c !== null) diffs.push(c - a) }
+  diffs.sort((a, c) => a - c)
+  const cap = (n) => Math.max(-12, Math.min(12, Math.round(n)))
+  const dx = diffs.length ? cap(diffs[diffs.length >> 1]) : 0
+  return { dx, dy }
+}
+
 // Look photo built on the bare base, so its silhouette is the base's exactly and every clothes layer fits:
 //  - the look's head (skin + hair) is moved so its neck lines up with the base's, and blended into the base's neck
 //    over a soft band;
@@ -153,16 +170,7 @@ async function headMask(px, mask, g, w, h, cut, by, soft, strict = null) {
 //  - below the neck, the base's skin is recoloured to the look's measured skin tone (mean and spread per channel).
 async function compose(bareFile, bareMask, lookImg, lookMask, w, h, name) {
   const [b, v] = await Promise.all([raw(readFileSync(bareFile), w, h), raw(lookImg, w, h)])
-  const G = geometry(bareMask, w, h), L = geometry(lookMask, w, h)
-  // The look images keep the base's framing and scale (asked for in the prompt; measured within ~1-4%), so only a
-  // shift is needed. Horizontal: the median, over every row from the face's widest row to the neck, of the difference
-  // between the two skin masks' row centres, so a patchy mask can't throw it. Vertical: the neck rows. Both capped.
-  const rowCentre = (mask, y) => { let l = -1, r = -1; for (let x = 0; x < w; x++) if (mask[y * w + x] > 128) { if (l < 0) l = x; r = x } return l < 0 ? null : (l + r) / 2 }
-  const diffs = []
-  for (let y = G.face.y; y <= G.neck.y; y++) { const a = rowCentre(bareMask, y), c = rowCentre(lookMask, y + L.neck.y - G.neck.y); if (a !== null && c !== null) diffs.push(c - a) }
-  diffs.sort((a, c) => a - c)
-  const cap = (n) => Math.max(-12, Math.min(12, Math.round(n)))
-  const dx = diffs.length ? cap(diffs[diffs.length >> 1]) : 0, dy = cap(L.neck.y - G.neck.y)
+  const G = geometry(bareMask, w, h), L = geometry(lookMask, w, h), { dx, dy } = offsetOf(bareMask, lookMask, w, h)
   // base pixel (x, y) shows the look's pixel at (lx, ly)
   const lx = (x) => x + dx, ly = (y) => y + dy
   const warped = Buffer.alloc(w * h * 3), warpedMask = Buffer.alloc(w * h)
@@ -252,7 +260,20 @@ for (const g of args[0] ? [args[0]] : ["male", "female"]) {
         writeFileSync(src, await edit(`Edit this photo: make the model ${who} ${g === "male" ? "man, short hair" : "woman, hair tied back off the shoulders"}, ` +
           `same age, with natural facial features and skin tone across the whole body. Photorealistic, same studio quality. ${KEEP}`, bare))
       }
-      const lookMask = await skinMask(src, `.style-cache/${g}-${b}/look-${id}-skin.png`, w, h)
+      let lookMask = await skinMask(src, `.style-cache/${g}-${b}/look-${id}-skin.png`, w, h)
+      // Gemini sometimes draws the head somewhere else. If it's more than 8px off, make the look again (up to twice)
+      // and keep the best-aligned version.
+      const off = (m) => { const o = offsetOf(mask, m, w, h); return Math.max(Math.abs(o.dx), Math.abs(o.dy)) }
+      for (let tries = 0, best = off(lookMask); best > 8 && tries < 2; tries++) {
+        console.log(`  ${g}-${b}-${id}: head ${best}px off, making the look again`)
+        const img = await edit(`Edit this photo: make the model ${who} ${g === "male" ? "man, short hair" : "woman, hair tied back off the shoulders"}, ` +
+          `same age, with natural facial features and skin tone across the whole body. Photorealistic, same studio quality. ${KEEP}`, bare)
+        const tmp = `.style-cache/${g}-${b}/look-${id}-try.jpg`
+        writeFileSync(tmp, img)
+        const m = await skinMask(tmp, `.style-cache/${g}-${b}/look-${id}-try-skin.png`, w, h)
+        if (off(m) < best) { best = off(m); writeFileSync(src, img); await sharp(m, { raw: { width: w, height: h, channels: 1 } }).png().toFile(`.style-cache/${g}-${b}/look-${id}-skin.png`); lookMask = m }
+        for (const f of [tmp, `.style-cache/${g}-${b}/look-${id}-try-skin.png`]) rmSync(f, { force: true })
+      }
       writeFileSync(out, await compose(bare, mask, readFileSync(src), lookMask, w, h, `${g}-${b}-${id}`))
       console.log(`${g}-${b}-${id}: saved`)
     }

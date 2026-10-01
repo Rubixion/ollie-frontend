@@ -409,17 +409,6 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Alphonse_Bertillon_-_fiche_anthropom%C3%A9trique_(1894).jpg"
   },
-  "what-overfitting-means": {
-    "src": "/blog/img/what-overfitting-means.webp",
-    "thumb": "/blog/img/what-overfitting-means-sm.webp",
-    "width": 900,
-    "height": 900,
-    "alt": "Chart of a wiggly curve overfitting data points next to a straight-line fit",
-    "credit": "Amirreza mirzaei2001",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Overfitting_regression_deg5vsdeg1.png"
-  },
   "training-data-matters": {
     "src": "/blog/img/training-data-matters.webp",
     "thumb": "/blog/img/training-data-matters-sm.webp",
@@ -430,17 +419,6 @@ export const blogImages: Record<string, BlogImage> = {
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bookshelves_in_Faculty_of_Arts_Library,_Chulalongkorn_University.jpg"
-  },
-  "transfer-learning-explained": {
-    "src": "/blog/img/transfer-learning-explained.webp",
-    "thumb": "/blog/img/transfer-learning-explained-sm.webp",
-    "width": 1280,
-    "height": 853,
-    "alt": "A sprinter crouched at the start line holding a relay baton",
-    "credit": "Braden Collum bradencollum",
-    "license": "CC0",
-    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Relay_runner_(Unsplash).jpg"
   },
   "confidence-vs-accuracy": {
     "src": "/blog/img/confidence-vs-accuracy.webp",
@@ -541,17 +519,6 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:8_mm_Kodak_safety_film_reel_06.jpg"
   },
-  "face-recognition-in-art": {
-    "src": "/blog/img/face-recognition-in-art.webp",
-    "thumb": "/blog/img/face-recognition-in-art-sm.webp",
-    "width": 706,
-    "height": 900,
-    "alt": "Rembrandt's 1659 self-portrait",
-    "credit": "Rembrandt",
-    "license": "Public domain",
-    "licenseUrl": "",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rembrandt_self_portrait.jpg"
-  },
   "golden-ratio-face": {
     "src": "/blog/img/golden-ratio-face.webp",
     "thumb": "/blog/img/golden-ratio-face-sm.webp",
@@ -574,28 +541,6 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vitruvian.jpg"
   },
-  "face-recognition-in-dating": {
-    "src": "/blog/img/face-recognition-in-dating.webp",
-    "thumb": "/blog/img/face-recognition-in-dating-sm.webp",
-    "width": 1125,
-    "height": 900,
-    "alt": "A smartphone showing its home screen on a wooden table",
-    "credit": "mikemacmarketing",
-    "license": "CC BY 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Social_Media_App_Icons_On_The_Screen_of_A_Smartphone.jpg"
-  },
-  "face-recognition-genealogy": {
-    "src": "/blog/img/face-recognition-genealogy.webp",
-    "thumb": "/blog/img/face-recognition-genealogy-sm.webp",
-    "width": 1280,
-    "height": 758,
-    "alt": "A hand-drawn historical family tree manuscript",
-    "credit": "Qazi Abul Hassa, Muhammad Zia Ul Din Hakeem.",
-    "license": "CC0",
-    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Alvi_Family_Tree_Page_01.jpg"
-  },
   "face-reading-pseudoscience": {
     "src": "/blog/img/face-reading-pseudoscience.webp",
     "thumb": "/blog/img/face-reading-pseudoscience-sm.webp",
@@ -607,50 +552,6 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Phrenology_Head_Bust.jpg"
   },
-  "face-recognition-mental-health": {
-    "src": "/blog/img/face-recognition-mental-health.webp",
-    "thumb": "/blog/img/face-recognition-mental-health-sm.webp",
-    "width": 1280,
-    "height": 526,
-    "alt": "A still lake reflecting a green hillside",
-    "credit": "Julian Herzog (Website)",
-    "license": "CC BY 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Friars%27_Crag_Derwentwater_Lake_District_2022_01.jpg"
-  },
-  "future-of-face-recognition": {
-    "src": "/blog/img/future-of-face-recognition.webp",
-    "thumb": "/blog/img/future-of-face-recognition-sm.webp",
-    "width": 1280,
-    "height": 852,
-    "alt": "A modern building lit in blue at night",
-    "credit": "PattayaPatrol",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:DSC_7655_A_futuristic_rooftop_bar_glowing_with_blue_and_purple_lights_sleek_seating_and_a_stylish_lounge_area_overlooking_an_illuminated_terrace_at_night.jpg"
-  },
-  "face-recognition-surveillance": {
-    "src": "/blog/img/face-recognition-surveillance.webp",
-    "thumb": "/blog/img/face-recognition-surveillance-sm.webp",
-    "width": 1280,
-    "height": 853,
-    "alt": "Security cameras along the ceiling of a long tunnel",
-    "credit": "Gzen92",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gare_-_couloir_nord_(Strasbourg)_(2).jpg"
-  },
-  "face-recognition-animals": {
-    "src": "/blog/img/face-recognition-animals.webp",
-    "thumb": "/blog/img/face-recognition-animals-sm.webp",
-    "width": 910,
-    "height": 900,
-    "alt": "A chimpanzee sitting and looking to the side",
-    "credit": "William H. Calvin",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chimpanzee_female_Twycross.jpg"
-  },
   "face-memory-psychology": {
     "src": "/blog/img/face-memory-psychology.webp",
     "thumb": "/blog/img/face-memory-psychology-sm.webp",
@@ -661,50 +562,6 @@ export const blogImages: Record<string, BlogImage> = {
     "license": "CC BY 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hippocampus_-_DK_ATLAS.png"
-  },
-  "face-recognition-aging-brain": {
-    "src": "/blog/img/face-recognition-aging-brain.webp",
-    "thumb": "/blog/img/face-recognition-aging-brain-sm.webp",
-    "width": 900,
-    "height": 900,
-    "alt": "Side-view MRI scan of a human head and brain",
-    "credit": "511KeV",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:MRI_Brain_T1_Sag_(13).jpg"
-  },
-  "baby-face-recognition-development": {
-    "src": "/blog/img/baby-face-recognition-development.webp",
-    "thumb": "/blog/img/baby-face-recognition-development-sm.webp",
-    "width": 1280,
-    "height": 720,
-    "alt": "Colourful baby teething toys on a wooden floor",
-    "credit": "Zeromonk",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plastic_baby_rattle_toy.jpg"
-  },
-  "culture-and-face-recognition": {
-    "src": "/blog/img/culture-and-face-recognition.webp",
-    "thumb": "/blog/img/culture-and-face-recognition-sm.webp",
-    "width": 634,
-    "height": 900,
-    "alt": "A carved and painted traditional Sri Lankan mask",
-    "credit": "Henda Hewa Tharaka Nirmal",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:(Maru_Rakshaya)_Traditional_masks_of_Ambalangoda,_Sri_Lanka_-_Tharaka_Nirmal_Photography.png"
-  },
-  "face-recognition-with-mask": {
-    "src": "/blog/img/face-recognition-with-mask.webp",
-    "thumb": "/blog/img/face-recognition-with-mask-sm.webp",
-    "width": 1200,
-    "height": 900,
-    "alt": "A blue disposable surgical mask",
-    "credit": "AlexChirkin",
-    "license": "CC0",
-    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_surgical_mask_(2017).jpg"
   },
   "weight-change-and-matching": {
     "src": "/blog/img/weight-change-and-matching.webp",
@@ -816,39 +673,6 @@ export const blogImages: Record<string, BlogImage> = {
     "licenseUrl": "",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stoppuhr_hanhart.jpg"
   },
-  "face-hashing-privacy": {
-    "src": "/blog/img/face-hashing-privacy.webp",
-    "thumb": "/blog/img/face-hashing-privacy-sm.webp",
-    "width": 989,
-    "height": 900,
-    "alt": "A brass padlock with its keys",
-    "credit": "Trougnouf",
-    "license": "CC BY 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Solex_99_30_padlock_with_keys_(DSCF2659).jpg"
-  },
-  "face-spoof-detection": {
-    "src": "/blog/img/face-spoof-detection.webp",
-    "thumb": "/blog/img/face-spoof-detection-sm.webp",
-    "width": 1280,
-    "height": 853,
-    "alt": "A wall of Venetian carnival masks",
-    "credit": "Marek Ślusarczyk (Tupungato) Photo portfolio",
-    "license": "CC BY 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:23_Souvenir_from_Venice,_Italy_-_small_Venetian_carnival_mask_magnet_in_gift_shop.jpg"
-  },
-  "face-recognition-performance-tricks": {
-    "src": "/blog/img/face-recognition-performance-tricks.webp",
-    "thumb": "/blog/img/face-recognition-performance-tricks-sm.webp",
-    "width": 1280,
-    "height": 853,
-    "alt": "A network switch in a server rack with cables plugged in",
-    "credit": "Helpameout",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wikimedia_Servers-0001_42.jpg"
-  },
   "symmetrical-faces": {
     "src": "/blog/img/symmetrical-faces.webp",
     "thumb": "/blog/img/symmetrical-faces-sm.webp",
@@ -903,17 +727,6 @@ export const blogImages: Record<string, BlogImage> = {
     "license": "CC BY-SA 3.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Antique_Trumeau_reproduction.jpg"
-  },
-  "face-recognition-in-medicine": {
-    "src": "/blog/img/face-recognition-in-medicine.webp",
-    "thumb": "/blog/img/face-recognition-in-medicine-sm.webp",
-    "width": 1161,
-    "height": 900,
-    "alt": "Historical photo of a scientist at a microscope in a laboratory",
-    "credit": "Harris & Ewing, photographer",
-    "license": "Public domain",
-    "licenseUrl": "",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Man_using_microscope_in_laboratory_LCCN2016882745.jpg"
   },
   "celebrity-database-how-built": {
     "src": "/blog/img/celebrity-database-how-built.webp",

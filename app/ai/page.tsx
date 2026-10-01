@@ -631,9 +631,9 @@ function ArchitectureScroll2() {
               desc: "The margin-based loss function that achieves state-of-the-art face recognition accuracy.",
             },
             {
-              slug: "transfer-learning-explained",
-              title: "Transfer Learning Explained",
-              desc: "How a model trained on one task can be reused for another. (Ollie was trained from scratch.)",
+              slug: "training-data-matters",
+              title: "Why Training Data Matters",
+              desc: "Why what a face model learns from decides what it gets right, and wrong.",
             },
           ].map(({ slug, title, desc }) => (
             <Link
