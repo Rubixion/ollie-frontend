@@ -666,8 +666,8 @@ export const postsC: BlogPost[] = [
   },
   {
     slug: "face-memory-psychology",
-    title: "Face Memory: How the Brain Stores and Retrieves Thousands of Faces",
-    excerpt: "The average person can recognise roughly 5,000 faces. Here is how the brain manages this remarkable database, and how it compares to what Ollie's AI does.",
+    title: "How Many Faces Can a Human Remember? About 5,000",
+    excerpt: "Most people recognise about 5,000 faces, some over 10,000 (Jenkins et al., 2018). How the brain stores them, and how that compares with face recognition AI.",
     summary: "How many faces can we remember? About 5,000 for most people, according to a 2018 study by Jenkins and colleagues, with individuals ranging from about 1,000 to over 10,000. We build this store over a lifetime of meeting people and seeing celebrities. The brain indexes faces by their overall configuration, not as a list of features.",
     date: "July 2, 2026",
     isoDate: "2026-07-02",
@@ -1103,8 +1103,8 @@ export const postsC: BlogPost[] = [
   },
   {
     slug: "vggface2-explained",
-    title: "VGGFace2 Explained: The Dataset That Shaped Modern Face Recognition",
-    excerpt: "VGGFace2 packs 3.3 million photos of 9,131 people. Here is what made it important for face recognition, and how it compares with MS1MV2, the dataset Ollie was trained on.",
+    title: "VGGFace2 Explained: 3.3 Million Faces of 9,131 People",
+    excerpt: "VGGFace2 is Oxford's face recognition dataset: 3.31 million photos of 9,131 people. What is in it, how it was built, and how it compares with MS1MV2.",
     summary: "VGGFace2 is a face recognition dataset from Oxford's Visual Geometry Group, released in 2018, with 3.31 million images of 9,131 people, about 362 per person. It was built for variety in pose, age, lighting and ethnicity. Ollie's model was not trained on VGGFace2; it was trained on MS1MV2.",
     date: "June 18, 2026",
     updatedIsoDate: "2026-09-23",

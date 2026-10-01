@@ -5,6 +5,14 @@ import { GUEST_LIMIT, GUEST_WINDOW, USER_LIMIT, consumeSearch, guestId, refundSe
 
 const MAX_IMAGE_BYTES = 7 * 1024 * 1024
 
+// Warm-up: the finder pings this on page load so a sleeping Modal container boots while the visitor picks a photo
+// (a cold start is ~15-25s). /health is public and does no model work, so this costs one container boot at most.
+export async function GET() {
+  const baseUrl = process.env.INFERENCE_URL
+  if (baseUrl) await fetch(`${baseUrl.replace(/\/$/, "")}/health`, { signal: AbortSignal.timeout(30_000) }).catch(() => {})
+  return new NextResponse(null, { status: 204 })
+}
+
 export async function POST(req: NextRequest) {
   try {
     // No token = guest (GUEST_LIMIT free searches per IP per GUEST_WINDOW). A token that doesn't check out is an expired

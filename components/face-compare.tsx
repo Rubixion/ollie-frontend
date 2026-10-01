@@ -111,6 +111,9 @@ export function FaceCompare() {
   const [result, setResult] = useState<{ score: number; same: boolean; facesFound: boolean } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // wake the search server now, not when the photos are sent (see GET in app/api/search/route.ts)
+  useEffect(() => { fetch("/api/search").catch(() => {}) }, [])
+
   useEffect(() => {
     if (!loading) return
     const t0 = Date.now()

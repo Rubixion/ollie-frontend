@@ -239,6 +239,9 @@ export function CelebrityFinder() {
 
   useEffect(() => () => { if (originalUrl) URL.revokeObjectURL(originalUrl) }, [originalUrl])
 
+  // wake the search server now, not when the photo is sent (see GET in app/api/search/route.ts)
+  useEffect(() => { fetch("/api/search").catch(() => {}) }, [])
+
   const loadFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) {
       setError("Please upload an image file.")

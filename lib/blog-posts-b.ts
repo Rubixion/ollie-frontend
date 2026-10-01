@@ -208,8 +208,8 @@ export const postsB: BlogPost[] = [
   },
   {
     slug: "baby-face-features",
-    title: "Baby Face Features: Why Some Adults Score High Matches with Youthful Celebrities",
-    excerpt: "Baby-faced adults have large eyes, small noses, rounded chins, and high foreheads. These features map predictably onto specific celebrities, and specific audience reactions.",
+    title: "Baby Face Features in Adults: 5 Signs and What They Mean",
+    excerpt: "The 5 baby face features: large eyes, small nose, full lips, rounded chin, high forehead. Why adults with them look younger, and how that sways your celebrity match.",
     summary: "Baby face features are large eyes, a small nose, full lips, a rounded chin and a high forehead, the proportions of infants. Adults with these features tend to look younger and more approachable, and they often match baby-faced celebrities with the same proportions. Face recognition picks this up because it measures proportions, not age.",
     date: "August 21, 2026",
     isoDate: "2026-08-21",
@@ -509,8 +509,8 @@ export const postsB: BlogPost[] = [
   },
   {
     slug: "front-vs-rear-camera",
-    title: "Front Camera vs Rear Camera for Face Matching: What the Data Says",
-    excerpt: "The two cameras on your phone produce very different kinds of photos for face recognition. Here is a detailed comparison of focal length, distortion, and image quality.",
+    title: "Front Camera vs Back Camera: Which Shows Your Real Face?",
+    excerpt: "The back camera shows your real face. A front camera's wide lens, held close, enlarges your nose and narrows your face. Why, and how to take a fair photo.",
     summary: "The back camera shows your real face more accurately than the front camera. Front cameras use wide-angle lenses held close, which enlarge the nose and narrow the face; rear cameras, especially in portrait mode, use longer lenses with less distortion. For face matching, have someone take your photo with the rear camera from arm's length or further.",
     date: "August 12, 2026",
     isoDate: "2026-08-12",

@@ -1069,8 +1069,8 @@ export const postsA: BlogPost[] = [
   },
   {
     slug: "selfie-vs-passport-match",
-    title: "Why Your Selfie Might Match a Different Celebrity Than Your Passport Photo",
-    excerpt: "Selfie cameras distort the shape of your face in a way most people are never told about. Here is the physics of focal length distortion and why it matters for face matching.",
+    title: "Why You Look Different in Selfies vs Passport Photos",
+    excerpt: "A front camera held close makes your nose bigger and face rounder. That's why selfies look off, and why a selfie can match a different celebrity than your passport.",
     summary: "Your selfie can match a different celebrity than your passport photo because the front camera's wide-angle lens, held close, makes your nose look bigger and your face rounder. A passport photo is taken from further away in even light, so it shows your real proportions. That is also why you look different in selfies.",
     date: "September 4, 2026",
     isoDate: "2026-09-04",
