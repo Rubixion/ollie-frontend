@@ -197,15 +197,6 @@
       animation-range: 0 55vh;
       transform-origin: 50% 0;
     }
-    /* /face-search: the glowing horizon lifts and swells toward you as the page scrolls (the text recedes with "near") */
-    [data-parallax="horizon"] {
-      animation-name: parallax-horizon;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: scroll(root);
-      animation-range: 0 40vh;
-      transform-origin: 50% 100%;
-    }
   }
 
   .reveal-ready [data-reveal] {
@@ -239,11 +230,6 @@
   from {
     transform: perspective(1400px) rotateX(28deg) translateY(6vh) scale(0.9);
     opacity: 0.55;
-  }
-}
-@keyframes parallax-horizon {
-  to {
-    transform: translateY(-14vh) scale(1.25);
   }
 }
 @keyframes parallax-recede {

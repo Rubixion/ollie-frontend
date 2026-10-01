@@ -1,5 +1,5 @@
 {
- "v": 1790877960552,
+ "v": 1790882459200,
  "layers": {
   "male-slim": [
    "adidas-stan-smith",
@@ -93,29 +93,7 @@
    "uniqlo-uld-vest",
    "uniqlo-uld-vest@hood"
   ],
-  "female-slim": [
-   "adidas-stan-smith",
-   "alpha-ma1",
-   "alpha-ma1@hood",
-   "carhartt-michigan",
-   "carhartt-michigan@hood",
-   "champion-rw-hoodie",
-   "converse-chuck-70",
-   "dickies-874",
-   "dr-martens-1460",
-   "jcrew-ludlow",
-   "jcrew-ludlow@hood",
-   "levis-501",
-   "levis-501-black",
-   "levis-trucker",
-   "levis-trucker@hood",
-   "patagonia-torrentshell",
-   "patagonia-torrentshell@hood",
-   "uniqlo-chino",
-   "uniqlo-u-tee",
-   "uniqlo-uld-vest",
-   "uniqlo-uld-vest@hood"
-  ],
+  "female-slim": [],
   "female-average": [
    "adidas-stan-smith",
    "alpha-ma1",

@@ -164,9 +164,11 @@ async function drawCard(match: ShareableMatch, runnerUps: ShareableMatch[], user
   }
 
   ctx.fillStyle = BLUE
+  // 44px unless the URL is too wide for the card, then just small enough to fit (no squashed letters)
+  const cta = "Find yours at ollieml.com/celebrity-lookalike"
   ctx.font = `700 44px ${family}`
-  // ponytail: the short /match on purpose; it 308s to /celebrity-lookalike and the long URL overflows the card at 44px
-  ctx.fillText("Find yours at ollieml.com/match", 80, 1470)
+  ctx.font = `700 ${Math.min(44, Math.floor((44 * (W - 160)) / ctx.measureText(cta).width))}px ${family}`
+  ctx.fillText(cta, 80, 1470)
   // Credit every celebrity photo on the card whose license asks for attribution (CC0 / public domain don't)
   const credited = [...(celeb ? [match] : []), ...rows.filter((r) => r.image)]
     .filter((m) => m.credit && !/^(cc0|public domain|pd\b)/i.test(m.credit.license))

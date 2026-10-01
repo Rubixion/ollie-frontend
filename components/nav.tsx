@@ -18,13 +18,13 @@ import { MATCH_ONLY } from "@/lib/site-config"
 const links = MATCH_ONLY
   ? [
       { label: "Home", href: "/" },
-      { label: "Match", href: "/celebrity-lookalike" },
+      { label: "Celebrity Lookalike", href: "/celebrity-lookalike" },
       { label: "Compare", href: "/compare-faces" },
-      { label: "Search", href: "/face-search" },
+      { label: "AI Stylist", href: "/ai-stylist" },
       { label: "Contact", href: "/contact" },
     ]
   : [
-      { label: "Match", href: "/celebrity-lookalike" },
+      { label: "Celebrity Lookalike", href: "/celebrity-lookalike" },
       { label: "Projects", href: "/projects" },
       { label: "About", href: "/about" },
     ]
@@ -45,7 +45,7 @@ function ProfileMenu() {
 
   if (!user) {
     return (
-      <div className="hidden items-center gap-2 md:flex">
+      <div className="hidden items-center gap-2 lg:flex">
         <Button variant="outline" onClick={() => openModal(undefined, "signin")}>Sign In</Button>
         <Button onClick={() => openModal(undefined, "signup")}>Get Started</Button>
       </div>
@@ -53,7 +53,7 @@ function ProfileMenu() {
   }
 
   return (
-    <div ref={ref} className="relative hidden md:block">
+    <div ref={ref} className="relative hidden lg:block">
       <button
         onClick={() => setOpen((value) => !value)}
         className="flex size-9 items-center justify-center text-white/60 transition-colors hover:text-white aria-expanded:text-white"
@@ -95,7 +95,7 @@ function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
   if (!open || typeof window === "undefined") return null
 
   return createPortal(
-    <div className="fixed inset-x-0 top-16 bottom-0 z-40 overflow-hidden border-y border-white/10 bg-black/95 backdrop-blur-xl md:hidden">
+    <div className="fixed inset-x-0 top-16 bottom-0 z-40 overflow-hidden border-y border-white/10 bg-black/95 backdrop-blur-xl lg:hidden">
       <div className={cn("size-full p-4", className)} {...props}>
         {children}
       </div>
@@ -127,7 +127,7 @@ export function Nav() {
           OLLIE
         </PageLink>
 
-        <div className="col-start-2 hidden min-w-0 items-center gap-1 md:flex">
+        <div className="col-start-2 hidden min-w-0 items-center gap-1 lg:flex">
           {links.map((link) => {
             const active = pathname === link.href || pathname.startsWith(`${link.href}/`)
             return (
@@ -153,7 +153,7 @@ export function Nav() {
             size="icon"
             variant="outline"
             onClick={() => setOpen((value) => !value)}
-            className="md:hidden"
+            className="lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label="Toggle menu"

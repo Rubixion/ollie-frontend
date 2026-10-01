@@ -6,12 +6,11 @@ import { COMING_SOON, MATCH_ONLY, SITE_URL } from "@/lib/site-config"
 // ponytail: Worker handles it so it works whatever Cloudflare rules exist; keep until Google has moved the index (~6+ months).
 const OLD_HOSTS = ["ollie.ml", "www.ollie.ml", "ollieml.com"]
 
-// Renamed URLs (2026-10-01, keyword slugs). Keep forever: old links, shares and the share card's printed /match use them.
+// Renamed URLs (2026-10-01, keyword slugs). Keep forever: old links, shares and cards shared before the rename use them.
 // Exact paths only: public/style/* assets keep their folder name and must not redirect.
 const MOVED: Record<string, string> = {
   "/match": "/celebrity-lookalike",
   "/compare": "/compare-faces",
-  "/search": "/face-search",
   "/style": "/ai-stylist",
   // merged into the stronger post on the same topic
   "/blog/inside-ai-face-matching": "/blog/how-face-recognition-works",
@@ -29,7 +28,7 @@ const MOVED: Record<string, string> = {
 const ALLOWED_PREFIXES = ["/chemistry", "/api", "/robots.txt", "/sitemap.xml", "/opengraph-image", "/icon", "/favicon.ico"]
 // Pages that exist but aren't live in the match-only release: permanently redirected to /celebrity-lookalike.
 // Anything not listed here and not a real route falls through to the 404 page (no soft 404s).
-// Live: /, /celebrity-lookalike, /compare-faces, /face-search, /faq, /blog, /contact, /privacy, /terms.
+// Live: /, /celebrity-lookalike, /compare-faces, /ai-stylist, /faq, /blog, /contact, /privacy, /terms.
 const HIDDEN_PAGES = ["/ai", "/about", "/projects", "/info", "/chemistry"]
 
 export function middleware(request: NextRequest) {

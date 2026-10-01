@@ -17,8 +17,7 @@ Keyword numbers are US monthly searches and keyword difficulty (KD) from OpenSEO
 | `/` | celebrity lookalike AI | Ollie: Free Celebrity Lookalike AI |
 | `/celebrity-lookalike` (the money page; was `/match`) | what celebrity do I look like (14.8k, KD 10), celebrity look alike (60.5k, KD 7), what actor / actress / famous person do I look like (14.8k each), celebrity look alike finder (12.1k, KD 6), who do I look like (9.9k), who is my celebrity look alike (6.6k) | What Celebrity Do I Look Like? Free Celebrity Lookalike AI |
 | `/compare-faces` (was `/compare`) | compare faces (2.4k, KD 18), face comparison (2.4k, KD 4), compare 2 faces online (140, KD 0), compare two faces for similarity (70, KD 3) | Compare Faces Online: Are They the Same Person? |
-| `/face-search` (was `/search`; noindex until launch) | face search (33.1k, KD 36), reverse face search (8.1k, KD 33) | Face Search: Coming Soon |
-| `/ai-stylist` (was `/style`; hidden, noindex until launch) | ai stylist (880, KD 13), ai personal stylist (210, KD 15) | (set at launch) |
+| `/ai-stylist` (Ollie Stylist; was `/style`; launched 2026-10-01) | ai stylist (880, KD 13), ai personal stylist (210, KD 15) | Free AI Stylist for Haircuts & Outfits \| Ollie Stylist |
 | `/faq` | how the celebrity lookalike AI works; long-tail questions | FAQ: How Ollie's Celebrity Lookalike AI Works |
 | `/blog/find-your-celebrity-lookalike` | how to find your celebrity lookalike, find my celebrity lookalike (2.9k). The tool searches moved to `/celebrity-lookalike` on 2026-10-01 | How to Find Your Celebrity Lookalike, Step by Step |
 | `/blog/why-people-say-you-look-like-someone` (was `science-of-you-look-like`) | why do people say I look like someone / a celebrity. "who do I look like" moved to `/celebrity-lookalike` | Why Do People Say I Look Like Someone? The Science |
@@ -29,7 +28,7 @@ Keyword numbers are US monthly searches and keyword difficulty (KD) from OpenSEO
 | `/blog/what-is-similarity-score`, `/blog/why-same-person-different-ai-results` | compare faces / compare two faces (supporting /compare-faces) | (unchanged) |
 
 **URL changes (2026-10-01).** Old URLs 308 to the new ones in one hop, from any domain; the list is `MOVED` in `middleware.ts`. Keep it forever.
-- Tools: `/match` → `/celebrity-lookalike`, `/compare` → `/compare-faces`, `/search` → `/face-search`, `/style` → `/ai-stylist`. The share card still prints the short `ollieml.com/match` because the long URL doesn't fit.
+- Tools: `/match` → `/celebrity-lookalike`, `/compare` → `/compare-faces`, `/style` → `/ai-stylist`. The Search coming-soon page (`/search`, briefly `/face-search`) was removed the same day and both now 404; its nav slot went to Ollie Stylist.
 - Merged duplicate posts (the stronger post kept its URL and took the other's best section, its FAQs and its keywords):
   - inside-ai-face-matching → how-face-recognition-works
   - what-is-a-facial-fingerprint → what-is-facial-embedding

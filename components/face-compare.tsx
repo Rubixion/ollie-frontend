@@ -276,7 +276,7 @@ export function FaceCompare() {
                     photos: [{ src: photos[0].preview, label: "Photo 1" }, { src: photos[1].preview, label: "Photo 2" }],
                     headline: result.same ? "Same person" : "Different people",
                     subline: `${result.score.toFixed(1)}% lookalike`,
-                    path: "compare",
+                    path: "compare-faces",
                     text: `${result.same ? "Same person" : "Different people"}, ${result.score.toFixed(1)}% lookalike. Compare two faces:`,
                   }}
                 />

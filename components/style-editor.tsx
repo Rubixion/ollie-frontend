@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ProductCard, ProductCardBadge, ProductCardContent, ProductCardHeader, ProductCardImage, ProductCardSubtitle, ProductCardTitle } from "@/components/ui/product-card"
 import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
+import { Skeleton } from "@/components/ui/skeleton"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { StyleScanner, type ScanResult } from "@/components/style-scanner"
 import { useAuth } from "@/components/auth-provider"
@@ -106,6 +107,7 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
   const [build, setBuild] = useState<Build>("average")
   const [lookId, setLookId] = useState<LookId>("white")
   const [assets, setAssets] = useState<Assets>({ layers: {}, looks: {} })
+  const [ready, setReady] = useState(false) // saved model restored and the layer list loaded: until then, a placeholder
   const [outfit, setOutfit] = useState<Outfit>(DEFAULT_OUTFIT)
   useEffect(() => { // restore their model, and load which clothes layers exist
     const m = stored<{ gender?: Gender; build?: Build; lookId?: LookId }>("style_model", {})
@@ -115,7 +117,7 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
     if (m.lookId && LOOKS.some((l) => l.id === m.lookId)) setLookId(m.lookId)
     /* eslint-enable react-hooks/set-state-in-effect */
     fetch("/style/layers/index.json", { cache: "no-cache" }).then((r) => r.json())
-      .then((d) => setAssets({ v: d?.v, layers: d?.layers ?? {}, looks: d?.looks ?? {} })).catch(() => {})
+      .then((d) => setAssets({ v: d?.v, layers: d?.layers ?? {}, looks: d?.looks ?? {} })).catch(() => {}).finally(() => setReady(true))
   }, [])
   // saved when they change it (not in an effect, which would race the restore above and overwrite it)
   const setModel = (next: { gender?: Gender; build?: Build; lookId?: LookId }) => {
@@ -244,7 +246,7 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
             <TabsContent value="model" className="flex flex-col gap-3">
               {/* layers stacked in the browser: any outfit shows instantly and costs nothing */}
               <div className="relative mx-auto aspect-[3/4] w-full max-w-[min(30rem,62svh*0.75)] overflow-hidden rounded-2xl bg-gradient-to-b from-[#aea296] to-[#bbafa5]">
-                <div className="absolute inset-0">
+                {!ready ? <Skeleton className="absolute inset-0 rounded-none bg-white/[0.06]" /> : <div className="absolute inset-0">
                   {/* eslint-disable-next-line @next/next/no-img-element -- static model photo */}
                   <img src={u(modelPhoto(gender, bodyB, look))} alt={`A ${LOOKS.find((l) => l.id === look)?.label} ${gender === "male" ? "male" : "female"} model with ${bodyB === "slim" || bodyB === "plus" ? "a" : "an"} ${bodyB} build`} className="absolute inset-0 size-full object-cover" />
                   {stack.map((l) => (
@@ -252,7 +254,7 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
                     <img key={l.slot} src={u(l.src)} alt="" className="absolute inset-0 size-full object-cover"
                       style={l.mask ? { maskImage: `url(${u(l.mask)})`, WebkitMaskImage: `url(${u(l.mask)})`, maskSize: "100% 100%", WebkitMaskSize: "100% 100%" } : undefined} />
                   ))}
-                </div>
+                </div>}
               </div>
               <p className="text-center text-xs text-white/50">Every change to the model or clothes shows instantly.</p>
               {pro === false && (

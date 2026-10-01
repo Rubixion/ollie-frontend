@@ -28,7 +28,7 @@ const BUILDS = { // keep the ids in sync with BUILDS in lib/style/model.ts
     plus: "a heavier plus-size build: fuller belly, chest, arms and face, a waist around 42 inches",
   },
   female: {
-    slim: "a very slim, thin build, around US size 0-2: narrow shoulders and hips, thin arms and legs, visible collarbones",
+    slim: "a slim, lean build, around US size 2-4: narrow shoulders and hips, slender arms and legs, smooth natural skin",
     average: "an average build",
     athletic: "an athletic, toned build: defined shoulders and arms, strong legs",
     plus: "a clearly plus-size build, around US size 20: much fuller bust, belly, hips, thighs and upper arms, a softer rounder face and jaw",
@@ -55,7 +55,8 @@ async function skinMask(photo, cache, w, h) {
     for (let attempt = 1; ; attempt++) {
       console.log(`  skin mask for ${photo.split("/").pop()} (try ${attempt})…`)
       const img = await edit("Edit this photo: paint every area of visible skin (face, ears, neck, chest, stomach, arms, hands) flat pure magenta (#FF00FF). " +
-        "Keep everything else exactly as it is, pixel for pixel: hair, clothing, shoes, background. Do not zoom, crop or re-frame.", photo)
+        "Keep everything else exactly as it is, pixel for pixel: hair, clothing, shoes, background. Do not zoom, crop or re-frame.", photo).catch((e) => { console.log(`  ${e.message}, retrying`); return null })
+      if (!img) { if (attempt === 4) throw new Error(`no skin mask for ${photo}`); continue }
       const [m, b] = await Promise.all([raw(img, w, h), raw(readFileSync(photo), w, h)])
       const out = Buffer.alloc(w * h)
       let n = 0, diff = 0
@@ -91,23 +92,6 @@ function geometry(mask, w, h) {
   return { top, face: { y: face, width: width[face], cx: centre[face] }, neck: { y: neck, width: width[neck], cx: centre[neck] } }
 }
 
-// Head-and-body silhouette for measuring: skin-mask pixels OR pixels clearly different from the backdrop (sampled at
-// both edges of the row). The skin mask catches light skin that is close to the beige backdrop; the backdrop test
-// catches dark skin and hair, and covers gaps when Gemini's magenta mask misses part of a face.
-function silhouette(px, skin, w, h) {
-  const out = Buffer.alloc(w * h)
-  for (let y = 0; y < Math.round(h * 0.35); y++) {
-    const l = (y * w + 4) * 3, r = (y * w + w - 5) * 3
-    for (let x = 0; x < w; x++) {
-      const p = y * w + x, i = p * 3
-      const dl = Math.abs(px[i] - px[l]) + Math.abs(px[i + 1] - px[l + 1]) + Math.abs(px[i + 2] - px[l + 2])
-      const dr = Math.abs(px[i] - px[r]) + Math.abs(px[i + 1] - px[r + 1]) + Math.abs(px[i + 2] - px[r + 2])
-      out[p] = skin[p] > 128 || Math.min(dl, dr) > 40 ? 255 : 0
-    }
-  }
-  return out
-}
-
 // Mean and spread per channel of the chest skin (skin-mask pixels a little below the neck), for the tone transfer.
 function skinStats(px, mask, g, w, h) {
   const y0 = g.neck.y + Math.round(h * 0.08), y1 = g.neck.y + Math.round(h * 0.2)
@@ -118,26 +102,50 @@ function skinStats(px, mask, g, w, h) {
   return { m, s }
 }
 
-// A head mask: skin, plus anything clearly not backdrop (hair) near the face, above the cut. Grown and softened.
-async function headMask(px, mask, g, w, h, cut, grow, soft) {
-  const out = Buffer.alloc(w * h)
+// Grow a 0/255 mask by r pixels (square), with a sliding maximum. (sharp's dilate() shrinks a white-on-black mask.)
+function grow(mask, w, h, r) {
+  const tmp = Buffer.alloc(w * h), out = Buffer.alloc(w * h)
+  for (let y = 0; y < h; y++) for (let x = 0, last = -1e9; x < w; x++) { if (mask[y * w + x]) last = x; tmp[y * w + x] = x - last <= r ? 255 : 0 }
+  for (let y = 0; y < h; y++) for (let x = w - 1, last = 1e9; x >= 0; x--) { if (mask[y * w + x]) last = x; if (last - x <= r) tmp[y * w + x] = 255 }
+  for (let x = 0; x < w; x++) {
+    for (let y = 0, last = -1e9; y < h; y++) { if (tmp[y * w + x]) last = y; out[y * w + x] = y - last <= r ? 255 : 0 }
+    for (let y = h - 1, last = 1e9; y >= 0; y--) { if (tmp[y * w + x]) last = y; if (last - y <= r) out[y * w + x] = 255 }
+  }
+  return out
+}
+
+// A head mask: skin, plus anything clearly not backdrop (hair) near the face, from a little above the forehead down
+// to the cut. Backdrop = close to either edge of the row. Grown by `by` px and softened by `soft`.
+async function headMask(px, mask, g, w, h, cut, by, soft, strict = null) {
+  const out = Buffer.alloc(w * h), skin = Buffer.alloc(w * h)
   const x0 = Math.max(0, Math.round(g.face.cx - w * 0.2)), x1 = Math.min(w, Math.round(g.face.cx + w * 0.2))
-  for (let y = 0; y <= cut; y++) {
-    const e = (y * w + 4) * 3 // backdrop sample at the row's left edge
+  const y0 = Math.max(0, g.top - Math.round(h * 0.07))
+  for (let y = y0; y <= cut; y++) for (let x = x0; x < x1; x++) if (mask[y * w + x] > 128) skin[y * w + x] = 255
+  const hairZone = grow(skin, w, h, 60) // hair sits within ~60px of the face's skin; further out it's wall texture
+  for (let y = y0; y <= cut; y++) {
+    const l = (y * w + 4) * 3, r = (y * w + w - 5) * 3
     for (let x = x0; x < x1; x++) {
       const p = y * w + x, i = p * 3
-      const notBackdrop = Math.abs(px[i] - px[e]) + Math.abs(px[i + 1] - px[e + 1]) + Math.abs(px[i + 2] - px[e + 2]) > 45
-      if (mask[p] > 128 || notBackdrop) out[p] = 255
+      const dl = Math.abs(px[i] - px[l]) + Math.abs(px[i + 1] - px[l + 1]) + Math.abs(px[i + 2] - px[l + 2])
+      const dr = Math.abs(px[i] - px[r]) + Math.abs(px[i + 1] - px[r + 1]) + Math.abs(px[i + 2] - px[r + 2])
+      if (skin[p] || (hairZone[p] && Math.min(dl, dr) > 50)) out[p] = 255
     }
   }
-  let img = sharp(out, { raw: { width: w, height: h, channels: 1 } }).dilate(grow)
-  if (soft) img = sharp(await img.extractChannel(0).raw().toBuffer(), { raw: { width: w, height: h, channels: 1 } }).blur(soft)
-  return img.extractChannel(0).raw().toBuffer()
+  // strict (the look's head; strict = the base's skin mask): below ear level, a row is everything between the left
+  // and right edges of the look's skin OR the base's (aligned), which fills gaps in a patchy skin mask (a missed chin
+  // or jaw) without taking in shadows beside the neck as "hair"
+  if (strict) for (let y = Math.round(g.face.y + (g.neck.y - g.face.y) * 0.3); y <= cut; y++) {
+    let l = -1, r = -1
+    for (let x = x0; x < x1; x++) if (skin[y * w + x] || (y <= g.neck.y && strict[y * w + x] > 128)) { if (l < 0) l = x; r = x }
+    for (let x = x0; x < x1; x++) out[y * w + x] = l >= 0 && x >= l && x <= r ? 255 : 0
+  }
+  const grown = by ? grow(out, w, h, by) : out
+  return soft ? sharp(grown, { raw: { width: w, height: h, channels: 1 } }).blur(soft).extractChannel(0).raw().toBuffer() : grown
 }
 
 // Look photo built on the bare base, so its silhouette is the base's exactly and every clothes layer fits:
-//  - the look's head (skin + hair) is scaled and moved so its face width and neck line match the base's, sampled
-//    with bilinear filtering, and blended into the base's neck over a soft band;
+//  - the look's head (skin + hair) is moved so its neck lines up with the base's, and blended into the base's neck
+//    over a soft band;
 //  - first the base's own head is removed: each row of it is refilled with the base's backdrop, blended across from
 //    just left and right of the head (the backdrop is a smooth gradient), so no base hair can peek out and no other
 //    photo's backdrop (lighter or darker) is pasted in;
@@ -145,10 +153,18 @@ async function headMask(px, mask, g, w, h, cut, grow, soft) {
 //  - below the neck, the base's skin is recoloured to the look's measured skin tone (mean and spread per channel).
 async function compose(bareFile, bareMask, lookImg, lookMask, w, h, name) {
   const [b, v] = await Promise.all([raw(readFileSync(bareFile), w, h), raw(lookImg, w, h)])
-  const G = geometry(silhouette(b, bareMask, w, h), w, h), L = geometry(silhouette(v, lookMask, w, h), w, h)
-  const scale = Math.min(1.15, Math.max(0.87, G.face.width / L.face.width))
+  const G = geometry(bareMask, w, h), L = geometry(lookMask, w, h)
+  // The look images keep the base's framing and scale (asked for in the prompt; measured within ~1-4%), so only a
+  // shift is needed. Horizontal: the median, over every row from the face's widest row to the neck, of the difference
+  // between the two skin masks' row centres, so a patchy mask can't throw it. Vertical: the neck rows. Both capped.
+  const rowCentre = (mask, y) => { let l = -1, r = -1; for (let x = 0; x < w; x++) if (mask[y * w + x] > 128) { if (l < 0) l = x; r = x } return l < 0 ? null : (l + r) / 2 }
+  const diffs = []
+  for (let y = G.face.y; y <= G.neck.y; y++) { const a = rowCentre(bareMask, y), c = rowCentre(lookMask, y + L.neck.y - G.neck.y); if (a !== null && c !== null) diffs.push(c - a) }
+  diffs.sort((a, c) => a - c)
+  const cap = (n) => Math.max(-12, Math.min(12, Math.round(n)))
+  const dx = diffs.length ? cap(diffs[diffs.length >> 1]) : 0, dy = cap(L.neck.y - G.neck.y)
   // base pixel (x, y) shows the look's pixel at (lx, ly)
-  const lx = (x) => L.face.cx + (x - G.face.cx) / scale, ly = (y) => L.neck.y + (y - G.neck.y) / scale
+  const lx = (x) => x + dx, ly = (y) => y + dy
   const warped = Buffer.alloc(w * h * 3), warpedMask = Buffer.alloc(w * h)
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const fx = Math.min(w - 1.001, Math.max(0, lx(x))), fy = Math.min(h - 1.001, Math.max(0, ly(y)))
@@ -158,35 +174,52 @@ async function compose(bareFile, bareMask, lookImg, lookMask, w, h, name) {
     for (let c = 0; c < 3; c++) warped[p * 3 + c] = Math.round(v[k00 * 3 + c] * w00 + v[k01 * 3 + c] * w01 + v[k10 * 3 + c] * w10 + v[k11 * 3 + c] * w11)
     warpedMask[p] = Math.round(lookMask[k00] * w00 + lookMask[k01] * w01 + lookMask[k10] * w10 + lookMask[k11] * w11)
   }
-  const cut = G.neck.y, fade = 18
-  const [hb, hl] = await Promise.all([headMask(b, bareMask, G, w, h, cut + fade, 6, 0), headMask(warped, warpedMask, G, w, h, cut + fade, 1, 1.2)])
-  // clean plate: the base with its head painted out by row-wise interpolation of the backdrop either side
+  const cut = G.neck.y + Math.round(h * 0.012), fade = 14 // join low on the neck: where the look's neck is narrower, clean backdrop shows, not the base's neck edge
+  const [hb, hl] = await Promise.all([headMask(b, bareMask, G, w, h, cut + fade, 14, 0) /* generous: hair highlights can read as backdrop */, headMask(warped, warpedMask, G, w, h, cut + fade, 1, 1.2, bareMask)])
+  const span = (y) => { let l = -1, r = -1; for (let x = 0; x < w; x++) if (bareMask[y * w + x] > 128) { if (l < 0) l = x; r = x } return [l, r] }
+  for (let y = G.neck.y + 1; y < h; y++) {
+    const [l, r] = span(y)
+    const keep = Math.max(0, 1 - (y - G.neck.y) / 20) // outside the base's neck, fade (hair strands) instead of a hard cut
+    for (let x = 0; x < w; x++) if (l < 0 || x < l - 6 || x > r + 6) hl[y * w + x] = warpedMask[y * w + x] > 60 ? 0 : Math.round(hl[y * w + x] * keep) // skin: off; hair: fades
+  }
+  const near = grow(hb, w, h, 40) // the look's head must sit near the base's: drops stray specks of "not backdrop"
+  // clean plate: the base with its head painted out. The backdrop behind the head is estimated with a normalised
+  // blur: blur(base outside the head) / blur(outside-the-head mask), so only clean backdrop pixels contribute and the
+  // result is a smooth gradient with no streaks, whatever hair or shadow sits beside the head.
+  const anySkin = Buffer.alloc(w * h); for (let p = 0; p < w * h; p++) if (bareMask[p] > 10) anySkin[p] = 255
+  const nearSkin = grow(anySkin, w, h, 6) // soft skin edges are part skin: keep them out of the backdrop estimate
+  const keep = Buffer.alloc(w * h), masked = Buffer.alloc(w * h * 3)
+  for (let p = 0; p < w * h; p++) {
+    const k = hb[p] < 128 && !nearSkin[p] && p < (cut + fade + 40) * w ? 255 : 0 // backdrop only: not head, not near skin, upper frame
+    keep[p] = k
+    if (k) { masked[p * 3] = b[p * 3]; masked[p * 3 + 1] = b[p * 3 + 1]; masked[p * 3 + 2] = b[p * 3 + 2] }
+  }
+  const [mb, kb] = await Promise.all([
+    sharp(masked, { raw: { width: w, height: h, channels: 3 } }).blur(28).raw().toBuffer(),
+    sharp(keep, { raw: { width: w, height: h, channels: 1 } }).blur(28).extractChannel(0).raw().toBuffer(),
+  ])
+  const soft = await sharp(Buffer.from(hb), { raw: { width: w, height: h, channels: 1 } }).blur(5).extractChannel(0).raw().toBuffer()
   const plate = Buffer.from(b)
-  const avg = (y, x0, x1, c) => { let t = 0, n = 0; for (let x = Math.max(0, x0); x < Math.min(w, x1); x++) { t += b[(y * w + x) * 3 + c]; n++ } return t / n }
-  for (let y = 0; y <= cut + fade; y++) {
-    // one span per row, from the head's leftmost to rightmost pixel, so the samples are always clean backdrop
-    let x = 0, r = w - 1
-    while (x < w && hb[y * w + x] < 128) x++
-    while (r > x && hb[y * w + r] < 128) r--
-    if (x >= r) continue
-    r++
-    const left = [0, 1, 2].map((c) => avg(y, x - 10, x - 3, c)), right = [0, 1, 2].map((c) => avg(y, r + 3, r + 10, c))
-    for (let xx = x; xx < r; xx++) {
-      const t = (xx - x + 1) / (r - x + 1)
-      for (let c = 0; c < 3; c++) plate[(y * w + xx) * 3 + c] = Math.round(left[c] * (1 - t) + right[c] * t)
-    }
+  for (let p = 0; p < w * h; p++) {
+    if (!soft[p] || kb[p] < 8) continue // (no backdrop nearby at all: keep the base pixel)
+    const t = soft[p] / 255 // feathered edge where the cleaned backdrop meets the real one
+    for (let c = 0; c < 3; c++) plate[p * 3 + c] = Math.round(t * Math.min(255, mb[p * 3 + c] * 255 / kb[p]) + (1 - t) * b[p * 3 + c])
   }
   const A = skinStats(b, bareMask, G, w, h), B = skinStats(v, lookMask, L, w, h)
-  console.log(`  ${name}: scale ${scale.toFixed(3)}, face x ${L.face.cx.toFixed(0)}->${G.face.cx.toFixed(0)}, neck y ${L.neck.y}->${G.neck.y}`)
+  console.log(`  ${name}: shift ${dx},${dy}`)
   const out = Buffer.alloc(w * h * 3)
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const p = y * w + x, i = p * 3, k = bareMask[p] / 255
     const band = y < cut - fade ? 1 : y > cut + fade ? 0 : (cut + fade - y) / (2 * fade) // 1 = head, 0 = body
-    const look = hl[p] / 255
+    const look = band * (near[p] ? hl[p] / 255 : 0)
+    // What sits under the look's head: in the head zone, the base's hair and its face become clean backdrop; from
+    // the neck's narrowest row down, the base's own neck stays (recoloured), so the neck outline never notches.
+    const keepBase = !(hb[p] >= 128) || (k >= 0.08 && y > G.neck.y) // below the neck, even a skin edge stays base
+    const kk = keepBase ? Math.min(1, k * 2) : 0 // soft skin edges get the full new tone, so no light fringe
     for (let c = 0; c < 3; c++) {
-      const body = b[i + c] + k * ((b[i + c] - A.m[c]) / A.s[c] * B.s[c] + B.m[c] - b[i + c])
-      const top = look * warped[i + c] + (1 - look) * plate[i + c] // the look's head over the cleaned backdrop
-      out[i + c] = Math.max(0, Math.min(255, Math.round(band * top + (1 - band) * body)))
+      const src = keepBase ? b[i + c] : plate[i + c]
+      const under = src + kk * ((b[i + c] - A.m[c]) / A.s[c] * B.s[c] + B.m[c] - src)
+      out[i + c] = Math.max(0, Math.min(255, Math.round(look * warped[i + c] + (1 - look) * under)))
     }
   }
   return sharp(out, { raw: { width: w, height: h, channels: 3 } }).jpeg({ quality: 92 }).toBuffer()

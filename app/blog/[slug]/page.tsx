@@ -81,6 +81,7 @@ const bodyLink = "text-(--ollie-cyan) underline underline-offset-4 hover:text-wh
 const LINK_RULES: [href: string, phrase: RegExp][] = [
   ["/celebrity-lookalike", MATCH_PHRASE],
   ["/compare-faces", /compar(?:e|ing) (?:two |2 )?faces|face comparison/i],
+  ["/ai-stylist", /haircuts?|hairstyles?|face shapes?/i],
   ["/blog/why-everyone-has-doppelganger", /doppelg[aä]ngers?|resemblances?/i],
   ["/blog/what-is-similarity-score", /similarity scores?/i],
   ["/blog/why-same-person-different-ai-results", /(?:two )?photos of the same person/i],

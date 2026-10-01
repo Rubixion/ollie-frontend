@@ -5,9 +5,9 @@
       <stop offset="100%" stop-color="#5a72c0"/>
     </linearGradient>
   </defs>
-  <!-- Rounded tile for browser tabs, which prefer this SVG. favicon.ico / apple-icon.png stay full-bleed
-       squares for Google's circle crop, where transparent corners showed as a white ring.
+  <!-- Full-bleed square, like favicon.ico / apple-icon.png: Google crops icons to a circle, and rounded
+       (transparent) corners showed as a white ring around the tile in search results.
        The O is a drawn ring, not <text>: favicons can't load the Outfit font. -->
-  <rect width="32" height="32" rx="7" fill="#07070f"/>
+  <rect width="32" height="32" fill="#07070f"/>
   <circle cx="16" cy="16" r="7.9" fill="none" stroke="url(#g)" stroke-width="4.6"/>
 </svg>

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next"
 import { allPosts } from "@/lib/blog-posts"
-import { HOME_UPDATED, SITE_URL } from "@/lib/site-config"
+import { HOME_UPDATED, SITE_URL, STYLIST_UPDATED } from "@/lib/site-config"
 
 // Only URLs that return 200 (under MATCH_ONLY the other pages redirect to /celebrity-lookalike).
 // Fixed dates: bump one when that page's content really changes, so crawlers can trust lastModified.
@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: SITE_URL, lastModified: HOME_UPDATED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/celebrity-lookalike`, lastModified: HOME_UPDATED, changeFrequency: "monthly", priority: 1.0 },
     { url: `${SITE_URL}/compare-faces`, lastModified: HOME_UPDATED, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/ai-stylist`, lastModified: STYLIST_UPDATED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/faq`, lastModified: HOME_UPDATED, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/blog`, lastModified: latestPost, changeFrequency: "weekly", priority: 0.8 },
     ...allPosts.map((post) => ({

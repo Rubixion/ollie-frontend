@@ -12,6 +12,9 @@ export const SITE_URL = "https://www.ollieml.com"
 // Last real content change to / and /celebrity-lookalike. Used by the sitemap and the /celebrity-lookalike dateModified schema.
 export const HOME_UPDATED = "2026-09-26"
 
+// Last real content change to /ai-stylist (Ollie Stylist). Used by the sitemap and its dateModified schema.
+export const STYLIST_UPDATED = "2026-10-01"
+
 // Version of the Terms + Privacy Policy a user agrees to at signup (their "Last updated" date).
 // Bump it whenever either page changes materially; it's stored with each user's consent.
 export const TERMS_VERSION = "2026-09-26"
