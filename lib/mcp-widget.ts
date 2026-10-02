@@ -5,8 +5,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { SITE_URL } from "@/lib/site-config"
 
-export const WIDGET_URI = "ui://ollie/result.html"
-
 // Self-contained page: no external JS/CSS. Reads data from window.openai (ChatGPT) or the MCP-Apps postMessage.
 // Inside a host it shows a skeleton until the result arrives; only a page opened directly (/mcp-preview, or
 // ?kind=symmetry etc.) renders the sample data. Styled to docs/DESIGN.md: black, white type, one blue (--ollie-cyan).
@@ -192,6 +190,10 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
   window.addEventListener("openai:set_globals", function () { show(pick()); }, { passive: true });
 })();
 </script></body></html>`
+
+// ChatGPT caches a widget by its URI, so the URI carries a hash of the HTML: every change gets a fresh URI.
+const hash = (str: string) => { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619); return (h >>> 0).toString(36) }
+export const WIDGET_URI = `ui://ollie/result-${hash(WIDGET_HTML)}.html`
 
 /** Register the shared result widget on an MCP server. Call once per request in each app's build(). */
 export function registerWidget(server: McpServer) {

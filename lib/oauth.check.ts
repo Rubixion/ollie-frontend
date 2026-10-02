@@ -4,7 +4,7 @@
 // supabase/oauth.sql is applied.
 import assert from "node:assert"
 import { sha256, verifyPkce, randomToken, redirectAllowed } from "./oauth"
-import { isPrivateHost } from "./mcp"
+import { imageType, isPrivateHost } from "./mcp"
 
 // RFC 7636 Appendix B test vector.
 const verifier = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
@@ -34,3 +34,13 @@ const main = async () => {
   console.log("oauth.check ok")
 }
 main()
+
+// imageType: sniffs uploads served as application/octet-stream
+const bytes = (...p: (number | string)[]) => new Uint8Array(p.flatMap((x) => (typeof x === "string" ? [...x].map((c) => c.charCodeAt(0)) : [x])))
+assert.equal(imageType(bytes(0xff, 0xd8, 0xff, 0xe0)), "image/jpeg")
+assert.equal(imageType(bytes(0x89, "PNG", 13, 10)), "image/png")
+assert.equal(imageType(bytes("RIFF", 0, 0, 0, 0, "WEBP")), "image/webp")
+assert.equal(imageType(bytes(0, 0, 0, 24, "ftypheic")), "image/heic")
+assert.equal(imageType(bytes(0, 0, 0, 24, "ftypisom")), null) // mp4
+assert.equal(imageType(bytes("<html>")), null)
+console.log("imageType ok")

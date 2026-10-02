@@ -31,7 +31,7 @@ export const photoUrl = z.string().url().describe("A direct public https link to
 export const photoBase64 = z
   .string()
   .describe(
-    "The image bytes as base64 (or a data: URL). Use this when there's an uploaded image but no public URL — e.g. on claude.ai, read the uploaded file and pass its base64 here.",
+    "Only for clients that cannot attach files (e.g. claude.ai): the image bytes as base64 or a data: URL. In ChatGPT, never use this: pass the uploaded file in the photo field instead.",
   )
 
 // Fallback shown when a tool needs the user's photo but the client couldn't hand one over (e.g. Claude, which doesn't
@@ -104,6 +104,17 @@ async function safeFetch(rawUrl: string): Promise<Response> {
   throw new Error("too many redirects")
 }
 
+/** JPEG / PNG / GIF / WebP / HEIC-AVIF from the first 12 bytes, or null. */
+export function imageType(b: Uint8Array): string | null {
+  const s = (i: number, t: string) => [...t].every((c, j) => b[i + j] === c.charCodeAt(0))
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "image/jpeg"
+  if (b[0] === 0x89 && s(1, "PNG")) return "image/png"
+  if (s(0, "GIF8")) return "image/gif"
+  if (s(0, "RIFF") && s(8, "WEBP")) return "image/webp"
+  if (s(4, "ftyp")) return s(8, "avif") ? "image/avif" : ["heic", "heix", "mif1", "msf1"].some((t) => s(8, t)) ? "image/heic" : null // not mp4
+  return null
+}
+
 async function download(f: ImageFile): Promise<Blob> {
   // Inline base64 / data: URL (the claude.ai path) — decode directly, no network fetch.
   if (/^data:/i.test(f.download_url)) {
@@ -122,9 +133,12 @@ async function download(f: ImageFile): Promise<Blob> {
   if (declared > MAX_IMAGE_BYTES) throw new Error("too large")
   const blob = await res.blob()
   if (blob.size > MAX_IMAGE_BYTES) throw new Error("too large") // backstop for chunked responses with no content-length
-  // Trust the ACTUAL response type, never the attacker-supplied f.mime_type.
-  if (!blob.type.startsWith("image/")) throw new Error("not an image")
-  return blob
+  // Trust the ACTUAL bytes, never the attacker-supplied f.mime_type. File stores (ChatGPT's included) often serve
+  // uploads as application/octet-stream, so sniff the magic number when the header doesn't say image/*.
+  if (blob.type.startsWith("image/")) return blob
+  const sniffed = imageType(new Uint8Array(await blob.slice(0, 12).arrayBuffer()))
+  if (!sniffed) throw new Error(`not an image (${blob.type || "no type"})`)
+  return new Blob([blob], { type: sniffed })
 }
 
 export const text = (t: string, structured?: Record<string, unknown>) => ({
