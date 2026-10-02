@@ -141,9 +141,12 @@ async function download(f: ImageFile): Promise<Blob> {
   return new Blob([blob], { type: sniffed })
 }
 
+// Plain-text replies (errors, "no face found", etc.). Also sent to the widget as a message card, or a tool whose
+// output template is the widget would sit on the loading skeleton forever.
 export const text = (t: string, structured?: Record<string, unknown>) => ({
   content: [{ type: "text" as const, text: t }],
   ...(structured ? { structuredContent: structured } : {}),
+  _meta: { "ollie/widget": { kind: "message", body: t } },
 })
 
 // Total anonymous (not-connected) GPU calls allowed per day across EVERYONE. The per-ChatGPT-user teaser below is
@@ -194,7 +197,9 @@ export async function inference(path: "search" | "compare" | "landmarks", files:
   } catch (err) {
     console.error("mcp inference failed:", err)
     if (quota) await refundSearch(quota)
-    return { error: "The photo couldn't be checked. Try again with a clear, front-facing JPG or PNG photo." }
+    // the short reason (e.g. "download 403", "inference 500") makes failures diagnosable from the ChatGPT tool panel
+    const why = (err instanceof Error ? err.message : String(err)).slice(0, 80)
+    return { error: `The photo couldn't be checked (${why}). Try again with a clear, front-facing JPG or PNG photo.` }
   }
 }
 

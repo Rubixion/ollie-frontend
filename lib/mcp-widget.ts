@@ -82,6 +82,7 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
             background:var(--well); color:#fff; font-size:13px; font-weight:600; text-decoration:none; }
   .more a span { color:var(--blue); } .more a:hover { background:rgb(255 255 255/.07); }
   .more a:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  .msg { margin:0; color:var(--t80); font-size:14px; line-height:1.6; white-space:pre-line; } .msg a { color:var(--blue); }
   .foot { margin-top:12px; color:var(--t50); font-size:12px; text-align:center; }
 
   /* loading skeleton */
@@ -103,6 +104,7 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
       items:[{name:"Eyes",pct:81},{name:"Eyebrows",pct:64},{name:"Nose",pct:77},{name:"Mouth",pct:58},{name:"Jaw",pct:69}],
       cta:{label:"See the mirrored view →", href:"${SITE_URL}/face-symmetry-test"},
       more:[{label:"Which celebrity do you look like?", href:"${SITE_URL}/celebrity-lookalike"},{label:"Try hairstyles and outfits on your face with AI", href:"${SITE_URL}/ai-stylist"}], foot:"Symmetry only, not an attractiveness score." },
+    message: { kind:"message", body:"No face was found in that photo. Try a clear, front-facing photo with good light, or upload it at ${SITE_URL}/face-symmetry-test?utm_source=chatgpt" },
     compare: { kind:"compare", title:"Face comparison", pct:64, verdict:"How alike these two faces look", cta:{label:"Make a shareable card →", href:"${SITE_URL}/compare-faces"} }
   };
   var root = document.getElementById("root");
@@ -148,6 +150,9 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
       if (d.shape) h += '<span class="chip">'+esc(d.shape)+' face</span>';
       if (d.shapeInfo) h += '<p class="sub" style="margin-top:8px">'+esc(d.shapeInfo)+'</p>';
       (d.sections||[]).forEach(function (sec) { h += '<div class="sec in"><b>'+esc(sec.title)+'</b><ul>'+(sec.items||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ul></div>'; });
+    } else if (d.kind === "message") {
+      // linkify bare URLs after escaping
+      h += head("Ollie") + '<p class="msg">' + esc(d.body).replace(/https:\\/\\/[^\\s<)]+[^\\s<).,]/g, function (u) { return '<a href="'+u+'" target="_blank" rel="noopener">'+u.replace(/^https:\\/\\/(www\\.)?/, "").replace(/\\?.*$/, "")+'</a>'; }) + '</p>';
     } else return;
     if (d.cta && d.cta.href) h += '<a class="cta" href="'+esc(d.cta.href)+'" target="_blank" rel="noopener">'+esc(d.cta.label||"Open Ollie →")+'</a>';
     if (d.more && d.more.length) h += '<div class="more"><p>Also on Ollie</p>' + d.more.map(function (m) { return '<a href="'+esc(m.href)+'" target="_blank" rel="noopener">'+esc(m.label)+'<span aria-hidden="true">→</span></a>'; }).join("") + '</div>';
