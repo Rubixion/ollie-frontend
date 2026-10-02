@@ -1,5 +1,5 @@
 import { PageLink } from "@/components/page-link"
-import { MATCH_ONLY } from "@/lib/site-config"
+import { LOOK_ALIKE_LIVE, MATCH_ONLY, SYMMETRY_LIVE } from "@/lib/site-config"
 
 const nav = MATCH_ONLY
   ? [
@@ -7,6 +7,8 @@ const nav = MATCH_ONLY
       { label: "Celebrity Lookalike", href: "/celebrity-lookalike" },
       { label: "Compare", href: "/compare-faces" },
       { label: "AI Stylist", href: "/ai-stylist" },
+      ...(SYMMETRY_LIVE ? [{ label: "Symmetry Test", href: "/face-symmetry-test" }] : []),
+      ...(LOOK_ALIKE_LIVE ? [{ label: "Famous Look Alikes", href: "/look-alike" }] : []),
       { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },

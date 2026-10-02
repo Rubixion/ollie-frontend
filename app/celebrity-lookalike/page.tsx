@@ -9,7 +9,7 @@ import { RevealOnScroll } from "@/components/reveal-on-scroll"
 import { card } from "@/lib/surfaces"
 import { INDEX } from "@/lib/facts"
 import { FAQ, STEPS } from "@/lib/faq"
-import { HOME_UPDATED, SITE_URL } from "@/lib/site-config"
+import { HOME_UPDATED, LOOK_ALIKE_LIVE, SITE_URL } from "@/lib/site-config"
 
 // The questions people search most, answered here too so /celebrity-lookalike explains itself; the rest are on /faq
 const TOP_QUESTIONS = ["How accurate is Ollie?", "What actor or actress do I look like?", "Is Ollie free?", "Do you keep my photo?"]
@@ -105,6 +105,12 @@ export default function MatchPage() {
               Photo tips, limitations, privacy and more questions
               <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform motion-reduce:transition-none" aria-hidden="true" />
             </Link>
+            {LOOK_ALIKE_LIVE && (
+              <Link href="/look-alike" className="group mt-3 flex w-fit items-center gap-2 text-(--ollie-cyan) text-sm font-semibold underline-offset-4 hover:underline">
+                See which celebrities look like each other
+                <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform motion-reduce:transition-none" aria-hidden="true" />
+              </Link>
+            )}
           </div>
         </section>
 

@@ -21,7 +21,7 @@ export default function NewsletterForm({
   className,
 }: {
   defaultEmail?: string
-  source?: "search" | "blog"
+  source?: "search" | "blog" | "stylist"
   title?: string
   className?: string
 }) {
@@ -85,7 +85,7 @@ export default function NewsletterForm({
         ) : (
           <p role="status" className="flex items-start gap-2 font-medium text-(--ollie-cyan)">
             <Check size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
-            You&apos;re in! We&apos;ll email you when Search launches.
+            You&apos;re in! We&apos;ll email you new features and style tips.
           </p>
         )}
       </CardContent>

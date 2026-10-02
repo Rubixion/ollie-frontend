@@ -4,7 +4,8 @@ import Link from "next/link"
 import { Nav } from "@/components/nav"
 import { Footer } from "@/components/footer"
 import { allPosts, getPost, type BlogPost } from "@/lib/blog-posts"
-import { SITE_URL } from "@/lib/site-config"
+import { LOOK_ALIKE_LIVE, SITE_URL, SYMMETRY_LIVE } from "@/lib/site-config"
+import { lookAlikePages } from "@/lib/look-alike"
 import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react"
 import { AuthorBadge } from "@/components/author-badge"
 import { card } from "@/lib/surfaces"
@@ -85,13 +86,24 @@ const LINK_RULES: [href: string, phrase: RegExp][] = [
   ["/blog/why-everyone-has-doppelganger", /doppelg[aä]ngers?|resemblances?/i],
   ["/blog/what-is-similarity-score", /similarity scores?/i],
   ["/blog/why-same-person-different-ai-results", /(?:two )?photos of the same person/i],
+  ...(SYMMETRY_LIVE ? [["/face-symmetry-test", /(?:facial|face) symmetry|symmetrical faces?|how symmetrical/i] as [string, RegExp]] : []),
+  ...(LOOK_ALIKE_LIVE ? [["/look-alike", /celebrities who look alike|famous look[- ]?alikes?/i] as [string, RegExp]] : []),
 ]
+
+// The first mention of a celebrity who has a /look-alike page links to it, at most CELEB_LINKS per post
+const CELEB_LINKS = 3
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+// Whole names only ("Emma Stone", not "Emma Stonebridge"); paragraphs that already hold a link are skipped below
+const CELEB_RULES: [string, RegExp][] = LOOK_ALIKE_LIVE
+  ? lookAlikePages.map((c) => [`/look-alike/${c.slug}`, new RegExp(`(?<![\\w-])${escape(c.name)}(?![\\w-])`)])
+  : []
 
 // Style posts (any post whose body links Ollie Stylist) point readers to /ai-stylist, not the lookalike tool.
 const isStylistPost = (post: BlogPost) => post.sections.some((s) => s.paragraphs.some((p) => p.includes('href="/ai-stylist"')))
 
 function linkFirstMention(sections: BlogPost["sections"], slug: string, stylist: boolean) {
-  const todo = LINK_RULES.filter(([href]) => href !== `/blog/${slug}` && !(stylist && href === "/celebrity-lookalike"))
+  const todo = [...LINK_RULES, ...CELEB_RULES].filter(([href]) => href !== `/blog/${slug}` && !(stylist && href === "/celebrity-lookalike"))
+  let celebs = 0
   return sections.map((s) => ({
     ...s,
     paragraphs: s.paragraphs.map((p) => {
@@ -101,6 +113,9 @@ function linkFirstMention(sections: BlogPost["sections"], slug: string, stylist:
         if (p.includes("<a ") || !phrase.test(p)) continue
         p = p.replace(phrase, (m) => `<a href="${href}" class="${bodyLink}">${m}</a>`)
         todo.splice(i--, 1)
+        if (href.startsWith("/look-alike/") && ++celebs === CELEB_LINKS) {
+          for (let k = todo.length - 1; k >= 0; k--) if (todo[k][0].startsWith("/look-alike/")) todo.splice(k, 1)
+        }
       }
       return p
     }),

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { COMING_SOON, MATCH_ONLY, SITE_URL } from "@/lib/site-config"
+import { currencyFor } from "@/lib/style/plans"
 
 // Old domain and the bare new domain: 308 to the same path on SITE_URL (site moved from ollie.ml on 2026-09-26).
 // ponytail: Worker handles it so it works whatever Cloudflare rules exist; keep until Google has moved the index (~6+ months).
@@ -57,6 +58,12 @@ export function middleware(request: NextRequest) {
   const oldHost = OLD_HOSTS.includes(request.headers.get("host") ?? "")
   if (target || oldHost) {
     return NextResponse.redirect(new URL((target ?? pathname) + request.nextUrl.search, oldHost ? SITE_URL : request.url), 308)
+  }
+
+  // Guests asking "am I Pro?" (every /ai-stylist visit, twice): the answer is always no, so answer here instead of
+  // booting the Next.js server, which alone can blow the free Workers plan's 10 ms CPU limit (error 1102).
+  if (pathname === "/api/pro" && request.method === "GET" && !request.headers.get("authorization")) {
+    return NextResponse.json({ pro: false, currency: currencyFor(request.headers.get("cf-ipcountry")) })
   }
 
   if (MATCH_ONLY) {

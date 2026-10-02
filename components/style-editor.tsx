@@ -14,6 +14,8 @@ import { ProductCard, ProductCardBadge, ProductCardContent, ProductCardHeader, P
 import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { Skeleton } from "@/components/ui/skeleton"
 import { SegmentedControl } from "@/components/ui/segmented-control"
+import { ShareResult } from "@/components/share-result"
+import NewsletterForm from "@/components/ui/newsletter-form"
 import { StyleScanner, type ScanResult } from "@/components/style-scanner"
 import { useAuth } from "@/components/auth-provider"
 import { authHeaders, usePro } from "@/components/style-plans"
@@ -131,7 +133,7 @@ async function shrink(file: File, max = 1280): Promise<string> {
   return c.toDataURL("image/jpeg", 0.9)
 }
 
-export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void }) {
+export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: string) => void; scan?: number; onScan?: (where: string) => void }) {
   const pro = usePro()
   const { openModal } = useAuth()
 
@@ -168,6 +170,13 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
   const stack = layers(gender, bodyB, outfit, have)
   const setG = (g: Gender) => { setModel({ gender: g }); track("style_model_gender", { g }) }
 
+  // which control tab is open: visitors from the lookalike results came for face advice, so they start on Hair & face
+  const [panel, setPanel] = useState("model")
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of ?from= after hydration
+    if (new URLSearchParams(location.search).get("from") === "match") { setPanel("face"); track("stylist_from_match") }
+  }, [])
+
   // ── clothes ──
   const [clothesMode, setClothesMode] = useState<"pick" | "auto">("pick")
   const [autoStyle, setAutoStyle] = useState<Style | OccasionId>()
@@ -190,6 +199,22 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
   // ── face: the scan is asked for only here ──
   const [shape, setShape] = useState<ShapeResult>()
   const [scanOpen, setScanOpen] = useState(false)
+  // the sticky scan bar waits until the hero's scan button has scrolled away, so the first screen never shows two
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 400)
+    window.addEventListener("scroll", on, { passive: true })
+    return () => window.removeEventListener("scroll", on)
+  }, [])
+  // started from outside (the hero button, the sticky bar): open Hair & face and the scan
+  useEffect(() => {
+    if (!scan) return
+    /* eslint-disable react-hooks/set-state-in-effect -- reacting to a click outside this component */
+    setPanel("face")
+    setScanOpen(true)
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [scan])
+
   const [hairline, setHairline] = useState<Hairline | "">("")
   const [texture, setTexture] = useState<Texture | "">("")
   const [budget, setBudget] = useState<1 | 2 | 3 | undefined>()
@@ -210,7 +235,18 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
     setFace({ hair: cards("hair", a, s)[0]?.id })
     track("style_scan_done", { shape: s.shape })
     if (pro) setView("photo")
-    else onPlans(`You have a ${s.shape} face. See the haircuts that suit it on your own face with Ollie Pro.`)
+    // free: no popup yet. They see their shape, celebrities and ranked cuts first; Pro is offered when they pick one
+  }
+  // the first haircut a free user taps: the moment they want to see it on themselves
+  const offered = useRef(false)
+  function pickFace(tab: string, c: Card) {
+    const on = face[tab as keyof Look] !== c.id
+    setFace((f) => ({ ...f, [tab]: on ? c.id : undefined }))
+    track("style_face_pick", { tab, id: c.id })
+    if (on && tab === "hair" && pro === false && !offered.current) {
+      offered.current = true
+      onPlans(`See the ${c.name.toLowerCase()} on your own face before you book the barber. That's Ollie Pro.`)
+    }
   }
 
   // ── Pro: on your own photo ──
@@ -348,7 +384,7 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
 
         {/* ── controls ── */}
         <section className={`${glassOpen} flex min-h-0 flex-col gap-4 p-5 md:p-6`} aria-label="Edit the look">
-          <Tabs defaultValue="model" className="flex min-h-0 flex-col gap-4">
+          <Tabs value={panel} onValueChange={setPanel} className="flex min-h-0 flex-col gap-4">
             <TabsList className="grid h-auto w-full grid-cols-3">
               <TabsTrigger value="model">Model</TabsTrigger>
               <TabsTrigger value="clothes">Clothes</TabsTrigger>
@@ -446,6 +482,22 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
                   <p className="text-sm text-white/70">Face shape: <span className="font-semibold text-white first-letter:uppercase inline-block">{shapeLabel(shape)}</span>. {SHAPE_INFO[shape.shape]}{" "}
                     <button type="button" onClick={() => setScanOpen(true)} className="font-semibold text-(--ollie-cyan)">Rescan</button></p>
                   <CelebsLike shape={shape.shape} gender={gender} list={celebs?.[shape.shape]} />
+                  {(() => { // the growth loop: their shape, best cut and a same-shape celebrity, drawn on their device
+                    const twin = celebs?.[shape.shape]?.find((c) => c.gender === (gender === "male" ? "M" : "F"))
+                    const cut = faceCards.hair?.[0]?.name
+                    if (!photo || !twin || !cut) return null
+                    const label = shapeLabel(shape)
+                    return <ShareResult card={{
+                      intro: "My face shape, from Ollie's AI scan",
+                      photos: [{ src: photo, label: "Me" }, { src: `/style/celebs/${twin.img}.webp`, label: `Same shape: ${twin.name}` }],
+                      headline: `${shape.shape[0].toUpperCase()}${shape.shape.slice(1)} face`,
+                      subline: `Best cut: ${cut}`,
+                      path: "ai-stylist",
+                      text: `My face shape is ${label} (same as ${twin.name}) and my best haircut is a ${cut.toLowerCase()}. Find yours free:`,
+                      credit: `${twin.name}: ${twin.credit.author}, ${twin.credit.license}`,
+                    }} />
+                  })()}
+
                   <div className="grid grid-cols-3 gap-2">
                     <select aria-label="Your age" value={ageBand} onChange={(e) => setAgeBand(e.currentTarget.value as AgeBand | "")} className={select}>
                       <option value="">Age: any</option>
@@ -485,7 +537,7 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
                           <div className="grid max-h-[min(30rem,52svh)] grid-cols-2 gap-3 overflow-y-auto pr-1">
                             {faceCards[t.id]?.map((c) => (
                               <Option key={c.id} card={c} on={face[t.id] === c.id} icon={t.icon}
-                                onClick={() => setFace((f) => ({ ...f, [t.id]: f[t.id] === c.id ? undefined : c.id }))} />
+                                onClick={() => pickFace(t.id, c)} />
                             ))}
                           </div>
                         )}
@@ -540,7 +592,22 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
         ))}
         {fitNotes(a).length > 0 && <ul className="list-disc pl-5 text-sm leading-relaxed text-white/70">{fitNotes(a).map((n) => <li key={n}>{n}</li>)}</ul>}
         <p className="text-xs text-white/50">Ollie earns a commission from some links. As an Amazon Associate, Ollie earns from qualifying purchases.</p>
+        {/* free users who don't upgrade: keep them on the list (collected now, nothing is sent yet) */}
+        {pro === false && <NewsletterForm source="stylist" className="max-w-none"
+          title={shape ? `Style tips for ${/^[aeiou]/.test(shape.shape) ? "an" : "a"} ${shape.shape} face, by email` : "Style tips for your face and build, by email"} />}
       </section>
+
+      {/* phones: the scan stays one tap away until they've done it (the controls are far below the model there) */}
+      {!shape && onScan && <div aria-hidden="true" className="h-20 md:hidden" /> /* room for the bar, so it never covers the footer */}
+      {!shape && !scanOpen && scrolled && onScan && (
+        <>
+          <div className="fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-black via-black/90 to-transparent p-4 pt-8 md:hidden">
+            <Button variant="brand" size="cta" onClick={() => onScan("sticky")} className="w-full gap-2 rounded-full">
+              <ScanFace size={16} aria-hidden="true" />Scan my face · free
+            </Button>
+          </div>
+        </>
+      )}
 
       <Dialog open={scanOpen} onOpenChange={setScanOpen}>
         <DialogContent className="sm:max-w-lg">

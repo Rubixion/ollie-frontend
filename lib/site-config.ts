@@ -15,10 +15,10 @@ export const HOME_UPDATED = "2026-09-26"
 // Last real content change to /ai-stylist (Ollie Stylist). Used by the sitemap and its dateModified schema.
 export const STYLIST_UPDATED = "2026-10-01"
 
-// Hidden until the owner launches them (2026-10-01): false = noindex, left out of the sitemap and llms.txt, linked from nowhere.
+// Launched 2026-10-01 (built hidden the same day). false = noindex, left out of the sitemap and llms.txt, linked from nowhere.
 // To launch: set true, add links (blog/footer/tool pages), add to public/llms.txt, then request indexing in GSC.
-export const LOOK_ALIKE_LIVE = false // /look-alike and /look-alike/<celebrity>
-export const SYMMETRY_LIVE = false // /face-symmetry-test
+export const LOOK_ALIKE_LIVE = true // /look-alike and /look-alike/<celebrity>
+export const SYMMETRY_LIVE = true // /face-symmetry-test
 export const LOOK_ALIKE_UPDATED = "2026-10-01"
 export const SYMMETRY_UPDATED = "2026-10-01"
 

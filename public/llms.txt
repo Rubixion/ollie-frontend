@@ -30,6 +30,8 @@
 - [Find your celebrity lookalike](https://www.ollieml.com/celebrity-lookalike): the celebrity lookalike AI
 - [Compare faces](https://www.ollieml.com/compare-faces): compare two faces online; upload two photos to see if they show the same person, and how alike they look
 - [Ollie Stylist](https://www.ollieml.com/ai-stylist): a free AI stylist. Dress a realistic AI-made model (6 looks, 4 body types, your height) in real clothes, get full outfits in 9 styles, and scan your face in the browser for haircuts, beards and glasses that suit its shape (7 face shapes). Ollie Pro tries looks on your own photo, from US$6.99 a month
+- [Face symmetry test](https://www.ollieml.com/face-symmetry-test): a free face symmetry test. It maps 478 points on the face in the browser (the photo is never uploaded), mirrors one side onto the other, and ranks the result against 3,898 straight-on celebrity photos, overall and for the eyes, brows, nose, mouth and jaw. It does not rate attractiveness
+- [Famous look alikes](https://www.ollieml.com/look-alike): which celebrities look like each other, for 113 of the most searched-for stars (e.g. [Margot Robbie look alike](https://www.ollieml.com/look-alike/margot-robbie): Emma Mackey is closest). Each page ranks the 8 closest celebrities of the same gender with Ollie's face-recognition model (every photo pair compared, the two closest pairs averaged)
 - [FAQ](https://www.ollieml.com/faq): how it works, photo tips, limitations, privacy, FAQ
 - [Blog](https://www.ollieml.com/blog): photo tips and plain-English articles on face recognition
 - [Privacy policy](https://www.ollieml.com/privacy)

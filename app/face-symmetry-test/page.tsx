@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: "/face-symmetry-test" },
-  robots: SYMMETRY_LIVE ? undefined : { index: false, follow: false },
+  ...(SYMMETRY_LIVE ? {} : { robots: { index: false, follow: false } }),
   openGraph: { type: "website", siteName: "Ollie", url: "/face-symmetry-test", title: "Face symmetry test: how symmetrical is your face?", description: DESCRIPTION },
   twitter: { card: "summary_large_image", title: "Face symmetry test: how symmetrical is your face?", description: DESCRIPTION },
 }

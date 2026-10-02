@@ -3,13 +3,14 @@
 import { useState, useRef, useCallback, useEffect, useMemo, DragEvent, ChangeEvent } from "react"
 import Link from "next/link"
 import { AnimatePresence, MotionConfig, motion } from "framer-motion"
-import { Upload, X, Search, Loader2, AlertCircle, User, Camera, ChevronDown, RotateCcw, ImageIcon, ScanFace, ArrowRight } from "lucide-react"
+import { Upload, X, Search, Loader2, AlertCircle, User, Camera, ChevronDown, RotateCcw, ImageIcon, ScanFace, ArrowRight, Scissors } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { MATCH_ONLY } from "@/lib/site-config"
 import { INDEX } from "@/lib/facts"
 import { track } from "@/lib/analytics"
 import { ShareMatch } from "@/components/share-match"
+import { IconLinkCard } from "@/components/ui/icon-link-card"
 import { ProgressiveFluxLoader } from "@/components/ui/progressive-flux-loader"
 import { glass, glassOpen } from "@/lib/surfaces"
 import { MatchPreview, PreviewCaption } from "@/components/result-preview"
@@ -659,6 +660,13 @@ export function CelebrityFinder() {
                       </button>
                       <ShareMatch match={matches[0]} runnerUps={runnerUps} userPhoto={previewUrl ?? imageDataUrl} buttonClassName="flex-1" />
                     </div>
+
+                    {/* Next step: the stylist (the money maker). Added under the results; the results themselves are unchanged. */}
+                    <IconLinkCard icon={<Scissors aria-hidden="true" />} href="/ai-stylist?from=match"
+                      onClick={() => track("match_to_stylist", { celeb: matches[0].name })}
+                      title={`You look like ${matches[0].name}. Now find the look that suits your face.`}
+                      description="A free 10-second face scan finds your face shape, then ranks the haircuts, beards and glasses that suit it. Try outfits on a model too."
+                      link="Try the AI Stylist, free" />
                   </div>
                 </MotionConfig>
               )}

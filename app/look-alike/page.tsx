@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: "/look-alike" },
-  robots: LOOK_ALIKE_LIVE ? undefined : { index: false, follow: false },
+  ...(LOOK_ALIKE_LIVE ? {} : { robots: { index: false, follow: false } }),
   openGraph: { type: "website", siteName: "Ollie", url: "/look-alike", title: TITLE, description: DESCRIPTION },
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 }

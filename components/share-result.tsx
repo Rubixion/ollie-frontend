@@ -18,6 +18,7 @@ export interface ShareCard {
   subline?: string // blue line under it
   path: string // e.g. "kirk-meter": printed as ollieml.com/<path> and linked in the share text
   text: string // share sheet text, before the link
+  credit?: string // photo credit line for a licensed photo on the card (e.g. "Son Heung-min: Author, CC BY-SA 2.0")
 }
 
 async function drawCard(card: ShareCard): Promise<Blob> {
@@ -66,6 +67,11 @@ async function drawCard(card: ShareCard): Promise<Blob> {
   ctx.fillStyle = BLUE
   ctx.font = `700 44px ${family}`
   ctx.fillText(`Try it at ollieml.com/${card.path}`, 80, 1470, W - 160)
+  if (card.credit) {
+    ctx.fillStyle = "rgba(255,255,255,0.45)"
+    ctx.font = `500 22px ${family}`
+    ctx.fillText(`Photo: ${card.credit}`, 80, 1512, W - 160)
+  }
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png"))
 }
 

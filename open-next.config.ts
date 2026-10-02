@@ -1,9 +1,11 @@
-// default open-next.config.ts file created by @opennextjs/cloudflare
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-// import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache";
 
+// Prerendered pages (home, tools, every blog and look-alike page) are served from the build's static assets, and
+// cache interception answers them before the Next.js server is even loaded. Without this, every request re-rendered
+// the page inside the Worker, which blew the free plan's 10 ms CPU limit (Cloudflare error 1102, 2026-10-01).
+// ponytail: static-assets cache = no ISR/revalidation. Switch to the R2 cache if a page ever needs `revalidate`.
 export default defineCloudflareConfig({
-	// For best results consider enabling R2 caching
-	// See https://opennext.js.org/cloudflare/caching for more details
-	// incrementalCache: r2IncrementalCache
+	incrementalCache: staticAssetsIncrementalCache,
+	enableCacheInterception: true,
 });

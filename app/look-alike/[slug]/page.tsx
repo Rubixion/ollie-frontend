@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
-    robots: LOOK_ALIKE_LIVE ? undefined : { index: false, follow: false },
+    ...(LOOK_ALIKE_LIVE ? {} : { robots: { index: false, follow: false } }),
     openGraph: { type: "article", siteName: "Ollie", url, title, description },
     twitter: { card: "summary_large_image", title, description },
   }

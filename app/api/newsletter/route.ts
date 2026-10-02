@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Enter a valid email address" }, { status: 400 })
   }
   if (body?.consent !== true) return NextResponse.json({ error: "Consent missing" }, { status: 400 })
-  const source = ["search", "blog"].includes(body?.source) ? body.source : "search" // which form, for the list's records
+  const source = ["search", "blog", "stylist"].includes(body?.source) ? body.source : "search" // which form, for the list's records
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
