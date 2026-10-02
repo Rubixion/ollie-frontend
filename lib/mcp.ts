@@ -1,4 +1,4 @@
-// Shared by the ChatGPT apps (MCP servers): app/mcp (Celebrity Lookalike), app/mcp/symmetry, app/mcp/stylist.
+// Shared by the ChatGPT apps (MCP servers): app/mcp/lookalike (Celebrity Lookalike; /mcp is an alias), app/mcp/symmetry, app/mcp/stylist.
 // Each app is its own listing in the OpenAI plugin portal; its URL can never change after submission.
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
