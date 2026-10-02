@@ -25,12 +25,33 @@ export const imageFile = z.object({
 })
 export type ImageFile = z.infer<typeof imageFile>
 
+// Private / loopback / link-local hosts an attacker-supplied download_url must never reach. Cloudflare's
+// global_fetch_strictly_public already blocks these in prod; this also covers local/Node runtimes (defense in depth).
+export function isPrivateHost(host: string): boolean {
+  const h = host.toLowerCase().replace(/^\[|\]$/g, "")
+  if (h === "localhost" || h.endsWith(".localhost") || h.endsWith(".internal") || h === "metadata.google.internal") return true
+  if (h === "::1" || h.startsWith("fe80:") || h.startsWith("fc") || h.startsWith("fd")) return true // IPv6 loopback/link-local/ULA
+  const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  if (!m) return false
+  const [a, b] = [Number(m[1]), Number(m[2])]
+  return a === 10 || a === 127 || a === 0 || (a === 192 && b === 168) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || a >= 224
+}
+
 async function download(f: ImageFile): Promise<Blob> {
-  if (!f.download_url.startsWith("https://")) throw new Error("bad url")
-  const res = await fetch(f.download_url, { signal: AbortSignal.timeout(20_000) })
+  let url: URL
+  try {
+    url = new URL(f.download_url)
+  } catch {
+    throw new Error("bad url")
+  }
+  if (url.protocol !== "https:" || isPrivateHost(url.hostname)) throw new Error("bad url")
+  const res = await fetch(url, { signal: AbortSignal.timeout(20_000) })
   if (!res.ok) throw new Error(`download ${res.status}`)
+  // Reject oversized bodies by their declared length before reading them into memory.
+  const declared = Number(res.headers.get("content-length") ?? "0")
+  if (declared > MAX_IMAGE_BYTES) throw new Error("too large")
   const blob = await res.blob()
-  if (blob.size > MAX_IMAGE_BYTES) throw new Error("too large")
+  if (blob.size > MAX_IMAGE_BYTES) throw new Error("too large") // backstop for chunked responses with no content-length
   if (!(f.mime_type ?? blob.type).startsWith("image/")) throw new Error("not an image")
   return blob
 }

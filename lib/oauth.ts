@@ -8,8 +8,9 @@ import { SITE_URL } from "@/lib/site-config"
 export const ISSUER = SITE_URL // the OAuth issuer and base URL for every endpoint; must equal the live origin
 export const OAUTH_SCOPE = "ollie.search"
 const CODE_TTL_S = 300 // 5 min to complete the token exchange after consent
-const ACCESS_TTL_S = 30 * 24 * 3600 // long-lived so people don't re-connect constantly; the daily search cap is the real limit
+const ACCESS_TTL_S = 3600 // 1 h: short, so a leaked access token dies fast; ChatGPT silently refreshes
 const REFRESH_TTL_S = 180 * 24 * 3600
+const REGISTER_PER_IP_PER_DAY = 20 // dynamic-registration cap per IP (DB-backed)
 
 function db() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -41,6 +42,17 @@ export async function verifyPkce(verifier: string, challenge: string): Promise<b
 
 // ─── clients (dynamic registration, RFC 7591) ────────────────────────────────
 export type OAuthClient = { client_id: string; client_name: string | null; redirect_uris: string[] }
+
+/** Durable per-IP cap on dynamic client registration. Records the attempt and returns false when over the daily limit. */
+export async function canRegister(ip: string): Promise<boolean> {
+  const d = db()
+  if (!d) return false
+  const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
+  const { count } = await d.from("oauth_register_log").select("id", { count: "exact", head: true }).eq("ip", ip).gte("created_at", since)
+  if ((count ?? 0) >= REGISTER_PER_IP_PER_DAY) return false
+  await d.from("oauth_register_log").insert({ ip })
+  return true
+}
 
 export async function registerClient(redirect_uris: string[], client_name?: string): Promise<OAuthClient | null> {
   const d = db()
@@ -95,21 +107,22 @@ export async function issueCode(p: {
   return code
 }
 
-/** One-time: looks the code up, deletes it, and returns it only if unexpired and matching the client+redirect. */
+/** One-time: validates the code, and only burns it on a correct match (so a wrong-client attempt can't DoS a real code). */
 export async function consumeCode(code: string, client_id: string, redirect_uri: string) {
   const d = db()
   if (!d) return null
   const code_hash = await sha256(code)
   const { data } = await d.from("oauth_codes").select("*").eq("code_hash", code_hash).maybeSingle()
-  if (data) await d.from("oauth_codes").delete().eq("code_hash", code_hash) // burn it whether or not it checks out
   if (!data) return null
-  if (new Date(data.expires_at).getTime() < Date.now()) return null
-  if (data.client_id !== client_id || data.redirect_uri !== redirect_uri) return null
+  if (new Date(data.expires_at).getTime() < Date.now() || data.client_id !== client_id || data.redirect_uri !== redirect_uri) {
+    return null // leave the row; the legitimate client can still redeem it (PKCE still gates the exchange)
+  }
+  await d.from("oauth_codes").delete().eq("code_hash", code_hash) // valid match: burn it so it's single-use
   return data as { user_id: string; code_challenge: string; scope: string }
 }
 
 // ─── access / refresh tokens ─────────────────────────────────────────────────
-export async function issueTokens(user_id: string, client_id: string, scope: string) {
+export async function issueTokens(user_id: string, client_id: string, scope: string, family_id?: string) {
   const d = db()
   if (!d) return null
   const access = randomToken()
@@ -121,6 +134,7 @@ export async function issueTokens(user_id: string, client_id: string, scope: str
     client_id,
     user_id,
     scope,
+    family_id: family_id ?? randomToken(16), // one family per original grant; rotations keep the same id
     expires_at: new Date(now + ACCESS_TTL_S * 1000).toISOString(),
     refresh_expires_at: new Date(now + REFRESH_TTL_S * 1000).toISOString(),
   })
@@ -140,15 +154,60 @@ export async function userFromAccessToken(access: string): Promise<{ user_id: st
   return { user_id: data.user_id, scope: data.scope }
 }
 
-/** Refresh-token rotation: the old refresh token is replaced by a brand-new pair. */
+/** Refresh-token rotation with reuse detection: replaying an already-rotated refresh token nukes the whole family. */
 export async function rotateRefreshToken(refresh: string, client_id: string) {
   const d = db()
   if (!d || !refresh) return null
   const refresh_hash = await sha256(refresh)
+
+  // Already rotated out and presented again = token theft. Revoke every token in that family.
+  const { data: used } = await d.from("oauth_used_refresh").select("family_id").eq("refresh_hash", refresh_hash).maybeSingle()
+  if (used) {
+    await d.from("oauth_tokens").delete().eq("family_id", used.family_id)
+    console.error("oauth: refresh-token reuse detected; family revoked")
+    return null
+  }
+
   const { data } = await d.from("oauth_tokens").select("*").eq("refresh_hash", refresh_hash).maybeSingle()
   if (!data || data.client_id !== client_id || new Date(data.refresh_expires_at).getTime() < Date.now()) return null
+
+  // Retire the old refresh token (so any later replay trips the check above), then issue a new pair in the same family.
+  await d.from("oauth_used_refresh").insert({ refresh_hash, family_id: data.family_id, expires_at: data.refresh_expires_at })
   await d.from("oauth_tokens").delete().eq("refresh_hash", refresh_hash)
-  return issueTokens(data.user_id, data.client_id, data.scope)
+  return issueTokens(data.user_id, data.client_id, data.scope, data.family_id)
+}
+
+// ─── revocation (RFC 7009) + user-facing disconnect ──────────────────────────
+/** Revoke by access or refresh token (RFC 7009). Always treated as success by the caller. */
+export async function revokeToken(token: string) {
+  const d = db()
+  if (!d || !token) return
+  const h = await sha256(token)
+  await d.from("oauth_tokens").delete().or(`token_hash.eq.${h},refresh_hash.eq.${h}`)
+}
+
+/** The apps a user has connected (one row per client they hold tokens for). */
+export async function listConnections(user_id: string) {
+  const d = db()
+  if (!d) return []
+  const { data } = await d.from("oauth_tokens").select("client_id, created_at").eq("user_id", user_id)
+  const byClient = new Map<string, string>()
+  for (const r of data ?? []) if (!byClient.has(r.client_id)) byClient.set(r.client_id, r.created_at)
+  const out = []
+  for (const [client_id, created_at] of byClient) {
+    const c = await getClient(client_id)
+    out.push({ client_id, client_name: c?.client_name ?? null, connected_at: created_at })
+  }
+  return out
+}
+
+/** Disconnect one app (or all) for a user — deletes their tokens so the app loses access immediately. */
+export async function revokeUserConnections(user_id: string, client_id?: string) {
+  const d = db()
+  if (!d) return
+  let q = d.from("oauth_tokens").delete().eq("user_id", user_id)
+  if (client_id) q = q.eq("client_id", client_id)
+  await q
 }
 
 // ─── discovery metadata ──────────────────────────────────────────────────────

@@ -1,9 +1,14 @@
 // Dynamic client registration (RFC 7591). ChatGPT POSTs its redirect_uris and gets a client_id back.
 // Public clients only (PKCE, no secret).
 import { NextResponse } from "next/server"
-import { registerClient, CORS } from "@/lib/oauth"
+import { registerClient, canRegister, CORS } from "@/lib/oauth"
+import { getIp } from "@/lib/rate-limit"
 
 export async function POST(req: Request) {
+  // Durable per-IP cap so open dynamic registration can't be used to flood the clients table.
+  if (!(await canRegister(getIp(req)))) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: CORS })
+  }
   const body = await req.json().catch(() => null)
   const uris: string[] = Array.isArray(body?.redirect_uris) ? body.redirect_uris.filter((u: unknown) => typeof u === "string") : []
   // Only https redirect targets (ChatGPT's callback is https); never register http/custom schemes.
