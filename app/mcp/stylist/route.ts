@@ -7,6 +7,7 @@ import { classify, measure, SHAPE_INFO, type Shape, type ShapeResult } from "@/l
 import { cards } from "@/lib/style/editor"
 import { fitNotes, shapeLabel, want, type Answers } from "@/lib/style/recommend"
 import { imageFile, inference, link, readOnly, serve, text, toMesh } from "@/lib/mcp"
+import { registerWidget, widgetMeta, widgetResult } from "@/lib/mcp-widget"
 
 const SHAPES = ["oval", "round", "square", "oblong", "heart", "diamond", "triangle"] as const
 const DISCLOSURE = "Product links are affiliate links: Ollie may earn a commission at no extra cost to the user."
@@ -47,10 +48,29 @@ function advice(s: ShapeResult, a: Answers, intro: string) {
     fit.length ? `Fit: ${fit.join(" ")}` : "",
     `Try these looks on the user's own photo (free) at ${link("/ai-stylist")}. ${DISCLOSURE}`,
   ]
-  return text(lines.filter(Boolean).join("\n\n"), { face_shape: s.shape, haircuts: hair, glasses, beard, fit_notes: fit, try_on: link("/ai-stylist") })
+  const sections = [
+    { title: "Best haircuts", items: hair.map((h) => `${h.name} — ${h.why}`) },
+    glasses.length ? { title: "Glasses", items: glasses.map((g) => g.name) } : null,
+    beard.length ? { title: "Beard", items: beard.map((b) => b.name) } : null,
+    fit.length ? { title: "Fit", items: fit } : null,
+  ].filter(Boolean)
+  return widgetResult(
+    lines.filter(Boolean).join("\n\n"),
+    { face_shape: s.shape, haircuts: hair, glasses, beard, fit_notes: fit, try_on: link("/ai-stylist") },
+    {
+      kind: "stylist",
+      title: "Your style guide",
+      shape: s.shape,
+      shapeInfo: intro,
+      sections,
+      cta: { label: "Try these on your photo →", href: link("/ai-stylist") },
+      foot: DISCLOSURE,
+    },
+  )
 }
 
 const handle = serve("ollie-stylist", (server, auth) => {
+  registerWidget(server)
   server.registerTool(
     "haircut_for_face_shape",
     {
@@ -61,7 +81,7 @@ const handle = serve("ollie-stylist", (server, auth) => {
         "'what glasses suit a heart shaped face' or 'which hairstyle suits my face shape' and already knows their face shape. No photo needed.",
       inputSchema: { face_shape: z.enum(SHAPES), ...about },
       annotations: readOnly,
-      _meta: { "openai/toolInvocation/invoking": "Picking haircuts…", "openai/toolInvocation/invoked": "Picked haircuts" },
+      _meta: { ...widgetMeta, "openai/toolInvocation/invoking": "Picking haircuts…", "openai/toolInvocation/invoked": "Picked haircuts" },
     },
     async ({ face_shape, ...x }) => advice(given(face_shape), answers(x), `For ${/^[aeiou]/.test(face_shape) ? "an" : "a"} ${face_shape} face: ${SHAPE_INFO[face_shape]}`),
   )
@@ -77,6 +97,7 @@ const handle = serve("ollie-stylist", (server, auth) => {
       inputSchema: { photo: imageFile.describe("A straight-on photo of the user's own face, hair pulled back from the face if possible"), ...about },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
+        ...widgetMeta,
         "openai/fileParams": ["photo"],
         "openai/toolInvocation/invoking": "Measuring your face shape…",
         "openai/toolInvocation/invoked": "Found your face shape",

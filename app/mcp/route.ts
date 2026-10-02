@@ -1,18 +1,19 @@
 // The Ollie ChatGPT app (MCP server, Streamable HTTP) at https://www.ollieml.com/mcp. Submitted in the OpenAI plugin
 // portal; the origin can never change between versions, so keep it on www.ollieml.com.
-// Shared plumbing (photo download, Modal call, daily cap) is in lib/mcp.ts.
-// ponytail: stateless and text-only (no widget, no OAuth yet). Add a result-card widget and OAuth sign-in once the
-// listing is approved and we can see which tools get used.
+// Shared plumbing (photo download, Modal call, daily cap) is in lib/mcp.ts; the inline result card is lib/mcp-widget.ts.
 import { z } from "zod"
 import { SITE_URL } from "@/lib/site-config"
 import { lookAlikePages, imgSrc, role, shown } from "@/lib/look-alike"
 import { imageFile, inference, link, readOnly, serve, text } from "@/lib/mcp"
+import { registerWidget, widgetMeta, widgetResult } from "@/lib/mcp-widget"
 
 const SAME_RAW = 45 // same threshold as components/face-compare.tsx
 
 const slugify = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_]+/g, "-")
 
 const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
+  registerWidget(server)
+
   server.registerTool(
     "famous_lookalikes",
     {
@@ -23,7 +24,7 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
         "'famous doppelgangers' or 'which actors look like each other'. Takes a celebrity's name; no photo needed.",
       inputSchema: { name: z.string().min(2).max(80).describe("The celebrity's name, e.g. 'Margot Robbie'") },
       annotations: readOnly,
-      _meta: { "openai/toolInvocation/invoking": "Finding lookalikes…", "openai/toolInvocation/invoked": "Found lookalikes" },
+      _meta: { ...widgetMeta, "openai/toolInvocation/invoking": "Finding lookalikes…", "openai/toolInvocation/invoked": "Found lookalikes" },
     },
     async ({ name }) => {
       const slug = slugify(name)
@@ -39,10 +40,18 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
         photo_credit: `${m.credit.author}, ${m.credit.license}`,
       }))
       const top = matches[0]
-      return text(
+      const pageUrl = link(`/look-alike/${page.slug}`)
+      return widgetResult(
         `${page.name}'s closest celebrity lookalike is ${top.name} (${top.known_for}, ${top.similarity_percent}% similar on Ollie's face-matching model). ` +
-          `Full list with photos: ${link(`/look-alike/${page.slug}`)}. Want to know which celebrity *you* look like? ${link("/celebrity-lookalike")}`,
-        { celebrity: page.name, matches, page: link(`/look-alike/${page.slug}`) },
+          `Full list with photos: ${pageUrl}. Want to know which celebrity *you* look like? ${link("/celebrity-lookalike")}`,
+        { celebrity: page.name, matches, page: pageUrl },
+        {
+          kind: "lookalike",
+          title: `Celebrities who look like ${page.name}`,
+          subtitle: "Ranked by Ollie's face-matching model",
+          items: matches.slice(0, 5).map((m) => ({ name: m.name, knownFor: m.known_for, pct: m.similarity_percent, img: m.photo })),
+          cta: { label: "See the full list →", href: pageUrl },
+        },
       )
     },
   )
@@ -59,6 +68,7 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
       inputSchema: { photo: imageFile.describe("A clear, front-facing photo of the user's own face") },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
+        ...widgetMeta,
         "openai/fileParams": ["photo"],
         "openai/toolInvocation/invoking": "Comparing your face with 4,000+ celebrities…",
         "openai/toolInvocation/invoked": "Found your celebrity lookalikes",
@@ -75,11 +85,19 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
       if (!rows.length) return text("No face was found in that photo. Try a clear, front-facing photo with good light.")
       const matches = rows.slice(0, 5).map((m) => ({ name: m.name, known_for: r.data.known_for?.[m.name] ?? null, similarity_percent: shown(m.score) }))
       const note = rows.length < all.length ? " (One near-identical match was left out: Ollie doesn't identify people in photos.)" : r.data.face_found ? "" : " (Ollie couldn't find a clear face in the photo, so these may be off. A front-facing photo works best.)"
-      return text(
+      return widgetResult(
         `The user's closest celebrity lookalike is ${matches[0].name} at ${matches[0].similarity_percent}% similar, then ` +
           matches.slice(1).map((m) => `${m.name} (${m.similarity_percent}%)`).join(", ") + `.${note} ` +
           `See the matches with photos and a shareable card at ${link("/celebrity-lookalike")}, and find outfits that suit their face shape at ${link("/ai-stylist")}.`,
         { matches, face_found: Boolean(r.data.face_found) },
+        {
+          kind: "lookalike",
+          title: "Your closest celebrity lookalikes",
+          subtitle: "Ranked by Ollie's face-matching model",
+          // thumbnails come back from the matcher as data: URIs (widget-only; the model never sees these)
+          items: matches.map((m) => ({ name: m.name, knownFor: m.known_for, pct: m.similarity_percent, img: r.data.thumbs?.[m.name] })),
+          cta: { label: "See your shareable card →", href: link("/celebrity-lookalike") },
+        },
       )
     },
   )
@@ -98,6 +116,7 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
       },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
+        ...widgetMeta,
         "openai/fileParams": ["photo_a", "photo_b"],
         "openai/toolInvocation/invoking": "Comparing the two faces…",
         "openai/toolInvocation/invoked": "Compared the faces",
@@ -110,14 +129,20 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
       if (!a || !b) return text(`Ollie couldn't find a clear face in ${!a && !b ? "either photo" : !a ? "the first photo" : "the second photo"}. Try front-facing photos with good light.`)
       const pct = shown(r.data.score)
       const strong = r.data.score >= SAME_RAW
-      return text(
+      return widgetResult(
         `These two faces are ${pct}% alike on Ollie's face-matching model${strong ? ", a very strong resemblance" : ""}. ` +
           `Most unrelated people score 20-50%. Make a shareable card at ${link("/compare-faces")}.`,
         { similarity_percent: pct, strong_resemblance: strong },
+        {
+          kind: "compare",
+          title: "Face comparison",
+          pct,
+          verdict: strong ? "Very strong resemblance" : "How alike these two faces look",
+          cta: { label: "Make a shareable card →", href: link("/compare-faces") },
+        },
       )
     },
   )
-
 })
 
 export { handle as GET, handle as POST, handle as DELETE }

@@ -35,8 +35,9 @@ export async function guestId(ip: string): Promise<string> {
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`
 }
 
-/** Counts one search against the user and the IP, atomically. Fails closed if the limiter is unreachable. */
-export async function consumeSearch(userId: string, ip: string, userLimit = USER_LIMIT, userWindow = USER_WINDOW): Promise<Quota> {
+/** Counts one search against the user and the IP (really: two buckets), atomically. Fails closed if unreachable.
+ *  ipLimit/ipWindow override the IP bucket — e.g. a constant key + high limit gives a durable *global* cap. */
+export async function consumeSearch(userId: string, ip: string, userLimit = USER_LIMIT, userWindow = USER_WINDOW, ipLimit = IP_LIMIT, ipWindow = IP_WINDOW): Promise<Quota> {
   if (isExempt(userId)) return { ok: true, used: null, logId: null }
 
   const db = serviceClient()
@@ -48,9 +49,9 @@ export async function consumeSearch(userId: string, ip: string, userLimit = USER
     p_user: userId,
     p_ip: ip,
     p_user_limit: userLimit,
-    p_ip_limit: IP_LIMIT,
+    p_ip_limit: ipLimit,
     p_user_window: userWindow,
-    p_ip_window: IP_WINDOW,
+    p_ip_window: ipWindow,
   })
   const row = Array.isArray(data) ? data[0] : null
   if (error || !row) {

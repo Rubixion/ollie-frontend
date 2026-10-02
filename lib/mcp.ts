@@ -37,22 +37,40 @@ export function isPrivateHost(host: string): boolean {
   return a === 10 || a === 127 || a === 0 || (a === 192 && b === 168) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || a >= 224
 }
 
-async function download(f: ImageFile): Promise<Blob> {
-  let url: URL
-  try {
-    url = new URL(f.download_url)
-  } catch {
-    throw new Error("bad url")
+// Fetch while following redirects MANUALLY, re-validating the host on every hop — otherwise an https URL could
+// 302 to http://169.254.169.254 and fetch's default redirect:"follow" would sail straight past the host check (SSRF).
+async function safeFetch(rawUrl: string): Promise<Response> {
+  let next = rawUrl
+  for (let hop = 0; hop < 4; hop++) {
+    let url: URL
+    try {
+      url = new URL(next)
+    } catch {
+      throw new Error("bad url")
+    }
+    if (url.protocol !== "https:" || isPrivateHost(url.hostname)) throw new Error("bad url")
+    const res = await fetch(url, { signal: AbortSignal.timeout(20_000), redirect: "manual" })
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get("location")
+      if (!loc) throw new Error(`download ${res.status}`)
+      next = new URL(loc, url).toString() // validated at the top of the next iteration
+      continue
+    }
+    return res
   }
-  if (url.protocol !== "https:" || isPrivateHost(url.hostname)) throw new Error("bad url")
-  const res = await fetch(url, { signal: AbortSignal.timeout(20_000) })
+  throw new Error("too many redirects")
+}
+
+async function download(f: ImageFile): Promise<Blob> {
+  const res = await safeFetch(f.download_url)
   if (!res.ok) throw new Error(`download ${res.status}`)
   // Reject oversized bodies by their declared length before reading them into memory.
   const declared = Number(res.headers.get("content-length") ?? "0")
   if (declared > MAX_IMAGE_BYTES) throw new Error("too large")
   const blob = await res.blob()
   if (blob.size > MAX_IMAGE_BYTES) throw new Error("too large") // backstop for chunked responses with no content-length
-  if (!(f.mime_type ?? blob.type).startsWith("image/")) throw new Error("not an image")
+  // Trust the ACTUAL response type, never the attacker-supplied f.mime_type.
+  if (!blob.type.startsWith("image/")) throw new Error("not an image")
   return blob
 }
 
@@ -61,23 +79,33 @@ export const text = (t: string, structured?: Record<string, unknown>) => ({
   ...(structured ? { structuredContent: structured } : {}),
 })
 
+// Total anonymous (not-connected) GPU calls allowed per day across EVERYONE. The per-ChatGPT-user teaser below is
+// keyed on the client-supplied openai/subject, which a direct caller can rotate to forge new identities — so this
+// global bucket (a constant key, un-spoofable) is the real cost ceiling that keeps the Modal endpoint from being
+// uncapped. Legit anonymous volume stays well under it; an abuser who rotates subjects just burns the shared cap.
+// ponytail: single global bucket serialises anon requests on one advisory lock; shard the key if anon throughput matters.
+const ANON_GLOBAL_DAILY = 300
+
 // Sends photos to the Modal server under a daily cap (Supabase, fails closed), refunded on failure.
-// Connected users are keyed on their real Supabase id, so the pool is shared with the website and every tool.
-// Anonymous users are keyed on ChatGPT's openai/subject and get GUEST_MCP_LIMIT; the "ip" slot mirrors the same key.
+// Connected users: keyed on their real Supabase id (shared with the website and every tool), own 25/day.
+// Not connected: 1/day per openai/subject (the teaser) AND a global ANON_GLOBAL_DAILY ceiling (the cost guard).
 // moreAt: the site page to send people to once they've used the day's checks.
 export async function inference(path: "search" | "compare" | "landmarks", files: ImageFile[], meta: Record<string, unknown> | undefined, moreAt: string, auth: McpAuth) {
   const baseUrl = process.env.INFERENCE_URL, apiKey = process.env.INFERENCE_API_KEY
   if (!baseUrl || !apiKey) return { error: "Ollie isn't available right now." }
   const subject = typeof meta?.["openai/subject"] === "string" ? meta["openai/subject"] : "anon"
-  const ipSlot = `chatgpt-sub:${subject}`
-  const userId = auth ? auth.userId : await guestId(`chatgpt:${subject}`)
-  const limit = auth ? USER_LIMIT : GUEST_MCP_LIMIT
-  const quota = await consumeSearch(userId, ipSlot, limit, auth ? USER_WINDOW ?? "24 hours" : "24 hours")
+  // Two buckets per call: a per-identity "user" bucket and an "ip" bucket. For anon we point the ip bucket at one
+  // constant key so it becomes a global cap; for connected users it's their own key so they don't block each other.
+  const quota = auth
+    ? await consumeSearch(auth.userId, `mcp-user:${auth.userId}`, USER_LIMIT, USER_WINDOW ?? "24 hours", USER_LIMIT, USER_WINDOW ?? "24 hours")
+    : await consumeSearch(await guestId(`chatgpt:${subject}`), "mcp:anon", GUEST_MCP_LIMIT, "24 hours", ANON_GLOBAL_DAILY, "24 hours")
   if (!quota.ok) {
     if (quota.reason === "unavailable") return { error: "Ollie is temporarily unavailable. Please try again shortly." }
+    if (auth) return { error: `That's your daily limit of Ollie searches. It resets tomorrow — or use the site: ${link(moreAt)}` }
+    // anon: ip_limit = the global free-tier cap for today; user_limit = this person's 1 free is spent
     return {
-      error: auth
-        ? `That's your daily limit of Ollie searches. It resets tomorrow — or use the site: ${link(moreAt)}`
+      error: quota.reason === "ip_limit"
+        ? `Ollie's free searches are at capacity for today. Connect your Ollie account in ChatGPT for your own daily allowance, or use the site: ${link(moreAt)}`
         : `That was your 1 free Ollie search. Connect your Ollie account in ChatGPT for your daily allowance, or use the site: ${link(moreAt)}`,
     }
   }
