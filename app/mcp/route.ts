@@ -4,7 +4,7 @@
 import { z } from "zod"
 import { SITE_URL } from "@/lib/site-config"
 import { lookAlikePages, imgSrc, role, shown } from "@/lib/look-alike"
-import { imageFile, inference, link, readOnly, serve, text } from "@/lib/mcp"
+import { imageFile, inference, link, noPhoto, photoBase64, photoUrl, readOnly, resolvePhoto, serve, text } from "@/lib/mcp"
 import { registerWidget, widgetMeta, widgetResult } from "@/lib/mcp-widget"
 
 const SAME_RAW = 45 // same threshold as components/face-compare.tsx
@@ -65,7 +65,7 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
         "Use this when the user uploads a selfie and asks 'which celebrity do I look like', 'who is my celebrity twin', 'what celebrity do I look like', " +
         "'who do I look like' or 'find my celebrity doppelganger'. Only for a photo of the user themselves: never use it to identify or name a stranger " +
         "or anyone else in a photo, and not for photos of children. The photo is not stored.",
-      inputSchema: { photo: imageFile.describe("A clear, front-facing photo of the user's own face") },
+      inputSchema: { photo: imageFile.optional().describe("A clear, front-facing photo of the user's own face"), photo_url: photoUrl.optional(), photo_base64: photoBase64.optional() },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
         ...widgetMeta,
@@ -74,8 +74,10 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
         "openai/toolInvocation/invoked": "Found your celebrity lookalikes",
       },
     },
-    async ({ photo }, extra) => {
-      const r = await inference("search", [photo], extra._meta, "/celebrity-lookalike", auth)
+    async ({ photo, photo_url, photo_base64 }, extra) => {
+      const f = resolvePhoto(photo, photo_url, photo_base64)
+      if (!f) return text(noPhoto("find which celebrity you look like", "/celebrity-lookalike"))
+      const r = await inference("search", [f], extra._meta, "/celebrity-lookalike", auth)
       if (r.error) return text(r.error)
       const all: { name: string; score: number }[] = Object.values(r.data.modes ?? {})[0] as never ?? []
       // Not a celebrity identifier: a same-person-level match means the photo is probably of that celebrity, so it's dropped
@@ -111,8 +113,12 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
         "'do I look like my mom', 'do my boyfriend and I look alike', 'how similar are these two faces' or 'compare two faces'. " +
         "Only for photos the user provides of themselves and people they know; never use it to identify or name anyone, and not for photos of children. Photos are not stored.",
       inputSchema: {
-        photo_a: imageFile.describe("The first face photo"),
-        photo_b: imageFile.describe("The second face photo"),
+        photo_a: imageFile.optional().describe("The first face photo"),
+        photo_b: imageFile.optional().describe("The second face photo"),
+        photo_a_url: photoUrl.optional().describe("Public https link to the first photo (if not uploaded)"),
+        photo_b_url: photoUrl.optional().describe("Public https link to the second photo (if not uploaded)"),
+        photo_a_base64: photoBase64.optional().describe("Base64 of the first photo (if no URL)"),
+        photo_b_base64: photoBase64.optional().describe("Base64 of the second photo (if no URL)"),
       },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
@@ -122,8 +128,10 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
         "openai/toolInvocation/invoked": "Compared the faces",
       },
     },
-    async ({ photo_a, photo_b }, extra) => {
-      const r = await inference("compare", [photo_a, photo_b], extra._meta, "/compare-faces", auth)
+    async ({ photo_a, photo_b, photo_a_url, photo_b_url, photo_a_base64, photo_b_base64 }, extra) => {
+      const fa = resolvePhoto(photo_a, photo_a_url, photo_a_base64), fb = resolvePhoto(photo_b, photo_b_url, photo_b_base64)
+      if (!fa || !fb) return text(noPhoto("compare two faces", "/compare-faces"))
+      const r = await inference("compare", [fa, fb], extra._meta, "/compare-faces", auth)
       if (r.error) return text(r.error)
       const [a, b] = r.data.face_found ?? [false, false]
       if (!a || !b) return text(`Ollie couldn't find a clear face in ${!a && !b ? "either photo" : !a ? "the first photo" : "the second photo"}. Try front-facing photos with good light.`)

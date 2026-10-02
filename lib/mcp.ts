@@ -25,6 +25,43 @@ export const imageFile = z.object({
 })
 export type ImageFile = z.infer<typeof imageFile>
 
+// A plain public image URL — a fallback for clients that can't hand an upload to a tool (e.g. Claude).
+// ChatGPT uploads still arrive as the `imageFile` object via openai/fileParams; these are alternatives.
+export const photoUrl = z.string().url().describe("A direct public https link to the photo. Use this only when there is no uploaded file to pass.")
+export const photoBase64 = z
+  .string()
+  .describe(
+    "The image bytes as base64 (or a data: URL). Use this when there's an uploaded image but no public URL — e.g. on claude.ai, read the uploaded file and pass its base64 here.",
+  )
+
+// Fallback shown when a tool needs the user's photo but the client couldn't hand one over (e.g. Claude, which doesn't
+// pass chat uploads to tools). Routes the user to the matching Ollie web page to do it there.
+export const noPhoto = (what: string, path: string) =>
+  `I can't read a photo uploaded directly in this chat — this assistant doesn't pass uploaded images to tools. ` +
+  `To ${what}, open the Ollie page and upload your photo there (it takes a few seconds): ${link(path)} . ` +
+  `You can also paste a direct public image link here and I'll run it. ` +
+  `Note: here I can reliably find which famous people look like a celebrity you name (no photo needed) — just give me a name.`
+
+// Server-level instructions (sent in the MCP initialize result) so the assistant understands what it can/can't do.
+export const SERVER_INSTRUCTIONS =
+  "Ollie measures how alike human faces look. Use the no-photo tools freely (e.g. which celebrities look like a named celebrity). " +
+  "The photo tools (your celebrity lookalike, compare two faces, face symmetry, face shape) need the user's own image. " +
+  "Some clients — notably Claude — can't pass a chat image upload to a tool; when a photo tool reports it couldn't read the photo, " +
+  "tell the user to upload their photo on the Ollie web page named in the tool's reply (celebrity-lookalike, compare-faces, or " +
+  "face-symmetry-test), or to paste a direct public image URL. Never guess or name a real person from a photo."
+
+/** Choose a usable image source. A file:// upload (claude.ai's local path) is unreachable, so it's ignored in favour
+ *  of a URL or base64. Returns an ImageFile (download() understands https and data: URLs), or null if nothing usable. */
+export function resolvePhoto(file: ImageFile | undefined, url?: string, b64?: string): ImageFile | null {
+  if (file && /^(https:|data:)/i.test(file.download_url)) return file
+  if (url) return { download_url: url, file_id: "url" }
+  if (b64) {
+    const dataUrl = /^data:/i.test(b64) ? b64 : `data:image/jpeg;base64,${b64.replace(/^base64,/, "")}`
+    return { download_url: dataUrl, file_id: "b64" }
+  }
+  return null
+}
+
 // Private / loopback / link-local hosts an attacker-supplied download_url must never reach. Cloudflare's
 // global_fetch_strictly_public already blocks these in prod; this also covers local/Node runtimes (defense in depth).
 export function isPrivateHost(host: string): boolean {
@@ -62,6 +99,16 @@ async function safeFetch(rawUrl: string): Promise<Response> {
 }
 
 async function download(f: ImageFile): Promise<Blob> {
+  // Inline base64 / data: URL (the claude.ai path) — decode directly, no network fetch.
+  if (/^data:/i.test(f.download_url)) {
+    const m = f.download_url.match(/^data:([^;,]*)(;base64)?,([\s\S]*)$/)
+    if (!m) throw new Error("bad url")
+    const mime = m[1] || "image/jpeg"
+    if (!mime.startsWith("image/")) throw new Error("not an image")
+    const bytes = m[2] ? Uint8Array.from(atob(m[3]), (c) => c.charCodeAt(0)) : new TextEncoder().encode(decodeURIComponent(m[3]))
+    if (bytes.byteLength > MAX_IMAGE_BYTES) throw new Error("too large")
+    return new Blob([bytes], { type: mime })
+  }
   const res = await safeFetch(f.download_url)
   if (!res.ok) throw new Error(`download ${res.status}`)
   // Reject oversized bodies by their declared length before reading them into memory.
@@ -146,7 +193,7 @@ export async function getMcpUser(req: Request): Promise<McpAuth> {
 export function serve(name: string, build: (server: McpServer, auth: McpAuth) => void) {
   return async (req: Request) => {
     const auth = await getMcpUser(req)
-    const server = new McpServer({ name, version: "1.0.0" })
+    const server = new McpServer({ name, version: "1.0.0" }, { instructions: SERVER_INSTRUCTIONS })
     build(server, auth)
     const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true })
     await server.connect(transport)
