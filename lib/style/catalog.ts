@@ -2,7 +2,8 @@
 import type { Shape } from "./face-shape"
 
 export type Texture = "straight" | "wavy" | "curly" | "coily"
-export type Hairline = "full" | "slight" | "receding" | "thinning" | "bald"
+// "high" = a full hairline that sits high (a tall forehead): cut filters treat it as full, scoring favours a fringe
+export type Hairline = "full" | "high" | "slight" | "receding" | "thinning" | "bald"
 export type Track = "working" | "genz" | "classic"
 
 export type Cut = {
@@ -211,6 +212,17 @@ export const BROWS: Option[] = [
   { id: "laminated", name: "Brushed-up, fluffy", dir: -0.5, sub: "Laminated look", render: "fluffy, brushed-up eyebrows with a laminated look", products: ["brow-gel"] },
   { id: "high-arch", name: "Defined high arch", dir: -0.8, sub: "Polished, glam", render: "precisely shaped eyebrows with a defined high arch", products: ["brow-pencil", "tweezers"] },
 ]
+
+// best brow ids per face shape, first = top pick: curves soften angles and width, straighter brows shorten a long face
+export const BROW_FOR: Record<Shape, string[]> = {
+  oval: ["natural", "soft-arch"], round: ["clean-arch", "high-arch"], square: ["soft-arch", "natural"], oblong: ["straight-full", "natural"],
+  heart: ["soft-arch", "natural"], diamond: ["soft-arch", "straight-full"], triangle: ["clean-arch", "high-arch"],
+}
+
+// cuts with hair falling over the forehead: they hide a high or receding hairline
+export const FRINGE = new Set(["textured-crop", "caesar", "fringe-taper", "curtain-bangs", "pixie", "shag", "crew"])
+// cuts that pull hair up or back off the forehead: they show more of it
+export const OFF_FOREHEAD = new Set(["slick-back", "pompadour", "quiff", "flow", "sleek-bun", "sleek-long"])
 
 export const BEARD_STYLES: Option[] = [
   { id: "clean", name: "Clean-shaven", sub: "Smooth, reads younger", render: "a clean-shaven face with no facial hair", products: ["moisturiser-spf"] },

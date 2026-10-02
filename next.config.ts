@@ -2,7 +2,7 @@ import type { NextConfig } from "next"
 
 // Cloudflare Web Analytics (enabled in the Cloudflare dashboard) injects this beacon; it reports real-user LCP/INP/CLS.
 // public/ files (e.g. /chemistry) are served by Cloudflare's asset layer and never get these headers.
-// extra = { script, connect } sources for one page; only the hidden /ai-stylist scanner uses it (MediaPipe WASM + model).
+// extra = { script, connect } sources for one page: the /ai-stylist scanner and /face-symmetry-test (MediaPipe WASM + model).
 const makeCsp = (extra = { script: "", connect: "" }) => [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com${extra.script}${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
@@ -45,6 +45,8 @@ const nextConfig: NextConfig = {
           { key: "Content-Security-Policy", value: styleCsp },
         ],
       },
+      // Hidden /face-symmetry-test: MediaPipe on an uploaded photo (no camera), so only the CSP changes
+      { source: "/face-symmetry-test", headers: [{ key: "Content-Security-Policy", value: styleCsp }] },
     ]
   },
 }

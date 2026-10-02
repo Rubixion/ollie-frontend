@@ -22,7 +22,7 @@ import { track } from "@/lib/analytics"
 import { SHAPE_INFO, classify, type ShapeResult } from "@/lib/style/face-shape"
 import { ITEMS, OCCASIONS, STYLES, type Hairline, type OccasionId, type Slot, type Style, type Texture } from "@/lib/style/catalog"
 import { cards, type Card, type Look, type TabId } from "@/lib/style/editor"
-import { fitNotes, type Answers, type Link } from "@/lib/style/recommend"
+import { AGE_BANDS, fitNotes, shapeLabel, type AgeBand, type Answers, type Link } from "@/lib/style/recommend"
 import { BUILDS, LOOKS, body, chooseOutfit, dressFor, layers, modelPhoto, type Assets, type Build, type Gender, type LookId, type Outfit } from "@/lib/style/model"
 
 const SLOTS: { id: Slot; label: string; icon: typeof Shirt }[] = [
@@ -64,6 +64,39 @@ function Links({ links, where }: { links: Link[]; where: string }) {
         </li>
       ))}
     </ul>
+  )
+}
+
+type Celeb = { name: string; gender: "M" | "F"; img: number; knownFor: string; credit: { author: string; license: string; license_url: string; page: string } }
+
+// "Celebrities with your face shape": licensed Wikimedia photos with their credits, same as the lookalike results.
+// Measured by the same scan on their photos. No paywall next to it (likeness: no implied endorsement).
+function CelebsLike({ shape, gender, list }: { shape: string; gender: Gender; list?: Celeb[] }) {
+  const people = list?.filter((c) => c.gender === (gender === "male" ? "M" : "F"))
+  if (!people?.length) return null
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-sm font-semibold text-white">Celebrities with {/^[aeiou]/.test(shape) ? "an" : "a"} {shape} face</p>
+      <ul className="flex gap-2 overflow-x-auto pb-1">
+        {people.map((c) => (
+          <li key={c.name} className="w-24 shrink-0">
+            <ProductCard className="max-w-none" size="sm">
+              <ProductCardImage className="relative aspect-square overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element -- small static thumbnail */}
+                <img src={`/style/celebs/${c.img}.webp`} alt={c.name} loading="lazy" width={128} height={128} className="size-full object-cover" />
+              </ProductCardImage>
+              <ProductCardContent><ProductCardTitle className="text-xs leading-tight">{c.name}</ProductCardTitle></ProductCardContent>
+            </ProductCard>
+            <a href={c.credit.page} target="_blank" rel="noopener nofollow" className="mt-1 block truncate text-[10px] leading-tight text-white/40 hover:text-white/70"
+              title={`Photo: ${c.credit.author}, ${c.credit.license}`}>Photo: {c.credit.author}, {c.credit.license}</a>
+          </li>
+        ))}
+      </ul>
+      <p className="text-xs text-white/50">
+        Measured with the same scan on public photos. Not affiliated with or endorsed by these people.{" "}
+        <a href="/celebrity-lookalike" onClick={() => track("style_celeb_lookalike_click", { shape })} className="font-semibold text-(--ollie-cyan)">Which one do you look like?</a>
+      </p>
+    </div>
   )
 }
 
@@ -160,11 +193,15 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
   const [hairline, setHairline] = useState<Hairline | "">("")
   const [texture, setTexture] = useState<Texture | "">("")
   const [budget, setBudget] = useState<1 | 2 | 3 | undefined>()
+  const [ageBand, setAgeBand] = useState<AgeBand | "">("")
+  // "celebrities with your face shape": loaded only after a scan (lib/style/celeb-shapes.json, from celeb_v2/celeb_face_shapes.py)
+  const [celebs, setCelebs] = useState<Record<string, Celeb[]>>()
+  useEffect(() => { if (shape && !celebs) import("@/lib/style/celeb-shapes.json").then((m) => setCelebs(m.default as Record<string, Celeb[]>)) }, [shape, celebs])
   const [face, setFace] = useState<Look>({})
-  const a: Answers = { gender, build: ({ slim: "slim", average: "average", athletic: "athletic", plus: "bigger" } as const)[bodyB], hairline: hairline || undefined, texture: texture || undefined, budget }
+  const a: Answers = { gender, build: ({ slim: "slim", average: "average", athletic: "athletic", plus: "bigger" } as const)[bodyB], hairline: hairline || undefined, texture: texture || undefined, budget, age: ageBand ? AGE_BANDS[ageBand] : undefined }
   const faceCards = useMemo(() => shape ? Object.fromEntries(FACE.map((t) => [t.id, cards(t.id, a, shape)])) as Record<string, Card[]> : {},
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [shape, gender, bodyB, hairline, texture, budget])
+    [shape, gender, bodyB, hairline, texture, budget, ageBand])
   function scanned({ ratios, frame }: ScanResult) {
     const s = classify(ratios)
     setShape(s)
@@ -406,12 +443,18 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
                 </div>
               ) : (
                 <>
-                  <p className="text-sm text-white/70">Face shape: <span className="font-semibold capitalize text-white">{shape.shape}</span>. {SHAPE_INFO[shape.shape]}{" "}
+                  <p className="text-sm text-white/70">Face shape: <span className="font-semibold text-white first-letter:uppercase inline-block">{shapeLabel(shape)}</span>. {SHAPE_INFO[shape.shape]}{" "}
                     <button type="button" onClick={() => setScanOpen(true)} className="font-semibold text-(--ollie-cyan)">Rescan</button></p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <CelebsLike shape={shape.shape} gender={gender} list={celebs?.[shape.shape]} />
+                  <div className="grid grid-cols-3 gap-2">
+                    <select aria-label="Your age" value={ageBand} onChange={(e) => setAgeBand(e.currentTarget.value as AgeBand | "")} className={select}>
+                      <option value="">Age: any</option>
+                      {(Object.keys(AGE_BANDS) as AgeBand[]).map((b) => <option key={b} value={b}>{b}</option>)}
+                    </select>
                     <select aria-label="Your hairline" value={hairline} onChange={(e) => setHairline(e.currentTarget.value as Hairline | "")} className={select}>
                       <option value="">Hairline: any</option>
                       <option value="full">Full</option>
+                      <option value="high">Full, high forehead</option>
                       <option value="slight">Slightly receding</option>
                       <option value="receding">Receding</option>
                       <option value="thinning">Thinning on top</option>

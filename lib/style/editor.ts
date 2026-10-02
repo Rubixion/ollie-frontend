@@ -2,10 +2,10 @@
 // image-edit instruction. The server rebuilds the instruction from option ids, so no client text reaches the model.
 import type { ShapeResult } from "./face-shape"
 import {
-  BEARD_FOR, BEARD_NOTES, BEARD_STYLES, BROWS, CUTS, GLASSES, GLASSES_FOR, ITEMS,
+  BEARD_FOR, BEARD_NOTES, BEARD_STYLES, BROW_FOR, BROWS, CUTS, GLASSES, GLASSES_FOR, ITEMS,
   type Option, type Slot, type Style, type Texture,
 } from "./catalog"
-import { amazon, product, rankCuts, want, type Answers, type Link } from "./recommend"
+import { amazon, product, rankCuts, want, weighted, type Answers, type Link } from "./recommend"
 
 export type TabId = "hair" | "brows" | "beard" | "glasses" | Slot
 export type Look = Partial<Record<TabId, string>> // tab -> chosen option id
@@ -46,7 +46,7 @@ export function cards(tab: TabId, a: Answers, s: ShapeResult, styles: Style[] = 
     return rankCuts(a, s).map((r, i) => ({
       id: r.cut.id,
       name: r.cut.name,
-      sub: r.reasons[0] ?? `Trim every ${r.cut.weeks} weeks`,
+      sub: r.reasons.find((x) => !x.startsWith("Suits")) ?? r.reasons[0] ?? `Trim every ${r.cut.weeks} weeks`, // the most specific reason
       best: i < 3,
       why: r.reasons.join(" · ") || undefined,
       links: r.cut.products.map((p) => product(p, a)),
@@ -54,15 +54,21 @@ export function cards(tab: TabId, a: Answers, s: ShapeResult, styles: Style[] = 
     }))
   }
   if (tab === "brows") {
-    const best = g === "younger" ? ["straight-full"] : g === "sharper" || g === "older" ? [dir !== undefined && dir < 0 ? "high-arch" : "clean-arch"] : g === "softer" ? ["soft-arch"] : ["natural"]
-    return bestFirst(BROWS.filter((o) => fits(o, dir)), best).map((o) => ({ ...o, best: best.includes(o.id), links: links(o, a) }))
+    // a goal decides first; otherwise the brows that suit your face shape(s), within the look you're going for
+    const shaped = weighted(BROW_FOR, s).filter((id) => fits(BROWS.find((o) => o.id === id)!, dir))
+    const best = g === "younger" ? ["straight-full"] : g === "sharper" || g === "older" ? [dir !== undefined && dir < 0 ? "high-arch" : "clean-arch"]
+      : g === "softer" ? ["soft-arch"] : shaped.slice(0, 2)
+    const why = g ? undefined : `Suits ${/^[aeiou]/.test(s.shape) ? "an" : "a"} ${s.shape} face`
+    return bestFirst(BROWS.filter((o) => fits(o, dir)), best).map((o) => ({ ...o, best: best.includes(o.id), why: best.includes(o.id) ? why : undefined, links: links(o, a) }))
   }
   if (tab === "beard") {
-    const best = g === "older" ? ["full", "boxed"] : g === "younger" ? ["clean", "stubble"] : BEARD_FOR[s.shape]
+    const best = g === "older" ? ["full", "boxed"] : g === "younger" ? ["clean", "stubble"]
+      : (a.age ?? 0) >= 35 ? weighted(BEARD_FOR, s).filter((id) => id !== "stubble").slice(0, 2) // tidier, fuller shapes read better later on
+      : weighted(BEARD_FOR, s).slice(0, 2)
     return bestFirst(BEARD_STYLES, best).map((o) => ({ ...o, best: best.includes(o.id), why: best.includes(o.id) ? BEARD_NOTES[s.shape] : undefined, links: links(o, a) }))
   }
   if (tab === "glasses") {
-    const best = GLASSES_FOR[s.shape]
+    const best = weighted(GLASSES_FOR, s).slice(0, 2)
     return bestFirst(GLASSES.filter((o) => fits(o, dir)), ["none", ...best]).map((o) => ({
       ...o, best: best.includes(o.id), links: o.query ? [{ label: "Shop frames", href: amazon(o.query, "glasses", a.budget) }] : [],
     }))

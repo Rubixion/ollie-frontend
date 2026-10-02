@@ -5,9 +5,10 @@ import norms from "./symmetry-norms.json"
 import { align, asymmetry, beats, pose } from "./symmetry"
 
 type P = [number, number]
-const partner = norms.partner
-assert.equal(partner.length, 468)
-assert.ok(partner.filter((j, i) => partner[j] !== i).length < 20, "mirror pairs are (nearly all) mutual")
+assert.equal(norms.partner.length, 468)
+assert.ok(norms.partner.filter((j, i) => norms.partner[j] !== i).length < 20, "mirror pairs are (nearly all) mutual")
+// The few non-mutual points count as their own mirror here, so the synthetic faces below are exactly symmetric
+const partner = norms.partner.map((j, i) => (norms.partner[j] === i ? j : i))
 
 // A perfectly mirror-symmetric face: random left points, right points mirrored from them, midline points on x = 0
 const face: P[] = Array.from({ length: 468 }, () => [0, 0])
@@ -20,15 +21,15 @@ for (let i = 0; i < 468; i++) {
   }
 }
 const rms = (d: number[]) => Math.sqrt(d.reduce((s, x) => s + x * x, 0) / d.length)
-assert.ok(rms(asymmetry(face)) < 1e-9, "symmetric face scores 0")
+assert.ok(rms(asymmetry(face, partner)) < 1e-9, "symmetric face scores 0")
 
 // Moving, rotating and scaling a face doesn't change its asymmetry (after align)
 const bent: P[] = face.map(([x, y], i) => [x + (x > 0 ? 0.03 * Math.sin(i) : 0), y])
-const base = rms(asymmetry(align(bent).pts))
+const base = rms(asymmetry(align(bent).pts, partner))
 const th = 0.3
 const moved: P[] = bent.map(([x, y]) => [200 + 50 * (x * Math.cos(th) - y * Math.sin(th)), 90 + 50 * (x * Math.sin(th) + y * Math.cos(th))])
 const { pts, roll } = align(moved)
-assert.ok(Math.abs(rms(asymmetry(pts)) - base) < 1e-9, "pose and size don't change the score")
+assert.ok(Math.abs(rms(asymmetry(pts, partner)) - base) < 1e-9, "pose and size don't change the score")
 assert.ok(base > 0, "a bent face is asymmetric")
 assert.ok(Math.abs(roll) < Math.PI)
 

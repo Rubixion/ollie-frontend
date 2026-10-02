@@ -1,0 +1,1472 @@
+{
+ "oval": [
+  {
+   "name": "Jude Bellingham",
+   "gender": "M",
+   "p": 0.341,
+   "knownFor": "English footballer (born 2003)",
+   "img": 18969,
+   "credit": {
+    "author": "Barcex",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Jude_Bellingham_Laureus_2024_(cropped2).jpg"
+   }
+  },
+  {
+   "name": "Harry Kane",
+   "gender": "M",
+   "p": 0.335,
+   "knownFor": "English association football player (born 1993)",
+   "img": 13851,
+   "credit": {
+    "author": "Number 10",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Harry_Kane_2023.jpg"
+   }
+  },
+  {
+   "name": "Zlatan Ibrahimović",
+   "gender": "M",
+   "p": 0.335,
+   "knownFor": "Swedish association football player (born 1981)",
+   "img": 40125,
+   "credit": {
+    "author": "Frankie Fouganthin",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Zlatan_Ibrahimovi%C4%87-13_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Timothée Chalamet",
+   "gender": "M",
+   "p": 0.335,
+   "knownFor": "French-American actor (born 1995)",
+   "img": 37308,
+   "credit": {
+    "author": "Somewhere In Toronto",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Timoth%C3%A9e_Chalamet_in_2018_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Wladimir Klitschko",
+   "gender": "M",
+   "p": 0.34,
+   "knownFor": "Ukrainian boxer (born 1976)",
+   "img": 39387,
+   "credit": {
+    "author": "Fuzheado",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Klitschko-gesf-2018-7931_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Callum Turner",
+   "gender": "M",
+   "p": 0.35,
+   "knownFor": "English actor",
+   "img": 5577,
+   "credit": {
+    "author": "Harald Krichel",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Callum_Turner-68473.jpg"
+   }
+  },
+  {
+   "name": "Bradley Cooper",
+   "gender": "M",
+   "p": 0.343,
+   "knownFor": "American actor (born 1975)",
+   "img": 4927,
+   "credit": {
+    "author": "Carlos González Santos from Madrid, España",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "page": "https://commons.wikimedia.org/wiki/File:Bradley_Cooper_(11242795155)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Shia LaBeouf",
+   "gender": "M",
+   "p": 0.336,
+   "knownFor": "American actor",
+   "img": 34692,
+   "credit": {
+    "author": "Shia_LaBeouf_Cannes_2012.jpg : Georges Biard derivative work: César",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Shia_LaBeouf_Cannes_2012_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Anne Hathaway",
+   "gender": "F",
+   "p": 0.337,
+   "knownFor": "American actress (born 1982)",
+   "img": 2658,
+   "credit": {
+    "author": "Mireille Ampilhac",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Anne_Hathaway_Face.jpg"
+   }
+  },
+  {
+   "name": "Angelina Jolie",
+   "gender": "F",
+   "p": 0.335,
+   "knownFor": "American actress (born 1975)",
+   "img": 2451,
+   "credit": {
+    "author": "Foreign and Commonwealth Office",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Angelina_Jolie_2_June_2014_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Priyanka Chopra",
+   "gender": "F",
+   "p": 0.354,
+   "knownFor": "Indian actress (born 1982)",
+   "img": 30630,
+   "credit": {
+    "author": "Bollywood Hungama",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Priyanka_Chopra_nel_2012.jpg"
+   }
+  },
+  {
+   "name": "Annette Bening",
+   "gender": "F",
+   "p": 0.346,
+   "knownFor": "American actress (born 1958)",
+   "img": 2677,
+   "credit": {
+    "author": "Gordon Correll",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Annette_Bening_(10404383974).jpg"
+   }
+  },
+  {
+   "name": "Hannah Waddingham",
+   "gender": "F",
+   "p": 0.332,
+   "knownFor": "British actress",
+   "img": 13775,
+   "credit": {
+    "author": "Gabriel Hutchinson",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Hannah_Waddingham_at_the_2025_Cannes_Film_Festival_12.jpg"
+   }
+  },
+  {
+   "name": "Keke Palmer",
+   "gender": "F",
+   "p": 0.338,
+   "knownFor": "American actress",
+   "img": 20482,
+   "credit": {
+    "author": "Kirby Taylor",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Keke_Palmer_at_Essence_Festival_of_Culture_2025_(11).jpg"
+   }
+  },
+  {
+   "name": "Jennifer Connelly",
+   "gender": "F",
+   "p": 0.338,
+   "knownFor": "American actress (born 1970)",
+   "img": 16657,
+   "credit": {
+    "author": "MTV International",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Jennifer_Connelly_2019.png"
+   }
+  },
+  {
+   "name": "Julie Andrews",
+   "gender": "F",
+   "p": 0.349,
+   "knownFor": "British actress, singer and author (born 1935)",
+   "img": 19169,
+   "credit": {
+    "author": "Eva Rinaldi",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Julie_Andrews_(8743735760).jpg"
+   }
+  }
+ ],
+ "round": [
+  {
+   "name": "Max Verstappen",
+   "gender": "M",
+   "p": 0.691,
+   "knownFor": "Dutch and Belgian racing driver",
+   "img": 25406,
+   "credit": {
+    "author": "Morio",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Max_Verstappen_2017_Malaysia_3_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Virat Kohli",
+   "gender": "M",
+   "p": 0.702,
+   "knownFor": "Indian cricket player (born 1988)",
+   "img": 38819,
+   "credit": {
+    "author": "Bollywood Hungama",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Viratkohli.jpg"
+   }
+  },
+  {
+   "name": "Emiliano Martínez",
+   "gender": "M",
+   "p": 0.524,
+   "knownFor": "Argentine footballer (born 1992)",
+   "img": 10714,
+   "credit": {
+    "author": "Bryan Berlin",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Emiliano_Martinez_Argentina_v_Egypt_7_July_2026-093_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Bill Pullman",
+   "gender": "M",
+   "p": 0.532,
+   "knownFor": "American actor (born 1953)",
+   "img": 4479,
+   "credit": {
+    "author": "Eye Steel Film from Canada",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Bill_Pullman_in_2011_(IMG_9696_by_Eye_Steel_Film).jpg"
+   }
+  },
+  {
+   "name": "Ed Sheeran",
+   "gender": "M",
+   "p": 0.507,
+   "knownFor": "English singer-songwriter (born 1991)",
+   "img": 10077,
+   "credit": {
+    "author": "Eva Rinaldi",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Ed_Sheeran_3,_2013.jpg"
+   }
+  },
+  {
+   "name": "Sadio Mané",
+   "gender": "M",
+   "p": 0.516,
+   "knownFor": "Senegalese footballer (born 1992)",
+   "img": 33149,
+   "credit": {
+    "author": "Werner100359",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:FC_Red_Bull_Salzburg_gegen_SV_Gr%C3%B6dig_25.JPG"
+   }
+  },
+  {
+   "name": "Lando Norris",
+   "gender": "M",
+   "p": 0.638,
+   "knownFor": "British and Belgian racing driver (born 1999)",
+   "img": 21867,
+   "credit": {
+    "author": "United Autosports",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:AI2019_United_Autosports_IMG_4123_(39811671093)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Alan Alda",
+   "gender": "M",
+   "p": 0.511,
+   "knownFor": "American actor (born 1936)",
+   "img": 788,
+   "credit": {
+    "author": "Moody College of Communication from Austin, USA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Alan_Alda_2015.jpg"
+   }
+  },
+  {
+   "name": "Sadie Sink",
+   "gender": "F",
+   "p": 0.528,
+   "knownFor": "American actress (born 2002)",
+   "img": 33142,
+   "credit": {
+    "author": "Gage Skidmore from Peoria, AZ, United States of America",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sadie_Sink_(36214027485)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Lukita Maxwell",
+   "gender": "F",
+   "p": 0.588,
+   "knownFor": "Indonesian-American actress",
+   "img": 23472,
+   "credit": {
+    "author": "Kevin Paul",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Lukita_Maxwell_at_PaleyLive_Shrinking_2024.jpg"
+   }
+  },
+  {
+   "name": "Suzi Quatro",
+   "gender": "F",
+   "p": 0.592,
+   "knownFor": "American rock musician (born 1950)",
+   "img": 36264,
+   "credit": {
+    "author": "Klaus Hellmerich",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Suzi_Quatro_in_F%C3%BCrth_2023.jpg"
+   }
+  },
+  {
+   "name": "Julie Christie",
+   "gender": "F",
+   "p": 0.537,
+   "knownFor": "British actress",
+   "img": 19197,
+   "credit": {
+    "author": "Trailer screenshot",
+    "license": "Public domain",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Julie_Christie_in_Doctor_Zhivago_2.jpg"
+   }
+  },
+  {
+   "name": "Shivangi Joshi",
+   "gender": "F",
+   "p": 0.539,
+   "knownFor": "Indian actress",
+   "img": 34819,
+   "credit": {
+    "author": "Bollywood Hungama",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Shivangi_Joshi_at_the_event_for_Uttarakhand_CM_Shri_Pushkar_Singh_Dhami_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Catherine Laga'aia",
+   "gender": "F",
+   "p": 0.65,
+   "knownFor": "Australian actress and singer",
+   "img": 6104,
+   "credit": {
+    "author": "Gage Skidmore from Surprise, AZ, United States of America",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Catherine_Laga%27aia_(55220880061).jpg"
+   }
+  },
+  {
+   "name": "June Squibb",
+   "gender": "F",
+   "p": 0.635,
+   "knownFor": "American actress",
+   "img": 19276,
+   "credit": {
+    "author": "Frank Schulenburg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:June_Squibb_2024.jpg"
+   }
+  },
+  {
+   "name": "Jaimie Alexander",
+   "gender": "F",
+   "p": 0.513,
+   "knownFor": "American actress",
+   "img": 15465,
+   "credit": {
+    "author": "Richard Goldschmidt, www.piqtured.com Derivative by Keraunoscopia",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Jaimie_Alexander,_London,_2013_(tone).jpg"
+   }
+  }
+ ],
+ "square": [
+  {
+   "name": "Sean Penn",
+   "gender": "M",
+   "p": 0.804,
+   "knownFor": "American actor",
+   "img": 34049,
+   "credit": {
+    "author": "Sachyn Mital",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sean_Penn_by_Sachyn_Mital_(cropped_3).jpg"
+   }
+  },
+  {
+   "name": "Paul Pogba",
+   "gender": "M",
+   "p": 0.757,
+   "knownFor": "French footballer (born 1993)",
+   "img": 29700,
+   "credit": {
+    "author": "Original: Антон Зайцев / Derivative work: Danyele , Bogomolov.PL",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:FRA-ARG_(11)_-_Paul_Pogba_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Kevin Durant",
+   "gender": "M",
+   "p": 0.523,
+   "knownFor": "American basketball player (born 1988)",
+   "img": 20765,
+   "credit": {
+    "author": "All-Pro Reels",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Kevin_Durant_(Wizards_v._Warriors,_1-24-2019)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Kevin Hart",
+   "gender": "M",
+   "p": 0.521,
+   "knownFor": "American comedian and actor (born 1979)",
+   "img": 20791,
+   "credit": {
+    "author": "Eva Rinaldi",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:The_Secret_Life_of_Pets_2,_Kevin_Hart_(48012960106).jpg"
+   }
+  },
+  {
+   "name": "Peter Dinklage",
+   "gender": "M",
+   "p": 0.507,
+   "knownFor": "American actor (born 1969)",
+   "img": 30062,
+   "credit": {
+    "author": "Harald Krichel",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Peter_Dinklage-28_(3x4_cropped).jpg"
+   }
+  },
+  {
+   "name": "David Harbour",
+   "gender": "M",
+   "p": 0.628,
+   "knownFor": "American actor (born 1975)",
+   "img": 8611,
+   "credit": {
+    "author": "Gage Skidmore from Peoria, AZ, United States of America",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:David_Harbour_(30230360410).jpg"
+   }
+  },
+  {
+   "name": "Terry Crews",
+   "gender": "M",
+   "p": 0.537,
+   "knownFor": "American actor, television host, and American football player (born 1968)",
+   "img": 36844,
+   "credit": {
+    "author": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Terry_Crews_by_Gage_Skidmore_5.jpg"
+   }
+  },
+  {
+   "name": "Spike Lee",
+   "gender": "M",
+   "p": 0.588,
+   "knownFor": "American filmmaker (born 1957)",
+   "img": 35556,
+   "credit": {
+    "author": "Peabody Awards",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Spike_Lee_Peabody_Awards_2011.jpg"
+   }
+  },
+  {
+   "name": "Ella Langley",
+   "gender": "F",
+   "p": 0.842,
+   "knownFor": "American country singer",
+   "img": 10556,
+   "credit": {
+    "author": "Rick Munroe",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Ella_Langley_2026_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Teyana Taylor",
+   "gender": "F",
+   "p": 0.551,
+   "knownFor": "American singer-songwriter and actress (born 1990)",
+   "img": 36874,
+   "credit": {
+    "author": "VOA",
+    "license": "Public domain",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Teyana_Taylor_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Adele",
+   "gender": "F",
+   "p": 0.516,
+   "knownFor": "English singer-songwriter (born 1988)",
+   "img": 473,
+   "credit": {
+    "author": "Kristopher Harris from Charlotte, NC",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Adele_%27Adele_Live_2016%27_-_Nashville_DSC04796_(29780913504).jpg"
+   }
+  },
+  {
+   "name": "Shania Twain",
+   "gender": "F",
+   "p": 0.5,
+   "knownFor": "Canadian country music singer and songwriter (born 1965)",
+   "img": 34502,
+   "credit": {
+    "author": "Raph_PH",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Glaston2024_2806_300624_(82_of_173)_(53838110750)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Billie Piper",
+   "gender": "F",
+   "p": 0.508,
+   "knownFor": "British actress and singer (born 1982)",
+   "img": 4535,
+   "credit": {
+    "author": "Florida Supercon from Ft. Lauderdale, USA",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Billie_Piper_2016_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Tori Kelly",
+   "gender": "F",
+   "p": 0.545,
+   "knownFor": "American singer and songwriter",
+   "img": 37760,
+   "credit": {
+    "author": "GabboT",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sing_01_(29771869045)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Anna Chlumsky",
+   "gender": "F",
+   "p": 0.505,
+   "knownFor": "American actress (born 1980)",
+   "img": 2553,
+   "credit": {
+    "author": "Greg2600",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Anna_Chlumsky_(2018).jpg"
+   }
+  },
+  {
+   "name": "Jhené Aiko",
+   "gender": "F",
+   "p": 0.608,
+   "knownFor": "American R&B singer (born 1988)",
+   "img": 17204,
+   "credit": {
+    "author": "The Come Up Show from Canada",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Jhen%C3%A9_Aiko_(28652537575)_(cropped).jpg"
+   }
+  }
+ ],
+ "oblong": [
+  {
+   "name": "Jalen Brunson",
+   "gender": "M",
+   "p": 0.541,
+   "knownFor": "American basketball player (born 1996)",
+   "img": 15535,
+   "credit": {
+    "author": "TonyTheTiger",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:20140322_Jalen_Brunson_in_IHSA_consolation_game_(2).JPG"
+   }
+  },
+  {
+   "name": "Jon Bernthal",
+   "gender": "M",
+   "p": 0.608,
+   "knownFor": "American actor",
+   "img": 18273,
+   "credit": {
+    "author": "Super Festivals from Ft. Lauderdale, USA",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Jon_Bernthal_(53983124020).jpg"
+   }
+  },
+  {
+   "name": "Marc Hagit Cucurella",
+   "gender": "M",
+   "p": 0.67,
+   "knownFor": "Spanish association football player",
+   "img": 24170,
+   "credit": {
+    "author": "Bryan Berlin",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Marc_Cucurella_France_v_Spain_7.24.26-190.jpg"
+   }
+  },
+  {
+   "name": "Adam Sandler",
+   "gender": "M",
+   "p": 0.669,
+   "knownFor": "American actor and comedian",
+   "img": 419,
+   "credit": {
+    "author": "Glyn Lowe PhotoWorks from lisbon, Portugal",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Adam_Sandler_on_%27Blended%27_Red_Carpet_in_Berlin_(14043442427).jpg"
+   }
+  },
+  {
+   "name": "Yan Diomande",
+   "gender": "M",
+   "p": 0.66,
+   "knownFor": "Ivorian footballer",
+   "img": 39557,
+   "credit": {
+    "author": "Bryan Berlin",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Yan_Diomande_Cote_D%27Ivoire_v_Ecuador_14_June_2026-17_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Gareth Bale",
+   "gender": "M",
+   "p": 0.599,
+   "knownFor": "Welsh association football player",
+   "img": 12386,
+   "credit": {
+    "author": "Дмитрий Журавель",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Gareth_Bale_2015_(1).jpg"
+   }
+  },
+  {
+   "name": "Paul Rudd",
+   "gender": "M",
+   "p": 0.618,
+   "knownFor": "American actor",
+   "img": 29720,
+   "credit": {
+    "author": "MTV UK",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Paul_Rudd_2018.jpg"
+   }
+  },
+  {
+   "name": "Joseph Fiennes",
+   "gender": "M",
+   "p": 0.687,
+   "knownFor": "English film and stage actor (born 1970)",
+   "img": 18673,
+   "credit": {
+    "author": "Siebbi",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Joseph_Fiennes_5_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Sarah Jessica Parker",
+   "gender": "F",
+   "p": 0.574,
+   "knownFor": "American actress (born 1965)",
+   "img": 33724,
+   "credit": {
+    "author": "David Shankbone",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sarah_Jessica_Parker_at_the_2009_Tribeca_Film_Festival_3.jpg"
+   }
+  },
+  {
+   "name": "Laurie Metcalf",
+   "gender": "F",
+   "p": 0.694,
+   "knownFor": "American actress (born 1955)",
+   "img": 22105,
+   "credit": {
+    "author": "Alan Light",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Laurie_Metcalf_(2079236142)_(cropped_3).jpg"
+   }
+  },
+  {
+   "name": "Cindy Crawford",
+   "gender": "F",
+   "p": 0.734,
+   "knownFor": "American model (born 1966)",
+   "img": 7237,
+   "credit": {
+    "author": "Georges Biard",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Cindy_Crawford_Cannes_2013.jpg"
+   }
+  },
+  {
+   "name": "Hilary Swank",
+   "gender": "F",
+   "p": 0.899,
+   "knownFor": "American actress (born 1974)",
+   "img": 14220,
+   "credit": {
+    "author": "Manfred Werner ( Tsui )",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Hilary_Swank_Life_Ball_2013_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Madeleine Stowe",
+   "gender": "F",
+   "p": 0.555,
+   "knownFor": "American actress (born 1958)",
+   "img": 23637,
+   "credit": {
+    "author": "DoubleSpeak with Matthew and Peter Slutsky from United States",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Madeleine_Stowe_crop.jpg"
+   }
+  },
+  {
+   "name": "Cheryl Hines",
+   "gender": "F",
+   "p": 0.547,
+   "knownFor": "American actress",
+   "img": 6563,
+   "credit": {
+    "author": "Rubenstein",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Cheryl_Hines_2009_TFF_2.jpg"
+   }
+  },
+  {
+   "name": "Mira Nair",
+   "gender": "F",
+   "p": 0.537,
+   "knownFor": "Indian-American filmmaker (born 1957)",
+   "img": 26849,
+   "credit": {
+    "author": "Bollywood Hungama",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Mira_Nair.jpg"
+   }
+  },
+  {
+   "name": "Lily Tomlin",
+   "gender": "F",
+   "p": 0.822,
+   "knownFor": "American actress",
+   "img": 22761,
+   "credit": {
+    "author": "Gotfryd, Bernard, photographer",
+    "license": "Public domain",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Lily_Tomlin,_actress-comedian,_1986.jpg"
+   }
+  }
+ ],
+ "heart": [
+  {
+   "name": "Michael Olise",
+   "gender": "M",
+   "p": 0.565,
+   "knownFor": "French footballer (born 2001)",
+   "img": 26101,
+   "credit": {
+    "author": "Bryan Berlin",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Michael_Olise_France_v_Senegal_16_June_2026-307.jpg"
+   }
+  },
+  {
+   "name": "Robert Lewandowski",
+   "gender": "M",
+   "p": 0.691,
+   "knownFor": "Polish association football player (born 1988)",
+   "img": 32210,
+   "credit": {
+    "author": "Sven Mandel",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:2019147200143_2019-05-27_Fussball_1.FC_Kaiserslautern_vs_FC_Bayern_M%C3%BCnchen_-_Sven_-_1D_X_MK_II_-_2462_-_B70I0762_(cropped)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Michael Caine",
+   "gender": "M",
+   "p": 0.603,
+   "knownFor": "English actor (born 1933)",
+   "img": 25946,
+   "credit": {
+    "author": "Manfred Werner / Tsui",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Michael_Caine_-_Viennale_2012_d_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Idris Elba",
+   "gender": "M",
+   "p": 0.641,
+   "knownFor": "British actor",
+   "img": 14651,
+   "credit": {
+    "author": "DFID - UK Department for International Development",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Idris_Elba_2014.jpg"
+   }
+  },
+  {
+   "name": "Taylor Sheridan",
+   "gender": "M",
+   "p": 0.509,
+   "knownFor": "American producer, screenwriter and director (born 1970)",
+   "img": 36694,
+   "credit": {
+    "author": "Michael Benatar",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sara_Malakul_Lane_by_Michael_Benatar_-_8269423863.jpg"
+   }
+  },
+  {
+   "name": "Edward Norton",
+   "gender": "M",
+   "p": 0.546,
+   "knownFor": "American actor",
+   "img": 10270,
+   "credit": {
+    "author": "Steve Jurvetson",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Edward_Norton_in_Kenya_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Billy Bob Thornton",
+   "gender": "M",
+   "p": 0.588,
+   "knownFor": "American actor, filmmaker, and musician",
+   "img": 4543,
+   "credit": {
+    "author": "Glenwarner",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Glen_Warner_And_Billy-Bob_Thornton_crop.JPG"
+   }
+  },
+  {
+   "name": "Tom Hiddleston",
+   "gender": "M",
+   "p": 0.559,
+   "knownFor": "English actor (born 1981)",
+   "img": 37509,
+   "credit": {
+    "author": "Gage Skidmore from Peoria, AZ, United States of America",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Tom_Hiddleston_(27992938324)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Ariana Grande",
+   "gender": "F",
+   "p": 0.81,
+   "knownFor": "American singer, songwriter, and actress (born 1993)",
+   "img": 3060,
+   "credit": {
+    "author": "Barbie Simons",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Ariana_Grande_promoting_Wicked_7.jpg"
+   }
+  },
+  {
+   "name": "Sydney Sweeney",
+   "gender": "F",
+   "p": 0.787,
+   "knownFor": "American actress (born 1997)",
+   "img": 36290,
+   "credit": {
+    "author": "Jay Dixit",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sydney_Sweeney_at_the_2024_Toronto_International_Film_Festival_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Zara Larsson",
+   "gender": "F",
+   "p": 0.574,
+   "knownFor": "Swedish singer-songwriter (born 1997)",
+   "img": 39984,
+   "credit": {
+    "author": "Daniel Åhs Karlsson",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Zara_Larsson_Poserar_P%C3%A5_Sommarkrysset_2013_By_Daniel_%C3%85hs_Karlsson.JPG"
+   }
+  },
+  {
+   "name": "Anya Taylor-Joy",
+   "gender": "F",
+   "p": 0.71,
+   "knownFor": "American actress and model (born 1996)",
+   "img": 3006,
+   "credit": {
+    "author": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Anya_Taylor-Joy_by_Gage_Skidmore.jpg"
+   }
+  },
+  {
+   "name": "Billie Eilish",
+   "gender": "F",
+   "p": 0.559,
+   "knownFor": "American singer-songwriter (born 2001)",
+   "img": 4499,
+   "credit": {
+    "author": "MTV UK",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Billie_Eilish_2019_MTV_Interview.png"
+   }
+  },
+  {
+   "name": "Lupita Nyong'o",
+   "gender": "F",
+   "p": 0.754,
+   "knownFor": "Mexican-Kenyan actress and film director (born 1983)",
+   "img": 23482,
+   "credit": {
+    "author": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Lupita_Nyong%27o_by_Gage_Skidmore.jpg"
+   }
+  },
+  {
+   "name": "Dakota Fanning",
+   "gender": "F",
+   "p": 0.609,
+   "knownFor": "American actress and model  (born 1994)",
+   "img": 7867,
+   "credit": {
+    "author": "David Shankbone",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Dakota_Fanning,_2012.jpg"
+   }
+  },
+  {
+   "name": "Blake Lively",
+   "gender": "F",
+   "p": 0.619,
+   "knownFor": "American actress (born 1987)",
+   "img": 4690,
+   "credit": {
+    "author": "GabboT",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Cannes_090_(27830786580)_(cropped)_(2).jpg"
+   }
+  }
+ ],
+ "diamond": [
+  {
+   "name": "Christian Pulisic",
+   "gender": "M",
+   "p": 0.706,
+   "knownFor": "American soccer player (born 1998)",
+   "img": 6973,
+   "credit": {
+    "author": "Bryan Berlin",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Christian_Pulisic_Belgium_v_USA_6_July_2026-120.jpg"
+   }
+  },
+  {
+   "name": "Son Heung-min",
+   "gender": "M",
+   "p": 0.535,
+   "knownFor": "South Korean association football player (born 1992)",
+   "img": 35230,
+   "credit": {
+    "author": "Republic of Korea",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Team_Korea_Russia_WorldCup_02_(cropped).png"
+   }
+  },
+  {
+   "name": "Emilio Estevez",
+   "gender": "M",
+   "p": 0.537,
+   "knownFor": "American actor, director, and writer",
+   "img": 10726,
+   "credit": {
+    "author": "Gabriele",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Emilio_Estevez_Venice_2006.jpg"
+   }
+  },
+  {
+   "name": "Jamie Foxx",
+   "gender": "M",
+   "p": 0.561,
+   "knownFor": "American actor, comedian, and singer (born 1967)",
+   "img": 15808,
+   "credit": {
+    "author": "Georges Biard",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Jamie_Foxx_Django_avp.jpg"
+   }
+  },
+  {
+   "name": "Giuliano Simeone",
+   "gender": "M",
+   "p": 0.839,
+   "knownFor": "Argentine footballer (born 2002)",
+   "img": 13027,
+   "credit": {
+    "author": "Bryan Berlin",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Giuliano_Simeone_Argentina_v_Spain_19_July_2026-268.jpg"
+   }
+  },
+  {
+   "name": "Steven Yeun",
+   "gender": "M",
+   "p": 0.608,
+   "knownFor": "South Korean-American actor",
+   "img": 36005,
+   "credit": {
+    "author": "Gage Skidmore from Peoria, AZ, United States of America",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:SDCC_2015_-_Steven_Yeun_(19674345441)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Spike Jonze",
+   "gender": "M",
+   "p": 0.509,
+   "knownFor": "American filmmaker (born 1969)",
+   "img": 35553,
+   "credit": {
+    "author": "Greg2600",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Spike_Jonze_(25544217322).jpg"
+   }
+  },
+  {
+   "name": "Lisandro Martínez",
+   "gender": "M",
+   "p": 0.578,
+   "knownFor": "Argentine association football player",
+   "img": 22955,
+   "credit": {
+    "author": "Ardfern",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Lisandro_Martinez_2022.jpg"
+   }
+  },
+  {
+   "name": "Jennifer Lawrence",
+   "gender": "F",
+   "p": 0.531,
+   "knownFor": "American actress and producer (born 1990)",
+   "img": 16696,
+   "credit": {
+    "author": "Joel Kowsky",
+    "license": "Public domain",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Jennifer_Lawrence_in_2016.jpg"
+   }
+  },
+  {
+   "name": "Trisha Krishnan",
+   "gender": "F",
+   "p": 0.509,
+   "knownFor": "Indian actress",
+   "img": 37952,
+   "credit": {
+    "author": "Verghese TK",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Tisha_Krishnan_at_PS1_pre_release_event_(2).jpg"
+   }
+  },
+  {
+   "name": "Claire Danes",
+   "gender": "F",
+   "p": 0.518,
+   "knownFor": "American actor (born 1979)",
+   "img": 7259,
+   "credit": {
+    "author": "iDominick",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Claire_Danes_2015_(facecrop).jpg"
+   }
+  },
+  {
+   "name": "Gemma Chan",
+   "gender": "F",
+   "p": 0.662,
+   "knownFor": "British actress (born 1982)",
+   "img": 12552,
+   "credit": {
+    "author": "DOD photo by Shannon Collins",
+    "license": "Public domain",
+    "license_url": "",
+    "page": "https://commons.wikimedia.org/wiki/File:Gemma_Chan_Marvel_2019.jpg"
+   }
+  },
+  {
+   "name": "Vera Farmiga",
+   "gender": "F",
+   "p": 0.618,
+   "knownFor": "American actress (born 1973)",
+   "img": 38450,
+   "credit": {
+    "author": "David Shankbone",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Vera_Farmiga_Met_Opera_2010_Shankbone.jpg"
+   }
+  },
+  {
+   "name": "Laura Linney",
+   "gender": "F",
+   "p": 0.659,
+   "knownFor": "American actress",
+   "img": 22027,
+   "credit": {
+    "author": "Peabody Awards",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Laura_Linney,_May_2009_(1).jpg"
+   }
+  },
+  {
+   "name": "Kesha",
+   "gender": "F",
+   "p": 0.536,
+   "knownFor": "American singer and songwriter (born 1987)",
+   "img": 20709,
+   "credit": {
+    "author": "Kesha_2011_2.jpg : Peter Neill derivative work: Tabercil ( talk )",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Kesha_2011_2_crop_adj.jpg"
+   }
+  },
+  {
+   "name": "Eliza Dushku",
+   "gender": "F",
+   "p": 0.547,
+   "knownFor": "American actress",
+   "img": 10461,
+   "credit": {
+    "author": "https://www.flickr.com/photos/greg2600/",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Eliza_Dushku_(18884616868)_(cropped).jpg"
+   }
+  }
+ ],
+ "triangle": [
+  {
+   "name": "Keanu Reeves",
+   "gender": "M",
+   "p": 0.678,
+   "knownFor": "Canadian actor and musician (born 1964)",
+   "img": 20381,
+   "credit": {
+    "author": "Governo do Estado de São Paulo",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Reuni%C3%A3o_com_o_ator_norte-americano_Keanu_Reeves_(40564290483)_(cropped)_2.jpg"
+   }
+  },
+  {
+   "name": "Kurt Russell",
+   "gender": "M",
+   "p": 0.505,
+   "knownFor": "American actor (born 1951)",
+   "img": 21593,
+   "credit": {
+    "author": "S Pakhrin from DC, USA",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:P1090663_Russell.jpg"
+   }
+  },
+  {
+   "name": "John Travolta",
+   "gender": "M",
+   "p": 0.807,
+   "knownFor": "American actor (born 1954)",
+   "img": 18180,
+   "credit": {
+    "author": "Georges Biard",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:John_Travolta_Deauville_2013_2.jpg"
+   }
+  },
+  {
+   "name": "Martin Short",
+   "gender": "M",
+   "p": 0.506,
+   "knownFor": "Canadian comedian and actor (born 1950)",
+   "img": 24938,
+   "credit": {
+    "author": "Dominick D",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Martin_Short_at_PaleyFest_2014.jpg"
+   }
+  },
+  {
+   "name": "Will Ferrell",
+   "gender": "M",
+   "p": 0.518,
+   "knownFor": "American actor, comedian, screenwriter and producer (born 1967)",
+   "img": 39180,
+   "credit": {
+    "author": "Eva Rinaldi",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Will_Ferrell_2012.jpg"
+   }
+  },
+  {
+   "name": "Jim Caviezel",
+   "gender": "M",
+   "p": 0.516,
+   "knownFor": "American actor",
+   "img": 17263,
+   "credit": {
+    "author": "Genevieve",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Jim_Caviezel_(6991507588).jpg"
+   }
+  },
+  {
+   "name": "Timothy Olyphant",
+   "gender": "M",
+   "p": 0.535,
+   "knownFor": "American actor",
+   "img": 37321,
+   "credit": {
+    "author": "Peabody Awards",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Timothy_Olyphant_(8166744480).jpg"
+   }
+  },
+  {
+   "name": "Matt Smith",
+   "gender": "M",
+   "p": 0.734,
+   "knownFor": "English actor (born 1982)",
+   "img": 25214,
+   "credit": {
+    "author": "Gage Skidmore from Peoria, AZ, United States of America",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Matt_Smith_(7606548682).jpg"
+   }
+  },
+  {
+   "name": "Geena Davis",
+   "gender": "F",
+   "p": 0.511,
+   "knownFor": "American actress (born 1956)",
+   "img": 12534,
+   "credit": {
+    "author": "itupictures",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Geena_Davis_2013_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Jodie Foster",
+   "gender": "F",
+   "p": 0.87,
+   "knownFor": "American actress and filmmaker (born 1962)",
+   "img": 17550,
+   "credit": {
+    "author": "Franz Richter ( User:FRZ )",
+    "license": "CC BY-SA 2.5",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.5",
+    "page": "https://commons.wikimedia.org/wiki/File:Jodie_Foster.4785.jpg"
+   }
+  },
+  {
+   "name": "Olivia Munn",
+   "gender": "F",
+   "p": 0.565,
+   "knownFor": "American actress, comedian, television personality and author",
+   "img": 28919,
+   "credit": {
+    "author": "Christopher William Adach from London, UK",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Olivia_Munn_2013.jpg"
+   }
+  },
+  {
+   "name": "Ali Larter",
+   "gender": "F",
+   "p": 0.875,
+   "knownFor": "American actress and model (born 1976)",
+   "img": 1422,
+   "credit": {
+    "author": "BrokenSphere",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Ali_Larter_at_WonderCon_2010_2.JPG"
+   }
+  },
+  {
+   "name": "Laura Dern",
+   "gender": "F",
+   "p": 0.744,
+   "knownFor": "American actress and producer (born 1967)",
+   "img": 21989,
+   "credit": {
+    "author": "Bryan Berlin",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Bradley_Cooper_and_Laura_Dern_Is_This_Thing_On-42_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Lucy Liu",
+   "gender": "F",
+   "p": 0.62,
+   "knownFor": "American actress (born 1968)",
+   "img": 23295,
+   "credit": {
+    "author": "Montclair Film",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Lucy_Liu_MFF_2025.jpg"
+   }
+  },
+  {
+   "name": "Cobie Smulders",
+   "gender": "F",
+   "p": 0.583,
+   "knownFor": "Canadian actress and model (born 1982)",
+   "img": 7443,
+   "credit": {
+    "author": "https://www.flickr.com/photos/relevantwriter/",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Cobie_Smulders_Comicpalooza_2015_(17838582368)_(cropped).jpg"
+   }
+  },
+  {
+   "name": "Sia",
+   "gender": "F",
+   "p": 0.51,
+   "knownFor": "Australian singer and songwriter (born 1975)",
+   "img": 34923,
+   "credit": {
+    "author": "( Kirk Stauffer )",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Sia_Seattle_(cropped).jpg"
+   }
+  }
+ ]
+}

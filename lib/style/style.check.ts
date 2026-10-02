@@ -1,10 +1,11 @@
 // Self-check for the style logic. Run:
 //   npx esbuild lib/style/style.check.ts --bundle --platform=node --outfile=%TEMP%/style-check.cjs && node %TEMP%/style-check.cjs
 import { chooseOutfit, dressFor, layers } from "./model"
-import { ITEMS, OCCASIONS } from "./catalog"
+import { BROW_FOR, FRINGE, GLASSES_FOR, ITEMS, OCCASIONS, OFF_FOREHEAD } from "./catalog"
+import CELEBS from "./celeb-shapes.json"
 import assert from "node:assert/strict"
-import { NORMS, classify, type Ratios } from "./face-shape"
-import { grooming, heightClass, rankCuts, type Answers } from "./recommend"
+import { NORMS, classify, type Ratios, type ShapeResult } from "./face-shape"
+import { grooming, heightClass, rankCuts, shapeLabel, weighted, type Answers } from "./recommend"
 import { cards, instruction, tabsFor } from "./editor"
 
 const z = (zs: number[]) => zs.map((v, i) => NORMS.mean[i] + v * NORMS.std[i]) as Ratios
@@ -74,5 +75,35 @@ assert.equal(dressFor("interview", "male", both).outfit.top, "rl-oxford")
 assert.equal(dressFor("interview", "female", both).outfit.outer, "babaton-agency-blazer")
 assert.ok(dressFor("older", "male", have).outfit.bottom, "missing layers are filled in, not left empty")
 assert.ok(new Set(ITEMS.map((i) => i.id)).size === ITEMS.length, "item ids are unique")
+
+// ─── recommendations beyond face shape ───
+// between shapes: a face the scan can't call between oval and oblong gets picks that suit both, and says so
+const between: ShapeResult = { shape: "oval", second: "oblong", confidence: 0.45, z: [0, 0, 0, 0],
+  probs: { oval: 0.45, oblong: 0.4, round: 0.05, square: 0.04, heart: 0.03, diamond: 0.02, triangle: 0.01 } }
+assert.equal(shapeLabel(between), "oval, close to oblong")
+assert.equal(shapeLabel(oval).includes("close to"), oval.probs[oval.second] >= oval.probs.oval - 0.15)
+assert.ok(weighted(GLASSES_FOR, between).slice(0, 2).some((id) => GLASSES_FOR.oblong.includes(id)), "oblong half still counts")
+// hairline: a receding or high hairline never leads with a cut that shows the forehead; a fringe comes first
+for (const hairline of ["receding", "high", "slight"] as const) {
+  const top = rankCuts({ ...base, gender: "male", hairline }, between)[0].cut.id
+  assert.ok(!OFF_FOREHEAD.has(top), `${hairline}: ${top}`)
+  assert.ok(FRINGE.has(top) || top === "buzz" || top === "shaved", `${hairline}: ${top} should be a fringe or a clean buzz`)
+}
+assert.ok(rankCuts({ ...base, hairline: "high" }, between).some((r) => r.cut.hairline.includes("full") && !r.cut.hairline.includes("slight")),
+  "a high hairline is still a full one: full-only cuts aren't filtered out")
+// age: 35+ doesn't lead with a Gen-Z-only cut; brows follow the face shape when there's no goal
+assert.ok(rankCuts({ ...base, gender: "male", age: 42 }, between).slice(0, 3).every((r) => !(r.cut.tracks.length === 1 && r.cut.tracks[0] === "genz")))
+assert.ok(BROW_FOR.oval.includes(cards("brows", { gender: "male" }, between).find((c) => c.best)!.id) ||
+  BROW_FOR.oblong.includes(cards("brows", { gender: "male" }, between).find((c) => c.best)!.id))
+// hair type unknown: the top pick works for most hair (no waves or twists until they say their hair is coily)
+for (const g of ["male", "female"] as const) assert.ok(rankCuts({ ...base, gender: g }, between)[0].cut.tex.length >= 3, g)
+// celebrities: every shape has people (oval included), each with a photo credit, and no politics, royalty or religion
+for (const [shape, people] of Object.entries(CELEBS)) {
+  assert.ok(people.length >= 4, `${shape} has a list`)
+  for (const c of people) {
+    assert.ok(c.credit?.page && c.credit.license, `${c.name} has a credit`)
+    assert.ok(!/politic|president|minister|prince|princess|king of|queen of|pope|senator|activist/i.test(c.knownFor), `${c.name}: ${c.knownFor}`)
+  }
+}
 
 console.log("style checks passed")

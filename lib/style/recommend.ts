@@ -1,7 +1,7 @@
 // Scan + quiz answers -> ranked haircuts, grooming and fit notes. Pure rules: same answers, same advice.
 import type { Shape, ShapeResult } from "./face-shape"
 import {
-  CUTS, PRICE_TIERS, PRODUCTS,
+  CUTS, FRINGE, OFF_FOREHEAD, PRICE_TIERS, PRODUCTS,
   type Cut, type Hairline, type Kind, type ProductId, type Style, type Texture,
 } from "./catalog"
 
@@ -63,10 +63,26 @@ export function heightClass(a: Answers): "short" | "tall" | undefined {
 }
 
 // ─── haircuts ────────────────────────────────────────────────────────────────
+/** Ids from a per-shape "best first" table, ranked over every shape the scan thinks you might be: a face that's
+ *  45% oval and 40% oblong gets picks that suit both, not just oval's. */
+export function weighted(table: Record<Shape, string[]>, s: ShapeResult): string[] {
+  const score = new Map<string, number>()
+  for (const [shape, p] of Object.entries(s.probs) as [Shape, number][])
+    table[shape].forEach((id, i) => score.set(id, (score.get(id) ?? 0) + p * (i === 0 ? 1 : 0.6)))
+  return [...score.entries()].sort((x, y) => y[1] - x[1]).map(([id]) => id)
+}
+
+/** "oval" or "oval, close to oblong" when the second shape is nearly as likely. */
+export const shapeLabel = (s: ShapeResult) => s.probs[s.second] >= s.probs[s.shape] - 0.15 ? `${s.shape}, close to ${s.second}` : s.shape
+
+export type AgeBand = "18-24" | "25-34" | "35-49" | "50+"
+export const AGE_BANDS: Record<AgeBand, number> = { "18-24": 21, "25-34": 30, "35-49": 42, "50+": 55 } // stored as a.age
+
 function score(cut: Cut, a: Answers, s: ShapeResult): { score: number; reasons: string[] } | null {
   const dir = want(a)
   if (a.texture && !cut.tex.includes(a.texture)) return null
-  if (a.hairline && !cut.hairline.includes(a.hairline)) return null
+  const hl = a.hairline === "high" ? "full" : a.hairline // a high hairline is still a full one
+  if (hl && !cut.hairline.includes(hl)) return null
   if (dir !== undefined && Math.abs(cut.dir - dir) > 1.1) return null
 
   let score = 0
@@ -100,7 +116,28 @@ function score(cut: Cut, a: Answers, s: ShapeResult): { score: number; reasons: 
 
   if ((a.life === "office" || a.life === "trades") && cut.tracks.includes("working")) score += 0.5
   if ((a.life === "student" || a.life === "creative") && cut.tracks.includes("genz")) score += 0.5
-  if (a.hairline === "receding" || a.hairline === "thinning") reasons.push("Works with your hairline")
+  // hair type not given yet: cuts that need one particular texture (waves, twists, sleek) shouldn't lead
+  if (!a.texture && cut.tex.length <= 2) score -= 1
+
+  // hairline: a fringe hides a high or receding one; pulling hair up and back shows it
+  if (a.hairline === "high" || a.hairline === "slight" || a.hairline === "receding") {
+    if (FRINGE.has(cut.id)) { score += 1; reasons.push(a.hairline === "high" ? "The fringe balances a taller forehead" : "The fringe softens a receding hairline") }
+    if (OFF_FOREHEAD.has(cut.id)) score -= 1
+  }
+  if (a.hairline === "thinning") {
+    if (cut.weeks <= 3) { score += 1; reasons.push("Short and textured, so thinning shows less") }
+    if (cut.weeks >= 8) score -= 1
+  }
+  if ((a.hairline === "receding" || a.hairline === "bald") && (cut.id === "buzz" || cut.id === "shaved")) { score += 0.5; reasons.push("Owns the hairline instead of hiding it") }
+
+  // age band: trends for the young, polish later on
+  const age = a.age
+  if (age !== undefined) {
+    if (age < 25 && cut.tracks.includes("genz")) score += 0.5
+    if (age >= 25 && age < 35 && cut.tracks.includes("working")) score += 0.5
+    if (age >= 35 && (cut.tracks.includes("classic") || cut.tracks.includes("working"))) score += 0.5
+    if (age >= 35 && cut.tracks.length === 1 && cut.tracks[0] === "genz") score -= 1
+  }
   return { score, reasons }
 }
 
