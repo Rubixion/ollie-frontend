@@ -50,7 +50,7 @@ function advice(s: ShapeResult, a: Answers, intro: string) {
   return text(lines.filter(Boolean).join("\n\n"), { face_shape: s.shape, haircuts: hair, glasses, beard, fit_notes: fit, try_on: link("/ai-stylist") })
 }
 
-const handle = serve("ollie-stylist", (server) => {
+const handle = serve("ollie-stylist", (server, auth) => {
   server.registerTool(
     "haircut_for_face_shape",
     {
@@ -83,7 +83,7 @@ const handle = serve("ollie-stylist", (server) => {
       },
     },
     async ({ photo, ...x }, extra) => {
-      const r = await inference("landmarks", [photo], extra._meta, "/ai-stylist")
+      const r = await inference("landmarks", [photo], extra._meta, "/ai-stylist", auth)
       if (r.error) return text(r.error)
       if (!r.data.face_found) return text("No face was found in that photo. Try a clear, front-facing photo with good light.")
       const m = toMesh(r.data)

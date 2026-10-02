@@ -3,7 +3,7 @@
 import { analyse, MAX_PITCH, MAX_YAW, NORMS_N, REGION_LABEL, REGIONS } from "@/lib/symmetry"
 import { imageFile, inference, link, readOnly, serve, text, toMesh } from "@/lib/mcp"
 
-const handle = serve("ollie-face-symmetry-test", (server) => {
+const handle = serve("ollie-face-symmetry-test", (server, auth) => {
   server.registerTool(
     "face_symmetry_test",
     {
@@ -22,7 +22,7 @@ const handle = serve("ollie-face-symmetry-test", (server) => {
       },
     },
     async ({ photo }, extra) => {
-      const r = await inference("landmarks", [photo], extra._meta, "/face-symmetry-test")
+      const r = await inference("landmarks", [photo], extra._meta, "/face-symmetry-test", auth)
       if (r.error) return text(r.error)
       if (!r.data.face_found) return text("No face was found in that photo. Try a clear, front-facing photo with good light.")
       const m = toMesh(r.data)

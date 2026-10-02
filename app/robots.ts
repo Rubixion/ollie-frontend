@@ -5,7 +5,7 @@ import { SITE_URL } from "@/lib/site-config"
 // Google-Extended, CCBot) is an open question for the owner; add rules here once decided.
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/mcp"] }],
     sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }

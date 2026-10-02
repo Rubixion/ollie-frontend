@@ -12,7 +12,7 @@ const SAME_RAW = 45 // same threshold as components/face-compare.tsx
 
 const slugify = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_]+/g, "-")
 
-const handle = serve("ollie-celebrity-lookalike", (server) => {
+const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
   server.registerTool(
     "famous_lookalikes",
     {
@@ -65,7 +65,7 @@ const handle = serve("ollie-celebrity-lookalike", (server) => {
       },
     },
     async ({ photo }, extra) => {
-      const r = await inference("search", [photo], extra._meta, "/celebrity-lookalike")
+      const r = await inference("search", [photo], extra._meta, "/celebrity-lookalike", auth)
       if (r.error) return text(r.error)
       const all: { name: string; score: number }[] = Object.values(r.data.modes ?? {})[0] as never ?? []
       // Not a celebrity identifier: a same-person-level match means the photo is probably of that celebrity, so it's dropped
@@ -104,7 +104,7 @@ const handle = serve("ollie-celebrity-lookalike", (server) => {
       },
     },
     async ({ photo_a, photo_b }, extra) => {
-      const r = await inference("compare", [photo_a, photo_b], extra._meta, "/compare-faces")
+      const r = await inference("compare", [photo_a, photo_b], extra._meta, "/compare-faces", auth)
       if (r.error) return text(r.error)
       const [a, b] = r.data.face_found ?? [false, false]
       if (!a || !b) return text(`Ollie couldn't find a clear face in ${!a && !b ? "either photo" : !a ? "the first photo" : "the second photo"}. Try front-facing photos with good light.`)

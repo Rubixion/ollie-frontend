@@ -18,7 +18,7 @@ export default function PrivacyPage() {
       <main id="main" className="relative min-h-screen bg-transparent">
         <div className="max-w-3xl mx-auto px-6 pt-32 pb-20">
           <h1 className="text-4xl font-black text-white mb-2 tracking-tight">Privacy Policy</h1>
-          <p className="text-white/60 text-sm mb-12">Last updated: September 26, 2026</p>
+          <p className="text-white/60 text-sm mb-12">Last updated: October 1, 2026</p>
 
           <div className="prose prose-invert max-w-none space-y-10 text-white/60 leading-relaxed">
 
@@ -33,6 +33,7 @@ export default function PrivacyPage() {
               <p className="mt-3">A face fingerprint can count as biometric data under the laws of some places. By uploading a photo you consent to this processing, for the sole purpose of showing you your matches. If you do not consent, please do not upload a photo. Only upload photos of yourself, or of people who have agreed to it.</p>
               <p className="mt-3"><strong className="text-white/80">Gender estimate:</strong> unless you choose &quot;Men&quot; or &quot;Women&quot; in the &quot;Gender&quot; menu, the matching server also estimates from your photo whether the face looks male or female, using the open-source InsightFace model, and uses that estimate only to pick which celebrities to compare you with. The estimate is made in memory, is not stored, and is discarded with your photo. It can be wrong; if you choose &quot;Men&quot; or &quot;Women&quot; instead, no estimate is used.</p>
               <p className="mt-3"><strong className="text-white/80">Share cards:</strong> if you make a card to share your match, it is created entirely in your browser. Nothing is uploaded to us or stored. Your own photo appears on the card next to your match unless you untick &ldquo;Include my photo&rdquo;. The card only leaves your device if you share it.</p>
+              <p className="mt-3"><strong className="text-white/80">Using Ollie inside ChatGPT:</strong> we also offer Ollie as apps inside ChatGPT (celebrity lookalike, face symmetry and stylist). When you use one, ChatGPT passes the photo you gave it to our server through a temporary link so we can run the same analysis. We handle it exactly as above: it is used in memory only, is never stored, saved, logged or used to train our model, and is discarded when the result is ready. We measure your face&apos;s geometry (its &quot;fingerprint&quot; or the positions of facial landmarks), which can count as biometric data; by using the app you consent to this, solely to return your result. The photo also passes through OpenAI, who run ChatGPT under their own privacy policy. Our ChatGPT apps never try to identify, name or find a stranger, and are only for a photo of yourself.</p>
             </section>
 
             <section>
@@ -76,6 +77,7 @@ export default function PrivacyPage() {
                 <li><strong className="text-white/80">Cloudflare:</strong> hosts the website, delivers pages to you, and provides cookieless website analytics.</li>
                 <li><strong className="text-white/80">Supabase:</strong> stores account data, your signup choices, the email list, and search records.</li>
                 <li><strong className="text-white/80">Google:</strong> if you choose &quot;Continue with Google&quot;, Google authenticates you and shares your basic profile details with us. We use that information only to sign you in and manage your account. Google also provides Google Analytics (see Website analytics above).</li>
+                <li><strong className="text-white/80">OpenAI:</strong> if you use Ollie through one of our apps in ChatGPT, OpenAI runs ChatGPT and passes the photo you gave it to our server so we can return your result. OpenAI handles your use of ChatGPT under its own privacy policy.</li>
               </ul>
               <p className="mt-3">We may also disclose data if the law requires it.</p>
             </section>

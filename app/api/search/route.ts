@@ -66,10 +66,9 @@ export async function POST(req: NextRequest) {
     if (!quota.ok) {
       if (quota.reason === "user_limit") {
         return NextResponse.json(
-          // Don't quote USER_LIMIT here — it's a token-cost guard, not a real cap, and not worth advertising.
           user
-            ? { error: "Search is temporarily unavailable for your account. Please try again later.", code: "user_limit" }
-            : { error: "You've used today's free searches. Sign in to keep searching.", code: "guest_limit" },
+            ? { error: "You've reached your daily search limit. It resets tomorrow.", code: "user_limit" }
+            : { error: "You've used today's free search. Sign in to keep searching.", code: "guest_limit" },
           { status: 429 }
         )
       }
