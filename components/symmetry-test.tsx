@@ -16,7 +16,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Skeleton } from "@/components/ui/skeleton"
 import { track } from "@/lib/analytics"
 import { glass, glassOpen } from "@/lib/surfaces"
-import { analyse, MAX_PITCH, MAX_YAW, NORMS_N, pose, REGION_LABEL, REGIONS, type SymmetryResult } from "@/lib/symmetry"
+import { analyse, MAX_PITCH, MAX_YAW, NORMS_N, pose, REGION_LABEL, REGIONS, verdict, type SymmetryResult } from "@/lib/symmetry"
 
 // Same files as the style scan (keep the version in step with package.json); loaded on the first test only (~15 MB).
 const WASM = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm"
@@ -87,14 +87,6 @@ function mirrorViews(img: HTMLImageElement, lm: { x: number; y: number }[], roll
     return c.toDataURL("image/jpeg", 0.9)
   }
   return { original: level.toDataURL("image/jpeg", 0.9), left: half(true), right: half(false) }
-}
-
-function verdict(b: number) {
-  if (b >= 80) return "Very symmetric"
-  if (b >= 60) return "More symmetric than most"
-  if (b >= 40) return "About average"
-  if (b >= 20) return "A little less symmetric than most"
-  return "Noticeably asymmetric (often the photo)"
 }
 
 export function SymmetryTest() {

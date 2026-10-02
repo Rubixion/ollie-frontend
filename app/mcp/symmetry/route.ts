@@ -1,10 +1,11 @@
 // The "Face Symmetry Test" ChatGPT app at https://www.ollieml.com/mcp/symmetry (its own listing in the OpenAI plugin portal).
 // Same maths and norms as /face-symmetry-test: Modal's /landmarks runs the browser's MediaPipe model, lib/symmetry.ts scores it.
-import { analyse, MAX_PITCH, MAX_YAW, NORMS_N, REGION_LABEL, REGIONS } from "@/lib/symmetry"
+// No login and no daily limit (owner's call 2026-10-02): the OAuth metadata route 404s for this path, and inference runs "free".
+import { analyse, MAX_PITCH, MAX_YAW, NORMS_N, REGION_LABEL, REGIONS, verdict } from "@/lib/symmetry"
 import { imageFile, inference, link, noPhoto, photoBase64, photoUrl, readOnly, resolvePhoto, serve, text, toMesh } from "@/lib/mcp"
 import { registerWidget, widgetMeta, widgetResult } from "@/lib/mcp-widget"
 
-const handle = serve("ollie-face-symmetry-test", (server, auth) => {
+const handle = serve("ollie-face-symmetry-test", (server) => {
   registerWidget(server)
   server.registerTool(
     "face_symmetry_test",
@@ -27,7 +28,7 @@ const handle = serve("ollie-face-symmetry-test", (server, auth) => {
     async ({ photo, photo_url, photo_base64 }, extra) => {
       const f = resolvePhoto(photo, photo_url, photo_base64)
       if (!f) return text(noPhoto("test your face symmetry", "/face-symmetry-test"))
-      const r = await inference("landmarks", [f], extra._meta, "/face-symmetry-test", auth)
+      const r = await inference("landmarks", [f], extra._meta, "/face-symmetry-test", "free")
       if (r.error) return text(r.error)
       if (!r.data.face_found) return text("No face was found in that photo. Try a clear, front-facing photo with good light.")
       const m = toMesh(r.data)
@@ -44,16 +45,21 @@ const handle = serve("ollie-face-symmetry-test", (server, auth) => {
           `Most symmetric: ${best} (${res.regions[sorted[0]]}%); least: ${least} (${res.regions[sorted[sorted.length - 1]]}%). ` +
           `Nobody's face is perfectly symmetric, and small differences are normal and often part of what makes a face recognisable; this is not an attractiveness score. ` +
           `See the face mirrored left-left and right-right, plus a shareable card, at ${link("/face-symmetry-test")}. ` +
-          `Find haircuts and glasses that suit the face shape at ${link("/ai-stylist")}.`,
+          `Also on Ollie's website: find which celebrity the user looks like at ${link("/celebrity-lookalike")}, and try different hairstyles and outfits on their own face with AI at ${link("/ai-stylist")}.`,
         { more_symmetric_than_percent: res.beats, compared_with: NORMS_N, regions_percent: regions },
         {
           kind: "symmetry",
           title: "Your face symmetry",
           pct: res.beats,
+          verdict: verdict(res.beats),
           pctLabel: `more symmetric than ${NORMS_N.toLocaleString("en-US")} real faces`,
           items: REGIONS.map((k) => ({ name: REGION_LABEL[k], pct: res.regions[k] })),
           cta: { label: "See the mirrored view →", href: link("/face-symmetry-test") },
-          foot: "Symmetry only — not an attractiveness score.",
+          more: [
+            { label: "Which celebrity do you look like?", href: link("/celebrity-lookalike") },
+            { label: "Try hairstyles and outfits on your face with AI", href: link("/ai-stylist") },
+          ],
+          foot: "Symmetry only, not an attractiveness score.",
         },
       )
     },

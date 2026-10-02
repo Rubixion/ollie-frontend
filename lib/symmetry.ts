@@ -83,3 +83,12 @@ export function pose(m: number[]): { yaw: number; pitch: number } {
 }
 
 export const REGION_LABEL: Record<Region, string> = { eyes: "Eyes", brows: "Eyebrows", nose: "Nose", mouth: "Mouth", jaw: "Jaw and face outline" }
+
+/** The one-line read of an overall percentile, shared by /face-symmetry-test and the ChatGPT app. */
+export function verdict(b: number) {
+  if (b >= 80) return "Very symmetric"
+  if (b >= 60) return "More symmetric than most"
+  if (b >= 40) return "About average"
+  if (b >= 20) return "A little less symmetric than most"
+  return "Noticeably asymmetric (often the photo)"
+}

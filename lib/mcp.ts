@@ -143,16 +143,18 @@ const ANON_GLOBAL_DAILY = 300
 // Connected users: keyed on their real Supabase id (shared with the website and every tool), own 25/day.
 // Not connected: 1/day per openai/subject (the teaser) AND a global ANON_GLOBAL_DAILY ceiling (the cost guard).
 // moreAt: the site page to send people to once they've used the day's checks.
-export async function inference(path: "search" | "compare" | "landmarks", files: ImageFile[], meta: Record<string, unknown> | undefined, moreAt: string, auth: McpAuth) {
+// auth "free": no quota at all (the symmetry app, owner's call 2026-10-02; /landmarks is CPU-only).
+// ponytail: uncapped Modal CPU calls, add a global ceiling here if /landmarks spend ever shows up on the bill.
+export async function inference(path: "search" | "compare" | "landmarks", files: ImageFile[], meta: Record<string, unknown> | undefined, moreAt: string, auth: McpAuth | "free") {
   const baseUrl = process.env.INFERENCE_URL, apiKey = process.env.INFERENCE_API_KEY
   if (!baseUrl || !apiKey) return { error: "Ollie isn't available right now." }
   const subject = typeof meta?.["openai/subject"] === "string" ? meta["openai/subject"] : "anon"
   // Two buckets per call: a per-identity "user" bucket and an "ip" bucket. For anon we point the ip bucket at one
   // constant key so it becomes a global cap; for connected users it's their own key so they don't block each other.
-  const quota = auth
+  const quota = auth === "free" ? null : auth
     ? await consumeSearch(auth.userId, `mcp-user:${auth.userId}`, USER_LIMIT, USER_WINDOW ?? "24 hours", USER_LIMIT, USER_WINDOW ?? "24 hours")
     : await consumeSearch(await guestId(`chatgpt:${subject}`), "mcp:anon", GUEST_MCP_LIMIT, "24 hours", ANON_GLOBAL_DAILY, "24 hours")
-  if (!quota.ok) {
+  if (quota && !quota.ok) {
     if (quota.reason === "unavailable") return { error: "Ollie is temporarily unavailable. Please try again shortly." }
     if (auth) return { error: `That's your daily limit of Ollie searches. It resets tomorrow — or use the site: ${link(moreAt)}` }
     // anon: ip_limit = the global free-tier cap for today; user_limit = this person's 1 free is spent
@@ -177,7 +179,7 @@ export async function inference(path: "search" | "compare" | "landmarks", files:
     return { data: await res.json() }
   } catch (err) {
     console.error("mcp inference failed:", err)
-    await refundSearch(quota)
+    if (quota) await refundSearch(quota)
     return { error: "The photo couldn't be checked. Try again with a clear, front-facing JPG or PNG photo." }
   }
 }
