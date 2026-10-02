@@ -10,7 +10,42 @@ export const OAUTH_SCOPE = "ollie.search"
 const CODE_TTL_S = 300 // 5 min to complete the token exchange after consent
 const ACCESS_TTL_S = 3600 // 1 h: short, so a leaked access token dies fast; ChatGPT silently refreshes
 const REFRESH_TTL_S = 180 * 24 * 3600
-const REGISTER_PER_IP_PER_DAY = 20 // dynamic-registration cap per IP (DB-backed)
+const REGISTER_PER_IP_PER_DAY = 8 // dynamic-registration cap per IP (DB-backed)
+
+// Redirect targets we accept at registration. The attack we're blocking is a remote attacker host (evil.com)
+// receiving a victim's auth code (consent-phishing via open DCR). Two things are safe:
+//  - loopback (http://localhost:PORT) — native desktop/CLI MCP clients (Claude Desktop, Claude Code, Cursor, Gemini CLI)
+//    use it, and the code only reaches the user's own machine;
+//  - remote https on a known MCP-client vendor host.
+// Everything else is rejected. Add vendor hosts without a deploy via OAUTH_ALLOWED_REDIRECT_HOSTS (comma-separated),
+// and rejected hosts are logged so you can spot a legit client that needs adding.
+const DEFAULT_REDIRECT_HOSTS = [
+  "openai.com", "chatgpt.com", "oaiusercontent.com", // ChatGPT
+  "claude.ai", "claude.com", "anthropic.com", // Claude (web + desktop)
+  "perplexity.ai", // Perplexity
+  "cursor.com", "cursor.sh", // Cursor
+  "google.com", "googleusercontent.com", // Gemini
+]
+
+const isLoopbackHost = (host: string) => {
+  const h = host.replace(/^\[|\]$/g, "").toLowerCase()
+  return h === "localhost" || h === "127.0.0.1" || h === "::1" || h.endsWith(".localhost")
+}
+
+/** Is this redirect_uri safe to register/use? Loopback (any port) or https on an allowed vendor host. */
+export function redirectAllowed(uri: string): boolean {
+  let u: URL
+  try {
+    u = new URL(uri)
+  } catch {
+    return false
+  }
+  if (isLoopbackHost(u.hostname)) return u.protocol === "http:" || u.protocol === "https:"
+  if (u.protocol !== "https:") return false
+  const host = u.hostname.toLowerCase()
+  const extra = (process.env.OAUTH_ALLOWED_REDIRECT_HOSTS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
+  return [...DEFAULT_REDIRECT_HOSTS, ...extra].some((a) => host === a || host.endsWith("." + a))
+}
 
 function db() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -74,10 +109,11 @@ export async function getClient(client_id: string): Promise<OAuthClient | null> 
   return data as OAuthClient | null
 }
 
-/** A client is valid only if it exists and the redirect_uri is one it registered (exact match). */
+/** Valid only if the client exists, the redirect_uri is one it registered (exact match), and it's an allowed target.
+ *  The allowlist is re-checked here (not just at registration) so a client registered before the rule can't use evil hosts. */
 export async function validateClientRedirect(client_id: string, redirect_uri: string): Promise<boolean> {
   const c = await getClient(client_id)
-  return !!c && c.redirect_uris.includes(redirect_uri)
+  return !!c && c.redirect_uris.includes(redirect_uri) && redirectAllowed(redirect_uri)
 }
 
 // ─── authorization codes ─────────────────────────────────────────────────────

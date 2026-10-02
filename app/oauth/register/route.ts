@@ -1,7 +1,7 @@
 // Dynamic client registration (RFC 7591). ChatGPT POSTs its redirect_uris and gets a client_id back.
 // Public clients only (PKCE, no secret).
 import { NextResponse } from "next/server"
-import { registerClient, canRegister, CORS } from "@/lib/oauth"
+import { registerClient, canRegister, redirectAllowed, CORS } from "@/lib/oauth"
 import { getIp } from "@/lib/rate-limit"
 
 export async function POST(req: Request) {
@@ -11,8 +11,9 @@ export async function POST(req: Request) {
   }
   const body = await req.json().catch(() => null)
   const uris: string[] = Array.isArray(body?.redirect_uris) ? body.redirect_uris.filter((u: unknown) => typeof u === "string") : []
-  // Only https redirect targets (ChatGPT's callback is https); never register http/custom schemes.
-  if (!uris.length || !uris.every((u) => u.startsWith("https://"))) {
+  // Loopback (native MCP clients) or https on a known vendor host — never an arbitrary attacker host (consent-phishing).
+  if (!uris.length || !uris.every(redirectAllowed)) {
+    console.error("oauth register rejected redirect_uris:", uris.join(" "))
     return NextResponse.json({ error: "invalid_redirect_uri" }, { status: 400, headers: CORS })
   }
   const client = await registerClient(uris, typeof body?.client_name === "string" ? body.client_name.slice(0, 120) : undefined)

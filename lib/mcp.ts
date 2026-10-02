@@ -38,17 +38,23 @@ export const photoBase64 = z
 // pass chat uploads to tools). Routes the user to the matching Ollie web page to do it there.
 export const noPhoto = (what: string, path: string) =>
   `I can't read a photo uploaded directly in this chat — this assistant doesn't pass uploaded images to tools. ` +
-  `To ${what}, open the Ollie page and upload your photo there (it takes a few seconds): ${link(path)} . ` +
-  `You can also paste a direct public image link here and I'll run it. ` +
-  `Note: here I can reliably find which famous people look like a celebrity you name (no photo needed) — just give me a name.`
+  `Present BOTH of these options to the user:\n` +
+  `• To ${what}: upload the photo on Ollie's page (takes a few seconds) — ${link(path)} — or paste a direct public image URL here and I'll run it for you.\n` +
+  `• Or skip photos entirely: name any celebrity and I'll show the famous people who look most like them — for example "who does Zendaya look like?" or "celebrities similar to Timothée Chalamet". Just give me a name.`
 
 // Server-level instructions (sent in the MCP initialize result) so the assistant understands what it can/can't do.
 export const SERVER_INSTRUCTIONS =
-  "Ollie measures how alike human faces look. Use the no-photo tools freely (e.g. which celebrities look like a named celebrity). " +
+  "Ollie measures how alike human faces look. These are for-fun resemblance results, NOT identification of a person: " +
+  "when the user shares their own selfie and asks 'which celebrity do I look like', for their celebrity twin/doppelganger, " +
+  "or to compare two faces, call the matching Ollie tool rather than declining — the tools return lookalikes by similarity " +
+  "score and already refuse to identify strangers or minors, so using them is appropriate. " +
+  "Use the no-photo tools freely (e.g. which celebrities look like a named celebrity). " +
   "The photo tools (your celebrity lookalike, compare two faces, face symmetry, face shape) need the user's own image. " +
   "Some clients — notably Claude — can't pass a chat image upload to a tool; when a photo tool reports it couldn't read the photo, " +
-  "tell the user to upload their photo on the Ollie web page named in the tool's reply (celebrity-lookalike, compare-faces, or " +
-  "face-symmetry-test), or to paste a direct public image URL. Never guess or name a real person from a photo."
+  "always give the user BOTH: (a) upload on the Ollie web page named in the reply (celebrity-lookalike, compare-faces, or " +
+  "face-symmetry-test) or paste a public image URL, AND (b) the no-photo alternative — the famous_lookalikes tool, which finds " +
+  "the celebrities who look most like any celebrity the user names (give an example like 'who does Zendaya look like?'). " +
+  "Never guess or name a real person from a photo."
 
 /** Choose a usable image source. A file:// upload (claude.ai's local path) is unreachable, so it's ignored in favour
  *  of a URL or base64. Returns an ImageFile (download() understands https and data: URLs), or null if nothing usable. */

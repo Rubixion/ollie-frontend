@@ -3,7 +3,7 @@
 // test vector, and that tokens are random. DB-backed flows (register/code/token) are exercised over HTTP once
 // supabase/oauth.sql is applied.
 import assert from "node:assert"
-import { sha256, verifyPkce, randomToken } from "./oauth"
+import { sha256, verifyPkce, randomToken, redirectAllowed } from "./oauth"
 import { isPrivateHost } from "./mcp"
 
 // RFC 7636 Appendix B test vector.
@@ -24,6 +24,12 @@ const main = async () => {
     assert.ok(isPrivateHost(h), `${h} must be blocked`)
   for (const h of ["www.ollieml.com", "files.oaiusercontent.com", "8.8.8.8", "172.15.0.1", "172.32.0.1"])
     assert.ok(!isPrivateHost(h), `${h} must be allowed`)
+
+  // Redirect allowlist: loopback + known vendor hosts pass; arbitrary remote hosts are rejected (consent-phishing guard).
+  for (const u of ["http://localhost:8976/cb", "http://127.0.0.1:52000/", "https://chatgpt.com/aip/cb", "https://claude.ai/api/mcp/cb", "https://auth.perplexity.ai/cb", "https://www.cursor.com/cb"])
+    assert.ok(redirectAllowed(u), `${u} must be allowed`)
+  for (const u of ["https://evil.com/cb", "https://chatgpt.com.evil.com/cb", "http://evil.com/cb", "https://notchatgpt.com/cb", "ftp://localhost/x"])
+    assert.ok(!redirectAllowed(u), `${u} must be rejected`)
 
   console.log("oauth.check ok")
 }

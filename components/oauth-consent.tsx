@@ -104,6 +104,15 @@ export function OAuthConsent(props: Props) {
               <li>Count those searches against your account&apos;s daily limit</li>
             </ul>
             <p className="mt-3 text-xs text-white/40">It cannot read your photos after a result is returned — nothing is stored.</p>
+            {(() => {
+              let host = ""
+              try { host = new URL(props.redirectUri).host } catch {}
+              return host ? (
+                <p className="mt-3 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/50">
+                  Your authorization will be sent to <span className="font-semibold text-white/80">{host}</span>. Only continue if you recognise it.
+                </p>
+              ) : null
+            })()}
             {err && <p className="mt-4 text-sm text-red-400">{err}</p>}
             <div className="mt-6 flex gap-3">
               <Button variant="brand" size="cta" className="flex-1" onClick={allow} disabled={busy}>
