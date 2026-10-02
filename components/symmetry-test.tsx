@@ -267,8 +267,8 @@ export function SymmetryTest() {
                   card={{
                     intro: "How symmetric is my face?",
                     photos: [{ src: result.views.original, label: "Me" }, { src: result.views[side], label: `${side === "left" ? "Left" : "Right"} side × 2` }],
-                    headline: `${result.beats}% symmetric`,
-                    subline: `More symmetric than ${result.beats}% of faces`,
+                    headline: `Beats ${result.beats}% of faces`,
+                    subline: verdict(result.beats),
                     path: "face-symmetry-test",
                     text: `My face is more symmetric than ${result.beats}% of faces. Test yours:`,
                   }}
