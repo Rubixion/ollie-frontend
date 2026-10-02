@@ -212,11 +212,13 @@ export async function getMcpUser(req: Request): Promise<McpAuth> {
 }
 
 /** Stateless Streamable HTTP route handler for one app. Resolves the user once, per request, and hands it to build(). */
-export function serve(name: string, build: (server: McpServer, auth: McpAuth) => void) {
+// claude: true on the bare /mcp alias (the claude.ai connector). Only there do photo tools take base64: ChatGPT, offered it,
+// re-encodes the upload and types ~30k characters into the tool call, which takes minutes.
+export function serve(name: string, build: (server: McpServer, auth: McpAuth, claude: boolean) => void) {
   return async (req: Request) => {
     const auth = await getMcpUser(req)
     const server = new McpServer({ name, version: "1.0.0" }, { instructions: SERVER_INSTRUCTIONS })
-    build(server, auth)
+    build(server, auth, new URL(req.url).pathname === "/mcp")
     const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true })
     await server.connect(transport)
     return transport.handleRequest(req)

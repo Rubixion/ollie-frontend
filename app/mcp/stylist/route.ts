@@ -6,7 +6,7 @@ import { z } from "zod"
 import { classify, measure, SHAPE_INFO, type Shape, type ShapeResult } from "@/lib/style/face-shape"
 import { cards } from "@/lib/style/editor"
 import { fitNotes, shapeLabel, want, type Answers } from "@/lib/style/recommend"
-import { imageFile, inference, link, noPhoto, photoBase64, photoUrl, readOnly, resolvePhoto, serve, text, toMesh } from "@/lib/mcp"
+import { imageFile, inference, link, noPhoto, photoUrl, readOnly, resolvePhoto, serve, text, toMesh } from "@/lib/mcp"
 import { registerWidget, widgetMeta, widgetResult } from "@/lib/mcp-widget"
 
 const SHAPES = ["oval", "round", "square", "oblong", "heart", "diamond", "triangle"] as const
@@ -94,7 +94,7 @@ const handle = serve("ollie-stylist", (server, auth) => {
         "Finds the user's face shape from their photo (oval, round, square, oblong, heart, diamond or triangle), then recommends the 3 best haircuts, glasses and beard styles for it. " +
         "Use this when the user uploads a selfie and asks 'what is my face shape', 'what haircut would suit me', 'what hairstyle suits my face', " +
         "'what glasses suit my face' or 'how should I change my look'. Only for a photo of the user themselves, not of other people or children. The photo is not stored.",
-      inputSchema: { photo: imageFile.optional().describe("A straight-on photo of the user's own face, hair pulled back from the face if possible"), photo_url: photoUrl.optional(), photo_base64: photoBase64.optional(), ...about },
+      inputSchema: { photo: imageFile.optional().describe("A straight-on photo of the user's own face, hair pulled back from the face if possible"), photo_url: photoUrl.optional(), ...about },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
         ...widgetMeta,
@@ -103,8 +103,8 @@ const handle = serve("ollie-stylist", (server, auth) => {
         "openai/toolInvocation/invoked": "Found your face shape",
       },
     },
-    async ({ photo, photo_url, photo_base64, ...x }, extra) => {
-      const f = resolvePhoto(photo, photo_url, photo_base64)
+    async ({ photo, photo_url, ...x }, extra) => {
+      const f = resolvePhoto(photo, photo_url)
       if (!f) return text(noPhoto("find your face shape and the styles that suit it", "/ai-stylist"))
       const r = await inference("landmarks", [f], extra._meta, "/ai-stylist", auth)
       if (r.error) return text(r.error)

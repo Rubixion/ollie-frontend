@@ -2,7 +2,7 @@
 // Same maths and norms as /face-symmetry-test: Modal's /landmarks runs the browser's MediaPipe model, lib/symmetry.ts scores it.
 // No login and no daily limit (owner's call 2026-10-02): the OAuth metadata route 404s for this path, and inference runs "free".
 import { analyse, MAX_PITCH, MAX_YAW, NORMS_N, REGION_LABEL, REGIONS, verdict } from "@/lib/symmetry"
-import { imageFile, inference, link, noPhoto, photoBase64, photoUrl, readOnly, resolvePhoto, serve, text, toMesh } from "@/lib/mcp"
+import { imageFile, inference, link, noPhoto, photoUrl, readOnly, resolvePhoto, serve, text, toMesh } from "@/lib/mcp"
 import { registerWidget, widgetMeta, widgetResult } from "@/lib/mcp-widget"
 
 const handle = serve("ollie-face-symmetry-test", (server) => {
@@ -16,7 +16,7 @@ const handle = serve("ollie-face-symmetry-test", (server) => {
         "Use this when the user uploads a selfie and asks 'how symmetrical is my face', 'is my face symmetrical', 'face symmetry test', " +
         "'rate my face symmetry' or 'which side of my face is different'. It measures symmetry only, not attractiveness. " +
         "Only for a photo of the user themselves, not of other people or children. The photo is not stored.",
-      inputSchema: { photo: imageFile.optional().describe("A straight-on, front-facing photo of the user's own face, looking at the camera"), photo_url: photoUrl.optional(), photo_base64: photoBase64.optional() },
+      inputSchema: { photo: imageFile.optional().describe("A straight-on, front-facing photo of the user's own face, looking at the camera"), photo_url: photoUrl.optional() },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
         ...widgetMeta,
@@ -25,8 +25,8 @@ const handle = serve("ollie-face-symmetry-test", (server) => {
         "openai/toolInvocation/invoked": "Measured your face symmetry",
       },
     },
-    async ({ photo, photo_url, photo_base64 }, extra) => {
-      const f = resolvePhoto(photo, photo_url, photo_base64)
+    async ({ photo, photo_url }, extra) => {
+      const f = resolvePhoto(photo, photo_url)
       if (!f) return text(noPhoto("test your face symmetry", "/face-symmetry-test"))
       const r = await inference("landmarks", [f], extra._meta, "/face-symmetry-test", "free")
       if (r.error) return text(r.error)

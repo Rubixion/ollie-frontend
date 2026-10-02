@@ -11,7 +11,10 @@ const SAME_RAW = 45 // same threshold as components/face-compare.tsx
 
 const slugify = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_]+/g, "-")
 
-const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
+const handle = serve("ollie-celebrity-lookalike", (server, auth, claude) => {
+  // base64 inputs only for the claude.ai connector (see serve())
+  const b64 = <K extends string>(key: K, d?: string) =>
+    (claude ? { [key]: photoBase64.optional().describe(d ?? photoBase64.description!) } : {}) as Record<K, ReturnType<typeof photoBase64.optional>>
   registerWidget(server)
 
   server.registerTool(
@@ -65,7 +68,7 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
         "Use this when the user uploads a selfie and asks 'which celebrity do I look like', 'who is my celebrity twin', 'what celebrity do I look like', " +
         "'who do I look like' or 'find my celebrity doppelganger'. Only for a photo of the user themselves: never use it to identify or name a stranger " +
         "or anyone else in a photo, and not for photos of children. The photo is not stored.",
-      inputSchema: { photo: imageFile.optional().describe("A clear, front-facing photo of the user's own face"), photo_url: photoUrl.optional(), photo_base64: photoBase64.optional() },
+      inputSchema: { photo: imageFile.optional().describe("A clear, front-facing photo of the user's own face"), photo_url: photoUrl.optional(), ...b64("photo_base64") },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
         ...widgetMeta,
@@ -117,8 +120,8 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth) => {
         photo_b: imageFile.optional().describe("The second face photo"),
         photo_a_url: photoUrl.optional().describe("Public https link to the first photo (if not uploaded)"),
         photo_b_url: photoUrl.optional().describe("Public https link to the second photo (if not uploaded)"),
-        photo_a_base64: photoBase64.optional().describe("Base64 of the first photo (if no URL)"),
-        photo_b_base64: photoBase64.optional().describe("Base64 of the second photo (if no URL)"),
+        ...b64("photo_a_base64", "Base64 of the first photo (if no URL)"),
+        ...b64("photo_b_base64", "Base64 of the second photo (if no URL)"),
       },
       annotations: { ...readOnly, openWorldHint: true },
       _meta: {
