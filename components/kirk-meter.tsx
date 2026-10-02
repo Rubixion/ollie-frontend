@@ -4,7 +4,7 @@
 import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Upload, X, Gauge, Loader2, AlertCircle, RotateCcw, ArrowRight } from "lucide-react"
+import { Upload, X, Gauge, Loader2, AlertCircle, RotateCcw, ArrowRight, Camera } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { scale } from "@/components/celebrity-finder"
@@ -172,6 +172,15 @@ export function KirkMeter() {
                   <span className="text-sm font-medium text-white/80">Click to upload or drop a photo</span>
                   <span className="text-xs text-white/50">You can also paste with Ctrl+V</span>
                 </span>
+              </label>
+            )}
+            {!imageDataUrl && (
+              // Phones: straight to the front camera, like the lookalike finder
+              <label className="md:hidden flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/10 bg-white/[0.03] text-white/70 text-sm font-semibold has-focus-visible:ring-2 has-focus-visible:ring-(--ollie-cyan) cursor-pointer">
+                <input type="file" accept="image/*" capture="user" className="sr-only"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => { const f = e.target.files?.[0]; if (f) loadFile(f); e.target.value = "" }} />
+                <Camera size={16} aria-hidden="true" />
+                Take a selfie
               </label>
             )}
 

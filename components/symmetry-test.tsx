@@ -24,22 +24,27 @@ const MODEL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/f
 const BLUE = "rgb(100 130 210)"
 const faces = NORMS_N.toLocaleString("en-US")
 
-let landmarker: Promise<FL> | null = null
-function getLandmarker() {
-  landmarker ??= (async () => {
+// One landmarker per delegate. GPU first; some graphics drivers load the GPU model fine but then fail on a still photo
+// (the error isn't even an Error), so run() retries the same photo on the CPU one.
+const landmarkers: Partial<Record<"GPU" | "CPU", Promise<FL>>> = {}
+function getLandmarker(delegate: "GPU" | "CPU" = "GPU") {
+  const p = landmarkers[delegate] ??= (async () => {
     const { FaceLandmarker, FilesetResolver } = await import("@mediapipe/tasks-vision")
     const files = await FilesetResolver.forVisionTasks(WASM)
-    const opts = (delegate: "GPU" | "CPU") => ({
-      baseOptions: { modelAssetPath: MODEL, delegate },
+    const opts = (d: "GPU" | "CPU") => ({
+      baseOptions: { modelAssetPath: MODEL, delegate: d },
       runningMode: "IMAGE" as const,
       numFaces: 1,
       outputFacialTransformationMatrixes: true,
     })
-    return FaceLandmarker.createFromOptions(files, opts("GPU")).catch(() => FaceLandmarker.createFromOptions(files, opts("CPU")))
+    return delegate === "CPU" ? FaceLandmarker.createFromOptions(files, opts("CPU"))
+      : FaceLandmarker.createFromOptions(files, opts("GPU")).catch(() => FaceLandmarker.createFromOptions(files, opts("CPU")))
   })()
-  landmarker.catch(() => (landmarker = null)) // let a retry load it again
-  return landmarker
+  p.catch(() => delete landmarkers[delegate]) // let a retry load it again
+  return p
 }
+
+class ModelLoadError extends Error {}
 
 function loadImg(src: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -125,8 +130,16 @@ export function SymmetryTest() {
     setLoading(true)
     setError(null)
     try {
-      const [lm, img] = await Promise.all([getLandmarker(), loadImg(photo.preview)])
-      const res = lm.detect(img)
+      // the 1280px copy, not the original: a 12-48 MP phone photo can be bigger than the GPU's largest texture
+      const img = await loadImg(photo.data)
+      const lm = await getLandmarker().catch((e) => { throw new ModelLoadError(String(e)) })
+      let res
+      try {
+        res = lm.detect(img)
+      } catch (e) {
+        console.warn("symmetry: GPU detect failed, retrying on the CPU", e)
+        res = (await getLandmarker("CPU").catch((e2) => { throw new ModelLoadError(String(e2)) })).detect(img)
+      }
       const pts = res.faceLandmarks[0]
       if (!pts) throw new Error("We couldn't find a face. Try a clear, front-facing photo.")
       const m = res.facialTransformationMatrixes?.[0]?.data
@@ -139,7 +152,10 @@ export function SymmetryTest() {
       track("symmetry_done", { beats: r.beats })
       requestAnimationFrame(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }))
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong loading the face model. Check your connection and try again.")
+      console.error("symmetry test failed", e)
+      setError(e instanceof ModelLoadError ? "Something went wrong loading the face model. Check your connection and try again."
+        : e instanceof Error ? e.message : "Couldn't analyse that photo. Try another clear, front-facing photo.")
+      track("symmetry_error", { kind: e instanceof ModelLoadError ? "model" : e instanceof Error ? "photo" : "detect" })
     } finally {
       setLoading(false)
     }

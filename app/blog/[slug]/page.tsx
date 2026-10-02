@@ -130,12 +130,12 @@ function TableOfContents({ headings, ids }: { headings: string[]; ids: string[] 
   return (
     <nav aria-label="In this article" className={`${card} mb-10 p-6`}>
       <p className="text-[10px] font-bold tracking-widest uppercase text-white/60 mb-3">In this article</p>
-      <ol className="space-y-1.5">
+      <ol className="space-y-0">
         {headings.map((h, i) => (
           <li key={i}>
             <a
               href={`#${ids[i]}`}
-              className="text-sm text-white/50 hover:text-(--ollie-cyan) transition-colors leading-snug block"
+              className="text-sm text-white/50 hover:text-(--ollie-cyan) transition-colors leading-snug block py-1.5"
             >
               {h}
             </a>
@@ -224,10 +224,10 @@ export default async function BlogPostPage({ params }: Props) {
 
         <div className="max-w-3xl mx-auto px-6 pt-28 pb-24">
           {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-white/60 mb-10">
-            <Link href="/" className="hover:text-white/70 transition-colors">Home</Link>
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-white/60 mb-7">
+            <Link href="/" className="py-2.5 hover:text-white/70 transition-colors">Home</Link>
             <ChevronRight size={12} aria-hidden="true" />
-            <Link href="/blog" className="hover:text-white/70 transition-colors">Blog</Link>
+            <Link href="/blog" className="py-2.5 hover:text-white/70 transition-colors">Blog</Link>
             <ChevronRight size={12} aria-hidden="true" />
             <span className="text-white/50 truncate max-w-[240px]" aria-current="page">{post.title}</span>
           </nav>
@@ -265,7 +265,7 @@ export default async function BlogPostPage({ params }: Props) {
                 unoptimized
                 className="max-h-[28rem] w-full rounded-3xl bg-white/[0.03] object-contain"
               />
-              <figcaption className="mt-2 text-[11px] text-white/50">
+              <figcaption className="mt-2 text-xs text-white/50">
                 Image: <a href={image.sourceUrl} className="underline underline-offset-2 hover:text-white" rel="nofollow noopener" target="_blank">{image.credit}</a>
                 {", "}
                 {image.licenseUrl

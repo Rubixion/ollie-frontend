@@ -59,8 +59,8 @@ export default function LookAlikeHub() {
       <Nav />
       <main id="main" className="relative min-h-screen bg-transparent">
         <div className="max-w-5xl mx-auto px-6 pt-28 pb-24">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-white/60 mb-10">
-            <Link href="/" className="hover:text-white/70 transition-colors">Home</Link>
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-white/60 mb-7">
+            <Link href="/" className="py-2.5 hover:text-white/70 transition-colors">Home</Link>
             <ChevronRight size={12} aria-hidden="true" />
             <span className="text-white/50" aria-current="page">Famous look alikes</span>
           </nav>

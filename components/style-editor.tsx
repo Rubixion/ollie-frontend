@@ -6,7 +6,7 @@
 // (in-context permission priming); the result shows their face shape and picks, then offers Pro to see them on you.
 // Pro (the popup via onPlans): the AI try-on on your own photo, brow shapes, unlimited Choose for me.
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
-import { Check, Crown, ExternalLink, Eye, Footprints, Glasses, ImageUp, Layers, Lock, ScanFace, Scissors, Shirt, ShoppingBag, Smile, Sparkles, WandSparkles } from "lucide-react"
+import { Camera, Check, Crown, ExternalLink, Eye, Footprints, Glasses, ImageUp, Layers, Lock, ScanFace, Scissors, Shirt, ShoppingBag, Smile, Sparkles, WandSparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -374,6 +374,13 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
                   <label className="cursor-pointer">
                     <ImageUp size={16} aria-hidden="true" />Use a full-body photo
                     <input type="file" accept="image/jpeg,image/png,image/webp" onChange={upload} className="sr-only" />
+                  </label>
+                </Button>
+                <Button variant="brandOutline" size="cta" asChild className="gap-2 md:hidden">
+                  {/* phones: straight to the camera, like the lookalike finder's "Take a selfie" */}
+                  <label className="cursor-pointer">
+                    <Camera size={16} aria-hidden="true" />Take a photo
+                    <input type="file" accept="image/*" capture="user" onChange={upload} className="sr-only" />
                   </label>
                 </Button>
               </div>

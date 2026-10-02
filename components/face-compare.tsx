@@ -4,7 +4,7 @@
 import { useState, useRef, useCallback, useEffect, DragEvent, ChangeEvent } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Upload, X, Users, Loader2, AlertCircle, RotateCcw, ArrowRight } from "lucide-react"
+import { Upload, X, Users, Loader2, AlertCircle, RotateCcw, ArrowRight, Camera } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { track } from "@/lib/analytics"
@@ -86,6 +86,7 @@ export function Slot({ photo, label, onFile, onClear }: { photo: Photo; label: s
       </div>
     </div>
   ) : (
+    <div className="flex flex-1 flex-col gap-2">
     <label {...dragProps} className={zone} style={{ minHeight: "clamp(8rem, 20svh, 13rem)" }}>
       <input
         ref={inputRef}
@@ -100,6 +101,14 @@ export function Slot({ photo, label, onFile, onClear }: { photo: Photo; label: s
         <span className="text-xs text-white/50">Click, drop or paste</span>
       </span>
     </label>
+    {/* Phones: straight to the front camera, like the lookalike finder */}
+    <label className="md:hidden flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/10 bg-white/[0.03] text-white/70 text-sm font-semibold has-focus-visible:ring-2 has-focus-visible:ring-(--ollie-cyan) cursor-pointer">
+      <input type="file" accept="image/*" capture="user" className="sr-only"
+        onChange={(e: ChangeEvent<HTMLInputElement>) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = "" }} />
+      <Camera size={16} aria-hidden="true" />
+      Take a selfie
+    </label>
+    </div>
   )
 }
 

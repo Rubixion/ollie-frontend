@@ -54,12 +54,12 @@ export function Footer() {
           {/* Links */}
           <div className="flex flex-wrap gap-x-16 gap-y-10">
             <div>
-              <p className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-4">Pages</p>
+              <p className="text-white/60 text-xs font-bold tracking-widest uppercase mb-2">Pages</p>
               {/* Two columns, filled top to bottom: the tools on the left, the rest on the right */}
-              <ul className="grid grid-flow-col grid-rows-4 gap-x-12 gap-y-3">
+              <ul className="grid grid-flow-col grid-rows-4 gap-x-12 gap-y-1">
                 {nav.map((l) => (
                   <li key={l.href}>
-                    <PageLink href={l.href} className="text-white/60 hover:text-white/70 text-sm transition-colors">
+                    <PageLink href={l.href} className="inline-block py-2 text-white/60 hover:text-white/70 text-sm transition-colors">
                       {l.label}
                     </PageLink>
                   </li>
@@ -67,11 +67,11 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <p className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-4">Guides</p>
-              <ul className="flex flex-col gap-3">
+              <p className="text-white/60 text-xs font-bold tracking-widest uppercase mb-2">Guides</p>
+              <ul className="flex flex-col gap-1">
                 {guides.map((l) => (
                   <li key={l.href}>
-                    <PageLink href={l.href} className="text-white/60 hover:text-white/70 text-sm transition-colors">
+                    <PageLink href={l.href} className="inline-block py-2 text-white/60 hover:text-white/70 text-sm transition-colors">
                       {l.label}
                     </PageLink>
                   </li>
@@ -79,11 +79,11 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <p className="text-white/60 text-[10px] font-bold tracking-widest uppercase mb-4">Legal</p>
-              <ul className="flex flex-col gap-3">
+              <p className="text-white/60 text-xs font-bold tracking-widest uppercase mb-2">Legal</p>
+              <ul className="flex flex-col gap-1">
                 {legal.map((l) => (
                   <li key={l.href}>
-                    <PageLink href={l.href} className="text-white/60 hover:text-white/70 text-sm transition-colors">
+                    <PageLink href={l.href} className="inline-block py-2 text-white/60 hover:text-white/70 text-sm transition-colors">
                       {l.label}
                     </PageLink>
                   </li>

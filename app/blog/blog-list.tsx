@@ -96,7 +96,7 @@ export function BlogList({ posts, categories }: { posts: PostCard[]; categories:
                   />
                 )}
                 <div className="flex flex-1 flex-col p-6">
-                <span className="flex items-center gap-2 text-[11px]">
+                <span className="flex items-center gap-2 text-xs">
                   <span className="font-bold uppercase tracking-widest text-(--ollie-cyan)">{post.category}</span>
                   <span className="text-white/50">· {post.readTime}</span>
                 </span>
