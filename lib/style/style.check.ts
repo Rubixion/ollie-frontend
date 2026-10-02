@@ -1,6 +1,7 @@
 // Self-check for the style logic. Run:
 //   npx esbuild lib/style/style.check.ts --bundle --platform=node --outfile=%TEMP%/style-check.cjs && node %TEMP%/style-check.cjs
-import { chooseOutfit, layers } from "./model"
+import { chooseOutfit, dressFor, layers } from "./model"
+import { ITEMS, OCCASIONS } from "./catalog"
 import assert from "node:assert/strict"
 import { NORMS, classify, type Ratios } from "./face-shape"
 import { grooming, heightClass, rankCuts, type Answers } from "./recommend"
@@ -54,9 +55,24 @@ assert.deepEqual(stack.map((l) => l.slot), ["shoes", "bottom", "top", "outer"])
 assert.ok(stack[3].src.includes("/male-athletic/") && stack[3].src.endsWith("levis-trucker@hood.webp") && stack[2].mask?.endsWith("levis-trucker@hood.clip.webp"))
 assert.ok(layers("male", "athletic", { top: "uniqlo-u-tee", outer: "levis-trucker" }, have)[1].src.endsWith("levis-trucker.webp"))
 assert.equal(layers("male", "athletic", { bottom: "dickies-874" }, have).length, 0, "no layer, nothing drawn")
+assert.equal(layers("male", "athletic", { top: "champion-rw-hoodie", outer: "uniqlo-uld-vest" }, [...have, "uniqlo-uld-vest", "uniqlo-uld-vest@hood"])[0].mask, undefined, "a vest never clips the sleeves of the top under it")
 // choose for me: style first, plus bodies lean to longer layers, items without a layer are never picked
 assert.equal(chooseOutfit("techwear", "male", have).outfit.outer, "patagonia-torrentshell")
 assert.equal(chooseOutfit("minimal", "male", have).outfit.outer, undefined, "no minimal jacket has a layer here, so none")
 for (const id of Object.values(chooseOutfit("workwear", "female", have, "plus").outfit)) assert.ok(have.includes(id!))
+// gendered items: never chosen for the other gender, even when a layer exists
+const both = [...have, "uniqlo-chesterfield", "jcrew-trench-w", "rl-oxford", "jcrew-oxford-w", "bass-weejuns", "sam-edelman-loraine", "uniqlo-smart-ankle", "uniqlo-smart-ankle-w", "jcrew-ludlow", "babaton-agency-blazer", "clarks-desert-boot"]
+for (const g of ["male", "female"] as const) for (const id of Object.values(chooseOutfit("classic", g, both, "plus").outfit)) {
+  const it = ITEMS.find((i) => i.id === id)!
+  assert.ok(!it.for || it.for === g, `${id} offered to ${g}`)
+}
+assert.ok(ITEMS.find((i) => i.id === chooseOutfit("classic", "male", both, "plus").outfit.outer)?.long, "plus leans to a long coat")
+// "Dress for…": the hand-picked outfit when its layers exist, Choose for me fills any gaps, all ids real
+for (const [id, o] of Object.entries(OCCASIONS)) for (const g of ["male", "female"] as const) for (const it of Object.values(o[g]))
+  assert.ok(ITEMS.some((i) => i.id === it && (!i.for || i.for === g)), `${id}/${g}: ${it}`)
+assert.equal(dressFor("interview", "male", both).outfit.top, "rl-oxford")
+assert.equal(dressFor("interview", "female", both).outfit.outer, "babaton-agency-blazer")
+assert.ok(dressFor("older", "male", have).outfit.bottom, "missing layers are filled in, not left empty")
+assert.ok(new Set(ITEMS.map((i) => i.id)).size === ITEMS.length, "item ids are unique")
 
 console.log("style checks passed")

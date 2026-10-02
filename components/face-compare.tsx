@@ -25,10 +25,10 @@ const PHASES = [
   { at: 95, label: "Still working…" },
 ]
 
-type Photo = { data: string; preview: string } | null
+export type Photo = { data: string; preview: string } | null
 
 // Same shrink-to-1280px JPEG as the match page
-function shrink(file: File): Promise<{ data: string; preview: string }> {
+export function shrink(file: File): Promise<{ data: string; preview: string }> {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith("image/")) return reject(new Error("Please upload an image file."))
     const reader = new FileReader()
@@ -54,7 +54,7 @@ function shrink(file: File): Promise<{ data: string; preview: string }> {
   })
 }
 
-function Slot({ photo, label, onFile, onClear }: { photo: Photo; label: string; onFile: (f: File) => void; onClear: () => void }) {
+export function Slot({ photo, label, onFile, onClear }: { photo: Photo; label: string; onFile: (f: File) => void; onClear: () => void }) {
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const dragProps = {

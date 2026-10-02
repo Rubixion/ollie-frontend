@@ -37,9 +37,10 @@ Keyword numbers are US monthly searches and keyword difficulty (KD) from OpenSEO
   - face-symmetry-and-genetics → symmetrical-faces (symmetrical face 5.4k beats facial symmetry 3.6k)
   - why-two-networks → siamese-neural-networks-explained
 - Renamed posts: siamese-versatility → siamese-network-applications, math-behind-your-face → face-recognition-math, science-of-you-look-like → why-people-say-you-look-like-someone.
-- Kept apart on purpose, because they answer different searches: baby-face-features / baby-face-recognition-development, celebrity-match-different-era, golden-ratio-face, ollie-how-it-works.
+- Kept apart on purpose, because they answer different searches: celebrity-match-different-era, golden-ratio-face, ollie-how-it-works.
+- 2026-10-01 blog rework: 17 off-topic posts with near-zero traffic removed and 308-redirected to the closest post (list in middleware.ts MOVED); face-shape-guide rewritten; 74 new Style posts (face shapes, haircuts, grooming, glasses, body types, colour, style) in lib/blog-posts-d.ts to -l.ts, dated across September 2026. Style posts by Wendy Wei, technical posts by Liam Bradley.
 
-Wording rules (also in OpenSEO's project context): say "the Ollie team"; the match percentage is a similarity score for comparing results, never accuracy or a probability; plain English, no hype. `/search` (coming soon) and `/kirk-meter` are `noindex` and not in the sitemap.
+Wording rules (also in OpenSEO's project context): say "the Ollie team"; the match percentage is a similarity score for comparing results, never accuracy or a probability; plain English, no hype. `/kirk-meter` is `noindex` and not in the sitemap; `/search` was removed (404).
 
 ### Technical pieces (all automatic)
 - **Sitemap:** `app/sitemap.ts` lists `/`, `/match`, `/compare`, `/faq`, `/blog`, every post, `/contact`, `/privacy` and `/terms`. A post's `lastmod` is its `updatedIsoDate` (or `isoDate`). Bump `HOME_UPDATED` / `LEGAL_UPDATED` only when those pages really change.

@@ -143,7 +143,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "why-same-person-different-ai-results",
     title: "Why Two Photos of the Same Person Can Give Different AI Results",
-    excerpt: "Upload two photos of yourself and you might get different celebrity matches. Here is the science behind why that happens and how to get more consistent results from Ollie.",
+    excerpt: "Two photos of you can get different celebrity matches. The science behind why that happens, and how to get more consistent results from Ollie.",
     summary: "Two photos of the same person can give different AI face recognition results because lighting, camera angle, lens distortion and compression all change the pixels the network reads. The same reasons explain why you look different in photos. For consistent celebrity matches, use even light, face the camera and take the photo from arm's length or further. Different lookalike apps disagree for another reason: each uses its own model, celebrity list and scoring scale.",
     date: "September 24, 2026",
     updatedIsoDate: "2026-09-26",
@@ -187,7 +187,7 @@ export const postsA: BlogPost[] = [
           "Even the exact same photo gets a different celebrity match in different lookalike apps. That isn't because one of them is broken. Each app makes four choices that change the answer: the <strong>model</strong>, the <strong>celebrity list</strong>, the <strong>photos of each celebrity</strong>, and the <strong>scoring rule</strong>.",
           "The model decides which facial features count. Two networks trained on different datasets learn different ideas of what makes faces similar. Ollie's was trained from scratch on MS1MV2, 5.8 million photos of about 85,000 people. Another app's model might weigh hairstyle or skin tone more, or less.",
           "The celebrity list decides who you can match. An app can only return people it has indexed. One that lists 500 Hollywood actors will never match you with a K-pop star or a footballer. Ollie indexes more than 5,000 living celebrities, and our post on <a href=\"/blog/celebrity-database-how-built\" class=\"text-(--ollie-cyan) underline underline-offset-4 hover:text-white\">how the database was built</a> explains how they were chosen.",
-          "The photos matter too. An app that stores one photo per celebrity matches you against that one image, lighting and angle included. Ollie stores up to 12 checked photos per person and scores each celebrity by the average of their two photos closest to yours, so one lucky photo can't win on its own. Finally, the percentage is each app's own scale. An 85% in one app and a 60% in another can describe the same distance, so compare the ranking of results, not the numbers across apps.",
+          "The photos matter too. An app that stores one photo per celebrity matches you against that one image, lighting and angle included. Ollie stores up to 12 checked photos per person and scores each celebrity by their single photo closest to yours. Finally, the percentage is each app's own scale. An 85% in one app and a 60% in another can describe the same distance, so compare the ranking of results, not the numbers across apps.",
         ],
       },
       {
@@ -259,7 +259,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "how-cnns-see-faces",
     title: "How Convolutional Neural Networks \"See\" a Human Face",
-    excerpt: "A convolutional neural network doesn't see your face the way you do, it processes edges, then shapes, then geometry. Here is what each stage looks like from the inside.",
+    excerpt: "A convolutional neural network sees your face as edges, then shapes, then geometry. What each stage looks like from the inside.",
     summary: "A convolutional neural network (CNN) for face recognition reads a face in layers: early layers find edges, middle layers find shapes like eyes and noses, and deep layers encode the proportions that make a face unique. The last layer outputs an embedding, a list of numbers used for matching. The network never sees a face the way people do, only patterns in pixels.",
     date: "September 21, 2026",
     isoDate: "2026-09-21",
@@ -307,7 +307,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "what-is-facial-embedding",
     title: "What Is Facial Embedding? The Technology Behind Celebrity Matching",
-    excerpt: "Facial embedding is the technique that makes it possible to compare two faces mathematically. Here is what it means, how it works, and why it enables instant search at Ollie.",
+    excerpt: "Facial embedding turns a face into numbers so two faces can be compared mathematically. What it means, how it works and why it makes search instant.",
     summary: "A face embedding is a list of numbers (512 at Ollie) that places a face as a point in a high-dimensional space, where photos of the same person land close together and different people land far apart. Comparing two faces then means measuring the distance between two points. That is how thousands of celebrity faces can be searched in milliseconds.",
     date: "September 20, 2026",
     updatedIsoDate: "2026-10-01",
@@ -365,7 +365,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "why-ai-beats-human-eye",
     title: "Why AI Face Matching Is More Accurate Than the Human Eye",
-    excerpt: "Humans are surprisingly bad at comparing unfamiliar faces. Controlled studies put expert accuracy around 80%. Here is why AI consistently outperforms human examiners, and where it still falls short.",
+    excerpt: "Humans are surprisingly bad at comparing unfamiliar faces; even experts score around 80%. Why AI outperforms human examiners, and where it falls short.",
     summary: "On unfamiliar faces, AI face recognition accuracy beats the human eye. Controlled studies put untrained observers near 70% on hard photo pairs and trained examiners around 80%, while top models score above 99% on the LFW benchmark. AI still falls short on very poor photos and conditions it was not trained for.",
     date: "September 19, 2026",
     updatedIsoDate: "2026-09-23",
@@ -414,7 +414,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "face-detection-vs-recognition",
     title: "The Difference Between Face Detection and Face Recognition",
-    excerpt: "Detection asks whether a face is present. Recognition asks whose face it is. They are different problems, different algorithms, and both must work for Ollie to return a result.",
+    excerpt: "Face detection asks whether a face is there; recognition asks whose it is. Two different problems and algorithms, and Ollie needs both to work.",
     summary: "Face detection vs face recognition: face detection finds where a face is in a photo, and face recognition works out whose face it is. They are separate steps with separate models, and both have to work. Ollie first detects and aligns your face, then compares it with celebrity faces to find your lookalike.",
     date: "September 17, 2026",
     isoDate: "2026-09-17",
@@ -455,7 +455,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "how-lighting-affects-recognition",
     title: "How Lighting Affects AI Facial Recognition (More Than You Think)",
-    excerpt: "Lighting is the single biggest source of variation in face recognition accuracy. Here is what it does to your photo at a technical level and how to work with it.",
+    excerpt: "Lighting is the biggest source of variation in face recognition accuracy. What it does to your photo at a technical level, and how to work with it.",
     summary: "Lighting is the biggest source of variation in facial recognition accuracy, because shadows change how your nose, eyes and jaw appear in a photo. Harsh side light, backlight and very dim light are the worst; soft, even light facing you is best. For a celebrity match, face a window or go outside on an overcast day.",
     date: "September 16, 2026",
     isoDate: "2026-09-16",
@@ -496,7 +496,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "siamese-neural-networks-explained",
     title: "Siamese Neural Networks Explained: The Twin-Network Idea Behind Face Matching",
-    excerpt: "A Siamese network compares two inputs by running both through the same network. Here is how the idea works, where it is used, and how it relates to the way Ollie compares faces.",
+    excerpt: "A Siamese neural network compares two inputs by running both through the same network. How it works, where it's used and how Ollie compares faces.",
     summary: "A Siamese neural network compares two inputs by passing both through the same network and measuring the distance between the two embeddings: close means similar, far means different. It is a classic approach to face verification and signature checking. Ollie uses the same idea, one shared network that turns every face into comparable numbers, though it was trained with a different loss.",
     date: "August 10, 2026",
     updatedIsoDate: "2026-10-01",
@@ -608,7 +608,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "contrastive-loss-explained",
     title: "Contrastive Loss Explained: The Math That Teaches Networks to Compare Faces",
-    excerpt: "Without a loss function that teaches the network what facial similarity means, face matching would not be possible. Here is how contrastive loss does it, and what modern systems like Ollie use instead.",
+    excerpt: "Contrastive loss teaches a network what facial similarity means. How it works, why face matching depends on it, and what modern systems use instead.",
     summary: "Contrastive loss is a training rule that pulls embeddings of the same person together and pushes different people apart until they are at least a set margin away. Triplet loss does the same with three images at once: an anchor, a match and a non-match. Most modern face recognition, including Ollie's model, uses margin-based losses such as CosFace or ArcFace instead.",
     date: "September 11, 2026",
     updatedIsoDate: "2026-09-23",
@@ -657,7 +657,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "what-is-similarity-score",
     title: "What Is a Similarity Score? How AI Ranks Face Matches by Percentage",
-    excerpt: "When Ollie says you are 87% similar to a celebrity, what does that number actually mean? It is not a probability. It is a rescaled distance. Here is the difference.",
+    excerpt: "When Ollie says you're 87% similar to a celebrity, what does it mean? It isn't a probability; it's a rescaled distance. Here's the difference.",
     summary: "A face similarity score shows how close two face embeddings are. Ollie measures the distance between your 512-number embedding and each celebrity's (for unit-length vectors this ranks faces the same way as cosine similarity), then rescales it to a percentage that is easier to read. The percentage is for ranking matches; it is not a probability that you look alike.",
     date: "September 10, 2026",
     updatedIsoDate: "2026-09-26",
@@ -771,7 +771,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "why-everyone-has-doppelganger",
     title: "Why Everyone Has a Celebrity Doppelganger (According to Science)",
-    excerpt: "There are only so many ways to arrange eyes, a nose, and a jaw within biological constraints. Here is why the mathematics of facial geometry virtually guarantees you have a famous lookalike.",
+    excerpt: "There are only so many ways to arrange eyes, a nose and a jaw. Why the maths of facial geometry almost guarantees you have a famous lookalike.",
     summary: "Does everyone have a doppelganger? Probably not an exact copy, but close lookalikes are common. Faces vary along a limited number of features within biological limits, so among eight billion people many faces land near yours, and among thousands of celebrities Ollie can nearly always find one whose face is close.",
     date: "September 9, 2026",
     updatedIsoDate: "2026-09-26",
@@ -856,7 +856,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "why-some-celebrities-matched-more",
     title: "Why Some Celebrities Get Matched More Than Others",
-    excerpt: "Three factors determine how often a celebrity appears in Ollie results: geometric position in embedding space, dataset representation, and facial distinctiveness.",
+    excerpt: "Why some celebrities appear in Ollie results far more often: their position in face space, how many photos they have, and how distinctive they look.",
     summary: "Some celebrities show up in celebrity lookalike results far more often because their faces sit in a crowded, average part of face space, close to many users. How many good photos a celebrity has in the database also matters. Distinctive faces appear less often, but when they do, the resemblance is usually clear.",
     date: "September 6, 2026",
     updatedIsoDate: "2026-09-23",
@@ -936,7 +936,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "selfie-vs-passport-match",
     title: "Why You Look Different in Selfies vs Passport Photos",
-    excerpt: "A front camera held close makes your nose bigger and face rounder. That's why selfies look off, and why a selfie can match a different celebrity than your passport.",
+    excerpt: "A front camera held close makes your nose look bigger and face rounder. Why selfies look off, and why they can match a different celebrity.",
     summary: "Your selfie can match a different celebrity than your passport photo because the front camera's wide-angle lens, held close, makes your nose look bigger and your face rounder. A passport photo is taken from further away in even light, so it shows your real proportions. That is also why you look different in selfies.",
     date: "September 4, 2026",
     isoDate: "2026-09-04",
@@ -977,14 +977,14 @@ export const postsA: BlogPost[] = [
   {
     slug: "celebrities-that-fool-ai",
     title: "The Celebrity Faces That Fool AI the Most",
-    excerpt: "Some celebrity faces produce inconsistent or surprisingly broad matching behaviour. Here is what makes a face 'hard' for face recognition, and what it reveals about how the system works.",
+    excerpt: "Some celebrity faces give inconsistent or surprisingly broad matches. What makes a face hard for face recognition, and what it reveals about the AI.",
     summary: "The celebrity faces that fool AI most are average-looking faces near the centre of face space, and faces that change a lot between photos. Average faces match many people at moderate scores; unstable faces jump around with lighting and angle. Neither means the system is broken, but together they explain most surprising celebrity lookalike results.",
     date: "September 3, 2026",
     isoDate: "2026-09-03",
     readTime: "4 min read",
     category: "Culture",
     author: "Wendy Wei",
-    keywords: ["celebrity lookalike results", "AI face matching", "face recognition", "face embedding"],
+    keywords: ["AI face matching mistakes", "celebrity lookalike results", "AI face matching", "face recognition", "face embedding"],
     sections: [
       {
         h2: "What 'Fooling' Means in Face Matching",
@@ -1017,7 +1017,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "what-celebrity-match-reveals",
     title: "What Your Celebrity Match Actually Tells You About Your Face Shape",
-    excerpt: "Your top celebrity match is a geometric statement about your bone structure. Here is how to decode what it says about your facial proportions beyond just being a fun comparison.",
+    excerpt: "Your top celebrity match says something about your bone structure. How to decode what it tells you about your facial proportions.",
     summary: "Your celebrity match shares a specific set of facial proportions with you, such as eye spacing relative to face width and midface height, not just the same face shape. That is why two people can match strongly without looking identical. It is far more precise than labels like oval or square, so celebrities with the same face shape as you are not always your best celebrity lookalike.",
     date: "September 2, 2026",
     isoDate: "2026-09-02",
@@ -1057,7 +1057,7 @@ export const postsA: BlogPost[] = [
   {
     slug: "why-people-say-you-look-like-someone",
     title: "Why Do People Say I Look Like Someone? The Science",
-    excerpt: "When someone says you look like a famous person, they are making an automatic geometric comparison. Here is what the psychology research says about how that works.",
+    excerpt: "When people say you look like someone famous, their brain is making an automatic comparison. What psychology research says about how it works.",
     summary: "People say you look like a celebrity because the brain automatically compares every new face with faces it already knows, and celebrities are faces almost everyone knows. Humans lean on hair, expression and overall impression, so people often disagree about lookalikes. AI measures facial proportions instead, which is why its matches can differ from your friends'.",
     date: "August 29, 2026",
     updatedIsoDate: "2026-10-01",

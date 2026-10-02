@@ -4,7 +4,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "why-humans-bad-at-faces",
     title: "Why Humans Are Surprisingly Bad at Matching Unfamiliar Faces",
-    excerpt: "You can instantly recognise a close friend from across a car park. But compare two photos of strangers? Research shows most people perform barely better than chance on hard pairs.",
+    excerpt: "You spot a friend across a car park instantly, but comparing photos of strangers? Research shows most people do barely better than chance on hard pairs.",
     summary: "Humans are excellent at recognising familiar faces but surprisingly bad at unfamiliar face matching: in lab tests, people often misjudge whether two photos show the same stranger. Familiarity lets the brain ignore changes in lighting and angle; with strangers it cannot. That is how humans recognise faces, and why AI face matching can beat them on strangers.",
     date: "August 28, 2026",
     isoDate: "2026-08-28",
@@ -45,7 +45,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "prosopagnosia",
     title: "Prosopagnosia: What Face Blindness Reveals About How We See Faces",
-    excerpt: "People with prosopagnosia cannot recognise faces, even their own. This rare condition illuminates how dedicated the brain's face processing system is, and what happens when it fails.",
+    excerpt: "People with prosopagnosia can't recognise faces, sometimes even their own. What face blindness reveals about the brain's dedicated face system.",
     summary: "Prosopagnosia, or face blindness, is a condition in which people cannot recognise faces, sometimes even their own, despite normal eyesight. Most cases are developmental, present from birth in about 2% of people; others follow damage to the fusiform face area. People with face blindness rely on voice, hair, walk and context instead.",
     date: "August 26, 2026",
     isoDate: "2026-08-26",
@@ -86,7 +86,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "pareidolia-faces-everywhere",
     title: "Why Your Brain Sees Faces in Toast, Clouds, and Power Sockets",
-    excerpt: "Pareidolia, the tendency to see faces in random patterns, reveals how fundamentally biased the brain is toward face detection. Here is the neuroscience behind this quirk.",
+    excerpt: "Pareidolia, seeing faces in random patterns, shows how strongly the brain is wired to detect faces. The neuroscience behind the quirk.",
     summary: "Pareidolia is seeing faces in things that are not faces, like power sockets, clouds or toast. It happens because the brain's face detection fires on anything with two eyes above a mouth: missing a real face was costlier than a false alarm. Face-like objects even activate the brain's face-processing areas.",
     date: "August 25, 2026",
     isoDate: "2026-08-25",
@@ -127,7 +127,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "own-race-effect",
     title: "The Own-Race Effect: Why We Recognise Same-Race Faces Better",
-    excerpt: "People consistently recognise faces from their own racial group more accurately than faces from other groups. Here is what this cross-race effect means for AI face recognition.",
+    excerpt: "People recognise faces from their own group more accurately than others. What the own-race effect is, why it happens and what it means for AI.",
     summary: "The own-race effect (also called the cross-race or other-race effect) is the finding that people recognise faces of their own race more accurately than faces of other races. It comes mainly from experience: we become experts at the faces we see most. AI face recognition shows a similar pattern when its training data is unbalanced.",
     date: "August 24, 2026",
     updatedIsoDate: "2026-09-23",
@@ -169,7 +169,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "your-own-face",
     title: "Why You Don't Recognise Your Own Face (At First)",
-    excerpt: "Most people are poor judges of their own appearance. You see your face more often in mirrors than in photos, and those are very different experiences. Here is the psychology of self-face recognition.",
+    excerpt: "Most people are poor judges of their own face, partly because mirrors and photos show it differently. The psychology of recognising yourself.",
     summary: "You look different in photos than in the mirror because a mirror flips your face left to right, and that flipped version is the one you know best. A photo shows your face the way others see it, so small asymmetries look wrong to you. The same effect can make your celebrity match feel off at first.",
     date: "August 23, 2026",
     isoDate: "2026-08-23",
@@ -209,7 +209,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "baby-face-features",
     title: "Baby Face Features in Adults: 5 Signs and What They Mean",
-    excerpt: "The 5 baby face features: large eyes, small nose, full lips, rounded chin, high forehead. Why adults with them look younger, and how that sways your celebrity match.",
+    excerpt: "The 5 baby face features: large eyes, small nose, full lips, rounded chin, high forehead. Why they make adults look younger and sway your match.",
     summary: "Baby face features are large eyes, a small nose, full lips, a rounded chin and a high forehead, the proportions of infants. Adults with these features tend to look younger and more approachable, and they often match baby-faced celebrities with the same proportions. Face recognition picks this up because it measures proportions, not age.",
     date: "August 21, 2026",
     isoDate: "2026-08-21",
@@ -249,7 +249,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "symmetrical-faces",
     title: "Face Symmetry and AI Recognition: Does Perfect Symmetry Help?",
-    excerpt: "Symmetrical faces are considered more attractive. But does greater symmetry actually help facial recognition accuracy? The answer is more nuanced than you might expect.",
+    excerpt: "Symmetrical faces are rated more attractive, but does symmetry help face recognition? What the research says, and why it's more nuanced than you'd think.",
     summary: "Facial symmetry helps face recognition only a little: symmetrical faces give slightly more stable results across angles, but lighting, image quality and alignment matter far more. Symmetry matters more to how attractive and healthy a face looks. No face is perfectly symmetrical, and a well-lit photo of an asymmetric face matches better than a poor photo of a symmetrical one.",
     date: "August 20, 2026",
     isoDate: "2026-08-20",
@@ -291,7 +291,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "resting-face",
     title: "Does Resting Face Expression Affect Your Celebrity Match?",
-    excerpt: "Your face at rest still carries expression information. Here is how neutral expression variation affects face recognition, and why a genuine neutral is better than a forced smile.",
+    excerpt: "Your resting face still carries expression. How small changes in a neutral expression affect face recognition, and why a natural neutral beats a smile.",
     summary: "Your resting face, the expression you make when relaxed, gives the best celebrity match because it is closest to the neutral faces most photos show. Resting faces are not truly blank: natural muscle tension can make a face look happy, sad or stern. For matching, relax your face rather than smile or frown.",
     date: "August 19, 2026",
     isoDate: "2026-08-19",
@@ -324,7 +324,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "brain-recognises-face",
     title: "How the Brain Recognises a Face in 200 Milliseconds",
-    excerpt: "Your brain identifies a known face faster than a camera can fire. Here is the neural pathway from photons hitting your retina to a name rising to conscious awareness.",
+    excerpt: "Your brain recognises a familiar face in a fraction of a second. The neural path from light hitting your eye to a name coming to mind.",
     summary: "The brain recognises a face in about 200 milliseconds: signals travel from the eyes through the visual cortex to the fusiform face area, which responds strongly to faces. A face-specific brain signal, the N170, appears about 170 milliseconds after a face is seen. AI face recognition networks work in similar stages, from simple edges to whole identities.",
     date: "August 18, 2026",
     isoDate: "2026-08-18",
@@ -365,7 +365,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "uncanny-valley",
     title: "The Uncanny Valley: Why Near-Perfect AI Faces Feel Wrong",
-    excerpt: "Faces that are almost but not quite human trigger a specific discomfort response. Here is what the uncanny valley reveals about the face perception system, and how AI generation falls into it.",
+    excerpt: "Faces that are almost human trigger a specific unease. What the uncanny valley reveals about face perception, and why AI-made faces fall into it.",
     summary: "The uncanny valley is the uneasy feeling people get from faces that look almost, but not quite, human, such as realistic robots, CGI characters and some AI faces. Robotics professor Masahiro Mori described it in 1970. The closer a face gets to real, the more its small errors in skin, eyes or movement stand out.",
     date: "August 17, 2026",
     isoDate: "2026-08-17",
@@ -446,7 +446,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "best-lighting-for-match",
     title: "Best Lighting for a Celebrity Face Match: A Complete Guide",
-    excerpt: "Lighting is the single most controllable factor affecting face match accuracy. Here is how to get it right in every environment, indoors, outdoors, and in between.",
+    excerpt: "Lighting is the factor you can most control for a good face match. How to get it right indoors, outdoors and everywhere in between.",
     summary: "The best lighting for selfies and face photos is soft, even light facing you: overcast daylight, open shade or a large window. A ring light works too. Avoid a single lamp from the side, overhead light and backlight, because the shadows they cast change how your face reads to a face match.",
     date: "August 14, 2026",
     isoDate: "2026-08-14",
@@ -479,7 +479,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "glasses-hats-hair",
     title: "Glasses, Hats, and Hairstyles: What Accessories Do to Your Face Match",
-    excerpt: "Glasses cover the eye region, the most diagnostically important feature for identity. Here is what wearing accessories does to face recognition results, and when to remove them.",
+    excerpt: "Glasses cover the eyes, the most important region for identity. What glasses, hats and hair do to face recognition results, and when to remove them.",
     summary: "Face recognition does work with glasses, but less accurately: frames cover the eye region, the most important part of the face for identity, and lenses change how big your eyes look. Sunglasses are worse still. Hats and hair that cover the forehead or face also hurt, so for the best celebrity match, remove glasses and pull hair back.",
     date: "August 13, 2026",
     isoDate: "2026-08-13",
@@ -593,7 +593,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "bias-in-face-recognition",
     title: "Bias in Face Recognition: What It Is and What to Do About It",
-    excerpt: "Bias in AI face recognition is a real and documented problem. Here is what it means technically, where it comes from, and what responsible development looks like.",
+    excerpt: "Bias in AI face recognition is a real, documented problem. What it means technically, where it comes from and what responsible development looks like.",
     summary: "Bias in facial recognition means accuracy that differs systematically between demographic groups, such as more false matches or more missed matches for some races, sexes or ages. It mostly comes from unbalanced training data and from cameras and photos that suit some skin tones less. It can be reduced with balanced data and by testing every group before release.",
     date: "August 8, 2026",
     isoDate: "2026-08-08",
@@ -634,7 +634,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "privacy-and-face-recognition",
     title: "Privacy and Face Recognition: What You Should Know",
-    excerpt: "Face recognition technology raises real privacy questions. Here is what the key issues are, how they apply to consumer apps, and what responsible practice looks like.",
+    excerpt: "Face recognition raises real privacy questions. The key issues, how they apply to consumer apps like Ollie, and what responsible practice looks like.",
     summary: "Facial recognition privacy concerns come from face data being biometric: you can change a password but not your face, and faces can be captured without consent. Good practice is to collect only what is needed, keep no photos and delete data quickly. Ollie processes your photo in memory for the search and never saves it.",
     date: "August 7, 2026",
     isoDate: "2026-08-07",
@@ -723,7 +723,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "training-data-matters",
     title: "Why Training Data Is the Most Important Factor in Face Recognition Quality",
-    excerpt: "\"Garbage in, garbage out\",but in deep learning, data quantity and diversity are almost more important than architecture. Here is why training data dominates face recognition performance.",
+    excerpt: "In deep learning, the amount and variety of training data matter almost as much as the model. Why training data dominates face recognition performance.",
     summary: "Training data is the most important factor in face recognition quality: once a model is big enough, more and more varied faces beat a cleverer architecture. A good face recognition dataset has many people, many photos per person and wide variety in age, ethnicity, lighting and pose. Ollie's network was trained on MS1MV2, about 5.8 million images of 85,742 people.",
     date: "August 3, 2026",
     updatedIsoDate: "2026-09-23",
@@ -806,7 +806,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "identical-twins-different-profiles",
     title: "Identical Twins, Different Profiles: What Face Recognition Reveals",
-    excerpt: "Face recognition can distinguish identical twins in most conditions. Here is what that tells us about how small the differences are, and how sensitive modern AI has become.",
+    excerpt: "Face recognition can tell identical twins apart in most conditions. What that shows about how small the differences are and how sensitive AI has become.",
     summary: "Can facial recognition tell identical twins apart? Modern systems often can in good, controlled photos, but twins remain one of the hardest cases, and errors are far more common than with unrelated people. The differences systems rely on, like small asymmetries and marks, come from development rather than DNA.",
     date: "July 30, 2026",
     isoDate: "2026-07-30",
@@ -848,7 +848,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "expression-affects-matching",
     title: "Does Your Expression Affect Your Celebrity Match Result?",
-    excerpt: "Smiling changes the apparent geometry of your face significantly. Here is what expression does to the facial embedding, and which expressions to use for the most accurate results.",
+    excerpt: "Smiling changes the geometry of your face. What expression does to a face embedding, and which expression gives the most accurate match.",
     summary: "Does smiling affect face recognition? Yes: a big smile raises the cheeks, narrows the eyes and changes the midface proportions the network measures, so your expression can change your celebrity match. Models are trained on varied expressions, so the change is modest, but it can reorder close matches. For the most consistent result, use a relaxed, neutral expression.",
     date: "July 29, 2026",
     isoDate: "2026-07-29",
@@ -880,7 +880,7 @@ export const postsB: BlogPost[] = [
   {
     slug: "makeup-affects-matching",
     title: "Does Makeup Change Your Celebrity Match?",
-    excerpt: "Heavy makeup can alter the apparent positions of facial features. Here is what contouring, eye makeup, and lip colour do to face recognition, and when it matters.",
+    excerpt: "Heavy makeup can shift how facial features appear. What contouring, eye makeup and lip colour do to face recognition, and when it matters.",
     summary: "Most makeup barely affects face recognition or Face ID, because it changes colour and texture, not the positions of your features. Heavy contouring and dramatic makeup that reshape how features look can shift results, and anti-recognition makeup is designed to. For a celebrity match, everyday makeup is fine.",
     date: "July 28, 2026",
     isoDate: "2026-07-28",

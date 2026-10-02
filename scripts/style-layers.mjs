@@ -13,9 +13,9 @@ import { generateImage, scriptEnv } from "../lib/image-gen.mjs"
 import { ITEMS as CATALOG } from "../lib/style/catalog.ts"
 
 const env = await scriptEnv()
-const NOUN = { top: "top", outer: "outer layer (jacket, coat or vest)", bottom: "trousers", shoes: "pair of shoes" }
+const NOUN = { top: "top", outer: "outer layer (jacket, coat or vest)", bottom: "trousers", shoes: "pair of shoes (and any socks showing above them)" }
 const ITEMS = Object.fromEntries(CATALOG.map((i) => [i.id, {
-  slot: i.slot, noun: NOUN[i.slot], hood: /hoodie/i.test(i.name),
+  slot: i.slot, noun: NOUN[i.slot], hood: /hoodie/i.test(i.name), for: i.for,
   what: i.slot === "outer" ? `${i.render}, worn open` : i.render,
 }]))
 const TEE = "uniqlo-u-tee" // jackets are drawn over this, so their sleeves are wide enough to cover a t-shirt's
@@ -66,6 +66,10 @@ async function cutout(green, dressed, w, h, skin, slot) {
   }
   const err = n ? diff / n / 3 : 255 // mean per-channel difference inside the garment
   if (err > 30) { console.log(`  cut-out doesn't line up (mean diff ${err.toFixed(0)})`); return null }
+  // Gemini sometimes keeps the whole person instead of just the garment. It lines up perfectly, so check the size:
+  // shoes are ~1% of the frame, other garments ~10% (up to ~27% for a hoodie on a Plus body).
+  const MAX = { shoes: 0.04, bottom: 0.2, top: 0.35, outer: 0.35 }
+  if (n / (w * h) > MAX[slot]) { console.log(`  cut-out kept too much (${(100 * n / (w * h)).toFixed(0)}% of the frame)`); return null }
   // trim 2px off every edge (the border can carry a sliver of the base model's skin), then grow 6px copying the
   // garment's own edge colours outward: net ~4px bigger, so it covers the base body where a look's shoulders or
   // hips sit a few pixels wider than in the dressed photo
@@ -154,13 +158,15 @@ for (const b of bodies) {
   // the body's skin mask from scripts/style-bases.mjs, used to keep its shoulders from showing above tops
   const skin = existsSync(`${CACHE}/skin.png`) ? await sharp(`${CACHE}/skin.png`).resize(W, H, { fit: "fill" }).extractChannel(0).raw().toBuffer() : null
   const over = async (id) => sharp(base).composite([{ input: await sharp(`${OUT}/${id}.webp`).png().toBuffer() }]).jpeg({ quality: 95 }).toBuffer()
-  const ids = (only.length ? only : Object.keys(ITEMS))
+  const ids = (only.length ? only : Object.keys(ITEMS)).filter((id) => !ITEMS[id].for || b.startsWith(`${ITEMS[id].for}-`))
     .sort((a, b) => (ITEMS[a].slot === "outer") - (ITEMS[b].slot === "outer")) // jackets last: they're drawn over the tee and hoodie layers
   for (const id of ids) {
     const it = ITEMS[id]
-    if (it.slot !== "outer") { await makeLayer(OUT, CACHE, W, H, id, it, base, "", skin); continue }
-    await makeLayer(OUT, CACHE, W, H, id, it, await over(TEE), " over the t-shirt", skin)
-    await makeLayer(OUT, CACHE, W, H, `${id}@hood`, it, await over(HOODIE), " over the hoodie, with the hood resting naturally outside over the collar", skin)
+    try { // one bad item shouldn't stop a long batch: log it, re-run the script later to retry just the missing ones
+      if (it.slot !== "outer") { await makeLayer(OUT, CACHE, W, H, id, it, base, "", skin); continue }
+      await makeLayer(OUT, CACHE, W, H, id, it, await over(TEE), " over the t-shirt", skin)
+      await makeLayer(OUT, CACHE, W, H, `${id}@hood`, it, await over(HOODIE), " over the hoodie, with the hood resting naturally outside over the collar", skin)
+    } catch (e) { console.log(`FAILED ${b} ${id}: ${e.message.slice(0, 200)}`) }
   }
 }
 
@@ -168,7 +174,10 @@ for (const b of bodies) {
 const list = (dir, re) => (existsSync(dir) ? readdirSync(dir) : []).flatMap((f) => { const m = f.match(re); return m ? [m[1]] : [] }).sort()
 const index = {
   v: Date.now(), // cache-buster: the editor adds ?v= to every image, so regenerated files never show stale
-  layers: Object.fromEntries(BODIES.map((b) => [b, list(`public/style/layers/${b}`, /^(.+)\.webp$/).filter((f) => !f.endsWith(".clip"))])),
+  layers: Object.fromEntries(BODIES.map((b) => [b, list(`public/style/layers/${b}`, /^(.+)\.webp$/).filter((f) => {
+    const it = ITEMS[f.replace(/@hood$/, "")] // only items in the catalogue, and only on their gender's model
+    return !f.endsWith(".clip") && it && (!it.for || b.startsWith(`${it.for}-`))
+  })])),
   looks: Object.fromEntries(BODIES.map((b) => [b, list("public/style/models", new RegExp(`^${b}-(?!bare)(.+)\\.jpg$`))])),
 }
 writeFileSync("public/style/layers/index.json", JSON.stringify(index, null, 1))

@@ -46,7 +46,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "photo-angle-celebrity-match",
     title: "The Best Angle for a Celebrity Face Match (According to the AI)",
-    excerpt: "Camera angle changes how your facial features appear at the pixel level. Here is what the research says about which angles produce the most accurate results, and why.",
+    excerpt: "Camera angle changes how your features look to the AI. What research says about which angles give the most accurate celebrity match, and why.",
     summary: "The best angle for a face picture, for AI matching, is straight on, within about 15 degrees in any direction, with the camera at eye level. Turning, tilting or shooting from above or below changes how your 3D face projects into a 2D photo, which changes the features the network reads. Face the camera for the most accurate celebrity match.",
     date: "July 26, 2026",
     isoDate: "2026-07-26",
@@ -112,7 +112,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "celebrity-doppelgangers-throughout-history",
     title: "Celebrity Doppelgangers Throughout History: Faces That Repeat",
-    excerpt: "The same facial archetypes appear in royal portraits, ancient sculpture, and modern celebrities. Here is what repeated historical face types tell us about facial geometry.",
+    excerpt: "The same face types appear in royal portraits, ancient sculpture and modern celebrities. What historical doppelgangers reveal about facial geometry.",
     summary: "Historical doppelgangers exist because the same facial proportions recur across centuries: the genes behind them stay in the population, so similar faces appear in Roman busts, Renaissance portraits and today's celebrities. Face recognition measures that structure, not the era, so a modern face can closely resemble a centuries-old one.",
     date: "July 23, 2026",
     updatedIsoDate: "2026-09-26",
@@ -143,41 +143,9 @@ export const postsC: BlogPost[] = [
     relatedSlugs: ["celebrity-match-different-era", "why-everyone-has-doppelganger", "most-matched-celebrities"],
   },
   {
-    slug: "face-shape-guide",
-    title: "Face Shapes Explained: What 'Oval', 'Square', and 'Heart' Actually Mean for AI",
-    excerpt: "Traditional face shape categories describe the overall outline. AI face recognition measures something more detailed. Here is how the two relate, and how each predicts your celebrity match.",
-    summary: "The main face shapes are oval, round, square, heart, diamond and oblong, defined by the outline of your hairline, cheekbones and jaw. They are useful for choosing haircuts and glasses but too coarse for AI. Face recognition encodes much finer proportions in 512 numbers, which is why two square faces can match different celebrities.",
-    date: "July 22, 2026",
-    isoDate: "2026-07-22",
-    readTime: "4 min read",
-    category: "Culture",
-    author: "Wendy Wei",
-    keywords: ["face shapes", "what face shape do i have", "face shape chart", "oval face", "square face", "face recognition"],
-    sections: [
-      {
-        h2: "What Traditional Face Shapes Measure",
-        paragraphs: [
-          "Traditional face shape categories, oval, round, square, heart, diamond, oblong, describe the two-dimensional silhouette of the face: the outline defined by the hairline, jaw, and widest point. These categories are useful heuristics for hairstyling and eyewear recommendations because they predict the visual balance of shapes applied around the face.",
-          "From a face recognition perspective, these categories are quite coarse. Two faces categorised as 'square' might have very different inter-ocular distances, very different nose shapes, and very different midface proportions. The same celebrity embedding could sit in the 'square face' category and match users across a wide range of actual feature configurations within that category.",
-        ],
-      },
-      {
-        h2: "What AI Measures Instead",
-        paragraphs: [
-          "A 512-dimensional facial embedding captures far more than the face silhouette. It simultaneously encodes: inter-ocular distance relative to face width, midface proportions (nose length relative to face height), jaw angle and definition, cheekbone prominence, nose bridge width, and many other geometric relationships, each varying continuously rather than falling into categories.",
-          "This richer representation explains why people with the same traditional face shape can receive very different celebrity matches. Two 'oval-faced' people whose midface proportions differ, or whose eye spacing differs, will have embeddings in different regions of face space and will match different sets of celebrities.",
-        ],
-      },
-    ],
-    faqs: [
-      { q: "What is my face shape and how does it affect my celebrity match?", a: "Traditional face shapes (oval, square, heart) describe the overall silhouette. AI matches on many more dimensions simultaneously, two people with the same shape category can receive very different matches due to differences in feature proportions." },
-    ],
-    relatedSlugs: ["what-celebrity-match-reveals", "face-recognition-math", "why-everyone-has-doppelganger"],
-  },
-  {
     slug: "celebrity-face-evolution",
     title: "How Celebrity Beauty Standards Have Changed Over 50 Years",
-    excerpt: "The faces that became famous in 1970 differ systematically from those that became famous in 2020. Here is how beauty standards have shifted, and what it means for face matching.",
+    excerpt: "The faces that became famous in 1970 differ from those famous in 2020. How celebrity beauty standards have shifted, and what it means for face matching.",
     summary: "Beauty standards have changed over time: classic Hollywood favoured strong symmetry and sharp cheekbones, the 1970s more natural looks, and the 1990s and 2000s large eyes and particular jaw shapes. Each era's celebrity beauty standards reflect its culture, its cameras and its entertainment industry, and the shift shows in which faces became famous.",
     date: "July 21, 2026",
     isoDate: "2026-07-21",
@@ -274,7 +242,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "celebrity-resemblance-and-self-image",
     title: "What Your Celebrity Match Says About How You See Yourself",
-    excerpt: "People react very differently to their celebrity matches, with delight, scepticism, or surprise. Here is the psychology of self-image and how it filters your reaction to AI results.",
+    excerpt: "People react to their celebrity match with delight, doubt or surprise. The psychology of self-image and how it shapes your reaction to AI results.",
     summary: "Your reaction to a celebrity resemblance often says more about how you see yourself than about the match. People accept matches with celebrities they admire and doubt equally strong matches with ones they don't. The AI only measures facial proportions; the meaning comes from you.",
     date: "July 16, 2026",
     isoDate: "2026-07-16",
@@ -306,7 +274,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "face-reading-pseudoscience",
     title: "Face Reading and Physiognomy: Why Your Personality Is Not in Your Face",
-    excerpt: "Claims that facial features reveal personality, intelligence, or criminal tendency have a long history, and no scientific support. Here is why the claims persist and why they are wrong.",
+    excerpt: "Claims that your face reveals personality or criminality are old and have no scientific support. Why face reading persists, and why it's wrong.",
     summary: "Face reading, or physiognomy, the idea that personality can be read from facial features, is a pseudoscience. It was popular from ancient Greece to the 19th century and was used to justify racism, and modern research finds no reliable link between face shape and character. AI tools that claim to read personality or criminality from faces repeat the same mistake.",
     date: "July 12, 2026",
     isoDate: "2026-07-12",
@@ -339,7 +307,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "what-makes-a-face-memorable",
     title: "What Makes a Face Memorable? The Science of Facial Distinctiveness",
-    excerpt: "Some faces stick in memory immediately; others fade after minutes. Research reveals that memorability is a consistent, measurable property of faces, here is what makes it happen.",
+    excerpt: "Some faces stick in memory instantly; others fade in minutes. Research shows memorability is a measurable property of a face. Here's what drives it.",
     summary: "What makes a face memorable is mostly the face itself: people agree strongly on which faces they remember. Distinctive faces, those far from average, are remembered best, while average faces are easily forgotten. The same distinctiveness sets a face apart in face recognition embedding space.",
     date: "July 8, 2026",
     isoDate: "2026-07-08",
@@ -411,7 +379,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "weight-change-and-matching",
     title: "Does Weight Change Affect Your Celebrity Face Match?",
-    excerpt: "Significant weight change alters facial volume and soft tissue distribution. Here is how much this affects face recognition, and whether your match changes after losing or gaining weight.",
+    excerpt: "Weight change alters facial volume and soft tissue. How much it affects face recognition, and whether your celebrity match changes after weight loss or gain.",
     summary: "Does losing weight change face shape? Somewhat: weight change mostly alters the cheeks, jawline and area around the eyes, while your bone structure stays the same. Moderate weight change usually leaves facial recognition results and your celebrity match much the same; large changes can shift them. Weight loss tends to make bone structure more visible.",
     date: "June 26, 2026",
     isoDate: "2026-06-26",
@@ -476,7 +444,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "beard-affects-matching",
     title: "Does Having a Beard Change Your Celebrity Face Match?",
-    excerpt: "A beard covers the lower face, a region that carries real identity information. Here is exactly how much facial hair affects face recognition accuracy and what you can do about it.",
+    excerpt: "A beard covers the lower face, which carries real identity information. How much facial hair affects face recognition, and what you can do about it.",
     summary: "A beard can affect face recognition and Face ID because it hides the jawline and chin, which the network uses for identity. Light stubble changes little, while a full beard can shift your celebrity match. Try a photo with and without the beard to see the difference.",
     date: "June 24, 2026",
     isoDate: "2026-06-24",
@@ -614,7 +582,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "understanding-your-results",
     title: "Understanding Your Ollie Results: What the Scores and Rankings Mean",
-    excerpt: "A guide to interpreting everything on your Ollie results page, what the percentages mean, why the ranking matters more than the score, and how to read the top five.",
+    excerpt: "How to read your Ollie results: what the percentages mean, why the ranking matters more than the score, and how to read your top five.",
     summary: "Your celebrity lookalike percentage on Ollie is a rescaled similarity score: higher means your facial proportions are closer to that celebrity's. It is for ranking, not a probability, so the order of your top five matters more than the exact number. Scores of 90% and above usually mean a resemblance people can see.",
     date: "June 20, 2026",
     updatedIsoDate: "2026-09-26",
@@ -690,7 +658,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "resnet-face-recognition",
     title: "Why ResNet Is the Backbone of Most Modern Face Recognition Systems",
-    excerpt: "ResNet solved the vanishing gradient problem in deep neural networks, making 50–100+ layer networks trainable. Here is why it became the standard backbone for face recognition.",
+    excerpt: "ResNet made 50 to 100+ layer networks trainable by solving vanishing gradients. Why it became the standard backbone for face recognition.",
     summary: "ResNet is the backbone of most modern face recognition because its residual (skip) connections solved the vanishing gradient problem, making very deep networks trainable. Each block learns a small correction that is added to its input, so the training signal flows through dozens or hundreds of layers. Ollie's own 20-layer network uses the same residual idea.",
     date: "June 16, 2026",
     isoDate: "2026-06-16",
@@ -723,7 +691,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "arcface-explained",
     title: "ArcFace: The Loss Function That Makes Modern Face Recognition So Accurate",
-    excerpt: "ArcFace replaced contrastive and triplet loss in most production face recognition systems. Here is what angular margin loss is and why it produces better-structured embedding spaces.",
+    excerpt: "ArcFace replaced contrastive and triplet loss in most face recognition systems. What angular margin loss is and why it gives better embeddings.",
     summary: "ArcFace is a loss function that trains face recognition by adding an angular margin between each face and the wrong identities, which forces tighter, better-separated clusters. It trains like a simple classifier, so it avoids the pair mining that contrastive and triplet loss need. Ollie's model uses CosFace, a close relative that applies the margin to the cosine instead.",
     date: "June 15, 2026",
     isoDate: "2026-06-15",
@@ -789,7 +757,7 @@ export const postsC: BlogPost[] = [
   {
     slug: "celebrity-database-how-built",
     title: "How Ollie's Celebrity Database Was Built",
-    excerpt: "Behind every match is a database of thousands of celebrities, each with verified, freely licensed photos. Here is how the list was chosen and how every photo was checked.",
+    excerpt: "How Ollie's celebrity database was built: how thousands of celebrities were chosen, and how every freely licensed photo was checked.",
     summary: "Ollie's celebrity face database was built from Wikidata and Wikimedia Commons: living adults famous across many languages, ranked by recent Wikipedia views, with only freely licensed photos. Every photo is checked with face recognition to confirm it shows the right person, and fakes, memes, sunglasses and duplicates are removed. Each celebrity keeps 2 to 12 verified photos.",
     date: "June 9, 2026",
     updatedIsoDate: "2026-09-23",

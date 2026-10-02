@@ -1,4 +1,4 @@
-import { allPosts } from "@/lib/blog-posts"
+import { allPosts, postDate } from "@/lib/blog-posts"
 import { SITE_URL } from "@/lib/site-config"
 
 // RSS feed of the blog (linked from every blog page's <head>), rebuilt on each deploy.
@@ -16,7 +16,7 @@ export function GET() {
       <title>${esc(p.title)}</title>
       <link>${url}</link>
       <guid isPermaLink="true">${url}</guid>
-      <pubDate>${new Date(`${p.isoDate}T12:00:00Z`).toUTCString()}</pubDate>
+      <pubDate>${postDate(p.isoDate, "12:00:00").toUTCString()}</pubDate>
       <category>${esc(p.category)}</category>
       <description>${esc(p.excerpt)}</description>
     </item>`
@@ -30,7 +30,7 @@ export function GET() {
     <atom:link href="${SITE_URL}/blog/rss.xml" rel="self" type="application/rss+xml" />
     <description>How face recognition works, how to get your best celebrity match, and why people look alike.</description>
     <language>en</language>
-    <lastBuildDate>${new Date(`${posts[0].updatedIsoDate ?? posts[0].isoDate}T12:00:00Z`).toUTCString()}</lastBuildDate>
+    <lastBuildDate>${postDate(posts[0].updatedIsoDate ?? posts[0].isoDate, "12:00:00").toUTCString()}</lastBuildDate>
 ${items}
   </channel>
 </rss>

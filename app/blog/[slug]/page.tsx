@@ -87,8 +87,11 @@ const LINK_RULES: [href: string, phrase: RegExp][] = [
   ["/blog/why-same-person-different-ai-results", /(?:two )?photos of the same person/i],
 ]
 
-function linkFirstMention(sections: BlogPost["sections"], slug: string) {
-  const todo = LINK_RULES.filter(([href]) => href !== `/blog/${slug}`)
+// Style posts (any post whose body links Ollie Stylist) point readers to /ai-stylist, not the lookalike tool.
+const isStylistPost = (post: BlogPost) => post.sections.some((s) => s.paragraphs.some((p) => p.includes('href="/ai-stylist"')))
+
+function linkFirstMention(sections: BlogPost["sections"], slug: string, stylist: boolean) {
+  const todo = LINK_RULES.filter(([href]) => href !== `/blog/${slug}` && !(stylist && href === "/celebrity-lookalike"))
   return sections.map((s) => ({
     ...s,
     paragraphs: s.paragraphs.map((p) => {
@@ -138,7 +141,8 @@ export default async function BlogPostPage({ params }: Props) {
   const h2s = post.sections.filter((s) => s.h2).map((s) => s.h2!)
   const ids = headingIds(h2s)
   let h2Index = 0
-  const sections = linkFirstMention(post.sections, post.slug).map((s) => ({ ...s, id: s.h2 ? ids[h2Index++] : undefined }))
+  const stylist = isStylistPost(post)
+  const sections = linkFirstMention(post.sections, post.slug, stylist).map((s) => ({ ...s, id: s.h2 ? ids[h2Index++] : undefined }))
   const image = blogImages[post.slug]
   const relatedPosts = post.relatedSlugs.map((s) => getPost(s)).filter((p) => p !== undefined)
   // "Read more" links inside the article: after the 2nd and 4th sections, one related post each
@@ -312,15 +316,26 @@ export default async function BlogPostPage({ params }: Props) {
           {/* CTA */}
           <section className={`${card} mt-14 p-7`}>
             <p className="text-[10px] font-bold tracking-widest uppercase text-(--ollie-cyan) mb-2">Try it yourself</p>
-            <h2 className="text-xl font-bold text-white mb-2">Find your celebrity lookalike</h2>
-            <p className="text-white/55 text-sm mb-5">
-              Upload a photo and see which celebrities you look most like. Free to try, and your photo is never stored.
-            </p>
+            {stylist ? (
+              <>
+                <h2 className="text-xl font-bold text-white mb-2">Find what suits you with Ollie Stylist</h2>
+                <p className="text-white/55 text-sm mb-5">
+                  Scan your face for haircuts that suit its shape and dress a realistic model in real clothes. Free, and the face scan runs in your browser.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold text-white mb-2">Find your celebrity lookalike</h2>
+                <p className="text-white/55 text-sm mb-5">
+                  Upload a photo and see which celebrities you look most like. Free to try, and your photo is never stored.
+                </p>
+              </>
+            )}
             <Link
-              href="/celebrity-lookalike"
+              href={stylist ? "/ai-stylist" : "/celebrity-lookalike"}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-(--ollie-cyan) text-black text-sm font-bold hover:opacity-90 transition-opacity"
             >
-              Find my celebrity look alike <ArrowRight size={14} aria-hidden="true" />
+              {stylist ? "Try Ollie Stylist free" : "Find my celebrity look alike"} <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </section>
 
@@ -328,7 +343,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* About the author */}
           <section className={`${card} mt-14 p-7`} aria-labelledby="about-author">
             <p id="about-author" className="text-[10px] font-bold tracking-widest uppercase text-(--ollie-cyan) mb-4">About the author</p>
-            <AuthorBadge name={post.author} detail="Writes for Ollie, a free celebrity lookalike AI" />
+            <AuthorBadge name={post.author} detail={stylist ? "Writes for Ollie Stylist, a free AI stylist" : "Writes for Ollie, a free celebrity lookalike AI"} />
             <p className="mt-4 text-white/60 text-sm leading-relaxed">
               The Ollie team wrote and trained Ollie&apos;s own face-recognition model from scratch, and writes these guides to
               explain how face matching works in plain English. Questions or corrections are welcome on the{" "}

@@ -23,6 +23,24 @@ const MOVED: Record<string, string> = {
   "/blog/siamese-versatility": "/blog/siamese-network-applications",
   "/blog/math-behind-your-face": "/blog/face-recognition-math",
   "/blog/science-of-you-look-like": "/blog/why-people-say-you-look-like-someone",
+  // removed 2026-10-01 (off-topic, near-zero search traffic): sent to the closest surviving post
+  "/blog/face-recognition-surveillance": "/blog/privacy-and-face-recognition",
+  "/blog/face-recognition-in-medicine": "/blog/how-face-recognition-works",
+  "/blog/face-recognition-genealogy": "/blog/celebrities-who-look-alike",
+  "/blog/face-recognition-animals": "/blog/brain-recognises-face",
+  "/blog/face-recognition-mental-health": "/blog/celebrity-resemblance-and-self-image",
+  "/blog/face-spoof-detection": "/blog/how-face-recognition-works",
+  "/blog/face-hashing-privacy": "/blog/privacy-and-face-recognition",
+  "/blog/face-recognition-performance-tricks": "/blog/how-face-recognition-works",
+  "/blog/future-of-face-recognition": "/blog/history-of-face-recognition",
+  "/blog/face-recognition-with-mask": "/blog/glasses-hats-hair",
+  "/blog/face-recognition-in-art": "/blog/celebrity-doppelgangers-throughout-history",
+  "/blog/face-recognition-in-dating": "/blog/celebrity-resemblance-and-self-image",
+  "/blog/face-recognition-aging-brain": "/blog/face-memory-psychology",
+  "/blog/baby-face-recognition-development": "/blog/brain-recognises-face",
+  "/blog/culture-and-face-recognition": "/blog/own-race-effect",
+  "/blog/transfer-learning-explained": "/blog/training-data-matters",
+  "/blog/what-overfitting-means": "/blog/training-data-matters",
 }
 
 const ALLOWED_PREFIXES = ["/chemistry", "/api", "/robots.txt", "/sitemap.xml", "/opengraph-image", "/icon", "/favicon.ico"]

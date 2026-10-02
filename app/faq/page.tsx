@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "FAQ: How Ollie's Celebrity Lookalike AI Works",
   description: DESCRIPTION,
   alternates: { canonical: "/faq" },
-  openGraph: { type: "website", siteName: "Ollie", url: "/faq", title: "Ollie FAQ", description: DESCRIPTION },
+  openGraph: { type: "website", siteName: "Ollie", url: "/faq", title: "Ollie FAQ", description: DESCRIPTION, images: "/opengraph-image" },
 }
 
 const TIPS: { tip: string; href?: string; link?: string }[] = [

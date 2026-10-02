@@ -270,13 +270,18 @@ export type Slot = "top" | "outer" | "bottom" | "shoes"
 // Real products (found 2026-09-30 on each brand's own site). Prices only where the brand's page showed one.
 // Photo for the try-on and the card: public/style/products/<id>.jpg (front-on product shot, plain background).
 // ponytail: plain brand links; swap `url` for affiliate links (Amazon / Awin / Rakuten / Impact) once approved.
-export type Item = Option & { slot: Slot; styles: Style[]; brand: string; url: string; price?: string }
-const item = (slot: Slot, id: string, brand: string, name: string, colorName: string, styles: Style[], url: string, render: string, price?: string): Item =>
-  ({ slot, id, brand, name: `${brand} ${name}`, styles, url, render, price, sub: [colorName, price].filter(Boolean).join(" · ") })
+// `for`: only rendered and offered on that gender's model (unset = both). `long`: outerwear past the hip (Choose for me
+// leans to it for Plus builds). `age`: reads younger (-1) / older (+1), for the "look older / younger" presets.
+export type Gender = "male" | "female"
+type More = { for?: Gender; long?: boolean; age?: -1 | 0 | 1 }
+export type Item = Option & More & { slot: Slot; styles: Style[]; brand: string; url: string; price?: string }
+const item = (slot: Slot, id: string, brand: string, name: string, colorName: string, styles: Style[], url: string, render: string, price?: string, more: More = {}): Item =>
+  ({ slot, id, brand, name: `${brand} ${name}`, styles, url, render, price, sub: [colorName, price].filter(Boolean).join(" · "), ...more })
+const M: More = { for: "male" }, W: More = { for: "female" }
 
 export const ITEMS: Item[] = [
   item("top", "champion-rw-hoodie", "Champion", "Reverse Weave Hoodie", "Black", ["streetwear", "athleisure"],
-    "https://www.champion.com/products/champion-reverse-weave-hoodie-black", "a black Champion Reverse Weave heavyweight pullover hoodie"),
+    "https://www.champion.com/products/champion-reverse-weave-small-c-hooded-sweatshirt-black", "a black Champion Reverse Weave heavyweight pullover hoodie", undefined, { age: -1 }),
   item("top", "uniqlo-u-tee", "Uniqlo", "U Crew Neck T-Shirt", "White", ["minimal", "classic"],
     "https://www.uniqlo.com/us/en/products/E433028-000/00", "a plain white heavyweight Uniqlo U crew-neck t-shirt"),
   item("outer", "levis-trucker", "Levi's", "Trucker Jacket", "Medium wash", ["streetwear", "y2k", "workwear"],
@@ -284,13 +289,13 @@ export const ITEMS: Item[] = [
   item("outer", "alpha-ma1", "Alpha Industries", "MA-1 Bomber (Heritage)", "Sage", ["streetwear", "classic"],
     "https://www.alphaindustries.com/products/mjm21000c1-ma-1-bomber-jacket-heritage", "an Alpha Industries MA-1 nylon bomber jacket in sage green with ribbed collar and cuffs", "$200"),
   item("outer", "carhartt-michigan", "Carhartt WIP", "Michigan Chore Coat", "Hamilton brown", ["workwear", "minimal"],
-    "https://us.carhartt-wip.com/en-us/collections/men-jackets-michigan-chore-coat", "a Carhartt WIP Michigan chore coat in brown canvas with a corduroy collar and patch pockets"),
+    "https://us.carhartt-wip.com/en-us/collections/men-jackets-michigan-chore-coat", "a Carhartt WIP Michigan chore coat in brown canvas with a corduroy collar and patch pockets", undefined, { long: true }),
   item("outer", "patagonia-torrentshell", "Patagonia", "Torrentshell 3L Jacket", "Black", ["techwear", "athleisure"],
-    "https://www.patagonia.com/torrentshell/", "a black Patagonia Torrentshell 3L waterproof rain shell jacket with a hood", "$189"),
+    "https://www.patagonia.com/torrentshell/", "a black Patagonia Torrentshell 3L waterproof rain shell jacket with a hood", "$189", { long: true }),
   item("outer", "uniqlo-uld-vest", "Uniqlo", "Ultra Light Down Vest", "Navy", ["minimal", "athleisure"],
     "https://www.uniqlo.com/us/en/products/E472294-000/00", "a navy Uniqlo Ultra Light Down quilted puffer vest"),
   item("outer", "jcrew-ludlow", "J.Crew", "Ludlow Unstructured Blazer", "Navy", ["classic", "old-money", "preppy"],
-    "https://www.jcrew.com/p/mens/categories/clothing/blazers/casual-blazers/ludlow-slim-fit-unstructured-blazer-in-italian-wool-blend/AO686", "a navy J.Crew Ludlow slim-fit unstructured wool blazer"),
+    "https://www.jcrew.com/p/mens/categories/clothing/blazers/casual-blazers/ludlow-slim-fit-unstructured-blazer-in-italian-wool-blend/AO686", "a navy J.Crew Ludlow slim-fit unstructured wool blazer", undefined, { ...M, age: 1 }),
   item("bottom", "levis-501", "Levi's", "501 Original Jeans", "Medium wash", ["classic", "minimal", "streetwear"],
     "https://www.levi.com/US/en_US/clothing/men/jeans/straight/501-original-mens-jeans/p/005010193", "Levi's 501 straight-leg jeans in medium-wash blue denim"),
   item("bottom", "levis-501-black", "Levi's", "501 Original Fit Jeans", "Black", ["streetwear", "minimal"],
@@ -300,10 +305,159 @@ export const ITEMS: Item[] = [
   item("bottom", "uniqlo-chino", "Uniqlo", "Slim-Fit Chino Pants", "Beige", ["classic", "preppy", "old-money"],
     "https://www.uniqlo.com/us/en/products/E422370-000/00", "beige Uniqlo slim-fit chino trousers"),
   item("shoes", "converse-chuck-70", "Converse", "Chuck 70 High Top", "Black canvas", ["streetwear", "y2k", "classic"],
-    "https://www.converse.com/shop/p/chuck-70-canvas-unisex-high-top-shoe/162056MP.html", "black canvas Converse Chuck 70 high-top sneakers with white soles", "$95"),
+    "https://www.converse.com/shop/p/chuck-70-canvas-unisex-high-top-shoe/162056MP.html", "black canvas Converse Chuck 70 high-top sneakers with white soles", "$95", { age: -1 }),
   item("shoes", "adidas-stan-smith", "adidas", "Stan Smith", "White / green", ["classic", "minimal"],
     "https://www.adidas.com/us/men-stan_smith-shoes", "white leather adidas Stan Smith sneakers with a green heel tab", "$100"),
   item("shoes", "dr-martens-1460", "Dr. Martens", "1460 Boots", "Black smooth leather", ["workwear", "streetwear"],
     "https://www.drmartens.com/us/en/unisex/originals-boots-and-shoes/boots/1460-lace-up-boots/c/06015600", "black smooth-leather Dr. Martens 1460 8-eye lace-up boots with yellow welt stitching", "$180"),
+
+  // ── added 2026-10-01: every style covered for both genders (found on each brand's own site) ──
+  // tops, both
+  item("top", "uniqlo-merino-mock", "Uniqlo", "Extra Fine Merino Mock Neck Sweater", "Black", ["techwear", "minimal"],
+    "https://www.uniqlo.com/us/en/products/E438787-000/00", "a slim black fine-knit merino wool mock-neck long-sleeve sweater", undefined, { age: 1 }),
+  item("top", "carhartt-k87", "Carhartt", "K87 Heavyweight Pocket T-Shirt", "Carhartt brown", ["workwear", "streetwear"],
+    "https://www.carhartt.com/product/K87/loose-fit-heavyweight-short-sleeve-pocket-t-shirt", "a loose-fit brown heavyweight cotton Carhartt K87 t-shirt with a left chest pocket and a small square Carhartt patch", "from $19.99"),
+  item("top", "carhartt-flannel", "Carhartt", "Heavyweight Flannel Plaid Shirt", "Red / black plaid", ["workwear"],
+    "https://www.carhartt.com/product/107013/loose-fit-heavyweight-flannel-long-sleeve-plaid-shirt", "a loose-fit red and black plaid heavyweight cotton flannel shirt, buttoned, with two flap chest pockets"),
+  item("top", "saint-james-breton", "Saint James", "Minquiers Breton Shirt", "Ecru / navy", ["preppy", "minimal", "classic"],
+    "https://us.saint-james.com/products/minquiers-modern-authentic-breton-stripe-shirt-soft-cotton-men-fit-ecru-navy", "an ecru and navy horizontally striped Breton boat-neck long-sleeve cotton shirt", "$139"),
+  item("top", "nike-club-crew", "Nike", "Sportswear Club Fleece Crew", "Dark grey heather", ["y2k", "athleisure", "streetwear"],
+    "https://www.nike.com/t/sportswear-club-fleece-mens-crew-TWcqLw", "a dark grey heather Nike Club fleece crew-neck sweatshirt with a small white embroidered swoosh on the left chest", "$60", { age: -1 }),
+  // tops, men
+  item("top", "rl-oxford", "Polo Ralph Lauren", "Classic Fit Oxford Shirt", "Blue", ["preppy", "old-money", "classic"],
+    "https://www.ralphlauren.com/men-clothing-button-down-shirts/classic-fit-oxford-shirt-/639388.html", "a light blue Polo Ralph Lauren button-down oxford cotton shirt with a small embroidered pony on the chest, buttoned, untucked", "$120", { ...M, age: 1 }),
+  item("top", "jcrew-cable-knit", "J.Crew", "Heritage Cotton Cable-Knit Sweater", "Ivory", ["old-money", "preppy"],
+    "https://www.jcrew.com/p/mens/categories/clothing/sweaters/crewneck/heritage-cotton-cable-knit-sweater/CO474", "an ivory chunky cotton cable-knit crewneck sweater", "$118", { ...M, age: 1 }),
+  item("top", "lacoste-polo", "Lacoste", "L.12.12 Original Polo", "Navy", ["preppy", "classic", "old-money"],
+    "https://lacoste.com/us/lacoste/men/clothing/L1212-51-166.html", "a navy blue Lacoste L.12.12 petit pique cotton polo shirt with a small green crocodile logo on the chest", "$115", M),
+  item("top", "uniqlo-merino-crew", "Uniqlo", "Extra Fine Merino Crew Neck Sweater", "Navy", ["classic", "old-money", "minimal"],
+    "https://www.uniqlo.com/us/en/products/E429066-000/00", "a navy fine-knit merino wool crew-neck long-sleeve sweater", undefined, { ...M, age: 1 }),
+  item("top", "nike-tech-hoodie", "Nike", "Tech Fleece Windrunner Hoodie", "Black", ["athleisure", "techwear", "streetwear"],
+    "https://www.nike.com/t/sportswear-tech-fleece-windrunner-mens-full-zip-hoodie-rznlBf", "a black Nike Tech Fleece full-zip hoodie, zipped up, with the hood down", "$145", { ...M, age: -1 }),
+  item("top", "lululemon-metal-vent", "lululemon", "Metal Vent Tech Short-Sleeve Shirt", "Black", ["athleisure"],
+    "https://shop.lululemon.com/p/men-ss-tops/Metal-Vent-Tech-Relaxed-Fit-Short-Sleeve-Shirt/_/prod11870202", "a black lululemon Metal Vent Tech relaxed-fit short-sleeve athletic t-shirt", "$78", M),
+  item("top", "arcteryx-cormac", "Arc'teryx", "Cormac Crew Neck Shirt", "Black", ["techwear", "athleisure"],
+    "https://arcteryx.com/us/en/shop/mens/cormac-crew-neck-shirt-ss-0292", "a black Arc'teryx Cormac technical waffle-knit short-sleeve crew-neck t-shirt with a small Arc'teryx logo", "$70", M),
+  // tops, women
+  item("top", "jcrew-cashmere-w", "J.Crew", "Cashmere Classic-Fit Crewneck", "Heather oatmeal", ["old-money", "classic", "minimal"],
+    "https://www.jcrew.com/p/womens/categories/clothing/sweaters/crewneck/cashmere-classic-fit-crewneck-sweater/BA400", "an oatmeal heather cashmere classic-fit crewneck sweater", undefined, { ...W, age: 1 }),
+  item("top", "babaton-contour", "Babaton", "Contour Squareneck Bodysuit", "Black", ["minimal", "classic"],
+    "https://www.aritzia.com/us/en/product/contour-squareneck-longsleeve-bodysuit/73936.html", "a black fitted square-neck long-sleeve bodysuit", undefined, { ...W, age: 1 }),
+  item("top", "lululemon-align-tank", "lululemon", "Align Tank Top", "Black", ["athleisure"],
+    "https://shop.lululemon.com/p/women-tanks/Align-Tank-MD/_/prod9980085", "a black fitted lululemon Align racerback tank top", "$68", { ...W, age: -1 }),
+  item("top", "jcrew-oxford-w", "J.Crew", "Classic-Fit Oxford Shirt", "White", ["preppy", "classic", "old-money"],
+    "https://www.jcrew.com/p/womens/categories/clothing/shirts-and-tops/classic-fit-oxford-cotton-shirt/AW254", "a white classic-fit button-down oxford cotton shirt, buttoned, untucked", undefined, { ...W, age: 1 }),
+  item("top", "bdg-baby-tee", "BDG", "Baby Tee", "White", ["y2k", "streetwear"],
+    "https://www.urbanoutfitters.com/womens-tops?style=Baby+Tees", "a white slim cropped cotton baby tee with short sleeves", undefined, { ...W, age: -1 }),
+  // outerwear, both
+  item("outer", "tnf-nuptse", "The North Face", "1996 Retro Nuptse Jacket", "Black", ["streetwear", "y2k"],
+    "https://www.thenorthface.com/en-us/p/mens/mens-jackets-and-vests/mens-insulated-and-down-300771/mens-1996-retro-nuptse-jacket-NF0A3C8D", "a black The North Face 1996 Retro Nuptse boxy puffer down jacket with oversized baffles", "$380", { age: -1 }),
+  // outerwear, men
+  item("outer", "barbour-bedale", "Barbour", "Classic Bedale Wax Jacket", "Olive", ["old-money", "classic", "preppy"],
+    "https://www.barbour.com/us/classic-bedale%C2%AE-waxed-jacket-MWX0010OL7148.html", "an olive waxed-cotton Barbour Bedale jacket with a brown corduroy collar and flap pockets", "$425", { ...M, age: 1 }),
+  item("outer", "carhartt-detroit", "Carhartt", "J01 Detroit Jacket", "Carhartt brown", ["workwear", "streetwear"],
+    "https://www.carhartt.com/product/103828/iconic-j01-duck-detroit-jacket", "a brown Carhartt Detroit cotton duck canvas work jacket with a brown corduroy collar", "$129.99", M),
+  item("outer", "arcteryx-beta", "Arc'teryx", "Beta AR Jacket", "Black", ["techwear"],
+    "https://arcteryx.com/us/en/shop/mens/beta-ar-jacket-1062", "a black Arc'teryx Beta AR Gore-Tex hard-shell jacket with a hood and a small Arc'teryx logo on the chest", "$650", M),
+  item("outer", "nike-windrunner", "Nike", "Windrunner Hooded Jacket", "Black / white", ["athleisure", "y2k"],
+    "https://www.nike.com/t/sportswear-windrunner-mens-hooded-jacket-5hK13x", "a black Nike Windrunner hooded jacket with the white chevron panel across the chest", "$100", { ...M, age: -1 }),
+  item("outer", "uniqlo-chesterfield", "Uniqlo", "Wool Cashmere Chesterfield Coat", "Charcoal", ["classic", "old-money", "minimal"],
+    "https://www.uniqlo.com/us/en/products/E470082-000/00", "a charcoal grey wool-cashmere single-breasted Chesterfield overcoat, knee length", undefined, { ...M, long: true, age: 1 }),
+  // outerwear, women
+  item("outer", "jcrew-trench-w", "J.Crew", "Icon Trench Coat", "Vintage khaki", ["classic", "old-money", "preppy"],
+    "https://www.jcrew.com/p/womens/categories/clothing/coats-and-jackets/rain-jacket/icon-trench-coat/BF456", "a khaki double-breasted cotton trench coat, knee length, belt tied loosely", "$348", { ...W, long: true, age: 1 }),
+  item("outer", "babaton-agency-blazer", "Babaton", "Agency Blazer", "Black", ["classic", "minimal", "old-money"],
+    "https://www.aritzia.com/us/en/product/agency-blazer/73982.html", "a black relaxed single-breasted wool blazer with notch lapels", undefined, { ...W, age: 1 }),
+  item("outer", "lululemon-define", "lululemon", "Define Jacket Nulu", "Black", ["athleisure"],
+    "https://shop.lululemon.com/p/jackets-and-hoodies-jackets/Define-Jacket-Nulu/_/prod11020769", "a black slim-fit lululemon Define zip-up athletic jacket", "$138", W),
+  item("outer", "aritzia-super-puff", "Aritzia", "The Super Puff Shorty", "Black", ["streetwear", "y2k", "techwear"],
+    "https://www.aritzia.com/us/en/product/the-super-puff%E2%84%A2-shorty/126365.html", "a black matte hip-length puffer jacket with horizontal baffles", undefined, { ...W, age: -1 }),
+  item("outer", "patagonia-better-sweater-w", "Patagonia", "Better Sweater Fleece Jacket", "Oatmeal heather", ["workwear", "minimal", "athleisure"],
+    "https://www.patagonia.com/product/womens-better-sweater-fleece-jacket/25543.html", "an oatmeal heather Patagonia Better Sweater full-zip fleece jacket", "$169", W),
+  // bottoms, men
+  item("bottom", "levis-578-baggy", "Levi's", "578 Baggy Jeans", "Light wash", ["y2k", "streetwear"],
+    "https://www.levi.com/US/en_US/clothing/men/jeans/loose/578TM-baggy-mens-jeans/p/A47500022", "light-wash blue Levi's 578 extra baggy jeans stacking at the ankle", undefined, { ...M, age: -1 }),
+  item("bottom", "carhartt-b01", "Carhartt", "B01 Double-Front Work Pant", "Carhartt brown", ["workwear", "streetwear"],
+    "https://www.carhartt.com/product/106679/iconic-b01-firm-duck-double-front-dungaree", "brown Carhartt double-knee duck canvas loose straight work pants", "$64.99", M),
+  item("bottom", "uniqlo-pleated-wide", "Uniqlo", "Pleated Wide Pants", "Grey", ["old-money", "minimal"],
+    "https://www.uniqlo.com/us/en/products/E462197-000/00", "grey pleated wide-leg tailored trousers with a soft drape", "$59.90", { ...M, age: 1 }),
+  item("bottom", "uniqlo-smart-ankle", "Uniqlo", "Smart Ankle Pants", "Navy", ["classic", "minimal", "preppy"],
+    "https://www.uniqlo.com/us/en/products/E475574-000/00", "navy slim tapered ankle-length smart trousers with a pressed crease", undefined, { ...M, age: 1 }),
+  item("bottom", "arcteryx-gamma", "Arc'teryx", "Gamma Pant", "Black", ["techwear"],
+    "https://arcteryx.com/us/en/shop/mens/gamma-pant-0481", "black Arc'teryx Gamma softshell technical trousers, slim straight leg", "$200", M),
+  item("bottom", "nike-tech-jogger", "Nike", "Tech Fleece Joggers", "Black", ["athleisure", "techwear"],
+    "https://www.nike.com/t/sportswear-tech-fleece-mens-joggers-fsTgRP", "black Nike Tech Fleece slim joggers with tall ribbed cuffs", "$125", { ...M, age: -1 }),
+  // bottoms, women
+  item("bottom", "levis-ribcage", "Levi's", "Ribcage Straight Ankle Jeans", "Medium wash", ["classic", "streetwear", "minimal"],
+    "https://www.levi.com/US/en_US/clothing/women/jeans/straight/ribcage-straight-ankle-womens-jeans/p/726930117", "medium-wash blue Levi's Ribcage super high-rise straight ankle jeans", "$110", W),
+  item("bottom", "levis-baggy-dad", "Levi's", "Baggy Dad Jeans", "Light wash", ["y2k", "streetwear"],
+    "https://www.levi.com/US/en_US/clothing/women/jeans/loose/baggy-dad-womens-jeans/p/A34940012", "light-wash blue Levi's Baggy Dad loose jeans stacking at the ankle", "$118", { ...W, age: -1 }),
+  item("bottom", "babaton-effortless", "Babaton", "The Effortless Pant", "Black", ["old-money", "minimal", "classic"],
+    "https://www.aritzia.com/us/en/product/the-effortless-pant%E2%84%A2/77775.html", "black high-rise pleated wide-leg tailored trousers, floor length", "$148", { ...W, age: 1 }),
+  item("bottom", "lululemon-groove-flare", "lululemon", "Groove Super-High-Rise Flared Pant", "Black", ["athleisure", "y2k"],
+    "https://shop.lululemon.com/p/womens-leggings/Groove-Pant-Flare-Nulu/_/prod9820425", "black lululemon Groove super-high-rise flared yoga pants", "$118", W),
+  item("bottom", "uniqlo-smart-ankle-w", "Uniqlo", "Smart Ankle Pants", "Black", ["classic", "preppy", "minimal"],
+    "https://www.uniqlo.com/us/en/products/E479298-000/00", "black slim tapered ankle-length smart trousers", "$39.90", { ...W, age: 1 }),
+  item("bottom", "arcteryx-gamma-w", "Arc'teryx", "Gamma Pant", "Black", ["techwear"],
+    "https://arcteryx.com/us/en/shop/womens/gamma-pant-0033", "black Arc'teryx Gamma softshell technical trousers, slim straight leg", "$200", W),
+  // shoes, both
+  item("shoes", "nb-550", "New Balance", "550", "White / green", ["y2k", "preppy", "streetwear"],
+    "https://www.newbalance.com/550/", "white leather New Balance 550 low-top sneakers with green N logos", "$109.99", { age: -1 }),
+  item("shoes", "nike-af1", "Nike", "Air Force 1 '07", "White", ["streetwear", "y2k"],
+    "https://www.nike.com/t/air-force-1-07-mens-shoes-XVPIszaq/CW2288-111", "all-white leather Nike Air Force 1 low sneakers", "$115", { age: -1 }),
+  item("shoes", "adidas-samba", "adidas", "Samba OG", "Black / white / gum", ["streetwear", "y2k", "minimal"],
+    "https://www.adidas.com/us/samba-og-shoes/JS3832.html", "black leather adidas Samba OG sneakers with white three stripes and gum soles", "$100"),
+  item("shoes", "salomon-xt6", "Salomon", "XT-6", "Black", ["techwear", "athleisure"],
+    "https://www.salomon.com/en-us/product/xt-6-lg4239/L41086600", "all-black Salomon XT-6 trail sneakers", "$185"),
+  item("shoes", "veja-campo", "VEJA", "Campo Leather", "White / natural", ["minimal", "classic"],
+    "https://www.veja-store.com/en_us/p/campo-leather-white-natural-natural-CP0503147.html", "white leather VEJA Campo low-top sneakers with a tonal V logo", "$175"),
+  item("shoes", "on-cloudmonster", "On", "Cloudmonster", "All black", ["athleisure"],
+    "https://www.on.com/en-us/products/cloudmonster-61/mens/all-black-shoes-61.99025", "all-black On Cloudmonster running shoes with chunky cloud-pod soles"),
+  item("shoes", "redwing-iron-ranger", "Red Wing Heritage", "Iron Ranger 8111", "Amber harness", ["workwear", "classic"],
+    "https://www.redwingheritage.com/us/USD/product/mens-footwear/6-inch-boots/6-amber-8111-08111", "amber-brown leather Red Wing Iron Ranger lace-up boots with a toe cap, trousers over the boot shafts", "$349.99", { age: 1 }),
+  // shoes, men (low shoes are drawn with socks, so the base model's own sneakers never show around them)
+  item("shoes", "bass-weejuns", "G.H. Bass", "Larson Weejuns Penny Loafer", "Burgundy", ["old-money", "preppy", "classic"],
+    "https://www.ghbass.com/collections/larson", "burgundy leather G.H. Bass penny loafers worn with navy socks", "$195", { ...M, age: 1 }),
+  item("shoes", "sperry-ao", "Sperry", "Authentic Original Boat Shoe", "Tan", ["preppy"],
+    "https://www.sperry.com/products/authentic-original-2-eye-boat-shoe-tan-14086738", "tan leather Sperry Authentic Original 2-eye boat shoes worn with white socks", "$110", M),
+  item("shoes", "clarks-desert-boot", "Clarks Originals", "Desert Boot", "Beeswax", ["classic", "minimal", "old-money"],
+    "https://www.clarks.com/en-us/desert-boot/26155484-p", "brown beeswax leather Clarks desert boots with crepe soles", "$140", { ...M, age: 1 }),
+  // shoes, women
+  item("shoes", "sam-edelman-loraine", "Sam Edelman", "Loraine Bit Loafer", "Black leather", ["old-money", "classic", "preppy"],
+    "https://www.samedelman.com/product/womens-loraine-bit-loafer-3016088", "black leather horsebit loafers worn with black socks", undefined, { ...W, age: 1 }),
+  item("shoes", "dr-martens-jadon", "Dr. Martens", "Jadon Platform Boots", "Black smooth leather", ["streetwear", "y2k", "workwear"],
+    "https://www.drmartens.com/us/en/jadon-boot-smooth-leather-platforms-black/p/15265001", "black smooth-leather Dr. Martens Jadon platform lace-up boots", "$210", W),
 ]
+
+// ─── "Dress for…" presets: hand-picked outfits for the things people actually ask for ─────────────────
+// Ids must exist in ITEMS; the editor drops any piece that has no layer for the current model and fills the gap
+// with Choose for me (chooseOutfit in model.ts).
+export type OccasionId = "older" | "younger" | "interview" | "date"
+type Fit = Partial<Record<Slot, string>>
+export const OCCASIONS: Record<OccasionId, { label: string; blurb: string; style: Style; male: Fit; female: Fit; notes: string[] }> = {
+  older: {
+    label: "Look older", blurb: "Collars, wool, leather. Reads 5 years older.", style: "old-money",
+    male: { top: "rl-oxford", outer: "barbour-bedale", bottom: "uniqlo-smart-ankle", shoes: "bass-weejuns" },
+    female: { top: "jcrew-cashmere-w", outer: "jcrew-trench-w", bottom: "babaton-effortless", shoes: "sam-edelman-loraine" },
+    notes: ["Structure reads older: a collar, a tailored trouser and leather shoes do most of the work.", "Darker, quieter colours. Skip big logos and chunky sneakers."],
+  },
+  younger: {
+    label: "Look younger", blurb: "Relaxed fits, lighter colours, sneakers.", style: "y2k",
+    male: { top: "nike-club-crew", outer: "tnf-nuptse", bottom: "levis-578-baggy", shoes: "nb-550" },
+    female: { top: "bdg-baby-tee", outer: "aritzia-super-puff", bottom: "levis-baggy-dad", shoes: "nike-af1" },
+    notes: ["Relaxed fits, lighter washes and clean sneakers read younger.", "Keep one fitted piece so it looks chosen, not borrowed."],
+  },
+  interview: {
+    label: "Job interview", blurb: "Sharp but not stiff. Works for most offices.", style: "classic",
+    male: { top: "rl-oxford", outer: "jcrew-ludlow", bottom: "uniqlo-smart-ankle", shoes: "clarks-desert-boot" },
+    female: { top: "jcrew-oxford-w", outer: "babaton-agency-blazer", bottom: "uniqlo-smart-ankle-w", shoes: "sam-edelman-loraine" },
+    notes: ["A blazer over a plain shirt is the safe middle for most interviews: dress one step above the team.", "Navy, white and grey. Nothing that needs explaining."],
+  },
+  date: {
+    label: "First date", blurb: "Effortless, a little sharp. Fits most places.", style: "minimal",
+    male: { top: "uniqlo-merino-mock", outer: "levis-trucker", bottom: "levis-501-black", shoes: "veja-campo" },
+    female: { top: "babaton-contour", outer: "babaton-agency-blazer", bottom: "levis-ribcage", shoes: "dr-martens-jadon" },
+    notes: ["Dark jeans and one good knit or fitted top: put together without looking like you tried too hard.", "One interesting piece is enough."],
+  },
+}
 

@@ -20,10 +20,10 @@ import { authHeaders, usePro } from "@/components/style-plans"
 import { glassOpen } from "@/lib/surfaces"
 import { track } from "@/lib/analytics"
 import { SHAPE_INFO, classify, type ShapeResult } from "@/lib/style/face-shape"
-import { ITEMS, STYLES, type Hairline, type Slot, type Style, type Texture } from "@/lib/style/catalog"
+import { ITEMS, OCCASIONS, STYLES, type Hairline, type OccasionId, type Slot, type Style, type Texture } from "@/lib/style/catalog"
 import { cards, type Card, type Look, type TabId } from "@/lib/style/editor"
 import { fitNotes, type Answers, type Link } from "@/lib/style/recommend"
-import { BUILDS, LOOKS, body, chooseOutfit, layers, modelPhoto, type Assets, type Build, type Gender, type LookId, type Outfit } from "@/lib/style/model"
+import { BUILDS, LOOKS, body, chooseOutfit, dressFor, layers, modelPhoto, type Assets, type Build, type Gender, type LookId, type Outfit } from "@/lib/style/model"
 
 const SLOTS: { id: Slot; label: string; icon: typeof Shirt }[] = [
   { id: "top", label: "Tops", icon: Shirt }, { id: "outer", label: "Jackets", icon: Layers },
@@ -137,17 +137,17 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
 
   // ── clothes ──
   const [clothesMode, setClothesMode] = useState<"pick" | "auto">("pick")
-  const [autoStyle, setAutoStyle] = useState<Style>()
+  const [autoStyle, setAutoStyle] = useState<Style | OccasionId>()
   const [autoNotes, setAutoNotes] = useState<string[]>([])
   // the model always wears a top: tapping the picked top again goes back to the plain tee
   const wear = (slot: Slot, id: string) => setOutfit((o) => ({ ...o, [slot]: o[slot] === id ? (slot === "top" ? DEFAULT_OUTFIT.top : undefined) : id }))
-  function chooseForMe(style: Style) {
+  function chooseForMe(style: Style | OccasionId) {
     const today = new Date().toDateString()
     const used = stored<{ day: string; n: number }>("style_auto", { day: today, n: 0 })
     const n = used.day === today ? used.n : 0
     if (!pro && n >= FREE_PICKS) return onPlans(`You've used today's ${FREE_PICKS} free outfit picks. Pro picks as many as you like.`)
     store("style_auto", { day: today, n: n + 1 })
-    const { outfit: o, notes } = chooseOutfit(style, gender, have, bodyB)
+    const { outfit: o, notes } = style in OCCASIONS ? dressFor(style as OccasionId, gender, have, bodyB) : chooseOutfit(style as Style, gender, have, bodyB)
     setOutfit({ top: DEFAULT_OUTFIT.top, ...o })
     setAutoStyle(style)
     setAutoNotes(notes)
@@ -248,7 +248,7 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
               <div className="relative mx-auto aspect-[3/4] w-full max-w-[min(30rem,62svh*0.75)] overflow-hidden rounded-2xl bg-gradient-to-b from-[#aea296] to-[#bbafa5]">
                 {!ready ? <Skeleton className="absolute inset-0 rounded-none bg-white/[0.06]" /> : <div className="absolute inset-0">
                   {/* eslint-disable-next-line @next/next/no-img-element -- static model photo */}
-                  <img src={u(modelPhoto(gender, bodyB, look))} alt={`A ${LOOKS.find((l) => l.id === look)?.label} ${gender === "male" ? "male" : "female"} model with ${bodyB === "slim" || bodyB === "plus" ? "a" : "an"} ${bodyB} build`} className="absolute inset-0 size-full object-cover" />
+                  <img src={u(modelPhoto(gender, bodyB, look))} alt={`A ${LOOKS.find((l) => l.id === look)?.label} ${gender === "male" ? "male" : "female"} model with ${bodyB === "slim" || bodyB === "plus" ? "a" : "an"} ${bodyB} build`} fetchPriority="high" className="absolute inset-0 size-full object-cover" />
                   {stack.map((l) => (
                     // eslint-disable-next-line @next/next/no-img-element -- clothes layer
                     <img key={l.slot} src={u(l.src)} alt="" className="absolute inset-0 size-full object-cover"
@@ -358,13 +358,16 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
                 <div className="flex flex-col gap-3">
                   <p className="text-sm text-white/70">What look are you going for? Ollie picks real pieces that suit it and the body type.</p>
                   <div className="grid max-h-[min(30rem,55svh)] grid-cols-2 gap-2 overflow-y-auto pr-1">
-                    {(Object.keys(STYLES) as Style[]).map((s) => (
-                      <button key={s} type="button" onClick={() => chooseForMe(s)} aria-pressed={autoStyle === s}
-                        className={`${optionBtn(autoStyle === s)} flex flex-col gap-1 bg-black/35 p-3`}>
-                        <span className="text-sm font-bold text-white">{STYLES[s].label}</span>
-                        <span className="text-xs leading-snug text-white/60">{STYLES[s].blurb}</span>
-                      </button>
-                    ))}
+                    {[["Dress for…", OCCASIONS], ["Styles", STYLES]].map(([title, list]) => [
+                      <p key={title as string} className="col-span-2 pt-1 text-xs font-semibold uppercase tracking-wide text-white/50">{title as string}</p>,
+                      ...Object.entries(list as Record<string, { label: string; blurb: string }>).map(([s, v]) => (
+                        <button key={s} type="button" onClick={() => chooseForMe(s as Style | OccasionId)} aria-pressed={autoStyle === s}
+                          className={`${optionBtn(autoStyle === s)} flex flex-col gap-1 bg-black/35 p-3`}>
+                          <span className="text-sm font-bold text-white">{v.label}</span>
+                          <span className="text-xs leading-snug text-white/60">{v.blurb}</span>
+                        </button>
+                      )),
+                    ])}
                   </div>
                   {autoNotes.length > 0 && <ul className="list-disc pl-5 text-sm text-white/70">{autoNotes.map((n) => <li key={n}>{n}</li>)}</ul>}
                   {pro === false && <p className="text-xs text-white/50">{FREE_PICKS} free picks a day. <button type="button" onClick={() => onPlans()} className="font-semibold text-(--ollie-cyan)">Unlimited with Pro</button></p>}
@@ -378,7 +381,7 @@ export function StyleEditor({ onPlans }: { onPlans: (reason?: string) => void })
                     <TabsContent key={s.id} value={s.id}>
                       <div className="grid max-h-[min(34rem,58svh)] grid-cols-2 gap-3 overflow-y-auto pr-1">
                         {ITEMS.filter((i) => i.slot === s.id && have.includes(i.id)).map((i) => (
-                          <Option key={i.id} card={{ ...i, best: !!autoStyle && i.styles.includes(autoStyle), links: [] }} on={outfit[s.id] === i.id}
+                          <Option key={i.id} card={{ ...i, best: !!autoStyle && (autoStyle in OCCASIONS ? Object.values(OCCASIONS[autoStyle as OccasionId][gender]).includes(i.id) : i.styles.includes(autoStyle as Style)), links: [] }} on={outfit[s.id] === i.id}
                             icon={s.icon} thumb={{ src: u(`/style/layers/${body(gender, bodyB)}/${i.id}.webp`), fit: THUMB[s.id] }} onClick={() => wear(s.id, i.id)} />
                         ))}
                       </div>
