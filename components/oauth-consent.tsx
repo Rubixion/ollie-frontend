@@ -20,7 +20,7 @@ type Props = {
 }
 
 export function OAuthConsent(props: Props) {
-  const { user, loading, signInWithGoogle, openModal } = useAuth()
+  const { user, loading, openModal } = useAuth()
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null)
 
@@ -89,8 +89,9 @@ export function OAuthConsent(props: Props) {
               your account&apos;s daily searches instead of a single free one.
             </p>
             <div className="mt-6 flex flex-col gap-3">
-              <Button variant="brand" size="cta" onClick={() => signInWithGoogle()}>Continue with Google</Button>
-              <Button variant="brandOutline" size="cta" onClick={() => openModal()}>Use email instead</Button>
+              {/* Both open the site's sign-in modal (Google or email inside), on the matching tab */}
+              <Button variant="brand" size="cta" onClick={() => openModal(undefined, "signin")}>Log in</Button>
+              <Button variant="brandOutline" size="cta" onClick={() => openModal(undefined, "signup")}>Sign up</Button>
             </div>
           </>
         ) : (
@@ -100,7 +101,7 @@ export function OAuthConsent(props: Props) {
               {user.email ? <> (<span className="text-white">{user.email}</span>)</> : null} and be able to:
             </p>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-white/60">
-              <li>Run your celebrity lookalike, face compare, symmetry and stylist searches</li>
+              <li>Run your celebrity lookalike, face compare and stylist searches</li>
               <li>Count those searches against your account&apos;s daily limit</li>
             </ul>
             <p className="mt-3 text-xs text-white/40">It cannot read your photos after a result is returned — nothing is stored.</p>
