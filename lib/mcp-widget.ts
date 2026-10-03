@@ -83,6 +83,8 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
   .more a span { color:var(--blue); } .more a:hover { background:rgb(255 255 255/.07); }
   .more a:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
   .msg { margin:0; color:var(--t80); font-size:14px; line-height:1.6; white-space:pre-line; } .msg a { color:var(--blue); }
+  .usage { display:flex; align-items:center; gap:8px; margin-top:16px; padding:10px 12px; border-radius:12px; background:var(--well); color:var(--t70); font-size:12px; }
+  .usage i { flex:none; width:6px; height:6px; border-radius:99px; background:var(--blue); }
   .foot { margin-top:12px; color:var(--t50); font-size:12px; text-align:center; }
 
   /* loading skeleton */
@@ -99,13 +101,14 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
     lookalike: { kind:"lookalike", title:"Your closest celebrity lookalikes", subtitle:"Ranked by Ollie's face-matching model",
       items:[{name:"Emma Mackey",knownFor:"British-French actress",pct:93,img:""},{name:"Samara Weaving",knownFor:"Australian actress",pct:91,img:""},
       {name:"Duffy",knownFor:"Welsh singer",pct:80,img:""},{name:"Margot Robbie",knownFor:"Australian actress",pct:78,img:""}],
-      cta:{label:"See your shareable card →", href:"${SITE_URL}/celebrity-lookalike"} },
+      cta:{label:"See your shareable card →", href:"${SITE_URL}/celebrity-lookalike"}, usage:"17 of 25 photo searches left today on your Ollie account." },
     symmetry: { kind:"symmetry", title:"Your face symmetry", pct:72, verdict:"More symmetric than most", pctLabel:"more symmetric than 3,898 real faces",
       items:[{name:"Eyes",pct:81},{name:"Eyebrows",pct:64},{name:"Nose",pct:77},{name:"Mouth",pct:58},{name:"Jaw",pct:69}],
       cta:{label:"See the mirrored view →", href:"${SITE_URL}/face-symmetry-test"},
       more:[{label:"Which celebrity do you look like?", href:"${SITE_URL}/celebrity-lookalike"},{label:"Try hairstyles and outfits on your face with AI", href:"${SITE_URL}/ai-stylist"}], foot:"Symmetry only, not an attractiveness score." },
+    usage: { kind:"usage", title:"Your Ollie searches", left:18, limit:25, verdict:"18 left today", sub:"Your Ollie account gets 25 photo searches a day, shared between ChatGPT and ollieml.com.", foot:"Free and unlimited: famous lookalikes of any celebrity, haircuts for a named face shape, and the face symmetry test." },
     message: { kind:"message", body:"No face was found in that photo. Try a clear, front-facing photo with good light, or upload it at ${SITE_URL}/face-symmetry-test?utm_source=chatgpt" },
-    compare: { kind:"compare", title:"Face comparison", pct:64, verdict:"How alike these two faces look", cta:{label:"Make a shareable card →", href:"${SITE_URL}/compare-faces"} }
+    compare: { kind:"compare", title:"Face comparison", pct:64, verdict:"How alike these two faces look", cta:{label:"Try more images →", href:"${SITE_URL}/compare-faces"} }
   };
   var root = document.getElementById("root");
   var esc = function (s) { return String(s==null?"":s).replace(/[&<>"]/g, function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); };
@@ -115,8 +118,8 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
   var bar = function (p) { return '<div class="bar" aria-hidden="true"><i data-w="'+clamp(p)+'"></i></div>'; };
   var head = function (tag) { return '<div class="top"><span class="mark">OLLIE</span><span class="tag">'+esc(tag)+'</span></div>'; };
   var R = 45, C = 2 * Math.PI * R;
-  var gauge = function (p) { return '<div class="gauge" role="img" aria-label="'+clamp(p)+' out of 100"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="'+R+'"/>' +
-    '<circle class="fg" cx="50" cy="50" r="'+R+'" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'" data-p="'+clamp(p)+'"/></svg><span class="num">'+clamp(p)+'</span></div>'; };
+  var gauge = function (p, label, aria) { return '<div class="gauge" role="img" aria-label="'+esc(aria || clamp(p)+' out of 100')+'"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="'+R+'"/>' +
+    '<circle class="fg" cx="50" cy="50" r="'+R+'" stroke-dasharray="'+C+'" stroke-dashoffset="'+C+'" data-p="'+clamp(p)+'"/></svg><span class="num">'+(label == null ? clamp(p) : esc(label))+'</span></div>'; };
 
   function skeleton() {
     root.innerHTML = head("Working…") + '<div class="sk" style="height:22px;width:62%"></div><div class="sk" style="height:14px;width:42%;margin-top:8px"></div>' +
@@ -150,10 +153,15 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
       if (d.shape) h += '<span class="chip">'+esc(d.shape)+' face</span>';
       if (d.shapeInfo) h += '<p class="sub" style="margin-top:8px">'+esc(d.shapeInfo)+'</p>';
       (d.sections||[]).forEach(function (sec) { h += '<div class="sec in"><b>'+esc(sec.title)+'</b><ul>'+(sec.items||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ul></div>'; });
+    } else if (d.kind === "usage") {
+      var lim = Number(d.limit) || 1, lf = Math.max(0, Number(d.left) || 0);
+      h += head("Usage") + '<h2>'+esc(d.title)+'</h2>' + '<div class="score in">' + gauge(lf / lim * 100, lf, lf+' of '+lim+' searches left') +
+        '<div><div class="verdict">'+esc(d.verdict)+'</div><p class="sub">'+esc(d.sub)+'</p></div></div>';
     } else if (d.kind === "message") {
       // linkify bare URLs after escaping
       h += head("Ollie") + '<p class="msg">' + esc(d.body).replace(/https:\\/\\/[^\\s<)]+[^\\s<).,]/g, function (u) { return '<a href="'+u+'" target="_blank" rel="noopener">'+u.replace(/^https:\\/\\/(www\\.)?/, "").replace(/\\?.*$/, "")+'</a>'; }) + '</p>';
     } else return;
+    if (d.usage) h += '<div class="usage"><i aria-hidden="true"></i>'+esc(d.usage)+'</div>';
     if (d.cta && d.cta.href) h += '<a class="cta" href="'+esc(d.cta.href)+'" target="_blank" rel="noopener">'+esc(d.cta.label||"Open Ollie →")+'</a>';
     if (d.more && d.more.length) h += '<div class="more"><p>Also on Ollie</p>' + d.more.map(function (m) { return '<a href="'+esc(m.href)+'" target="_blank" rel="noopener">'+esc(m.label)+'<span aria-hidden="true">→</span></a>'; }).join("") + '</div>';
     if (d.foot) h += '<div class="foot">'+esc(d.foot)+'</div>';
@@ -190,6 +198,15 @@ const WIDGET_HTML = /* html */ `<!doctype html><html><head><meta charset="utf-8"
     var p = m.params || {};
     show((p._meta && p._meta["ollie/widget"]) || (p.structuredContent && p.structuredContent.kind ? p.structuredContent : null));
   }, { passive: true });
+
+  // Links: the card runs in ChatGPT's sandboxed iframe, where a plain target=_blank link does nothing.
+  // Hand them to the host (window.openai.openExternal); elsewhere the normal link still works.
+  root.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+    if (!a || !window.openai || typeof window.openai.openExternal !== "function") return;
+    e.preventDefault();
+    try { window.openai.openExternal({ href: a.href }); } catch (err) { window.open(a.href, "_blank", "noopener"); }
+  });
 
   // ChatGPT fires a global event when toolOutput/metadata become available.
   window.addEventListener("openai:set_globals", function () { show(pick()); }, { passive: true });

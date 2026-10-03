@@ -4,7 +4,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
 import { z } from "zod"
 import { SITE_URL } from "@/lib/site-config"
-import { consumeSearch, guestId, refundSearch, USER_LIMIT, USER_WINDOW } from "@/lib/search-quota"
+import { consumeSearch, guestId, refundSearch, searchesUsed, USER_LIMIT, USER_WINDOW } from "@/lib/search-quota"
+import { widgetMeta, widgetResult } from "@/lib/mcp-widget"
 import { userFromAccessToken } from "@/lib/oauth"
 
 const MAX_IMAGE_BYTES = 7 * 1024 * 1024
@@ -193,7 +194,9 @@ export async function inference(path: "search" | "compare" | "landmarks", files:
       signal: AbortSignal.timeout(90_000), // a cold Modal container takes ~15-25 s
     })
     if (!res.ok) throw new Error(`inference ${res.status}`)
-    return { data: await res.json() }
+    // searches left after this one: null = not counted (the free symmetry app, or an exempt account)
+    const left = quota && quota.used !== null ? Math.max(0, (auth ? USER_LIMIT : GUEST_MCP_LIMIT) - quota.used) : null
+    return { data: await res.json(), left }
   } catch (err) {
     console.error("mcp inference failed:", err)
     if (quota) await refundSearch(quota)
@@ -201,6 +204,65 @@ export async function inference(path: "search" | "compare" | "landmarks", files:
     const why = (err instanceof Error ? err.message : String(err)).slice(0, 80)
     return { error: `The photo couldn't be checked (${why}). Try again with a clear, front-facing JPG or PNG photo.` }
   }
+}
+
+/** "N of 25 left today" after a counted photo search, or "" when it isn't counted. */
+export function leftLine(left: number | null | undefined, auth: McpAuth | "free"): string {
+  if (left == null || auth === "free") return ""
+  if (auth) return `${left} of ${USER_LIMIT} photo searches left today on your Ollie account.`
+  return left > 0 ? `${left} free photo search left today.` : `That was today's free photo search. Connect your Ollie account in ChatGPT for ${USER_LIMIT} a day.`
+}
+
+/** Adds the usage line to a tool result: the model's text and the card. */
+export function withUsage<T extends { content: { type: "text"; text: string }[]; _meta?: Record<string, unknown> }>(res: T, line: string): T {
+  if (!line) return res
+  res.content[0].text += `
+
+${line}`
+  const w = res._meta?.["ollie/widget"] as Record<string, unknown> | undefined
+  if (w) w.usage = line
+  return res
+}
+
+/** check_usage: how many photo searches the user has left today (lookalike + stylist; symmetry is free). */
+export function registerUsageTool(server: McpServer, auth: McpAuth) {
+  server.registerTool(
+    "check_usage",
+    {
+      title: "Check my Ollie searches left today",
+      description:
+        "Shows how many Ollie photo searches the user has left today and when the next one frees up. Use this when the user asks " +
+        "'how many searches do I have left', 'check my usage', 'what's my limit' or 'why can't I search'. No photo needed.",
+      inputSchema: {},
+      annotations: readOnly,
+      _meta: { ...widgetMeta, "openai/toolInvocation/invoking": "Checking your searches…", "openai/toolInvocation/invoked": "Checked your searches" },
+    },
+    async (_args, extra) => {
+      const subject = typeof extra._meta?.["openai/subject"] === "string" ? extra._meta["openai/subject"] : "anon"
+      const limit = auth ? USER_LIMIT : GUEST_MCP_LIMIT
+      const r = await searchesUsed(auth ? auth.userId : await guestId(`chatgpt:${subject}`), USER_WINDOW ?? "24 hours")
+      if (!r) return text("Ollie couldn't check your searches right now. Please try again shortly.")
+      const free = "Free and unlimited: famous lookalikes of any celebrity, haircuts for a named face shape, and the face symmetry test."
+      if (r === "exempt") return text(`This Ollie account has unlimited photo searches. ${free}`)
+      const left = Math.max(0, limit - r.used)
+      const hrs = r.oldest ? Math.max(1, Math.ceil((new Date(r.oldest).getTime() + 24 * 3600_000 - Date.now()) / 3600_000)) : 0
+      const next = left === 0 && hrs ? ` The next one frees up in about ${hrs} hour${hrs === 1 ? "" : "s"}.` : ""
+      const plan = auth
+        ? `Your Ollie account gets ${USER_LIMIT} photo searches a day, shared between ChatGPT and ollieml.com.`
+        : `Without an account you get ${GUEST_MCP_LIMIT} free photo search a day. Connect your Ollie account in ChatGPT for ${USER_LIMIT} a day.`
+      return widgetResult(
+        `The user has ${left} of ${limit} photo searches left today (${r.used} used in the last 24 hours).${next} ${plan} ${free}`,
+        { searches_left: left, daily_limit: limit, used_last_24h: r.used, connected: Boolean(auth) },
+        {
+          kind: "usage", title: "Your Ollie searches", left, limit,
+          verdict: left ? `${left} left today` : "None left today",
+          sub: `${plan}${next}`,
+          foot: free,
+          cta: auth ? { label: "Search on ollieml.com →", href: link("/celebrity-lookalike") } : undefined,
+        },
+      )
+    },
+  )
 }
 
 /** Landmarks from Modal's /landmarks in the { x, y } shape lib/symmetry.ts and lib/style/face-shape.ts expect. */

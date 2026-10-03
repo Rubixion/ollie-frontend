@@ -62,6 +62,20 @@ export async function consumeSearch(userId: string, ip: string, userLimit = USER
   return { ok: true, used: row.used, logId: row.log_id }
 }
 
+/** Read-only: searches counted against userId in the window, and when the oldest of them was made (it frees up
+ *  24 h later). null = exempt account (unlimited) or the database is unreachable (unavailable). */
+export async function searchesUsed(userId: string, window = "24 hours"): Promise<{ used: number; oldest: string | null } | "exempt" | null> {
+  if (isExempt(userId)) return "exempt"
+  const db = serviceClient()
+  if (!db) return null
+  const hours = parseInt(window, 10) || 24
+  const since = new Date(Date.now() - hours * 3600_000).toISOString()
+  const { data, count, error } = await db.from("search_log").select("created_at", { count: "exact" })
+    .eq("user_id", userId).gt("created_at", since).order("created_at", { ascending: true }).limit(1)
+  if (error) { console.error("searchesUsed failed:", error.message); return null }
+  return { used: count ?? 0, oldest: data?.[0]?.created_at ?? null }
+}
+
 /** Gives a search back when the search server failed, so an outage doesn't eat the user's allowance. */
 export async function refundSearch(quota: Quota): Promise<void> {
   if (!quota.ok || quota.logId === null) return

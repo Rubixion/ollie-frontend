@@ -6,7 +6,7 @@ import { z } from "zod"
 import { classify, measure, SHAPE_INFO, type Shape, type ShapeResult } from "@/lib/style/face-shape"
 import { cards } from "@/lib/style/editor"
 import { fitNotes, shapeLabel, want, type Answers } from "@/lib/style/recommend"
-import { imageFile, inference, link, noPhoto, photoUrl, readOnly, resolvePhoto, serve, text, toMesh } from "@/lib/mcp"
+import { imageFile, inference, leftLine, link, noPhoto, photoUrl, readOnly, registerUsageTool, resolvePhoto, serve, text, toMesh, withUsage } from "@/lib/mcp"
 import { registerWidget, widgetMeta, widgetResult } from "@/lib/mcp-widget"
 
 const SHAPES = ["oval", "round", "square", "oblong", "heart", "diamond", "triangle"] as const
@@ -71,6 +71,7 @@ function advice(s: ShapeResult, a: Answers, intro: string) {
 
 const handle = serve("ollie-stylist", (server, auth) => {
   registerWidget(server)
+  registerUsageTool(server, auth)
   server.registerTool(
     "haircut_for_face_shape",
     {
@@ -108,14 +109,15 @@ const handle = serve("ollie-stylist", (server, auth) => {
       if (!f) return text(noPhoto("find your face shape and the styles that suit it", "/ai-stylist"))
       const r = await inference("landmarks", [f], extra._meta, "/ai-stylist", auth)
       if (r.error) return text(r.error)
-      if (!r.data.face_found) return text("No face was found in that photo. Try a clear, front-facing photo with good light.")
+      const u = <T extends Parameters<typeof withUsage>[0]>(res: T) => withUsage(res, leftLine(r.left, auth)) // "N left today"
+      if (!r.data.face_found) return u(text("No face was found in that photo. Try a clear, front-facing photo with good light."))
       const m = toMesh(r.data)
       // ponytail: same straight-on limit as the symmetry norms; the site's live scan averages many frames instead
       if (Math.abs(m.yaw) > 12 || Math.abs(m.pitch) > 15) {
-        return text("The head is turned in that photo, which skews the face's proportions. Try a straight-on photo looking at the camera.")
+        return u(text("The head is turned in that photo, which skews the face's proportions. Try a straight-on photo looking at the camera."))
       }
       const s = classify(measure(m.lm, m.w, m.h))
-      return advice(s, answers(x), `The user's face shape is ${shapeLabel(s)}: ${SHAPE_INFO[s.shape]} (From one photo; hair covering the forehead or jaw can shift it.)`)
+      return u(advice(s, answers(x), `The user's face shape is ${shapeLabel(s)}: ${SHAPE_INFO[s.shape]} (From one photo; hair covering the forehead or jaw can shift it.)`))
     },
   )
 })

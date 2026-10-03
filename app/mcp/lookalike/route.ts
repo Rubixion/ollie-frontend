@@ -4,7 +4,7 @@
 import { z } from "zod"
 import { SITE_URL } from "@/lib/site-config"
 import { lookAlikePages, imgSrc, role, shown } from "@/lib/look-alike"
-import { imageFile, inference, link, noPhoto, photoBase64, photoUrl, readOnly, resolvePhoto, serve, text } from "@/lib/mcp"
+import { imageFile, inference, leftLine, link, noPhoto, photoBase64, photoUrl, readOnly, registerUsageTool, resolvePhoto, serve, text, withUsage } from "@/lib/mcp"
 import { registerWidget, widgetMeta, widgetResult } from "@/lib/mcp-widget"
 
 const SAME_RAW = 45 // same threshold as components/face-compare.tsx
@@ -16,6 +16,7 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth, claude) => {
   const b64 = <K extends string>(key: K, d?: string) =>
     (claude ? { [key]: photoBase64.optional().describe(d ?? photoBase64.description!) } : {}) as Record<K, ReturnType<typeof photoBase64.optional>>
   registerWidget(server)
+  registerUsageTool(server, auth)
 
   server.registerTool(
     "famous_lookalikes",
@@ -82,15 +83,16 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth, claude) => {
       if (!f) return text(noPhoto("find which celebrity you look like", "/celebrity-lookalike"))
       const r = await inference("search", [f], extra._meta, "/celebrity-lookalike", auth)
       if (r.error) return text(r.error)
+      const u = <T extends Parameters<typeof withUsage>[0]>(res: T) => withUsage(res, leftLine(r.left, auth)) // "N left today"
       const all: { name: string; score: number }[] = Object.values(r.data.modes ?? {})[0] as never ?? []
       // Not a celebrity identifier: a same-person-level match means the photo is probably of that celebrity, so it's dropped
       // (ChatGPT's review tests "who is this person in the photo").
       const rows = all.filter((m) => m.score < SAME_RAW)
-      if (all.length && !rows.length) return text("This looks like a photo of a celebrity, not of the user. Ollie finds lookalikes for the user's own face; it doesn't identify people in photos.")
-      if (!rows.length) return text("No face was found in that photo. Try a clear, front-facing photo with good light.")
+      if (all.length && !rows.length) return u(text("This looks like a photo of a celebrity, not of the user. Ollie finds lookalikes for the user's own face; it doesn't identify people in photos."))
+      if (!rows.length) return u(text("No face was found in that photo. Try a clear, front-facing photo with good light."))
       const matches = rows.slice(0, 5).map((m) => ({ name: m.name, known_for: r.data.known_for?.[m.name] ?? null, similarity_percent: shown(m.score) }))
       const note = rows.length < all.length ? " (One near-identical match was left out: Ollie doesn't identify people in photos.)" : r.data.face_found ? "" : " (Ollie couldn't find a clear face in the photo, so these may be off. A front-facing photo works best.)"
-      return widgetResult(
+      return u(widgetResult(
         `The user's closest celebrity lookalike is ${matches[0].name} at ${matches[0].similarity_percent}% similar, then ` +
           matches.slice(1).map((m) => `${m.name} (${m.similarity_percent}%)`).join(", ") + `.${note} ` +
           `See the matches with photos and a shareable card at ${link("/celebrity-lookalike")}, and find outfits that suit their face shape at ${link("/ai-stylist")}.`,
@@ -103,7 +105,7 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth, claude) => {
           items: matches.map((m) => ({ name: m.name, knownFor: m.known_for, pct: m.similarity_percent, img: r.data.thumbs?.[m.name] })),
           cta: { label: "See your shareable card →", href: link("/celebrity-lookalike") },
         },
-      )
+      ))
     },
   )
 
@@ -136,22 +138,23 @@ const handle = serve("ollie-celebrity-lookalike", (server, auth, claude) => {
       if (!fa || !fb) return text(noPhoto("compare two faces", "/compare-faces"))
       const r = await inference("compare", [fa, fb], extra._meta, "/compare-faces", auth)
       if (r.error) return text(r.error)
+      const u = <T extends Parameters<typeof withUsage>[0]>(res: T) => withUsage(res, leftLine(r.left, auth)) // "N left today"
       const [a, b] = r.data.face_found ?? [false, false]
-      if (!a || !b) return text(`Ollie couldn't find a clear face in ${!a && !b ? "either photo" : !a ? "the first photo" : "the second photo"}. Try front-facing photos with good light.`)
+      if (!a || !b) return u(text(`Ollie couldn't find a clear face in ${!a && !b ? "either photo" : !a ? "the first photo" : "the second photo"}. Try front-facing photos with good light.`))
       const pct = shown(r.data.score)
       const strong = r.data.score >= SAME_RAW
-      return widgetResult(
+      return u(widgetResult(
         `These two faces are ${pct}% alike on Ollie's face-matching model${strong ? ", a very strong resemblance" : ""}. ` +
-          `Most unrelated people score 20-50%. Make a shareable card at ${link("/compare-faces")}.`,
+          `Most unrelated people score 20-50%. Compare more photos at ${link("/compare-faces")}.`,
         { similarity_percent: pct, strong_resemblance: strong },
         {
           kind: "compare",
           title: "Face comparison",
           pct,
           verdict: strong ? "Very strong resemblance" : "How alike these two faces look",
-          cta: { label: "Make a shareable card →", href: link("/compare-faces") },
+          cta: { label: "Try more images →", href: link("/compare-faces") },
         },
-      )
+      ))
     },
   )
 })
