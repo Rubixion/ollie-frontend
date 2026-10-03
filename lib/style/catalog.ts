@@ -286,9 +286,27 @@ export type Slot = "top" | "outer" | "bottom" | "shoes"
 // leans to it for Plus builds). `age`: reads younger (-1) / older (+1), for the "look older / younger" presets.
 export type Gender = "male" | "female"
 type More = { for?: Gender; long?: boolean; age?: -1 | 0 | 1 }
-export type Item = Option & More & { slot: Slot; styles: Style[]; brand: string; url: string; price?: string }
+// `usd`: the brand's price when the page showed one, else EST (typical US list price, for budgets and "about $X"
+// totals only, never shown as the price). ponytail: hand-set; refresh when a feed with live prices is wired in.
+export type Item = Option & More & { slot: Slot; styles: Style[]; brand: string; url: string; price?: string; usd: number }
+const EST: Record<string, number> = {
+  "champion-rw-hoodie": 70, "uniqlo-u-tee": 20, "uniqlo-u-tee-black": 20, "levis-trucker": 98, "carhartt-michigan": 198,
+  "uniqlo-uld-vest": 60, "jcrew-ludlow": 298, "levis-501": 80, "levis-501-black": 80, "uniqlo-chino": 40, "uniqlo-merino-mock": 40,
+  "carhartt-flannel": 55, "uniqlo-merino-crew": 40, "jcrew-cashmere-w": 148, "babaton-contour-crew": 58, "jcrew-oxford-w": 80,
+  "bdg-baby-tee": 25, "uniqlo-chesterfield": 230, "babaton-agency-blazer": 248, "aritzia-super-puff": 250, "levis-578-baggy": 80,
+  "uniqlo-smart-ankle": 50, "on-cloudmonster": 180, "sam-edelman-loraine": 150, "uniqlo-merino-polo": 50, "uniqlo-dress-shirt": 40,
+  "levis-511-dark": 90, "jcrew-lodge-w": 300,
+}
 const item = (slot: Slot, id: string, brand: string, name: string, colorName: string, styles: Style[], url: string, render: string, price?: string, more: More = {}): Item =>
-  ({ slot, id, brand, name: `${brand} ${name}`, styles, url, render, price, sub: [colorName, price].filter(Boolean).join(" · "), ...more })
+  ({ slot, id, brand, name: `${brand} ${name}`, styles, url, render, price, sub: [colorName, price].filter(Boolean).join(" · "), usd: price ? Number(price.replace(/[^\d.]/g, "")) : EST[id] ?? NaN, ...more })
+
+// "Choose for me" budgets: the most a piece may cost in each slot (Premium has no cap and leans to the dearer piece)
+export type Budget = 1 | 2 | 3
+export const BUDGETS: Record<Budget, { label: string; cap?: Record<Slot, number> }> = {
+  1: { label: "Budget", cap: { top: 50, outer: 150, bottom: 70, shoes: 110 } },
+  2: { label: "Mid-range", cap: { top: 130, outer: 350, bottom: 160, shoes: 220 } },
+  3: { label: "Premium" },
+}
 const M: More = { for: "male" }, W: More = { for: "female" }
 
 export const ITEMS: Item[] = [
@@ -353,8 +371,9 @@ export const ITEMS: Item[] = [
   // tops, women
   item("top", "jcrew-cashmere-w", "J.Crew", "Cashmere Classic-Fit Crewneck", "Heather oatmeal", ["old-money", "classic", "minimal"],
     "https://www.jcrew.com/p/womens/categories/clothing/sweaters/crewneck/cashmere-classic-fit-crewneck-sweater/BA400", "an oatmeal heather cashmere classic-fit crewneck sweater", undefined, { ...W, age: 1 }),
-  item("top", "babaton-contour", "Babaton", "Contour Squareneck Bodysuit", "Black", ["minimal", "classic"],
-    "https://www.aritzia.com/us/en/product/contour-squareneck-longsleeve-bodysuit/73936.html", "a black fitted square-neck long-sleeve bodysuit", undefined, { ...W, age: 1 }),
+  // crew neck, not the square neck: the female base's sports bra showed inside a square neckline on every look
+  item("top", "babaton-contour-crew", "Babaton", "Contour Crew Longsleeve Bodysuit", "Black", ["minimal", "classic"],
+    "https://www.aritzia.com/us/en/product/contour-crew-longsleeve-bodysuit/79672.html", "a black fitted high crew-neck long-sleeve bodysuit, smooth and seamless, tucked into the trousers so the waistband shows", undefined, { ...W, age: 1 }),
   item("top", "lululemon-align-tank", "lululemon", "Align Tank Top", "Black", ["athleisure"],
     "https://shop.lululemon.com/p/women-tanks/Align-Tank-MD/_/prod9980085", "a black fitted lululemon Align racerback tank top", "$68", { ...W, age: -1 }),
   item("top", "jcrew-oxford-w", "J.Crew", "Classic-Fit Oxford Shirt", "White", ["preppy", "classic", "old-money"],
@@ -457,8 +476,8 @@ export const ITEMS: Item[] = [
     "https://www.uniqlo.com/us/en/products/E460939-000/00", "a black fine-knit merino wool long-sleeve knitted polo sweater with an open collar, top button undone", undefined, { ...M, age: 1 }),
   item("top", "uniqlo-dress-shirt", "Uniqlo", "Easy Care Stretch Slim Shirt", "White", ["classic", "minimal", "preppy"],
     "https://www.uniqlo.com/us/en/products/E467451-000/00", "a crisp white slim-fit cotton dress shirt with a regular collar, buttoned, no tie, neatly tucked into the trousers", undefined, { ...M, age: 1 }),
-  item("outer", "allsaints-milo", "AllSaints", "Milo Asymmetric Zip Leather Biker Jacket", "Black", ["streetwear", "minimal", "classic"],
-    "https://www.allsaints.com/us/men/leathers/leather-jackets/milo-asymmetric-zip-leather-biker-jacket/USML025N-5.html", "a black slim-fit leather biker jacket with an asymmetric silver zip and notched lapels", undefined, M),
+  item("outer", "allsaints-milo", "AllSaints", "Milo Leather Biker Jacket", "Black", ["streetwear", "minimal", "classic"],
+    "https://www.allsaints.com/us/men/leathers/leather-jackets/milo-leather-biker-jacket/USML025N-5.html", "a black slim-fit leather biker jacket with an asymmetric silver zip and notched lapels", "$649", M),
   item("outer", "baracuta-g9", "Baracuta", "G9 Harrington Jacket", "Dark navy", ["classic", "preppy", "old-money"],
     "https://us.baracuta.com/collections/g9-harrington-jacket", "a dark navy Baracuta G9 Harrington cotton jacket with a two-button stand collar, ribbed cuffs and hem, and red tartan lining showing at the collar", "$499", { ...M, age: 1 }),
   item("bottom", "levis-511-dark", "Levi's", "511 Slim Fit Jeans", "Dark wash", ["classic", "minimal", "preppy"],
@@ -470,8 +489,8 @@ export const ITEMS: Item[] = [
   // women
   item("top", "jcrew-jackie", "J.Crew", "Jackie Cardigan", "Ivory", ["preppy", "old-money", "classic"],
     "https://www.jcrew.com/p/womens/categories/clothing/sweaters/cardigan/jackie-cardigan/CJ755", "an ivory fine-knit fitted crewneck cardigan, fully buttoned, worn as a top", "$128", { ...W, age: 1 }),
-  item("outer", "allsaints-cargo-w", "AllSaints", "Cargo Leather Biker Jacket", "Black", ["streetwear", "minimal", "y2k"],
-    "https://www.allsaints.com/us/women/leather/leather-jackets/cargo-leather-biker-jacket/USWL047C-140.html", "a black slim leather biker jacket with an asymmetric zip, quilted shoulder panels and notched lapels", undefined, W),
+  item("outer", "allsaints-balfern-w", "AllSaints", "Balfern Leather Biker Jacket", "Black", ["streetwear", "minimal", "y2k"],
+    "https://www.allsaints.com/us/women/leather/leather-jackets/balfern-leather-biker-jacket/USW084LB-5.html", "a black soft leather biker jacket with an asymmetric silver zip, press-stud lapels, shoulder epaulettes, zipped cuffs and a belted hem", "$619", W),
   item("outer", "jcrew-lodge-w", "J.Crew", "Lodge Coat in Italian Stadium-Cloth Wool", "Camel", ["old-money", "classic", "minimal"],
     "https://www.jcrew.com/p/womens/categories/clothing/coats-and-jackets/topcoat/lodge-coat-in-italian-stadium-cloth-wool/K0896", "a camel wool single-breasted topcoat, thigh length", undefined, { ...W, long: true, age: 1 }),
   item("bottom", "levis-501-90s-w", "Levi's", "501 '90s Jeans", "Dark wash", ["classic", "minimal", "streetwear"],
@@ -508,13 +527,13 @@ export const OCCASIONS: Record<OccasionId, { label: string; blurb: string; style
   date: {
     label: "First date", blurb: "Effortless, a little sharp. Fits most places.", style: "minimal",
     male: { top: "uniqlo-merino-mock", outer: "allsaints-milo", bottom: "levis-511-dark", shoes: "blundstone-500" },
-    female: { top: "babaton-contour", outer: "allsaints-cargo-w", bottom: "levis-501-90s-w", shoes: "dr-martens-jadon" },
+    female: { top: "babaton-contour-crew", outer: "allsaints-balfern-w", bottom: "levis-501-90s-w", shoes: "dr-martens-jadon" },
     notes: ["Dark jeans, one good knit or fitted top and a leather jacket: put together without looking like you tried too hard.", "One interesting piece is enough."],
   },
   taller: {
     label: "Look taller", blurb: "One colour head to toe, a little heel.", style: "minimal",
     male: { top: "uniqlo-merino-mock", outer: "uniqlo-chesterfield", bottom: "levis-501-black", shoes: "dr-martens-1460" },
-    female: { top: "babaton-contour", outer: "babaton-agency-blazer", bottom: "babaton-effortless", shoes: "dr-martens-jadon" },
+    female: { top: "babaton-contour-crew", outer: "babaton-agency-blazer", bottom: "babaton-effortless", shoes: "dr-martens-jadon" },
     notes: ["One unbroken colour from collar to shoes makes one long line, so the eye doesn't stop at the waist.", "A boot with a stacked sole adds an honest inch or more; keep trousers long enough to cover the shaft."],
   },
   slimmer: {

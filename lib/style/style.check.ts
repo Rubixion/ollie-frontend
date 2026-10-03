@@ -109,3 +109,15 @@ for (const [shape, people] of Object.entries(CELEBS)) {
 }
 
 console.log("style checks passed")
+
+// ─── budgets ───
+{
+  const { BUDGETS, ITEMS: ALL } = await import("./catalog")
+  const { chooseOutfit: pick, dressFor: dress, outfitTotal } = await import("./model")
+  const every = ALL.map((i) => i.id)
+  const cheap = pick("classic", "male", every, "average", 1).outfit
+  for (const id of Object.values(cheap)) { const it = ALL.find((i) => i.id === id)!; assert.ok(it.usd <= BUDGETS[1].cap![it.slot], `${id} over budget`) }
+  assert.ok(outfitTotal(cheap) < outfitTotal(pick("classic", "male", every, "average", 3).outfit), "premium costs more than budget")
+  assert.notEqual(dress("interview", "male", every, "average", 1).outfit.shoes, "ae-park-avenue", "a $395 shoe gives way on a budget")
+  assert.equal(dress("interview", "male", every, "average").outfit.shoes, "ae-park-avenue")
+}

@@ -2,7 +2,7 @@
 // A "body" is gender + build. Photos: public/style/models/<body>-<look>.jpg (scripts/style-bases.mjs). All looks of
 // one body share its exact shape and pose, so that body's clothes layers (public/style/layers/<body>/,
 // scripts/style-layers.mjs) fit every look. public/style/layers/index.json lists what exists.
-import { ITEMS, OCCASIONS, STYLES, type Gender, type OccasionId, type Slot, type Style } from "./catalog"
+import { BUDGETS, ITEMS, OCCASIONS, STYLES, type Budget, type Gender, type OccasionId, type Slot, type Style } from "./catalog"
 
 export type { Gender }
 export const LOOKS = [ // keep the ids in sync with LOOKS in scripts/style-bases.mjs
@@ -45,15 +45,21 @@ export function layers(g: Gender, b: Build, outfit: Outfit, have: string[]) {
 }
 
 // ─── choose my clothes for me ────────────────────────────────────────────────
-/** Best item per slot for a look and body type, using only items that have a layer for this model. */
-export function chooseOutfit(style: Style, g: Gender, have: string[], b?: Build): { outfit: Outfit; notes: string[] } {
+/** Within budget: at or under the slot's cap (Premium has none). */
+const fits = (i: (typeof ITEMS)[number], budget?: Budget) => !budget || !BUDGETS[budget].cap || i.usd <= BUDGETS[budget].cap![i.slot]
+
+/** Best item per slot for a look, body type and budget, using only items that have a layer for this model. */
+export function chooseOutfit(style: Style, g: Gender, have: string[], b?: Build, budget?: Budget): { outfit: Outfit; notes: string[] } {
   const outfit: Outfit = {}
   for (const slot of LAYER_ORDER) {
-    const pool = ITEMS.filter((i) => i.slot === slot && have.includes(i.id) && (!i.for || i.for === g))
+    const all = ITEMS.filter((i) => i.slot === slot && have.includes(i.id) && (!i.for || i.for === g))
+    // nothing in budget for this slot: fall back to the cheapest piece rather than leave it empty
+    const pool = all.some((i) => fits(i, budget)) ? all.filter((i) => fits(i, budget)) : [...all].sort((x, y) => x.usd - y.usd).slice(0, 1)
     const rank = (i: (typeof pool)[number]) =>
       (i.styles.includes(style) ? 10 : 0) +
       (i.styles[0] === style ? 1 : 0) + // the style it's most typical of
-      (slot === "outer" && b === "plus" && i.long ? 2 : 0) // plus: longer layers over cropped
+      (slot === "outer" && b === "plus" && i.long ? 2 : 0) + // plus: longer layers over cropped
+      (budget === 3 ? Math.min(2, i.usd / 200) : 0) // premium: lean to the better-made, dearer piece
     const best = [...pool].sort((a, b) => rank(b) - rank(a))[0]
     // jackets are optional: only add one that fits the look
     if (best && (slot !== "outer" || best.styles.includes(style))) outfit[slot] = best.id
@@ -66,11 +72,16 @@ export function chooseOutfit(style: Style, g: Gender, have: string[], b?: Build)
 }
 
 /** A hand-picked "Dress for…" outfit. Pieces without a layer for this model are filled in by chooseOutfit. */
-export function dressFor(id: OccasionId, g: Gender, have: string[], b?: Build): { outfit: Outfit; notes: string[] } {
+export function dressFor(id: OccasionId, g: Gender, have: string[], b?: Build, budget?: Budget): { outfit: Outfit; notes: string[] } {
   const o = OCCASIONS[id]
-  const fill = chooseOutfit(o.style, g, have, b)
+  const fill = chooseOutfit(o.style, g, have, b, budget)
   const outfit: Outfit = { ...fill.outfit }
   const picks = { ...o[g], ...(b && o.builds?.[b]?.[g]) }
-  for (const [slot, item] of Object.entries(picks) as [Slot, string][]) if (have.includes(item)) outfit[slot] = item
+  // a hand-picked piece over budget gives way to Choose for me's in-budget pick for that slot
+  for (const [slot, item] of Object.entries(picks) as [Slot, string][])
+    if (have.includes(item) && fits(ITEMS.find((i) => i.id === item)!, budget)) outfit[slot] = item
   return { outfit, notes: [...o.notes, ...fill.notes.slice(1)] }
 }
+
+/** Rough cost of an outfit in USD (brand prices where known, typical list prices otherwise). */
+export const outfitTotal = (o: Outfit) => Object.values(o).reduce((t, id) => t + (ITEMS.find((i) => i.id === id)?.usd ?? 0), 0)

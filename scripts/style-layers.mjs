@@ -18,7 +18,7 @@ const env = await scriptEnv()
 const NOUN = { top: "top", outer: "outer layer (jacket, coat or vest)", bottom: "trousers", shoes: "pair of shoes (and any socks showing above them)" }
 const ITEMS = Object.fromEntries(CATALOG.map((i) => [i.id, {
   slot: i.slot, noun: NOUN[i.slot], hood: /hoodie/i.test(i.name), for: i.for,
-  what: i.slot === "outer" ? `${i.render}, worn open` : i.render,
+  what: i.slot === "outer" ? `${i.render}, worn open` : i.render, tucked: /tucked into/.test(i.render),
 }]))
 const TEE = "uniqlo-u-tee" // jackets are drawn over this, so their sleeves are wide enough to cover a t-shirt's
 const HOODIE = Object.keys(ITEMS).find((k) => ITEMS[k].hood)
@@ -92,6 +92,19 @@ async function cleanLayer(layer, bare, labels, w, h, slot) {
   let n = 0
   for (let p = 0; p < w * h; p++) if (drop[p] && L[p * 4 + 3]) { L[p * 4 + 3] = 0; n++ }
   return { n, buf: await sharp(L, { raw: { width: w, height: h, channels: 4 } }).webp({ quality: 88, alphaQuality: 90 }).toBuffer() }
+}
+// A tucked top ends at the bare base's waistband, a few px above where some trousers' layers start, so a sliver of
+// the base showed between them. Extend each column's bottom edge 8px down in its own colour: it tucks under any waistband.
+async function extendTucked(layer, w, h) {
+  const L = await sharp(layer).ensureAlpha().raw().toBuffer()
+  const bottom = (x) => { let y = h - 1; while (y >= 0 && L[(y * w + x) * 4 + 3] < 128) y--; return y }
+  const hem = bottom(w >> 1)
+  for (let x = 0; x < w; x++) {
+    const y = bottom(x)
+    if (y < 0 || Math.abs(y - hem) > 20) continue // only the hem: a sleeve's column ends at the cuff, lower down by the hand
+    for (let k = 1; k <= 8 && y + k < h; k++) L.copy(L, ((y + k) * w + x) * 4, (y * w + x) * 4, (y * w + x) * 4 + 4)
+  }
+  return sharp(L, { raw: { width: w, height: h, channels: 4 } }).webp({ quality: 88, alphaQuality: 90 }).toBuffer()
 }
 const labelsFor = async (CACHE, name, w, h) => existsSync(`${CACHE}/${name}-labels.png`)
   ? sharp(`${CACHE}/${name}-labels.png`).resize(w, h, { fit: "fill", kernel: "nearest" }).extractChannel(0).raw().toBuffer() : null
@@ -187,6 +200,7 @@ async function makeLayer(OUT, CACHE, W, H, name, it, start, under = "", skin = n
   if (!layer) throw new Error(`${name}: the cut-out kept coming back re-framed`)
   execFileSync("python", ["scripts/style-parse.py", `${CACHE}/${name}-dressed.jpg`], { stdio: "inherit" }) // skin/hair labels for cleanLayer
   layer = (await cleanLayer(layer, bare, await labelsFor(CACHE, name, W, H), W, H, it.slot)).buf
+  if (it.tucked) layer = await extendTucked(layer, W, H)
   writeFileSync(`${OUT}/${name}.webp`, layer)
   if (it.slot === "outer") writeFileSync(`${OUT}/${name}.clip.webp`, await clipMask(layer, W, H))
   console.log(`${OUT.split("/").pop()} ${name}: layer saved`)

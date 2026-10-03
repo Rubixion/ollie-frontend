@@ -2,7 +2,7 @@
 
 // /ai-stylist opens straight on the editor with a dressed model; no questions first. The face scan and the Pro popup
 // come up in context, from inside the editor.
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ScanFace } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StyleEditor } from "@/components/style-editor"
@@ -13,6 +13,10 @@ export function StyleAdvisor() {
   const [plans, setPlans] = useState<{ open: boolean; reason?: string }>({ open: false })
   const [scan, setScan] = useState(0) // bumped to start the face scan from outside the editor
   const startScan = (where: string) => { setScan((n) => n + 1); track("style_scan_open", { where }) }
+  useEffect(() => { // "Get Pro" on /account links here with ?plans=1
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of ?plans= after hydration
+    if (new URLSearchParams(location.search).get("plans")) setPlans({ open: true })
+  }, [])
   return (
     <div className="mx-auto w-full max-w-6xl">
       {/* the first action: the face scan is the free "aha" that leads to haircuts, the share card and Pro */}

@@ -1,9 +1,8 @@
 "use client"
 
 import { createPortal } from "react-dom"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import type { ComponentProps } from "react"
-import { AnimatePresence, motion } from "framer-motion"
 import { LogOut } from "lucide-react"
 import { AccountIcon } from "@/components/ui/account-icon"
 import { usePathname } from "next/navigation"
@@ -30,19 +29,7 @@ const links = MATCH_ONLY
     ]
 
 function ProfileMenu() {
-  const { user, signOut, openModal } = useAuth()
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-  const onDown = (event: globalThis.MouseEvent) => {
-    if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false)
-  }
-
-  document.addEventListener("mousedown", onDown)
-  return () => document.removeEventListener("mousedown", onDown)
-}, [])
-
+  const { user, openModal } = useAuth()
   if (!user) {
     return (
       <div className="hidden items-center gap-2 lg:flex">
@@ -51,41 +38,12 @@ function ProfileMenu() {
       </div>
     )
   }
-
+  // the account icon opens the profile page (/account): saved outfits, plan, password, sign out, delete
   return (
-    <div ref={ref} className="relative hidden lg:block">
-      <button
-        onClick={() => setOpen((value) => !value)}
-        className="flex size-9 items-center justify-center text-white/60 transition-colors hover:text-white aria-expanded:text-white"
-        aria-label="Account menu"
-        aria-expanded={open}
-      >
-        <AccountIcon size={22} aria-hidden="true" />
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 6 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 6 }}
-            transition={{ duration: 0.18 }}
-            className="absolute right-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] shadow-2xl shadow-black"
-          >
-            <div className="border-b border-white/5 px-4 py-3">
-              <p className="mb-0.5 text-[10px] uppercase tracking-widest text-white/60">Signed in as</p>
-              <p className="truncate text-xs font-medium text-white/70">{user.email}</p>
-            </div>
-            <button
-              onClick={() => { signOut(); setOpen(false) }}
-              className="flex w-full items-center gap-2.5 px-4 py-3 text-left text-sm text-red-400/80 transition-colors hover:bg-red-500/10 hover:text-red-300"
-            >
-              <LogOut size={14} />
-              Sign out
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <PageLink href="/account" aria-label="Your account"
+      className="hidden size-9 items-center justify-center text-white/60 transition-colors hover:text-white lg:flex">
+      <AccountIcon size={22} aria-hidden="true" />
+    </PageLink>
   )
 }
 
@@ -183,6 +141,10 @@ export function Nav() {
           {user ? (
             <>
               <p className="px-1 text-xs text-white/60">{user.email}</p>
+              <PageLink href="/account" onClick={() => setOpen(false)} className={buttonVariants({ variant: "outline", className: "w-full justify-start" })}>
+                <AccountIcon size={15} aria-hidden="true" />
+                Your account
+              </PageLink>
               <Button variant="outline" className="w-full justify-start text-red-300" onClick={() => { signOut(); setOpen(false) }}>
                 <LogOut size={15} />
                 Sign out

@@ -6,7 +6,7 @@
 // (in-context permission priming); the result shows their face shape and picks, then offers Pro to see them on you.
 // Pro (the popup via onPlans): the AI try-on on your own photo, brow shapes, unlimited Choose for me.
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
-import { Camera, Check, Crown, ExternalLink, Eye, Footprints, Glasses, ImageUp, Layers, Lock, ScanFace, Scissors, Shirt, ShoppingBag, Smile, Sparkles, WandSparkles } from "lucide-react"
+import { Bookmark, Camera, Check, Crown, ExternalLink, Eye, Footprints, Glasses, ImageUp, Layers, Lock, ScanFace, Scissors, Shirt, ShoppingBag, Smile, Sparkles, WandSparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -20,12 +20,14 @@ import { StyleScanner, type ScanResult } from "@/components/style-scanner"
 import { useAuth } from "@/components/auth-provider"
 import { authHeaders, usePro } from "@/components/style-plans"
 import { glassOpen } from "@/lib/surfaces"
+import { OutfitThumb } from "@/components/outfit-thumb"
+import { deleteOutfit, getOutfit, listOutfits, saveOutfit, type SavedOutfit } from "@/lib/style/saved"
 import { track } from "@/lib/analytics"
 import { SHAPE_INFO, classify, type ShapeResult } from "@/lib/style/face-shape"
-import { ITEMS, OCCASIONS, STYLES, type Hairline, type OccasionId, type Slot, type Style, type Texture } from "@/lib/style/catalog"
+import { BUDGETS, ITEMS, OCCASIONS, STYLES, type Budget, type Hairline, type OccasionId, type Slot, type Style, type Texture } from "@/lib/style/catalog"
 import { cards, type Card, type Look, type TabId } from "@/lib/style/editor"
 import { AGE_BANDS, fitNotes, grooming, shapeLabel, type AgeBand, type Answers, type Goal, type Link } from "@/lib/style/recommend"
-import { BUILDS, LOOKS, body, chooseOutfit, dressFor, layers, modelPhoto, type Assets, type Build, type Gender, type LookId, type Outfit } from "@/lib/style/model"
+import { BUILDS, LOOKS, body, chooseOutfit, dressFor, layers, modelPhoto, outfitTotal, type Assets, type Build, type Gender, type LookId, type Outfit } from "@/lib/style/model"
 
 const SLOTS: { id: Slot; label: string; icon: typeof Shirt }[] = [
   { id: "top", label: "Tops", icon: Shirt }, { id: "outer", label: "Jackets", icon: Layers },
@@ -135,7 +137,7 @@ async function shrink(file: File, max = 1280): Promise<string> {
 
 export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: string) => void; scan?: number; onScan?: (where: string) => void }) {
   const pro = usePro()
-  const { openModal } = useAuth()
+  const { openModal, user } = useAuth()
 
   // ── the model ──
   const [gender, setGender] = useState<Gender>("male")
@@ -178,7 +180,7 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
   }, [])
 
   // ── clothes ──
-  const [clothesMode, setClothesMode] = useState<"pick" | "auto">("pick")
+  const [clothesMode, setClothesMode] = useState<"pick" | "auto" | "saved">("pick")
   const [autoStyle, setAutoStyle] = useState<Style | OccasionId>()
   const [autoNotes, setAutoNotes] = useState<string[]>([])
   // the model always wears a top: tapping the picked top again goes back to the plain tee
@@ -189,12 +191,12 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
     const n = used.day === today ? used.n : 0
     if (!pro && n >= FREE_PICKS) return onPlans(`You've used today's ${FREE_PICKS} free outfit picks. Pro picks as many as you like.`)
     store("style_auto", { day: today, n: n + 1 })
-    const { outfit: o, notes } = style in OCCASIONS ? dressFor(style as OccasionId, gender, have, bodyB) : chooseOutfit(style as Style, gender, have, bodyB)
+    const { outfit: o, notes } = style in OCCASIONS ? dressFor(style as OccasionId, gender, have, bodyB, budget) : chooseOutfit(style as Style, gender, have, bodyB, budget)
     setOutfit({ top: DEFAULT_OUTFIT.top, ...o })
     setAutoStyle(style)
     if (style === "older" || style === "younger") setGoal(style)
     setAutoNotes(notes)
-    track("style_choose_for_me", { style, n: n + 1 })
+    track("style_choose_for_me", { style, n: n + 1, budget: budget ?? "any" })
   }
 
   // ── face: the scan is asked for only here ──
@@ -302,6 +304,37 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
     return c ? [{ label: t.label, c }] : []
   })
 
+  // ── saved outfits (supabase/saved_outfits.sql): saving needs an account, which is also the sign-up hook ──
+  const [saved, setSaved] = useState<SavedOutfit[]>()
+  const [saveMsg, setSaveMsg] = useState<string | null>(null)
+  useEffect(() => {
+    if (user && clothesMode === "saved" && !saved) listOutfits().then(setSaved).catch(() => setSaved([]))
+  }, [user, clothesMode, saved])
+  function load(o: SavedOutfit) {
+    setModel({ gender: o.look.gender, build: o.look.build, lookId: o.look.lookId })
+    setOutfit({ top: DEFAULT_OUTFIT.top, ...o.look.outfit })
+    if (o.look.face) setFace(o.look.face as Look)
+    track("style_outfit_load")
+  }
+  useEffect(() => { // opened from /account: /ai-stylist?saved=<id>
+    const id = new URLSearchParams(location.search).get("saved")
+    if (user && id) getOutfit(id).then((o) => o && load(o))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, when the session is known
+  }, [user])
+  async function save() {
+    if (!user) return openModal(() => save(), "signup")
+    const label = autoStyle ? (autoStyle in OCCASIONS ? OCCASIONS[autoStyle as OccasionId] : STYLES[autoStyle as Style]).label : "My outfit"
+    const name = `${label} · ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
+    const err = await saveOutfit(name, { gender, build: bodyB, lookId: look, outfit, face: face as Record<string, string> })
+    setSaveMsg(err ?? "Saved. Find it under Clothes, Saved, or on your account page.")
+    if (!err) { setSaved(undefined); track("style_outfit_save", { outfit: name }) }
+  }
+  async function remove(id: string) {
+    await deleteOutfit(id).catch(() => {})
+    setSaved((list) => list?.filter((o) => o.id !== id))
+  }
+  const total = Math.round(outfitTotal(outfit))
+
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,27rem)]">
@@ -331,7 +364,9 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
                   ))}
                 </div>}
               </div>
-              <p className="text-center text-xs text-white/50">Every change to the model or clothes shows instantly.</p>
+              <p className="text-center text-xs text-white/50">Every change to the model or clothes shows instantly. This outfit: about ${total}.</p>
+              <Button variant="brandOutline" size="cta" onClick={save} className="gap-2"><Bookmark size={16} aria-hidden="true" />Save this outfit</Button>
+              {saveMsg && <p role="status" className="text-center text-xs text-white/70">{saveMsg}</p>}
               {pro === false && (
                 <Button variant="brand" size="cta" onClick={() => onYou("See this exact outfit on your own photo with Ollie Pro.")} className="gap-2">
                   <WandSparkles size={16} aria-hidden="true" />See this look on you
@@ -434,11 +469,34 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
 
             {/* clothes */}
             <TabsContent value="clothes" className="flex min-h-0 flex-col gap-4">
-              <SegmentedControl label="How to pick clothes" value={clothesMode} onValueChange={(v) => setClothesMode(v as "pick" | "auto")}
-                options={[{ value: "pick", label: "Pick myself" }, { value: "auto", label: "Choose for me" }]} className="w-full" />
-              {clothesMode === "auto" ? (
+              <SegmentedControl label="How to pick clothes" value={clothesMode} onValueChange={(v) => setClothesMode(v as "pick" | "auto" | "saved")}
+                options={[{ value: "pick", label: "Pick myself" }, { value: "auto", label: "Choose for me" }, { value: "saved", label: "Saved" }]} className="w-full" />
+              {clothesMode === "saved" ? (
+                !user ? (
+                  <div className="flex flex-col gap-3 rounded-2xl bg-black/35 p-5">
+                    <p className="text-sm text-white/70">Save outfits you like and come back to them on any device. Free with an account.</p>
+                    <Button variant="brand" size="cta" onClick={() => openModal(() => setSaved(undefined), "signup")}>Create a free account</Button>
+                  </div>
+                ) : !saved ? <Skeleton className="h-40 rounded-2xl bg-white/[0.06]" /> : !saved.length ? (
+                  <p className="rounded-2xl bg-black/35 p-5 text-sm text-white/70">No saved outfits yet. Put one together, then tap Save this outfit under the model.</p>
+                ) : (
+                  <div className="grid max-h-[min(34rem,58svh)] grid-cols-2 gap-3 overflow-y-auto pr-1">
+                    {saved.map((o) => (
+                      <div key={o.id} className="flex flex-col gap-2 rounded-xl bg-black/35 p-2">
+                        <button type="button" onClick={() => load(o)} className={`${optionBtn(false)} flex flex-col gap-2`} aria-label={`Wear ${o.name}`}>
+                          <OutfitThumb look={o.look} />
+                          <span className="px-1 text-sm font-semibold text-white">{o.name}</span>
+                        </button>
+                        <button type="button" onClick={() => remove(o.id)} className="min-h-8 px-1 text-left text-xs text-white/50 hover:text-red-300">Delete</button>
+                      </div>
+                    ))}
+                  </div>
+                )
+              ) : clothesMode === "auto" ? (
                 <div className="flex flex-col gap-3">
-                  <p className="text-sm text-white/70">What look are you going for? Ollie picks real pieces that suit it and the body type.</p>
+                  <p className="text-sm text-white/70">What look are you going for? Ollie picks real pieces that suit it, the body type and your budget.</p>
+                  <SegmentedControl label="Budget" value={String(budget ?? "")} onValueChange={(v) => { setBudget(v ? (Number(v) as Budget) : undefined); track("style_budget", { budget: v || "any" }) }}
+                    options={[{ value: "", label: "Any" }, ...([1, 2, 3] as Budget[]).map((b) => ({ value: String(b), label: BUDGETS[b].label }))]} className="w-full" />
                   <div className="grid max-h-[min(30rem,55svh)] grid-cols-2 gap-2 overflow-y-auto pr-1">
                     {[["Dress for…", OCCASIONS], ["Styles", STYLES]].map(([title, list]) => [
                       <p key={title as string} className="col-span-2 pt-1 text-xs font-semibold uppercase tracking-wide text-white/50">{title as string}</p>,
@@ -451,6 +509,7 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
                       )),
                     ])}
                   </div>
+                  {autoStyle && <p className="text-sm font-semibold text-white">This outfit: about ${total}</p>}
                   {autoNotes.length > 0 && <ul className="list-disc pl-5 text-sm text-white/70">{autoNotes.map((n) => <li key={n}>{n}</li>)}</ul>}
                   {pro === false && <p className="text-xs text-white/50">{FREE_PICKS} free picks a day. <button type="button" onClick={() => onPlans()} className="font-semibold text-(--ollie-cyan)">Unlimited with Pro</button></p>}
                 </div>

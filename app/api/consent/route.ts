@@ -60,3 +60,37 @@ export async function POST(req: NextRequest) {
   }
   return NextResponse.json({ ok: true })
 }
+
+const admin = () => {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  return url && key ? createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } }) : null
+}
+
+// The account page's email switch: current state...
+export async function GET(req: NextRequest) {
+  const user = await getAuthUser(req)
+  if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 })
+  const db = admin()
+  if (!db) return NextResponse.json({ error: "Not configured" }, { status: 503 })
+  const { data } = await db.from("user_consents").select("email_opt_in, terms_accepted_at").eq("user_id", user.id).maybeSingle()
+  return NextResponse.json({ emailOptIn: !!data?.email_opt_in, termsAcceptedAt: data?.terms_accepted_at ?? null })
+}
+
+// ...and a change. Unlike POST this can re-subscribe someone who opted out: here they flipped the switch themselves.
+export async function PATCH(req: NextRequest) {
+  const user = await getAuthUser(req)
+  if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 })
+  if (!checkRateLimit(`consent:${getIp(req)}`, 20, 60_000)) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+  const on = (await req.json().catch(() => ({})))?.emailOptIn === true
+  const db = admin()
+  if (!db) return NextResponse.json({ error: "Not configured" }, { status: 503 })
+  const now = new Date().toISOString()
+  const { data, error } = await db.from("user_consents")
+    .update(on ? { email_opt_in: true, email_opt_in_at: now, email_opt_out_at: null, email: user.email ?? null, updated_at: now }
+      : { email_opt_in: false, email_opt_out_at: now, updated_at: now })
+    .eq("user_id", user.id).select("user_id")
+  if (error) return NextResponse.json({ error: "Could not save" }, { status: 500 })
+  if (!data?.length) return NextResponse.json({ error: "Accept the terms first" }, { status: 400 }) // no consent row yet
+  if (!on && user.email) await db.from("newsletter_signups").update({ unsubscribed_at: now }).eq("email", user.email.toLowerCase()).is("unsubscribed_at", null)
+  return NextResponse.json({ ok: true })
+}
