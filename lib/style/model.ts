@@ -70,6 +70,7 @@ export function dressFor(id: OccasionId, g: Gender, have: string[], b?: Build): 
   const o = OCCASIONS[id]
   const fill = chooseOutfit(o.style, g, have, b)
   const outfit: Outfit = { ...fill.outfit }
-  for (const [slot, item] of Object.entries(o[g]) as [Slot, string][]) if (have.includes(item)) outfit[slot] = item
+  const picks = { ...o[g], ...(b && o.builds?.[b]?.[g]) }
+  for (const [slot, item] of Object.entries(picks) as [Slot, string][]) if (have.includes(item)) outfit[slot] = item
   return { outfit, notes: [...o.notes, ...fill.notes.slice(1)] }
 }

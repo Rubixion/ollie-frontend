@@ -62,16 +62,18 @@ assert.equal(chooseOutfit("techwear", "male", have).outfit.outer, "patagonia-tor
 assert.equal(chooseOutfit("minimal", "male", have).outfit.outer, undefined, "no minimal jacket has a layer here, so none")
 for (const id of Object.values(chooseOutfit("workwear", "female", have, "plus").outfit)) assert.ok(have.includes(id!))
 // gendered items: never chosen for the other gender, even when a layer exists
-const both = [...have, "uniqlo-chesterfield", "jcrew-trench-w", "rl-oxford", "jcrew-oxford-w", "bass-weejuns", "sam-edelman-loraine", "uniqlo-smart-ankle", "uniqlo-smart-ankle-w", "jcrew-ludlow", "babaton-agency-blazer", "clarks-desert-boot"]
+const both = [...have, "uniqlo-chesterfield", "jcrew-trench-w", "rl-oxford", "jcrew-oxford-w", "bass-weejuns", "sam-edelman-loraine", "uniqlo-smart-ankle", "uniqlo-smart-ankle-w", "jcrew-ludlow", "babaton-agency-blazer", "clarks-desert-boot", "uniqlo-dress-shirt", "ae-park-avenue", "tnf-nuptse", "levis-trucker"]
 for (const g of ["male", "female"] as const) for (const id of Object.values(chooseOutfit("classic", g, both, "plus").outfit)) {
   const it = ITEMS.find((i) => i.id === id)!
   assert.ok(!it.for || it.for === g, `${id} offered to ${g}`)
 }
 assert.ok(ITEMS.find((i) => i.id === chooseOutfit("classic", "male", both, "plus").outfit.outer)?.long, "plus leans to a long coat")
 // "Dress for…": the hand-picked outfit when its layers exist, Choose for me fills any gaps, all ids real
-for (const [id, o] of Object.entries(OCCASIONS)) for (const g of ["male", "female"] as const) for (const it of Object.values(o[g]))
-  assert.ok(ITEMS.some((i) => i.id === it && (!i.for || i.for === g)), `${id}/${g}: ${it}`)
-assert.equal(dressFor("interview", "male", both).outfit.top, "rl-oxford")
+for (const [id, o] of Object.entries(OCCASIONS)) for (const g of ["male", "female"] as const)
+  for (const it of [...Object.values(o[g]), ...Object.values(o.builds ?? {}).flatMap((b) => Object.values(b[g] ?? {}))]) assert.ok(ITEMS.some((i) => i.id === it && (!i.for || i.for === g)), `${id}/${g}: ${it}`)
+assert.equal(dressFor("interview", "male", both).outfit.top, "uniqlo-dress-shirt")
+assert.equal(dressFor("younger", "male", both, "plus").outfit.outer, "levis-trucker", "body-type swap applies")
+assert.equal(dressFor("younger", "male", both, "slim").outfit.outer, "tnf-nuptse")
 assert.equal(dressFor("interview", "female", both).outfit.outer, "babaton-agency-blazer")
 assert.ok(dressFor("older", "male", have).outfit.bottom, "missing layers are filled in, not left empty")
 assert.ok(new Set(ITEMS.map((i) => i.id)).size === ITEMS.length, "item ids are unique")

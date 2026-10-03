@@ -24,7 +24,7 @@ import { track } from "@/lib/analytics"
 import { SHAPE_INFO, classify, type ShapeResult } from "@/lib/style/face-shape"
 import { ITEMS, OCCASIONS, STYLES, type Hairline, type OccasionId, type Slot, type Style, type Texture } from "@/lib/style/catalog"
 import { cards, type Card, type Look, type TabId } from "@/lib/style/editor"
-import { AGE_BANDS, fitNotes, shapeLabel, type AgeBand, type Answers, type Link } from "@/lib/style/recommend"
+import { AGE_BANDS, fitNotes, grooming, shapeLabel, type AgeBand, type Answers, type Goal, type Link } from "@/lib/style/recommend"
 import { BUILDS, LOOKS, body, chooseOutfit, dressFor, layers, modelPhoto, type Assets, type Build, type Gender, type LookId, type Outfit } from "@/lib/style/model"
 
 const SLOTS: { id: Slot; label: string; icon: typeof Shirt }[] = [
@@ -192,6 +192,7 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
     const { outfit: o, notes } = style in OCCASIONS ? dressFor(style as OccasionId, gender, have, bodyB) : chooseOutfit(style as Style, gender, have, bodyB)
     setOutfit({ top: DEFAULT_OUTFIT.top, ...o })
     setAutoStyle(style)
+    if (style === "older" || style === "younger") setGoal(style)
     setAutoNotes(notes)
     track("style_choose_for_me", { style, n: n + 1 })
   }
@@ -219,14 +220,15 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
   const [texture, setTexture] = useState<Texture | "">("")
   const [budget, setBudget] = useState<1 | 2 | 3 | undefined>()
   const [ageBand, setAgeBand] = useState<AgeBand | "">("")
+  const [goal, setGoal] = useState<Goal | "">("") // also set by the "Look older / younger" outfits, so hair and clothes agree
   // "celebrities with your face shape": loaded only after a scan (lib/style/celeb-shapes.json, from celeb_v2/celeb_face_shapes.py)
   const [celebs, setCelebs] = useState<Record<string, Celeb[]>>()
   useEffect(() => { if (shape && !celebs) import("@/lib/style/celeb-shapes.json").then((m) => setCelebs(m.default as Record<string, Celeb[]>)) }, [shape, celebs])
   const [face, setFace] = useState<Look>({})
-  const a: Answers = { gender, build: ({ slim: "slim", average: "average", athletic: "athletic", plus: "bigger" } as const)[bodyB], hairline: hairline || undefined, texture: texture || undefined, budget, age: ageBand ? AGE_BANDS[ageBand] : undefined }
+  const a: Answers = { gender, build: ({ slim: "slim", average: "average", athletic: "athletic", plus: "bigger" } as const)[bodyB], hairline: hairline || undefined, texture: texture || undefined, budget, age: ageBand ? AGE_BANDS[ageBand] : undefined, goal: goal || undefined }
   const faceCards = useMemo(() => shape ? Object.fromEntries(FACE.map((t) => [t.id, cards(t.id, a, shape)])) as Record<string, Card[]> : {},
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [shape, gender, bodyB, hairline, texture, budget, ageBand])
+    [shape, gender, bodyB, hairline, texture, budget, ageBand, goal])
   function scanned({ ratios, frame }: ScanResult) {
     const s = classify(ratios)
     setShape(s)
@@ -461,7 +463,7 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
                     <TabsContent key={s.id} value={s.id}>
                       <div className="grid max-h-[min(34rem,58svh)] grid-cols-2 gap-3 overflow-y-auto pr-1">
                         {ITEMS.filter((i) => i.slot === s.id && have.includes(i.id)).map((i) => (
-                          <Option key={i.id} card={{ ...i, best: !!autoStyle && (autoStyle in OCCASIONS ? Object.values(OCCASIONS[autoStyle as OccasionId][gender]).includes(i.id) : i.styles.includes(autoStyle as Style)), links: [] }} on={outfit[s.id] === i.id}
+                          <Option key={i.id} card={{ ...i, best: !!autoStyle && (autoStyle in OCCASIONS ? Object.values({ ...OCCASIONS[autoStyle as OccasionId][gender], ...OCCASIONS[autoStyle as OccasionId].builds?.[bodyB]?.[gender] }).includes(i.id) : i.styles.includes(autoStyle as Style)), links: [] }} on={outfit[s.id] === i.id}
                             icon={s.icon} thumb={{ src: u(`/style/layers/${body(gender, bodyB)}/${i.id}.webp`), fit: THUMB[s.id] }} onClick={() => wear(s.id, i.id)} />
                         ))}
                       </div>
@@ -505,7 +507,15 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
                     }} />
                   })()}
 
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <select aria-label="Your goal" value={goal} onChange={(e) => { setGoal(e.currentTarget.value as Goal | ""); track("style_goal", { goal: e.currentTarget.value }) }} className={select}>
+                      <option value="">Goal: best fit</option>
+                      <option value="older">Look older</option>
+                      <option value="younger">Look younger</option>
+                      <option value="sharper">Look sharper</option>
+                      <option value="softer">Look softer</option>
+                      <option value="low-effort">Low effort</option>
+                    </select>
                     <select aria-label="Your age" value={ageBand} onChange={(e) => setAgeBand(e.currentTarget.value as AgeBand | "")} className={select}>
                       <option value="">Age: any</option>
                       {(Object.keys(AGE_BANDS) as AgeBand[]).map((b) => <option key={b} value={b}>{b}</option>)}
@@ -595,6 +605,13 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
               </>
             )}
             <Links links={c.links} where={`face:${c.id}`} />
+          </div>
+        ))}
+        {shape && grooming(a).map((g) => ( // the skin and hair routine behind any cut: shown once they've scanned
+          <div key={g.title} className="flex flex-col gap-2 rounded-2xl bg-black/35 p-4">
+            <h3 className="text-lg font-bold text-white"><span className="mr-2 text-sm font-semibold text-(--ollie-cyan)">Routine</span>{g.title}</h3>
+            <p className="text-sm leading-relaxed text-white/70">{g.text}</p>
+            {g.products.length > 0 && <Links links={g.products} where={`routine:${g.title}`} />}
           </div>
         ))}
         {fitNotes(a).length > 0 && <ul className="list-disc pl-5 text-sm leading-relaxed text-white/70">{fitNotes(a).map((n) => <li key={n}>{n}</li>)}</ul>}

@@ -1,12 +1,14 @@
 // Clothes layers for the /ai-stylist model: each catalogue item is rendered ONCE per gender on the bare base model and cut
 // out as a see-through layer, so any outfit is just stacked layers in the browser (no image cost per outfit).
 // A "body" is gender + build (male-athletic, female-plus, ...), see scripts/style-bases.mjs.
-// Usage (from ollie-frontend): npx tsx scripts/style-layers.mjs [body|gender ...] [itemId ...]
+// Usage (from ollie-frontend): npx tsx scripts/style-layers.mjs [body|gender ...] [itemId ...] [--clean]
+// --clean re-cleans existing layers (drops leaked skin, hair and backdrop) with no image calls, using style-parse.py labels.
 // Writes public/style/layers/<body>/<id>.webp (+ <id>@hood.webp and <id>.clip.webp for jackets) and
 // public/style/layers/index.json. Work files are cached in .style-cache/<body>/ so re-runs don't pay twice.
 // Each item = 2 image calls: (1) put the item on the base model, (2) paint everything except the item pure green.
 // Jackets get one more pair, drawn over the hoodie, so a hood sits naturally over the collar.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs"
+import { execFileSync } from "node:child_process"
 import sharp from "sharp"
 sharp.cache(false) // libvips otherwise keeps files open, and Windows then can't replace them
 import { generateImage, scriptEnv } from "../lib/image-gen.mjs"
@@ -49,6 +51,51 @@ async function clipMask(layerPng, w, h) {
   return sharp(out, { raw: { width: w, height: h, channels: 4 } }).webp({ quality: 88, alphaQuality: 90 }).toBuffer()
 }
 const raw = (buf, w, h) => sharp(buf).resize(w, h, { fit: "fill" }).removeAlpha().raw().toBuffer()
+
+// Gemini's cut-out sometimes keeps bits of the base model: neck skin, a shoulder, even the whole backdrop. Those are the
+// WHITE base's pixels, so on a darker look they showed as pale patches (and kept backdrop clips bigger hair). Clean-up:
+// - skin and hair (and, on tops and jackets, trousers and shoes): wherever the human parser (scripts/style-parse.py -> <name>-labels.png) sees face/neck, arms, legs or
+//   hair, grown 2px. The leaked skin is redrawn by Gemini, so it can't be found by comparing with the base.
+// - backdrop: pixels unchanged from the bare base (they and most of their neighbourhood) connected to the frame's top
+//   or sides, and called background by the parser. Garments never touch those edges.
+const SKIN_LABELS = new Set([2, 11, 12, 13, 14, 15])
+const LOWER_LABELS = new Set([5, 6, 9, 10]) // skirt, trousers, shoes: a top or jacket cut-out sometimes keeps the base's grey trousers
+async function cleanLayer(layer, bare, labels, w, h, slot) {
+  const L = await sharp(layer).ensureAlpha().raw().toBuffer()
+  const same = Buffer.alloc(w * h)
+  for (let p = 0; p < w * h; p++) {
+    const d = Math.abs(L[p * 4] - bare[p * 3]) + Math.abs(L[p * 4 + 1] - bare[p * 3 + 1]) + Math.abs(L[p * 4 + 2] - bare[p * 3 + 2])
+    same[p] = L[p * 4 + 3] > 0 && d < 30 ? 255 : 0
+  }
+  const share = await sharp(same, { raw: { width: w, height: h, channels: 1 } }).blur(2.5).extractChannel(0).raw().toBuffer()
+  const drop = new Uint8Array(w * h)
+  const bg = new Uint8Array(w * h), stack = []
+  for (let x = 0; x < w; x++) stack.push(x)
+  for (let y = 0; y < h; y++) stack.push(y * w, y * w + w - 1)
+  while (stack.length) {
+    const p = stack.pop()
+    if (bg[p] || (L[p * 4 + 3] > 0 && !(same[p] && share[p] > 150))) continue // spread through unchanged and transparent pixels
+    bg[p] = 1
+    drop[p] = !labels || labels[p] === 0 ? 1 : 0 // a beige garment can match a beige backdrop: never drop what the parser calls clothing
+    const x = p % w
+    if (x > 0) stack.push(p - 1); if (x < w - 1) stack.push(p + 1); if (p >= w) stack.push(p - w); if (p < w * h - w) stack.push(p + w)
+  }
+  if (labels) {
+    const upper = slot === "top" || slot === "outer"
+    const skin = Uint8Array.from(labels, (v) => (SKIN_LABELS.has(v) || (upper && LOWER_LABELS.has(v)) ? 1 : 0)) // not Buffer: its slice() is a view, not a copy
+    for (let pass = 0; pass < 2; pass++) {
+      const prev = skin.slice()
+      for (let p = w; p < w * h - w; p++) if (!prev[p] && (prev[p - 1] || prev[p + 1] || prev[p - w] || prev[p + w])) skin[p] = 1
+    }
+    for (let p = 0; p < w * h; p++) if (skin[p]) drop[p] = 1
+  }
+  let n = 0
+  for (let p = 0; p < w * h; p++) if (drop[p] && L[p * 4 + 3]) { L[p * 4 + 3] = 0; n++ }
+  return { n, buf: await sharp(L, { raw: { width: w, height: h, channels: 4 } }).webp({ quality: 88, alphaQuality: 90 }).toBuffer() }
+}
+const labelsFor = async (CACHE, name, w, h) => existsSync(`${CACHE}/${name}-labels.png`)
+  ? sharp(`${CACHE}/${name}-labels.png`).resize(w, h, { fit: "fill", kernel: "nearest" }).extractChannel(0).raw().toBuffer() : null
+
 // backdrop = bright, saturated green; dark greenish pixels are a black garment with green spill, so they stay opaque
 const greenAlpha = (r, g, b) => { const k = g - Math.max(r, b); return g < 120 || k < 30 ? 255 : k > 90 ? 0 : Math.round(255 * (90 - k) / 60) }
 
@@ -114,7 +161,7 @@ async function cutout(green, dressed, w, h, skin, slot) {
   return sharp(out, { raw: { width: w, height: h, channels: 4 } }).webp({ quality: 88, alphaQuality: 90 }).toBuffer()
 }
 
-async function makeLayer(OUT, CACHE, W, H, name, it, start, under = "", skin = null) {
+async function makeLayer(OUT, CACHE, W, H, name, it, start, under = "", skin = null, bare = null) {
   if (existsSync(`${OUT}/${name}.webp`)) return console.log(`skip ${name} (layer exists)`)
   const cached = (f) => existsSync(`${CACHE}/${name}-${f}.jpg`) ? readFileSync(`${CACHE}/${name}-${f}.jpg`) : null
   console.log(`${OUT.split("/").pop()} ${name}: dressing…`)
@@ -138,13 +185,16 @@ async function makeLayer(OUT, CACHE, W, H, name, it, start, under = "", skin = n
     layer = await cutout(green, dressed, W, H, skin, it.slot)
   }
   if (!layer) throw new Error(`${name}: the cut-out kept coming back re-framed`)
+  execFileSync("python", ["scripts/style-parse.py", `${CACHE}/${name}-dressed.jpg`], { stdio: "inherit" }) // skin/hair labels for cleanLayer
+  layer = (await cleanLayer(layer, bare, await labelsFor(CACHE, name, W, H), W, H, it.slot)).buf
   writeFileSync(`${OUT}/${name}.webp`, layer)
   if (it.slot === "outer") writeFileSync(`${OUT}/${name}.clip.webp`, await clipMask(layer, W, H))
   console.log(`${OUT.split("/").pop()} ${name}: layer saved`)
 }
 
 const BODIES = ["male", "female"].flatMap((g) => ["slim", "average", "athletic", "plus"].map((b) => `${g}-${b}`))
-const args = process.argv.slice(2)
+const CLEAN = process.argv.includes("--clean") // re-clean existing layers (cleanLayer + clip masks), no image calls
+const args = process.argv.slice(2).filter((a) => a !== "--clean")
 const pick = args.filter((a) => !ITEMS[a])
 const bodies = BODIES.filter((b) => !pick.length || pick.some((a) => b === a || b.startsWith(`${a}-`)))
   .filter((b) => existsSync(`public/style/models/${b}-bare.jpg`))
@@ -157,15 +207,28 @@ for (const b of bodies) {
   const { width: W, height: H } = await sharp(base).metadata()
   // the body's skin mask from scripts/style-bases.mjs, used to keep its shoulders from showing above tops
   const skin = existsSync(`${CACHE}/skin.png`) ? await sharp(`${CACHE}/skin.png`).resize(W, H, { fit: "fill" }).extractChannel(0).raw().toBuffer() : null
+  const bare = await raw(base, W, H)
+  if (CLEAN) {
+    for (const f of readdirSync(OUT).filter((f) => f.endsWith(".webp") && !f.endsWith(".clip.webp"))) {
+      const name = f.slice(0, -5)
+      if (only.length && !only.includes(name.replace(/@hood$/, ""))) continue
+      const { n, buf } = await cleanLayer(readFileSync(`${OUT}/${f}`), bare, await labelsFor(CACHE, name, W, H), W, H, ITEMS[name.replace(/@hood$/, "")]?.slot)
+      if (!n) continue
+      writeFileSync(`${OUT}/${f}`, buf)
+      if (existsSync(`${OUT}/${name}.clip.webp`)) writeFileSync(`${OUT}/${name}.clip.webp`, await clipMask(buf, W, H))
+      if (n > 500) console.log(`${b} ${name}: dropped ${n} base-model pixels`)
+    }
+    continue
+  }
   const over = async (id) => sharp(base).composite([{ input: await sharp(`${OUT}/${id}.webp`).png().toBuffer() }]).jpeg({ quality: 95 }).toBuffer()
   const ids = (only.length ? only : Object.keys(ITEMS)).filter((id) => !ITEMS[id].for || b.startsWith(`${ITEMS[id].for}-`))
     .sort((a, b) => (ITEMS[a].slot === "outer") - (ITEMS[b].slot === "outer")) // jackets last: they're drawn over the tee and hoodie layers
   for (const id of ids) {
     const it = ITEMS[id]
     try { // one bad item shouldn't stop a long batch: log it, re-run the script later to retry just the missing ones
-      if (it.slot !== "outer") { await makeLayer(OUT, CACHE, W, H, id, it, base, "", skin); continue }
-      await makeLayer(OUT, CACHE, W, H, id, it, await over(TEE), " over the t-shirt", skin)
-      await makeLayer(OUT, CACHE, W, H, `${id}@hood`, it, await over(HOODIE), " over the hoodie, with the hood resting naturally outside over the collar", skin)
+      if (it.slot !== "outer") { await makeLayer(OUT, CACHE, W, H, id, it, base, "", skin, bare); continue }
+      await makeLayer(OUT, CACHE, W, H, id, it, await over(TEE), " over the t-shirt", skin, bare)
+      await makeLayer(OUT, CACHE, W, H, `${id}@hood`, it, await over(HOODIE), " over the hoodie, with the hood resting naturally outside over the collar", skin, bare)
     } catch (e) { console.log(`FAILED ${b} ${id}: ${e.message.slice(0, 200)}`) }
   }
 }

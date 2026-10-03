@@ -439,37 +439,97 @@ export const ITEMS: Item[] = [
     "https://www.samedelman.com/product/womens-loraine-bit-loafer-3016088", "black leather horsebit loafers worn with black socks", undefined, { ...W, age: 1 }),
   item("shoes", "dr-martens-jadon", "Dr. Martens", "Jadon Platform Boots", "Black smooth leather", ["streetwear", "y2k", "workwear"],
     "https://www.drmartens.com/us/en/jadon-boot-smooth-leather-platforms-black/p/15265001", "black smooth-leather Dr. Martens Jadon platform lace-up boots", "$210", W),
+
+  // ── added 2026-10-03: the pieces the "Dress for…" goals were missing (leather jacket, camel coat, quarter-zip,
+  // knit polo, dress shirt, dress shoes, Chelsea boots, dark slim denim, cargo). No cami: the female base's sports bra
+  // would show around thin straps.
+  // both
+  item("top", "uniqlo-u-tee-black", "Uniqlo", "U Crew Neck T-Shirt", "Black", ["minimal", "streetwear", "techwear"],
+    "https://www.uniqlo.com/us/en/products/E433028-000/00?colorDisplayCode=09", "a plain black heavyweight Uniqlo U crew-neck t-shirt"),
+  item("shoes", "blundstone-500", "Blundstone", "Original 500 Chelsea Boot", "Stout brown", ["workwear", "classic", "minimal"],
+    "https://www.blundstone.com/products/stout-brown-premium-leather-v-cut-boots-mens-style-500", "stout brown leather Blundstone 500 Chelsea boots with brown elastic side panels, trousers over the boot shafts", "$209.95", { age: 1 }),
+  item("shoes", "cp-achilles", "Common Projects", "Original Achilles Low", "White", ["minimal", "old-money", "classic"],
+    "https://www.endclothing.com/us/common-projects-original-achilles-low-1528-0506.html", "minimal all-white leather Common Projects Achilles low-top sneakers with small gold serial numbers on the heel", "$415"),
+  // men
+  item("top", "rl-quarter-zip", "Polo Ralph Lauren", "Cable-Knit Cotton Quarter-Zip Sweater", "Cream", ["old-money", "preppy", "classic"],
+    "https://www.ralphlauren.com/men-clothing-sweaters/cable-knit-cotton-quarter-zip-sweater/546194.html", "a cream cable-knit cotton quarter-zip sweater with a stand collar, zip half open, with a small embroidered pony on the chest", "$150", { ...M, age: 1 }),
+  item("top", "uniqlo-merino-polo", "Uniqlo", "Merino Polo Sweater", "Black", ["old-money", "minimal", "classic"],
+    "https://www.uniqlo.com/us/en/products/E460939-000/00", "a black fine-knit merino wool long-sleeve knitted polo sweater with an open collar, top button undone", undefined, { ...M, age: 1 }),
+  item("top", "uniqlo-dress-shirt", "Uniqlo", "Easy Care Stretch Slim Shirt", "White", ["classic", "minimal", "preppy"],
+    "https://www.uniqlo.com/us/en/products/E467451-000/00", "a crisp white slim-fit cotton dress shirt with a regular collar, buttoned, no tie, neatly tucked into the trousers", undefined, { ...M, age: 1 }),
+  item("outer", "allsaints-milo", "AllSaints", "Milo Asymmetric Zip Leather Biker Jacket", "Black", ["streetwear", "minimal", "classic"],
+    "https://www.allsaints.com/us/men/leathers/leather-jackets/milo-asymmetric-zip-leather-biker-jacket/USML025N-5.html", "a black slim-fit leather biker jacket with an asymmetric silver zip and notched lapels", undefined, M),
+  item("outer", "baracuta-g9", "Baracuta", "G9 Harrington Jacket", "Dark navy", ["classic", "preppy", "old-money"],
+    "https://us.baracuta.com/collections/g9-harrington-jacket", "a dark navy Baracuta G9 Harrington cotton jacket with a two-button stand collar, ribbed cuffs and hem, and red tartan lining showing at the collar", "$499", { ...M, age: 1 }),
+  item("bottom", "levis-511-dark", "Levi's", "511 Slim Fit Jeans", "Dark wash", ["classic", "minimal", "preppy"],
+    "https://www.levi.com/US/en_US/jeans-by-fit-number/men/jeans/511TM/511TM-slim-fit-mens-jeans/p/045115025", "dark indigo Levi's 511 slim-fit jeans with a clean, even wash", undefined, M),
+  item("bottom", "carhartt-wip-cargo", "Carhartt WIP", "Regular Cargo Pant", "Black", ["streetwear", "y2k", "techwear", "workwear"],
+    "https://us.carhartt-wip.com/en-us/products/regular-cargo-pant-black-rinsed-309", "black ripstop Carhartt WIP regular-fit cargo trousers with side cargo pockets", "$158", { ...M, age: -1 }),
+  item("shoes", "ae-park-avenue", "Allen Edmonds", "Park Avenue Cap-Toe Oxford", "Black", ["classic", "old-money"],
+    "https://www.allenedmonds.com/product/mens-park-avenue-cap-toe-oxford-dress-shoe-3023014/black-leather-ec4001390", "polished black leather cap-toe Oxford dress shoes worn with black socks", "$395", { ...M, age: 1 }),
+  // women
+  item("top", "jcrew-jackie", "J.Crew", "Jackie Cardigan", "Ivory", ["preppy", "old-money", "classic"],
+    "https://www.jcrew.com/p/womens/categories/clothing/sweaters/cardigan/jackie-cardigan/CJ755", "an ivory fine-knit fitted crewneck cardigan, fully buttoned, worn as a top", "$128", { ...W, age: 1 }),
+  item("outer", "allsaints-cargo-w", "AllSaints", "Cargo Leather Biker Jacket", "Black", ["streetwear", "minimal", "y2k"],
+    "https://www.allsaints.com/us/women/leather/leather-jackets/cargo-leather-biker-jacket/USWL047C-140.html", "a black slim leather biker jacket with an asymmetric zip, quilted shoulder panels and notched lapels", undefined, W),
+  item("outer", "jcrew-lodge-w", "J.Crew", "Lodge Coat in Italian Stadium-Cloth Wool", "Camel", ["old-money", "classic", "minimal"],
+    "https://www.jcrew.com/p/womens/categories/clothing/coats-and-jackets/topcoat/lodge-coat-in-italian-stadium-cloth-wool/K0896", "a camel wool single-breasted topcoat, thigh length", undefined, { ...W, long: true, age: 1 }),
+  item("bottom", "levis-501-90s-w", "Levi's", "501 '90s Jeans", "Dark wash", ["classic", "minimal", "streetwear"],
+    "https://www.levi.com/US/en_US/clothing/women/jeans/straight/501-90s-womens-jeans/p/A19590059", "dark-wash blue Levi's 501 '90s mid-rise loose straight-leg jeans", "$110", W),
 ]
 
 // ─── "Dress for…" presets: hand-picked outfits for the things people actually ask for ─────────────────
 // Ids must exist in ITEMS; the editor drops any piece that has no layer for the current model and fills the gap
 // with Choose for me (chooseOutfit in model.ts).
-export type OccasionId = "older" | "younger" | "interview" | "date"
+export type OccasionId = "older" | "younger" | "interview" | "date" | "taller" | "slimmer" | "broader"
 type Fit = Partial<Record<Slot, string>>
-export const OCCASIONS: Record<OccasionId, { label: string; blurb: string; style: Style; male: Fit; female: Fit; notes: string[] }> = {
+// `builds`: swaps for one body type (slim / average / athletic / plus), laid over the gender's outfit
+export const OCCASIONS: Record<OccasionId, { label: string; blurb: string; style: Style; male: Fit; female: Fit; notes: string[]; builds?: Record<string, { male?: Fit; female?: Fit }> }> = {
   older: {
     label: "Look older", blurb: "Collars, wool, leather. Reads 5 years older.", style: "old-money",
-    male: { top: "rl-oxford", outer: "barbour-bedale", bottom: "uniqlo-smart-ankle", shoes: "bass-weejuns" },
-    female: { top: "jcrew-cashmere-w", outer: "jcrew-trench-w", bottom: "babaton-effortless", shoes: "sam-edelman-loraine" },
+    male: { top: "uniqlo-merino-polo", outer: "uniqlo-chesterfield", bottom: "uniqlo-smart-ankle", shoes: "bass-weejuns" },
+    female: { top: "jcrew-cashmere-w", outer: "jcrew-lodge-w", bottom: "babaton-effortless", shoes: "sam-edelman-loraine" },
+    builds: { slim: { male: { outer: "barbour-bedale" } } }, // a waxed jacket adds the bulk a slim frame lacks
     notes: ["Structure reads older: a collar, a tailored trouser and leather shoes do most of the work.", "Darker, quieter colours. Skip big logos and chunky sneakers."],
   },
   younger: {
     label: "Look younger", blurb: "Relaxed fits, lighter colours, sneakers.", style: "y2k",
     male: { top: "nike-club-crew", outer: "tnf-nuptse", bottom: "levis-578-baggy", shoes: "nb-550" },
     female: { top: "bdg-baby-tee", outer: "aritzia-super-puff", bottom: "levis-baggy-dad", shoes: "nike-af1" },
+    builds: { plus: { male: { outer: "levis-trucker" }, female: { top: "uniqlo-u-tee", outer: "levis-trucker" } } }, // a puffer adds bulk
     notes: ["Relaxed fits, lighter washes and clean sneakers read younger.", "Keep one fitted piece so it looks chosen, not borrowed."],
   },
   interview: {
     label: "Job interview", blurb: "Sharp but not stiff. Works for most offices.", style: "classic",
-    male: { top: "rl-oxford", outer: "jcrew-ludlow", bottom: "uniqlo-smart-ankle", shoes: "clarks-desert-boot" },
+    male: { top: "uniqlo-dress-shirt", outer: "jcrew-ludlow", bottom: "uniqlo-smart-ankle", shoes: "ae-park-avenue" },
     female: { top: "jcrew-oxford-w", outer: "babaton-agency-blazer", bottom: "uniqlo-smart-ankle-w", shoes: "sam-edelman-loraine" },
     notes: ["A blazer over a plain shirt is the safe middle for most interviews: dress one step above the team.", "Navy, white and grey. Nothing that needs explaining."],
   },
   date: {
     label: "First date", blurb: "Effortless, a little sharp. Fits most places.", style: "minimal",
-    male: { top: "uniqlo-merino-mock", outer: "levis-trucker", bottom: "levis-501-black", shoes: "veja-campo" },
-    female: { top: "babaton-contour", outer: "babaton-agency-blazer", bottom: "levis-ribcage", shoes: "dr-martens-jadon" },
-    notes: ["Dark jeans and one good knit or fitted top: put together without looking like you tried too hard.", "One interesting piece is enough."],
+    male: { top: "uniqlo-merino-mock", outer: "allsaints-milo", bottom: "levis-511-dark", shoes: "blundstone-500" },
+    female: { top: "babaton-contour", outer: "allsaints-cargo-w", bottom: "levis-501-90s-w", shoes: "dr-martens-jadon" },
+    notes: ["Dark jeans, one good knit or fitted top and a leather jacket: put together without looking like you tried too hard.", "One interesting piece is enough."],
+  },
+  taller: {
+    label: "Look taller", blurb: "One colour head to toe, a little heel.", style: "minimal",
+    male: { top: "uniqlo-merino-mock", outer: "uniqlo-chesterfield", bottom: "levis-501-black", shoes: "dr-martens-1460" },
+    female: { top: "babaton-contour", outer: "babaton-agency-blazer", bottom: "babaton-effortless", shoes: "dr-martens-jadon" },
+    notes: ["One unbroken colour from collar to shoes makes one long line, so the eye doesn't stop at the waist.", "A boot with a stacked sole adds an honest inch or more; keep trousers long enough to cover the shaft."],
+  },
+  slimmer: {
+    label: "Look slimmer", blurb: "Dark colours, an open long layer.", style: "classic",
+    male: { top: "uniqlo-merino-crew", outer: "uniqlo-chesterfield", bottom: "uniqlo-smart-ankle", shoes: "clarks-desert-boot" },
+    female: { top: "uniqlo-merino-mock", outer: "jcrew-lodge-w", bottom: "uniqlo-smart-ankle-w", shoes: "sam-edelman-loraine" },
+    builds: { slim: { male: { outer: "jcrew-ludlow" } } },
+    notes: ["An open coat or blazer draws two vertical lines down the body: the strongest slimming trick there is.", "Dark, matte fabrics that skim rather than cling. Avoid big horizontal stripes and shiny puffers."],
+  },
+  broader: {
+    label: "Broader shoulders", blurb: "Width up top, a taper below.", style: "classic",
+    male: { top: "saint-james-breton", outer: "alpha-ma1", bottom: "levis-511-dark", shoes: "nike-af1" },
+    female: { top: "saint-james-breton", outer: "babaton-agency-blazer", bottom: "levis-501-90s-w", shoes: "veja-campo" },
+    builds: { plus: { male: { top: "uniqlo-merino-crew", outer: "levis-trucker" } } }, // stripes and a puffy bomber widen everywhere
+    notes: ["Detail at the shoulders (stripes, chest pockets, a bomber's rib) widens the top half; a slimmer trouser makes the V.", "Ribbed cuffs and hem gather the jacket at the waist, which reads as a taper."],
   },
 }
 
