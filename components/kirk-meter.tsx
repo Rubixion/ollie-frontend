@@ -144,19 +144,19 @@ export function KirkMeter() {
         <div className="grid grid-cols-1 gap-6 md:min-h-[clamp(24rem,calc(100svh-19.5rem),54rem)] md:grid-cols-2 md:items-stretch">
           <div className={`${glassOpen} flex flex-col gap-5 p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-backwards motion-reduce:animate-none`}>
             {imageDataUrl ? (
-              <div {...dragProps} className={dropZone} style={{ minHeight: "clamp(9rem, 24svh, 15rem)" }}>
-                <div className="relative p-2">
+              <div {...dragProps} className={dropZone} style={{ minHeight: "calc(min(20rem, 40svh) + 1.5rem)" }}>
+                <div className="absolute inset-0 flex items-center justify-center p-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={previewUrl ?? imageDataUrl} alt="Your uploaded photo" className="max-w-full max-h-[min(20rem,40svh)] rounded-xl object-contain" />
-                  <button
-                    type="button"
-                    onClick={clearImage}
-                    className="absolute top-3 right-3 p-1.5 rounded-full bg-black/70 border border-white/10 text-white hover:bg-black/90"
-                    aria-label="Remove photo"
-                  >
-                    <X size={14} />
-                  </button>
+                  <img src={previewUrl ?? imageDataUrl} alt="Your uploaded photo" className="max-h-full max-w-full rounded-xl object-contain" />
                 </div>
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  className="absolute top-3 right-3 p-1.5 rounded-full bg-black/70 border border-white/10 text-white hover:bg-black/90"
+                  aria-label="Remove photo"
+                >
+                  <X size={14} />
+                </button>
               </div>
             ) : (
               <label {...dragProps} className={dropZone} style={{ minHeight: "clamp(9rem, 24svh, 15rem)" }}>

@@ -71,19 +71,19 @@ export function Slot({ photo, label, onFile, onClear }: { photo: Photo; label: s
     ${isDragging ? "border-(--ollie-cyan)/40 bg-(--ollie-glow)" : photo ? "border-white/10 bg-white/[0.02]" : "border-white/15 hover:border-white/30 hover:bg-white/[0.03] cursor-pointer"}`
 
   return photo ? (
-    <div {...dragProps} className={zone} style={{ minHeight: "clamp(8rem, 20svh, 13rem)" }}>
-      <div className="relative p-2">
+    <div {...dragProps} className={zone} style={{ minHeight: "calc(min(14rem, 28svh) + 1.5rem)" }}>
+      <div className="absolute inset-0 flex items-center justify-center p-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={photo.preview} alt={`${label}, uploaded`} className="max-w-full max-h-[min(14rem,28svh)] rounded-xl object-contain" />
-        <button
-          type="button"
-          onClick={() => { onClear(); if (inputRef.current) inputRef.current.value = "" }}
-          className="absolute top-3 right-3 p-1.5 rounded-full bg-black/70 border border-white/10 text-white hover:bg-black/90"
-          aria-label={`Remove ${label.toLowerCase()}`}
-        >
-          <X size={14} />
-        </button>
+        <img src={photo.preview} alt={`${label}, uploaded`} className="max-h-full max-w-full rounded-xl object-contain" />
       </div>
+      <button
+        type="button"
+        onClick={() => { onClear(); if (inputRef.current) inputRef.current.value = "" }}
+        className="absolute top-3 right-3 p-1.5 rounded-full bg-black/70 border border-white/10 text-white hover:bg-black/90"
+        aria-label={`Remove ${label.toLowerCase()}`}
+      >
+        <X size={14} />
+      </button>
     </div>
   ) : (
     <div className="flex flex-1 flex-col gap-2">

@@ -410,23 +410,23 @@ export function CelebrityFinder() {
           <div className={`${glassOpen} flex flex-col gap-5 p-5 md:p-6 animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-backwards motion-reduce:animate-none`}>
             {/* Drop zone: a label around the file input, so it works with the keyboard and screen readers */}
             {imageDataUrl ? (
-              <div {...dragProps} className={`${dropZone} flex items-center justify-center`} style={{ minHeight: "clamp(9rem, 24svh, 15rem)" }}>
-                <div className="relative flex items-center justify-center p-2">
+              <div {...dragProps} className={`${dropZone} flex items-center justify-center`} style={{ minHeight: "calc(min(20rem, 40svh) + 1.5rem)" }}>
+                <div className="absolute inset-0 flex items-center justify-center p-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={previewUrl ?? imageDataUrl}
                     alt="Your uploaded photo"
-                    className="max-w-full max-h-[min(20rem,40svh)] rounded-xl object-contain"
+                    className="max-h-full max-w-full rounded-xl object-contain"
                   />
-                  <button
-                    type="button"
-                    onClick={clearImage}
-                    className="absolute top-3 right-3 p-1.5 rounded-full bg-black/70 border border-white/10 text-white hover:bg-black/90 transition-colors"
-                    aria-label="Remove photo"
-                  >
-                    <X size={14} />
-                  </button>
                 </div>
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  className="absolute top-3 right-3 p-1.5 rounded-full bg-black/70 border border-white/10 text-white hover:bg-black/90 transition-colors"
+                  aria-label="Remove photo"
+                >
+                  <X size={14} />
+                </button>
               </div>
             ) : (
               <label {...dragProps} className={`${dropZone} block`} style={{ minHeight: "clamp(9rem, 24svh, 15rem)" }}>
