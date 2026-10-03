@@ -4,9 +4,11 @@ import { NextResponse } from "next/server"
 import { protectedResourceMetadata, CORS, ISSUER } from "@/lib/oauth"
 
 export async function GET(_req: Request, { params }: { params: Promise<{ resource?: string[] }> }) {
-  const seg = (await params).resource?.join("/") || "mcp"
-  // the symmetry app has no login, so it advertises no OAuth (ChatGPT would otherwise offer "Connect")
-  if (seg === "mcp/symmetry") return new NextResponse(null, { status: 404, headers: CORS })
+  const seg = (await params).resource?.join("/") ?? ""
+  // Only the apps with sign-in advertise OAuth. The symmetry app has none, and the bare root is 404 too: clients
+  // (and the OpenAI portal's auth detection) fall back to the root when the path-specific URL 404s, which made
+  // /mcp/symmetry look like an OAuth server. The /mcp alias (claude.ai connector) still has its own path.
+  if (!/^mcp(\/(lookalike|stylist))?$/.test(seg)) return new NextResponse(null, { status: 404, headers: CORS })
   return NextResponse.json(protectedResourceMetadata(`${ISSUER}/${seg}`), { headers: CORS })
 }
 export function OPTIONS() {
