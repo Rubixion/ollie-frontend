@@ -27,7 +27,7 @@ const shareButtons = [
   { icon: '/icons/reddit.svg', label: 'Reddit', href: (u: string, t: string) => `https://www.reddit.com/submit?url=${u}&title=${t}` },
 ]
 
-export default function SocialButton({ url, title, className }: { url: string; title: string; className?: string }) {
+export default function SocialButton({ url, title, className, kind = 'article' }: { url: string; title: string; className?: string; kind?: string }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
 
@@ -44,7 +44,7 @@ export default function SocialButton({ url, title, className }: { url: string; t
     if (!navigator.share) return setIsExpanded(true)
     try {
       await navigator.share({ url, title })
-      track('share', { content_type: 'article' })
+      track('share', { content_type: kind, method: 'link' })
     } catch (e) {
       if (!(e instanceof DOMException && e.name === 'AbortError')) setIsExpanded(true) // AbortError = sheet closed
     }
@@ -71,7 +71,7 @@ export default function SocialButton({ url, title, className }: { url: string; t
         >
           <AnimatePresence mode='sync'>
             {!isExpanded ? (
-              <motion.button type='button' aria-label='Share this article' className='absolute inset-0 flex items-center justify-center gap-2' exit={{ opacity: 0, y: -20 }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key='share-text' transition={{ duration: 0.2 }}>
+              <motion.button type='button' aria-label={`Share this ${kind}`} className='absolute inset-0 flex items-center justify-center gap-2' exit={{ opacity: 0, y: -20 }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key='share-text' transition={{ duration: 0.2 }}>
                 <Share2 className='h-4 w-4' />
                 <span className='text-sm font-medium'>Share</span>
               </motion.button>

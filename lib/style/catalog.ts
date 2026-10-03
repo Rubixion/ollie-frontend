@@ -285,20 +285,65 @@ export type Slot = "top" | "outer" | "bottom" | "shoes"
 // `for`: only rendered and offered on that gender's model (unset = both). `long`: outerwear past the hip (Choose for me
 // leans to it for Plus builds). `age`: reads younger (-1) / older (+1), for the "look older / younger" presets.
 export type Gender = "male" | "female"
-type More = { for?: Gender; long?: boolean; age?: -1 | 0 | 1 }
+// A real colourway of a product. `drawn`: the colour its layer was rendered in (shown as is); every other colour is
+// recoloured from the layer in the browser (lib/style/recolor.ts), unless `layer` names a layer rendered in that colour.
+// The first colour is the default. An item whose rendered colour is no longer sold has no `drawn` colour.
+export type Color = { name: string; hex: string; layer?: string; drawn?: boolean; url?: string } // url: that colour's own product page
+// `colors`: only colours the brand really sells, and only for solid-colour pieces (no denim, plaid, stripes).
+// `shape`: reuse another item's layer (same cut, e.g. two fitted crew-neck long-sleeves), tinted to this item's colour:
+// a new product with a shape we already have costs no image calls.
+type More = { for?: Gender; long?: boolean; age?: -1 | 0 | 1; colors?: Color[]; shape?: string }
 // `usd`: the brand's price when the page showed one, else EST (typical US list price, for budgets and "about $X"
 // totals only, never shown as the price). ponytail: hand-set; refresh when a feed with live prices is wired in.
 export type Item = Option & More & { slot: Slot; styles: Style[]; brand: string; url: string; price?: string; usd: number }
 const EST: Record<string, number> = {
-  "champion-rw-hoodie": 70, "uniqlo-u-tee": 20, "uniqlo-u-tee-black": 20, "levis-trucker": 98, "carhartt-michigan": 198,
+  "champion-rw-hoodie": 70, "uniqlo-u-tee": 20, "levis-trucker": 98, "carhartt-michigan": 198,
   "uniqlo-uld-vest": 60, "jcrew-ludlow": 298, "levis-501": 80, "levis-501-black": 80, "uniqlo-chino": 40, "uniqlo-merino-mock": 40,
   "carhartt-flannel": 55, "uniqlo-merino-crew": 40, "jcrew-cashmere-w": 148, "babaton-contour-crew": 58, "jcrew-oxford-w": 80,
   "bdg-baby-tee": 25, "uniqlo-chesterfield": 230, "babaton-agency-blazer": 248, "aritzia-super-puff": 250, "levis-578-baggy": 80,
   "uniqlo-smart-ankle": 50, "on-cloudmonster": 180, "sam-edelman-loraine": 150, "uniqlo-merino-polo": 50, "uniqlo-dress-shirt": 40,
   "levis-511-dark": 90, "jcrew-lodge-w": 300,
 }
+// Real colourways per item (see Color above). Uniqlo's are from its product API; the rest from brand pages, 2026-10-03.
+// Only solid-colour pieces: denim, plaid, stripes and two-tone jackets would need a render per colour.
+const COLORS: Record<string, Color[]> = {
+  "uniqlo-u-tee": [{ name: "White", hex: "#f0efed", drawn: true }, { name: "Black", hex: "#1f1e22", layer: "uniqlo-u-tee-black" }, { name: "Gray 03", hex: "#e3dbd8" }, { name: "Gray 07", hex: "#444651" }, { name: "Cream", hex: "#f4ebdb" }, { name: "Beige", hex: "#bdb793" }, { name: "Brown", hex: "#9e855c" }, { name: "Dark Brown", hex: "#61493f" }, { name: "Red", hex: "#9e4e4a" }, { name: "Pink", hex: "#d9cbc0" }, { name: "Green", hex: "#a9b3ab" }, { name: "Blue 66", hex: "#60617f" }, { name: "Blue 67", hex: "#40506c" }, { name: "Purple", hex: "#9c7f8b" }],
+  "uniqlo-merino-crew": [{ name: "Navy", hex: "#272736", drawn: true }, { name: "Black", hex: "#252327" }, { name: "Dark Gray", hex: "#423c39" }, { name: "Gray 06", hex: "#46464b" }, { name: "Gray 03", hex: "#97979c" }],
+  "uniqlo-merino-mock": [{ name: "Black", hex: "#232224", drawn: true }, { name: "Navy", hex: "#282739" }, { name: "Gray 06", hex: "#48474a" }, { name: "Gray 03", hex: "#9f9ea3" }, { name: "Red", hex: "#791f35" }],
+  "uniqlo-merino-polo": [{ name: "Black", hex: "#202022", drawn: true }, { name: "Navy", hex: "#2a2b3f" }, { name: "Wine", hex: "#54273b" }, { name: "Gray", hex: "#8c9293" }, { name: "Beige", hex: "#b59977" }],
+  "uniqlo-dress-shirt": [{ name: "White", hex: "#f0f0f4", drawn: true }, { name: "Black", hex: "#1f1f21" }],
+  "uniqlo-uld-vest": [{ name: "Navy", hex: "#2b3044", drawn: true }, { name: "Black", hex: "#222226" }, { name: "Olive", hex: "#5d6858" }, { name: "Brown", hex: "#a69c80" }, { name: "Light Gray", hex: "#d1dbdc" }],
+  "uniqlo-chesterfield": [{ name: "Black", hex: "#252429" }, { name: "Navy", hex: "#20242d" }, { name: "Brown", hex: "#aa845d" }],
+  "uniqlo-chino": [{ name: "Beige", hex: "#b7ab9e", drawn: true }, { name: "Navy", hex: "#21212d" }, { name: "Black", hex: "#1d1b1c" }, { name: "Olive", hex: "#4a4c3f" }, { name: "Dark Green", hex: "#36352f" }, { name: "Gray 05", hex: "#7a706e" }, { name: "Gray 07", hex: "#525357" }, { name: "Off White", hex: "#e9e5e2" }],
+  "uniqlo-smart-ankle": [{ name: "Navy", hex: "#363c48", drawn: true }, { name: "Black", hex: "#2d2f2f" }, { name: "Gray", hex: "#5e6264" }, { name: "Beige", hex: "#bbb298" }],
+  "uniqlo-smart-ankle-w": [{ name: "Black", hex: "#2e302f", drawn: true }, { name: "Gray", hex: "#787881" }, { name: "Beige", hex: "#bdad94" }, { name: "Natural", hex: "#ede5da" }, { name: "Yellow", hex: "#f7e8c7" }],
+  "uniqlo-pleated-wide": [{ name: "Gray", hex: "#68686e", drawn: true }, { name: "Black", hex: "#29282b" }, { name: "Navy", hex: "#34333d" }, { name: "Dark Brown", hex: "#554e4b" }, { name: "Beige", hex: "#d2c2a9" }],
+  "champion-rw-hoodie": [{ name: "Black", hex: "#1c1c1e", drawn: true }, { name: "Oxford Grey", hex: "#9a9a9c" }, { name: "Navy", hex: "#1f2638" }, { name: "Oatmeal Heather", hex: "#cfc4b0" }, { name: "White", hex: "#f2f2f0" }],
+  "nike-club-crew": [{ name: "Dark Grey Heather", hex: "#4a4a4c", drawn: true }, { name: "Black", hex: "#1c1c1c" }, { name: "Obsidian", hex: "#24283a" }, { name: "University Blue", hex: "#9ec5e8" }],
+  "carhartt-k87": [{ name: "Carhartt Brown", hex: "#8b5a2b", drawn: true }, { name: "Black", hex: "#1c1c1c" }, { name: "Navy", hex: "#1f2a3d" }, { name: "Heather Grey", hex: "#b5b5b3" }, { name: "Dark Olive", hex: "#4a4b37" }, { name: "Port", hex: "#5a2430" }, { name: "Desert", hex: "#c9b18c" }, { name: "White", hex: "#f2f2f0" }],
+  "lacoste-polo": [{ name: "Navy Blue", hex: "#1d2340", drawn: true }, { name: "White", hex: "#f4f4f2" }, { name: "Black", hex: "#1a1a1a" }, { name: "Pine Green", hex: "#1f3d2e" }, { name: "Bordeaux", hex: "#5c1f2b" }],
+  "rl-oxford": [{ name: "Blue", hex: "#a9c4e3", drawn: true }, { name: "White", hex: "#f4f4f2" }, { name: "Faded Mint", hex: "#bcd6c6" }, { name: "Nutmeg Brown", hex: "#8a6a4e" }],
+  "rl-quarter-zip": [{ name: "Andover Cream", hex: "#ece3cf", drawn: true }, { name: "Fawn Grey Heather", hex: "#b7b2aa" }, { name: "Camel Melange", hex: "#b8936a" }, { name: "Polo Black", hex: "#1c1c1c" }],
+  "jcrew-cable-knit": [{ name: "Ivory", hex: "#ece4d3", drawn: true }, { name: "Darkest Indigo Navy", hex: "#1f2a44" }],
+  "nike-tech-hoodie": [{ name: "Black", hex: "#1c1c1c", drawn: true }, { name: "Dark Grey Heather", hex: "#5a5a5c" }, { name: "Obsidian", hex: "#24283a" }],
+  "jcrew-cashmere-w": [{ name: "Heather Oatmeal", hex: "#d8cbb5", drawn: true }, { name: "Black", hex: "#1c1c1c" }, { name: "Navy", hex: "#1f2638" }, { name: "Ash Grey", hex: "#b8b6b2" }, { name: "Utility Green", hex: "#6b6e4e" }],
+  "babaton-contour-crew": [{ name: "Black", hex: "#151515", drawn: true }, { name: "White", hex: "#f2f0ec" }, { name: "Matte Pearl", hex: "#e6ded2" }, { name: "Deep Taupe", hex: "#7d6c62" }, { name: "Rich Mocha", hex: "#4a3328" }],
+  "lululemon-align-tank": [{ name: "Black", hex: "#151515", drawn: true }, { name: "White", hex: "#f2f2f0" }, { name: "True Navy", hex: "#232b44" }, { name: "Bone", hex: "#e6dcc8" }, { name: "Espresso", hex: "#3b2a24" }, { name: "Dark Olive", hex: "#4a4b37" }],
+  "jcrew-jackie": [{ name: "Ivory", hex: "#efe8da", drawn: true }, { name: "Black", hex: "#1c1c1c" }, { name: "Navy", hex: "#1f2638" }],
+  "alpha-ma1": [{ name: "Sage", hex: "#8a9a7b", drawn: true }, { name: "Black", hex: "#1a1a1a" }, { name: "Replica Blue", hex: "#2b3346" }, { name: "Gunmetal", hex: "#5a5d5e" }, { name: "Midnight Teal", hex: "#1f3a3d" }],
+  "patagonia-torrentshell": [{ name: "Black", hex: "#161616", drawn: true }, { name: "Smolder Blue", hex: "#3c4e66" }, { name: "Noble Grey", hex: "#5e625f" }],
+  "jcrew-ludlow": [{ name: "Navy", hex: "#1f2638", drawn: true }, { name: "Grey", hex: "#6e6e70" }],
+  "carhartt-michigan": [{ name: "Hamilton Brown", hex: "#8b5a2b", drawn: true }, { name: "Black", hex: "#1c1c1c" }],
+  "baracuta-g9": [{ name: "Dark Navy", hex: "#1c2233", drawn: true }, { name: "Black", hex: "#1a1a1a", url: "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps1123bcnyz-100" }, { name: "Racing Green", hex: "#1f3a2c", url: "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps3001ut3124-6368" }, { name: "Army", hex: "#4f5236", url: "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps1123bcnyz-6097" }, { name: "Slate Grey", hex: "#5d6266", url: "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps3001ut3124-139" }, { name: "Tan", hex: "#b08a5c", url: "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps3001ut3124-710" }, { name: "Brown Cigar", hex: "#5a3e2b", url: "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps3001ut3124-7010" }, { name: "Natural", hex: "#d9cdb4", url: "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps3001ut3124-818" }, { name: "Tawny Port", hex: "#5e2630", url: "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps3001ut3124-5318" }],
+  "dickies-874": [{ name: "Khaki", hex: "#b5a27c", drawn: true }, { name: "Black", hex: "#1c1c1c" }, { name: "Dark Navy", hex: "#1f2433" }, { name: "Charcoal", hex: "#46484b" }, { name: "Dark Brown", hex: "#4a3a2e" }, { name: "Olive Green", hex: "#5a5b3c" }],
+  "nike-tech-jogger": [{ name: "Black", hex: "#1c1c1c", drawn: true }, { name: "Dark Grey Heather", hex: "#5a5a5c" }, { name: "Obsidian", hex: "#24283a" }],
+  "carhartt-wip-cargo": [{ name: "Black", hex: "#1c1c1c", drawn: true }, { name: "Cypress", hex: "#5d5f43" }, { name: "Leather", hex: "#8a6a4b" }, { name: "Graphite", hex: "#5b5c5e" }],
+  "converse-chuck-70": [{ name: "Black", hex: "#1c1c1c", drawn: true }, { name: "Parchment", hex: "#e8e0cc" }],
+  "dr-martens-1460": [{ name: "Black Smooth", hex: "#151515", drawn: true }, { name: "Cherry Red", hex: "#5e1a1c" }],
+  "clarks-desert-boot": [{ name: "Beeswax", hex: "#8a5a32", drawn: true }, { name: "Sand Suede", hex: "#c7a37a" }, { name: "Brown Suede", hex: "#5a3e2c" }, { name: "Cola Suede", hex: "#6b4630" }, { name: "Black Suede", hex: "#2a2827" }],
+}
 const item = (slot: Slot, id: string, brand: string, name: string, colorName: string, styles: Style[], url: string, render: string, price?: string, more: More = {}): Item =>
-  ({ slot, id, brand, name: `${brand} ${name}`, styles, url, render, price, sub: [colorName, price].filter(Boolean).join(" · "), usd: price ? Number(price.replace(/[^\d.]/g, "")) : EST[id] ?? NaN, ...more })
+  ({ slot, id, brand, name: `${brand} ${name}`, styles, url, render, price, sub: [colorName, price].filter(Boolean).join(" · "), usd: price ? Number(price.replace(/[^\d.]/g, "")) : EST[id] ?? NaN, ...(COLORS[id] && { colors: COLORS[id] }), ...more })
 
 // "Choose for me" budgets: the most a piece may cost in each slot (Premium has no cap and leans to the dearer piece)
 export type Budget = 1 | 2 | 3
@@ -312,8 +357,9 @@ const M: More = { for: "male" }, W: More = { for: "female" }
 export const ITEMS: Item[] = [
   item("top", "champion-rw-hoodie", "Champion", "Reverse Weave Hoodie", "Black", ["streetwear", "athleisure"],
     "https://www.champion.com/products/champion-reverse-weave-small-c-hooded-sweatshirt-black", "a black Champion Reverse Weave heavyweight pullover hoodie", undefined, { age: -1 }),
-  item("top", "uniqlo-u-tee", "Uniqlo", "U Crew Neck T-Shirt", "White", ["minimal", "classic"],
-    "https://www.uniqlo.com/us/en/products/E433028-000/00", "a plain white heavyweight Uniqlo U crew-neck t-shirt"),
+  // was the Uniqlo U tee, no longer sold in white or black (2026-10-03); the plain Crew Neck T-Shirt is the same cut
+  item("top", "uniqlo-u-tee", "Uniqlo", "Crew Neck T-Shirt", "White", ["minimal", "classic"],
+    "https://www.uniqlo.com/us/en/products/E422992-000/00", "a plain white heavyweight Uniqlo U crew-neck t-shirt", "$19.90"),
   item("outer", "levis-trucker", "Levi's", "Trucker Jacket", "Medium wash", ["streetwear", "y2k", "workwear"],
     "https://www.levi.com/US/en_US/clothing/men/outerwear/trucker-jacket/p/723340130", "a Levi's Trucker Jacket in medium-wash blue denim with metal buttons and chest pockets"),
   item("outer", "alpha-ma1", "Alpha Industries", "MA-1 Bomber (Heritage)", "Sage", ["streetwear", "classic"],
@@ -413,7 +459,7 @@ export const ITEMS: Item[] = [
   item("bottom", "uniqlo-pleated-wide", "Uniqlo", "Pleated Wide Pants", "Grey", ["old-money", "minimal"],
     "https://www.uniqlo.com/us/en/products/E462197-000/00", "grey pleated wide-leg tailored trousers with a soft drape", "$59.90", { ...M, age: 1 }),
   item("bottom", "uniqlo-smart-ankle", "Uniqlo", "Smart Ankle Pants", "Navy", ["classic", "minimal", "preppy"],
-    "https://www.uniqlo.com/us/en/products/E475574-000/00", "navy slim tapered ankle-length smart trousers with a pressed crease", undefined, { ...M, age: 1 }),
+    "https://www.uniqlo.com/us/en/products/E482886-000/00", "navy slim tapered ankle-length smart trousers with a pressed crease", undefined, { ...M, age: 1 }),
   item("bottom", "arcteryx-gamma", "Arc'teryx", "Gamma Pant", "Black", ["techwear"],
     "https://arcteryx.com/us/en/shop/mens/gamma-pant-0481", "black Arc'teryx Gamma softshell technical trousers, slim straight leg", "$200", M),
   item("bottom", "nike-tech-jogger", "Nike", "Tech Fleece Joggers", "Black", ["athleisure", "techwear"],
@@ -463,8 +509,6 @@ export const ITEMS: Item[] = [
   // knit polo, dress shirt, dress shoes, Chelsea boots, dark slim denim, cargo). No cami: the female base's sports bra
   // would show around thin straps.
   // both
-  item("top", "uniqlo-u-tee-black", "Uniqlo", "U Crew Neck T-Shirt", "Black", ["minimal", "streetwear", "techwear"],
-    "https://www.uniqlo.com/us/en/products/E433028-000/00?colorDisplayCode=09", "a plain black heavyweight Uniqlo U crew-neck t-shirt"),
   item("shoes", "blundstone-500", "Blundstone", "Original 500 Chelsea Boot", "Stout brown", ["workwear", "classic", "minimal"],
     "https://www.blundstone.com/products/stout-brown-premium-leather-v-cut-boots-mens-style-500", "stout brown leather Blundstone 500 Chelsea boots with brown elastic side panels, trousers over the boot shafts", "$209.95", { age: 1 }),
   item("shoes", "cp-achilles", "Common Projects", "Original Achilles Low", "White", ["minimal", "old-money", "classic"],
@@ -479,7 +523,7 @@ export const ITEMS: Item[] = [
   item("outer", "allsaints-milo", "AllSaints", "Milo Leather Biker Jacket", "Black", ["streetwear", "minimal", "classic"],
     "https://www.allsaints.com/us/men/leathers/leather-jackets/milo-leather-biker-jacket/USML025N-5.html", "a black slim-fit leather biker jacket with an asymmetric silver zip and notched lapels", "$649", M),
   item("outer", "baracuta-g9", "Baracuta", "G9 Harrington Jacket", "Dark navy", ["classic", "preppy", "old-money"],
-    "https://us.baracuta.com/collections/g9-harrington-jacket", "a dark navy Baracuta G9 Harrington cotton jacket with a two-button stand collar, ribbed cuffs and hem, and red tartan lining showing at the collar", "$499", { ...M, age: 1 }),
+    "https://us.baracuta.com/products/baracuta-g9-harrington-jacket-brcps3001ut3124-300", "a dark navy Baracuta G9 Harrington cotton jacket with a two-button stand collar, ribbed cuffs and hem, and red tartan lining showing at the collar", "$499", { ...M, age: 1 }),
   item("bottom", "levis-511-dark", "Levi's", "511 Slim Fit Jeans", "Dark wash", ["classic", "minimal", "preppy"],
     "https://www.levi.com/US/en_US/jeans-by-fit-number/men/jeans/511TM/511TM-slim-fit-mens-jeans/p/045115025", "dark indigo Levi's 511 slim-fit jeans with a clean, even wash", undefined, M),
   item("bottom", "carhartt-wip-cargo", "Carhartt WIP", "Regular Cargo Pant", "Black", ["streetwear", "y2k", "techwear", "workwear"],

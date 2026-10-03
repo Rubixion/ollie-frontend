@@ -3,8 +3,9 @@
 import { createPortal } from "react-dom"
 import { useEffect, useState } from "react"
 import type { ComponentProps } from "react"
-import { LogOut } from "lucide-react"
+import { LogOut, Settings } from "lucide-react"
 import { AccountIcon } from "@/components/ui/account-icon"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/components/auth-provider"
 import { PageLink } from "@/components/page-link"
@@ -29,7 +30,7 @@ const links = MATCH_ONLY
     ]
 
 function ProfileMenu() {
-  const { user, openModal } = useAuth()
+  const { user, openModal, signOut } = useAuth()
   if (!user) {
     return (
       <div className="hidden items-center gap-2 lg:flex">
@@ -38,12 +39,24 @@ function ProfileMenu() {
       </div>
     )
   }
-  // the account icon opens the profile page (/account): saved outfits, plan, password, sign out, delete
+  // the account icon opens a menu: settings (/account) or sign out
   return (
-    <PageLink href="/account" aria-label="Your account"
-      className="hidden size-9 items-center justify-center text-white/60 transition-colors hover:text-white lg:flex">
-      <AccountIcon size={22} aria-hidden="true" />
-    </PageLink>
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger aria-label="Your account"
+        className="hidden size-9 items-center justify-center text-white/60 outline-none transition-colors hover:text-white data-[state=open]:text-white lg:flex">
+        <AccountIcon size={22} aria-hidden="true" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel className="truncate text-xs font-normal text-white/60">{user.email}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <PageLink href="/account"><Settings size={15} /> Settings</PageLink>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="text-red-300 focus:text-red-300" onSelect={() => signOut()}>
+          <LogOut size={15} /> Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 

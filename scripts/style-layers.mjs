@@ -16,7 +16,10 @@ import { ITEMS as CATALOG } from "../lib/style/catalog.ts"
 
 const env = await scriptEnv()
 const NOUN = { top: "top", outer: "outer layer (jacket, coat or vest)", bottom: "trousers", shoes: "pair of shoes (and any socks showing above them)" }
-const ITEMS = Object.fromEntries(CATALOG.map((i) => [i.id, {
+// Items with `shape` reuse another item's layer, so there's nothing to render for them. A colour with its own `layer`
+// (rendered in that colour) is rendered like an item: its render text is the item's, with the colour swapped in.
+const COLOR_LAYERS = CATALOG.flatMap((i) => (i.colors ?? []).filter((c) => c.layer).map((c) => ({ ...i, id: c.layer, render: i.render.replace(new RegExp((i.colors.find((x) => x.drawn) ?? i.colors[0]).name, "i"), c.name.toLowerCase()) })))
+const ITEMS = Object.fromEntries([...CATALOG.filter((i) => !i.shape), ...COLOR_LAYERS].map((i) => [i.id, {
   slot: i.slot, noun: NOUN[i.slot], hood: /hoodie/i.test(i.name), for: i.for,
   what: i.slot === "outer" ? `${i.render}, worn open` : i.render, tucked: /tucked into/.test(i.render),
 }]))
@@ -60,7 +63,7 @@ const raw = (buf, w, h) => sharp(buf).resize(w, h, { fit: "fill" }).removeAlpha(
 //   or sides, and called background by the parser. Garments never touch those edges.
 const SKIN_LABELS = new Set([2, 11, 12, 13, 14, 15])
 const LOWER_LABELS = new Set([5, 6, 9, 10]) // skirt, trousers, shoes: a top or jacket cut-out sometimes keeps the base's grey trousers
-async function cleanLayer(layer, bare, labels, w, h, slot) {
+async function cleanLayer(layer, bare, labels, w, h, slot, baseSkin) {
   const L = await sharp(layer).ensureAlpha().raw().toBuffer()
   const same = Buffer.alloc(w * h)
   for (let p = 0; p < w * h; p++) {
@@ -91,6 +94,29 @@ async function cleanLayer(layer, bare, labels, w, h, slot) {
   }
   let n = 0
   for (let p = 0; p < w * h; p++) if (drop[p] && L[p * 4 + 3]) { L[p * 4 + 3] = 0; n++ }
+  // Trousers: the dressed photo's hands sat a few px off the base's, so dropping them left hand-shaped notches that
+  // showed the base's grey chinos. Where a notch lies over the base's trousers (not its skin, not backdrop), grow the
+  // trousers into it in their own edge colour. The editor draws the base's hands on top (hands.webp).
+  if (labels && baseSkin && slot === "bottom") {
+    const fill = Uint8Array.from(labels, (v) => (v === 14 || v === 15 ? 1 : 0))
+    for (let pass = 0; pass < 4; pass++) {
+      const prev = fill.slice()
+      for (let p = w; p < w * h - w; p++) if (!prev[p] && (prev[p - 1] || prev[p + 1] || prev[p - w] || prev[p + w])) fill[p] = 1
+    }
+    for (let p = 0; p < w * h; p++) {
+      const i = p * 3, e = (p - (p % w) + ((p % w) < w / 2 ? 4 : w - 5)) * 3 // backdrop sample, nearest side
+      const backdrop = Math.abs(bare[i] - bare[e]) + Math.abs(bare[i + 1] - bare[e + 1]) + Math.abs(bare[i + 2] - bare[e + 2]) < 40
+      if (backdrop || baseSkin[p] > 128) fill[p] = 0
+    }
+    for (let pass = 0; pass < 30; pass++) {
+      const solid = Uint8Array.from({ length: w * h }, (_, p) => (L[p * 4 + 3] > 128 ? 1 : 0))
+      for (let p = w; p < w * h - w; p++) {
+        if (!fill[p] || solid[p]) continue
+        const q = solid[p - 1] ? p - 1 : solid[p + 1] ? p + 1 : solid[p - w] ? p - w : solid[p + w] ? p + w : -1
+        if (q >= 0) { L.copy(L, p * 4, q * 4, q * 4 + 3); L[p * 4 + 3] = 255; n++ }
+      }
+    }
+  }
   return { n, buf: await sharp(L, { raw: { width: w, height: h, channels: 4 } }).webp({ quality: 88, alphaQuality: 90 }).toBuffer() }
 }
 // A tucked top ends at the bare base's waistband, a few px above where some trousers' layers start, so a sliver of
@@ -199,11 +225,27 @@ async function makeLayer(OUT, CACHE, W, H, name, it, start, under = "", skin = n
   }
   if (!layer) throw new Error(`${name}: the cut-out kept coming back re-framed`)
   execFileSync("python", ["scripts/style-parse.py", `${CACHE}/${name}-dressed.jpg`], { stdio: "inherit" }) // skin/hair labels for cleanLayer
-  layer = (await cleanLayer(layer, bare, await labelsFor(CACHE, name, W, H), W, H, it.slot)).buf
+  layer = (await cleanLayer(layer, bare, await labelsFor(CACHE, name, W, H), W, H, it.slot, skin)).buf
   if (it.tucked) layer = await extendTucked(layer, W, H)
   writeFileSync(`${OUT}/${name}.webp`, layer)
   if (it.slot === "outer") writeFileSync(`${OUT}/${name}.clip.webp`, await clipMask(layer, W, H))
   console.log(`${OUT.split("/").pop()} ${name}: layer saved`)
+}
+
+// The base's hands, drawn over every outfit in the editor (the model photo again, masked by this), so hands always sit
+// in front of trousers and hems. = the body's skin below the chest that no top or jacket layer ever covers.
+async function handsMask(OUT, skin, W, H) {
+  if (!skin) return
+  const keep = Uint8Array.from(skin, (v, p) => (v > 128 && p >= W * Math.round(H * 0.4) ? 1 : 0))
+  for (const f of readdirSync(OUT).filter((f) => f.endsWith(".webp") && !f.endsWith(".clip.webp"))) {
+    if (!["top", "outer"].includes(ITEMS[f.slice(0, -5).replace(/@hood$/, "")]?.slot)) continue
+    const a = await sharp(`${OUT}/${f}`).ensureAlpha().extractChannel(3).raw().toBuffer()
+    for (let p = 0; p < W * H; p++) if (a[p] > 128) keep[p] = 0
+  }
+  const alpha = await sharp(Buffer.from(keep.map((v) => v * 255)), { raw: { width: W, height: H, channels: 1 } }).blur(0.8).raw().toBuffer()
+  const out = Buffer.alloc(W * H * 4, 255)
+  for (let p = 0; p < W * H; p++) out[p * 4 + 3] = alpha[p]
+  writeFileSync(`${OUT}/hands.webp`, await sharp(out, { raw: { width: W, height: H, channels: 4 } }).webp({ quality: 80, alphaQuality: 90 }).toBuffer())
 }
 
 const BODIES = ["male", "female"].flatMap((g) => ["slim", "average", "athletic", "plus"].map((b) => `${g}-${b}`))
@@ -225,13 +267,15 @@ for (const b of bodies) {
   if (CLEAN) {
     for (const f of readdirSync(OUT).filter((f) => f.endsWith(".webp") && !f.endsWith(".clip.webp"))) {
       const name = f.slice(0, -5)
+      if (name === "hands") continue
       if (only.length && !only.includes(name.replace(/@hood$/, ""))) continue
-      const { n, buf } = await cleanLayer(readFileSync(`${OUT}/${f}`), bare, await labelsFor(CACHE, name, W, H), W, H, ITEMS[name.replace(/@hood$/, "")]?.slot)
+      const { n, buf } = await cleanLayer(readFileSync(`${OUT}/${f}`), bare, await labelsFor(CACHE, name, W, H), W, H, ITEMS[name.replace(/@hood$/, "")]?.slot, skin)
       if (!n) continue
       writeFileSync(`${OUT}/${f}`, buf)
       if (existsSync(`${OUT}/${name}.clip.webp`)) writeFileSync(`${OUT}/${name}.clip.webp`, await clipMask(buf, W, H))
       if (n > 500) console.log(`${b} ${name}: dropped ${n} base-model pixels`)
     }
+    await handsMask(OUT, skin, W, H)
     continue
   }
   const over = async (id) => sharp(base).composite([{ input: await sharp(`${OUT}/${id}.webp`).png().toBuffer() }]).jpeg({ quality: 95 }).toBuffer()
@@ -245,6 +289,7 @@ for (const b of bodies) {
       await makeLayer(OUT, CACHE, W, H, `${id}@hood`, it, await over(HOODIE), " over the hoodie, with the hood resting naturally outside over the collar", skin, bare)
     } catch (e) { console.log(`FAILED ${b} ${id}: ${e.message.slice(0, 200)}`) }
   }
+  await handsMask(OUT, skin, W, H)
 }
 
 // what exists, for the editor: clothes layers and looks per body

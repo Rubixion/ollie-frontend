@@ -187,12 +187,15 @@ export async function inference(path: "search" | "compare" | "landmarks", files:
     const blobs = await Promise.all(files.map(download))
     blobs.forEach((b, i) => form.append(i ? "file2" : "file", b, `upload${i}`))
     if (path === "search") form.append("gender", "auto"), form.append("category", "any")
-    const res = await fetch(`${baseUrl.replace(/\/$/, "")}/${path}`, {
+    const call = () => fetch(`${baseUrl.replace(/\/$/, "")}/${path}`, {
       method: "POST",
       headers: { "X-Api-Key": apiKey },
       body: form,
       signal: AbortSignal.timeout(90_000), // a cold Modal container takes ~15-25 s
     })
+    // one retry on a dropped connection or a 5xx (Modal swapping containers); not on a timeout, which already took 90 s
+    let res = await call().catch((e) => { if (e?.name === "TimeoutError") throw e; return null })
+    if (!res || res.status >= 500) res = await call()
     if (!res.ok) throw new Error(`inference ${res.status}`)
     // searches left after this one: null = not counted (the free symmetry app, or an exempt account)
     const left = quota && quota.used !== null ? Math.max(0, (auth ? USER_LIMIT : GUEST_MCP_LIMIT) - quota.used) : null

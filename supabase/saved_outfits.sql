@@ -17,6 +17,7 @@ create policy "own outfits" on public.saved_outfits for all to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
 revoke all on public.saved_outfits from anon;
 grant select, insert, delete on public.saved_outfits to authenticated;
+grant update (name, look) on public.saved_outfits to authenticated; -- rename / edit a saved outfit (added 2026-10-03)
 grant all on public.saved_outfits to service_role;
 
 -- At most 100 outfits per account, so one person can't fill the database.

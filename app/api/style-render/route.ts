@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   if (!parsed) return NextResponse.json({ error: "Invalid photo." }, { status: 400 })
   const look: Look = body.look && typeof body.look === "object" ? body.look : {}
   const texture = TEXTURES.includes(body.texture) ? (body.texture as Texture) : undefined
-  const built = instruction(look, texture)
+  const built = instruction(look, texture, body.tints && typeof body.tints === "object" ? body.tints : {})
   if (!built) return NextResponse.json({ error: "Pick at least one thing to try on." }, { status: 400 })
 
   const refs = await productPhotos(req.nextUrl.origin, built.refs)

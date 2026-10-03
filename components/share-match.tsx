@@ -46,7 +46,7 @@ export function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, 
 }
 
 // `text` cut with an ellipsis so it fits in `width` (fillText's maxWidth would squash the letters instead)
-function fitText(ctx: CanvasRenderingContext2D, text: string, width: number) {
+export function fitText(ctx: CanvasRenderingContext2D, text: string, width: number) {
   if (ctx.measureText(text).width <= width) return text
   let t = text
   while (t.length > 1 && ctx.measureText(`${t}…`).width > width) t = t.slice(0, -1)

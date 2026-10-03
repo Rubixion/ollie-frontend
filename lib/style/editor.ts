@@ -85,7 +85,8 @@ const find = (list: { id: string; render: string }[], id?: string) => (id ? list
 
 /** Look -> the edit instruction for the image model, plus the product pages whose photos go along as
  *  reference images, or null if any id is unknown. */
-export function instruction(look: Look, texture?: Texture): { text: string; refs: string[] } | null {
+/** `tints`: colour names per clothes slot; unknown names are ignored (the item's own colour is used). */
+export function instruction(look: Look, texture?: Texture, tints: Partial<Record<Slot, unknown>> = {}): { text: string; refs: string[] } | null {
   const lines: string[] = []
   const refs: string[] = [] // product ids, for their photos
   const bad = (id: string | undefined, r: string | undefined) => id !== undefined && r === undefined
@@ -105,7 +106,9 @@ export function instruction(look: Look, texture?: Texture): { text: string; refs
     if (!id) continue
     const it = ITEMS.find((i) => i.id === id && i.slot === slot)
     if (!it) return null
-    wear.push(slot === "outer" ? `${it.render} worn over the top` : it.render)
+    const c = it.colors?.find((x) => x.name === tints[slot]) ?? it.colors?.[0]
+    const render = c && !c.drawn ? `${it.render}, but in ${c.name.toLowerCase()} (${c.hex})` : it.render
+    wear.push(slot === "outer" ? `${render} worn over the top` : render)
     refs.push(it.id)
   }
   if (wear.length) lines.push(`Clothing: ${wear.join("; ")}.`)

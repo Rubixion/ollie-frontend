@@ -20,14 +20,19 @@ import { StyleScanner, type ScanResult } from "@/components/style-scanner"
 import { useAuth } from "@/components/auth-provider"
 import { authHeaders, usePro } from "@/components/style-plans"
 import { glassOpen } from "@/lib/surfaces"
-import { OutfitThumb } from "@/components/outfit-thumb"
-import { deleteOutfit, getOutfit, listOutfits, saveOutfit, type SavedOutfit } from "@/lib/style/saved"
+import { OutfitThumb, OutfitTitle } from "@/components/outfit-thumb"
+import { Input } from "@/components/ui/input"
+import { decodeLook, deleteOutfit, getOutfit, listOutfits, saveOutfit, updateOutfit, type SavedLook, type SavedOutfit } from "@/lib/style/saved"
+import { ShareOutfit } from "@/components/share-outfit"
 import { track } from "@/lib/analytics"
 import { SHAPE_INFO, classify, type ShapeResult } from "@/lib/style/face-shape"
 import { BUDGETS, ITEMS, OCCASIONS, STYLES, type Budget, type Hairline, type OccasionId, type Slot, type Style, type Texture } from "@/lib/style/catalog"
 import { cards, type Card, type Look, type TabId } from "@/lib/style/editor"
 import { AGE_BANDS, fitNotes, grooming, shapeLabel, type AgeBand, type Answers, type Goal, type Link } from "@/lib/style/recommend"
-import { BUILDS, LOOKS, body, chooseOutfit, dressFor, layers, modelPhoto, outfitTotal, type Assets, type Build, type Gender, type LookId, type Outfit } from "@/lib/style/model"
+import { BUILDS, LOOKS, body, chooseOutfit, handsLayer, colorOf, dressFor, layerOf, layers, modelPhoto, outfitTotal, type Assets, type Build, type Gender, type LookId, type Outfit, type Tints } from "@/lib/style/model"
+import { useTinted } from "@/lib/style/recolor"
+import { LayerImg } from "@/components/outfit-thumb"
+import { ColorSwatchPicker } from "@/components/ui/color-swatch-picker"
 
 const SLOTS: { id: Slot; label: string; icon: typeof Shirt }[] = [
   { id: "top", label: "Tops", icon: Shirt }, { id: "outer", label: "Jackets", icon: Layers },
@@ -104,13 +109,14 @@ function CelebsLike({ shape, gender, list }: { shape: string; gender: Gender; li
   )
 }
 
-function Option({ card, on, icon: Icon, thumb, onClick }: { card: Card; on: boolean; icon: typeof Shirt; thumb?: { src: string; fit: string }; onClick: () => void }) {
+function Option({ card, on, icon: Icon, thumb, onClick }: { card: Card; on: boolean; icon: typeof Shirt; thumb?: { src: string; fit: string; tint?: string }; onClick: () => void }) {
+  const thumbSrc = useTinted(thumb?.src ?? "", thumb?.tint)
   return (
     <button type="button" onClick={onClick} aria-pressed={on} className={optionBtn(on)}>
       <ProductCard className="max-w-none" size="sm">
         <ProductCardImage className="relative flex aspect-[4/3] items-center justify-center">
           <Icon size={28} className={on ? "text-(--ollie-cyan)" : "text-white/40"} aria-hidden="true" />
-          {thumb && <div aria-hidden="true" className="absolute inset-0" style={{ background: `url(${thumb.src}) ${thumb.fit} no-repeat, linear-gradient(#aea296, #bbafa5)` }} />}
+          {thumb && thumbSrc && <div aria-hidden="true" className="absolute inset-0" style={{ background: `url(${thumbSrc}) ${thumb.fit} no-repeat, linear-gradient(#aea296, #bbafa5)` }} />}
           {(on || card.best) && <ProductCardBadge isActive={on}>{on ? "Picked" : "Best for you"}</ProductCardBadge>}
         </ProductCardImage>
         <ProductCardContent>
@@ -169,7 +175,8 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
   const look = looksFor(gender, bodyB).includes(lookId) ? lookId : (looksFor(gender, bodyB)[0] as LookId | undefined) ?? lookId
   const have = assets.layers[body(gender, bodyB)] ?? []
   const u = (src: string) => (assets.v ? `${src}?v=${assets.v}` : src) // regenerated images never show stale
-  const stack = layers(gender, bodyB, outfit, have)
+  const [tints, setTints] = useState<Tints>({}) // chosen colour per slot (a Color name of the item there)
+  const stack = layers(gender, bodyB, outfit, have, tints)
   const setG = (g: Gender) => { setModel({ gender: g }); track("style_model_gender", { g }) }
 
   // which control tab is open: visitors from the lookalike results came for face advice, so they start on Hair & face
@@ -184,7 +191,10 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
   const [autoStyle, setAutoStyle] = useState<Style | OccasionId>()
   const [autoNotes, setAutoNotes] = useState<string[]>([])
   // the model always wears a top: tapping the picked top again goes back to the plain tee
-  const wear = (slot: Slot, id: string) => setOutfit((o) => ({ ...o, [slot]: o[slot] === id ? (slot === "top" ? DEFAULT_OUTFIT.top : undefined) : id }))
+  const wear = (slot: Slot, id: string) => {
+    setOutfit((o) => ({ ...o, [slot]: o[slot] === id ? (slot === "top" ? DEFAULT_OUTFIT.top : undefined) : id }))
+    setTints((t) => ({ ...t, [slot]: undefined }))
+  }
   function chooseForMe(style: Style | OccasionId) {
     const today = new Date().toDateString()
     const used = stored<{ day: string; n: number }>("style_auto", { day: today, n: 0 })
@@ -193,6 +203,7 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
     store("style_auto", { day: today, n: n + 1 })
     const { outfit: o, notes } = style in OCCASIONS ? dressFor(style as OccasionId, gender, have, bodyB, budget) : chooseOutfit(style as Style, gender, have, bodyB, budget)
     setOutfit({ top: DEFAULT_OUTFIT.top, ...o })
+    setTints({})
     setAutoStyle(style)
     if (style === "older" || style === "younger") setGoal(style)
     setAutoNotes(notes)
@@ -274,7 +285,7 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
       const res = await fetch("/api/style-render", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-        body: JSON.stringify({ image: photo, look: { ...face, ...outfit }, texture: texture || undefined, consent }),
+        body: JSON.stringify({ image: photo, look: { ...face, ...outfit }, tints, texture: texture || undefined, consent }),
       })
       const d = await res.json().catch(() => ({}))
       if (d.code === "signin") return openModal(undefined, "signup")
@@ -307,39 +318,72 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
   // ── saved outfits (supabase/saved_outfits.sql): saving needs an account, which is also the sign-up hook ──
   const [saved, setSaved] = useState<SavedOutfit[]>()
   const [saveMsg, setSaveMsg] = useState<string | null>(null)
+  const [title, setTitle] = useState("")
+  const [editing, setEditing] = useState<string | null>(null) // id of the saved outfit on the model: Save overwrites it
   useEffect(() => {
     if (user && clothesMode === "saved" && !saved) listOutfits().then(setSaved).catch(() => setSaved([]))
   }, [user, clothesMode, saved])
+  function wearLook(l: SavedLook) {
+    setModel({ gender: l.gender, build: l.build, lookId: l.lookId })
+    setOutfit({ top: DEFAULT_OUTFIT.top, ...l.outfit })
+    setTints(l.tints ?? {})
+    if (l.face) setFace(l.face as Look)
+  }
   function load(o: SavedOutfit) {
-    setModel({ gender: o.look.gender, build: o.look.build, lookId: o.look.lookId })
-    setOutfit({ top: DEFAULT_OUTFIT.top, ...o.look.outfit })
-    if (o.look.face) setFace(o.look.face as Look)
+    wearLook(o.look)
+    setEditing(o.id); setTitle(o.name); setSaveMsg(null)
     track("style_outfit_load")
   }
+  useEffect(() => { // a share link: /ai-stylist?look=<code> (ShareOutfit)
+    const shared = decodeLook(new URLSearchParams(location.search).get("look") ?? "")
+    if (!shared) return
+    /* eslint-disable react-hooks/set-state-in-effect -- one-time read of ?look= after hydration */
+    wearLook(shared.look)
+    setTitle(shared.name)
+    setSaveMsg("A friend shared this outfit. Change anything, save it, or shop the pieces below.")
+    /* eslint-enable react-hooks/set-state-in-effect */
+    track("style_outfit_open_shared")
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
+  }, [])
   useEffect(() => { // opened from /account: /ai-stylist?saved=<id>
     const id = new URLSearchParams(location.search).get("saved")
     if (user && id) getOutfit(id).then((o) => o && load(o))
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once, when the session is known
   }, [user])
-  async function save() {
-    if (!user) return openModal(() => save(), "signup")
-    const label = autoStyle ? (autoStyle in OCCASIONS ? OCCASIONS[autoStyle as OccasionId] : STYLES[autoStyle as Style]).label : "My outfit"
-    const name = `${label} · ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
-    const err = await saveOutfit(name, { gender, build: bodyB, lookId: look, outfit, face: face as Record<string, string> })
-    setSaveMsg(err ?? "Saved. Find it under Clothes, Saved, or on your account page.")
-    if (!err) { setSaved(undefined); track("style_outfit_save", { outfit: name }) }
+  const autoLabel = autoStyle ? (autoStyle in OCCASIONS ? OCCASIONS[autoStyle as OccasionId] : STYLES[autoStyle as Style]).label : "My outfit"
+  const defaultTitle = `${autoLabel} · ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
+  async function save(asNew = false) {
+    if (!user) return openModal(() => save(asNew), "signup")
+    const name = title.trim() || defaultTitle
+    if (editing && !asNew) {
+      const err = await updateOutfit(editing, { name, look: saving })
+      setSaveMsg(err ?? "Changes saved.")
+      if (!err) { setSaved(undefined); track("style_outfit_update") }
+      return
+    }
+    const res = await saveOutfit(name, saving)
+    if ("error" in res) return setSaveMsg(res.error)
+    setEditing(res.id); setTitle(name)
+    setSaveMsg("Saved. Find it under Clothes, Saved, or on your account page.")
+    setSaved(undefined); track("style_outfit_save", { outfit: name })
   }
   async function remove(id: string) {
     await deleteOutfit(id).catch(() => {})
     setSaved((list) => list?.filter((o) => o.id !== id))
+    if (editing === id) setEditing(null)
+  }
+  function renamed(id: string, name: string) {
+    setSaved((list) => list?.map((o) => (o.id === id ? { ...o, name } : o)))
+    if (editing === id) setTitle(name)
   }
   const total = Math.round(outfitTotal(outfit))
+  const saving: SavedLook = { gender, build: bodyB, lookId: look, outfit, tints, face: face as Record<string, string> }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,27rem)]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
         {/* ── preview ── */}
-        <section className={`${glassOpen} flex flex-col gap-4 p-5 md:p-6`} aria-label="Preview" aria-busy={busy}>
+        <section className={`${glassOpen} flex flex-col gap-3 p-3 md:p-4`} aria-label="Preview" aria-busy={busy}>
           {thanks && (
             <p role="status" className="rounded-xl border border-(--ollie-cyan)/30 bg-(--ollie-cyan)/10 p-3 text-sm text-white">
               Thanks! Your payment went through. Pro unlocks on your account within a minute.
@@ -353,19 +397,28 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
 
             <TabsContent value="model" className="flex flex-col gap-3">
               {/* layers stacked in the browser: any outfit shows instantly and costs nothing */}
-              <div className="relative mx-auto aspect-[3/4] w-full max-w-[min(30rem,62svh*0.75)] overflow-hidden rounded-2xl bg-gradient-to-b from-[#aea296] to-[#bbafa5]">
+              <div className="relative mx-auto aspect-[3/4] w-full max-w-[min(48rem,85svh*0.75)] overflow-hidden rounded-2xl bg-gradient-to-b from-[#aea296] to-[#bbafa5]">
                 {!ready ? <Skeleton className="absolute inset-0 rounded-none bg-white/[0.06]" /> : <div className="absolute inset-0">
                   {/* eslint-disable-next-line @next/next/no-img-element -- static model photo */}
                   <img src={u(modelPhoto(gender, bodyB, look))} alt={`A ${LOOKS.find((l) => l.id === look)?.label} ${gender === "male" ? "male" : "female"} model with ${bodyB === "slim" || bodyB === "plus" ? "a" : "an"} ${bodyB} build`} fetchPriority="high" className="absolute inset-0 size-full object-cover" />
-                  {stack.map((l) => (
-                    // eslint-disable-next-line @next/next/no-img-element -- clothes layer
-                    <img key={l.slot} src={u(l.src)} alt="" className="absolute inset-0 size-full object-cover"
-                      style={l.mask ? { maskImage: `url(${u(l.mask)})`, WebkitMaskImage: `url(${u(l.mask)})`, maskSize: "100% 100%", WebkitMaskSize: "100% 100%" } : undefined} />
-                  ))}
+                  {stack.map((l) => <LayerImg key={l.slot} l={l} u={u} />)}
+                  <LayerImg l={handsLayer(gender, bodyB, look)} u={u} />
                 </div>}
               </div>
               <p className="text-center text-xs text-white/50">Every change to the model or clothes shows instantly. This outfit: about ${total}.</p>
-              <Button variant="brandOutline" size="cta" onClick={save} className="gap-2"><Bookmark size={16} aria-hidden="true" />Save this outfit</Button>
+              <div className="flex flex-wrap gap-2">
+                <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={60} placeholder={defaultTitle} aria-label="Outfit title"
+                  className="h-11 min-w-48 flex-1 basis-full border-white/10 bg-black/35 text-white sm:basis-0" />
+                {editing ? (
+                  <div className="grid flex-1 grid-cols-2 gap-2">
+                    <Button variant="brandOutline" size="cta" onClick={() => save()} className="gap-2"><Bookmark size={16} aria-hidden="true" />Save changes</Button>
+                    <Button variant="brandOutline" size="cta" onClick={() => save(true)}>Save as new</Button>
+                  </div>
+                ) : (
+                  <Button variant="brandOutline" size="cta" onClick={() => save()} className="flex-1 gap-2"><Bookmark size={16} aria-hidden="true" />Save this outfit</Button>
+                )}
+                {ready && <ShareOutfit look={saving} name={title.trim() || defaultTitle} assets={assets} />}
+              </div>
               {saveMsg && <p role="status" className="text-center text-xs text-white/70">{saveMsg}</p>}
               {pro === false && (
                 <Button variant="brand" size="cta" onClick={() => onYou("See this exact outfit on your own photo with Ollie Pro.")} className="gap-2">
@@ -427,7 +480,7 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
         </section>
 
         {/* ── controls ── */}
-        <section className={`${glassOpen} flex min-h-0 flex-col gap-4 p-5 md:p-6`} aria-label="Edit the look">
+        <section className={`${glassOpen} flex min-h-0 flex-col gap-3 p-3 text-sm md:p-4`} aria-label="Edit the look">
           <Tabs value={panel} onValueChange={setPanel} className="flex min-h-0 flex-col gap-4">
             <TabsList className="grid h-auto w-full grid-cols-3">
               <TabsTrigger value="model">Model</TabsTrigger>
@@ -483,10 +536,10 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
                   <div className="grid max-h-[min(34rem,58svh)] grid-cols-2 gap-3 overflow-y-auto pr-1">
                     {saved.map((o) => (
                       <div key={o.id} className="flex flex-col gap-2 rounded-xl bg-black/35 p-2">
-                        <button type="button" onClick={() => load(o)} className={`${optionBtn(false)} flex flex-col gap-2`} aria-label={`Wear ${o.name}`}>
+                        <button type="button" onClick={() => load(o)} className={`${optionBtn(editing === o.id)} flex flex-col gap-2`} aria-label={`Wear ${o.name}`}>
                           <OutfitThumb look={o.look} />
-                          <span className="px-1 text-sm font-semibold text-white">{o.name}</span>
                         </button>
+                        <OutfitTitle id={o.id} name={o.name} onRenamed={(n) => renamed(o.id, n)} />
                         <button type="button" onClick={() => remove(o.id)} className="min-h-8 px-1 text-left text-xs text-white/50 hover:text-red-300">Delete</button>
                       </div>
                     ))}
@@ -519,11 +572,30 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
                     {SLOTS.map((s) => <TabsTrigger key={s.id} value={s.id}>{s.label}{outfit[s.id] && <Check size={12} className="ml-1" aria-label="picked" />}</TabsTrigger>)}
                   </TabsList>
                   {SLOTS.map((s) => (
-                    <TabsContent key={s.id} value={s.id}>
+                    <TabsContent key={s.id} value={s.id} className="flex flex-col gap-3">
+                      {(() => { // the piece worn here comes in other real colours: pick one without picking another item
+                        const id = outfit[s.id], cs = id ? ITEMS.find((i) => i.id === id)?.colors : undefined
+                        if (!id || !cs || cs.length < 2) return null
+                        const cur = colorOf(id, tints[s.id])!
+                        return (
+                          <div className="flex flex-col gap-2 rounded-xl bg-black/35 p-3">
+                            <p className="text-xs text-white/60">Colour: <span className="font-semibold text-white">{cur.name}</span></p>
+                            <ColorSwatchPicker size="sm" value={cur.hex} aria-label={`Colour of the ${ITEMS.find((i) => i.id === id)?.name}`}
+                              onChange={(v) => { const c = cs.find((x) => x.hex.toUpperCase() === v.toString()); if (c) { setTints((t) => ({ ...t, [s.id]: c.name })); track("style_color", { item: id, color: c.name }) } }}>
+                              {cs.map((c) => (
+                                <ColorSwatchPicker.Item key={c.name} color={c.hex} aria-label={c.name} title={c.name}>
+                                  <ColorSwatchPicker.Swatch className="ring-1 ring-white/20" />
+                                  <ColorSwatchPicker.Indicator />
+                                </ColorSwatchPicker.Item>
+                              ))}
+                            </ColorSwatchPicker>
+                          </div>
+                        )
+                      })()}
                       <div className="grid max-h-[min(34rem,58svh)] grid-cols-2 gap-3 overflow-y-auto pr-1">
-                        {ITEMS.filter((i) => i.slot === s.id && have.includes(i.id)).map((i) => (
-                          <Option key={i.id} card={{ ...i, best: !!autoStyle && (autoStyle in OCCASIONS ? Object.values({ ...OCCASIONS[autoStyle as OccasionId][gender], ...OCCASIONS[autoStyle as OccasionId].builds?.[bodyB]?.[gender] }).includes(i.id) : i.styles.includes(autoStyle as Style)), links: [] }} on={outfit[s.id] === i.id}
-                            icon={s.icon} thumb={{ src: u(`/style/layers/${body(gender, bodyB)}/${i.id}.webp`), fit: THUMB[s.id] }} onClick={() => wear(s.id, i.id)} />
+                        {ITEMS.filter((i) => i.slot === s.id && have.includes(layerOf(i.id)) && (!i.for || i.for === gender)).map((i) => (
+                          <Option key={i.id} card={{ ...i, best: !!autoStyle && (autoStyle in OCCASIONS ? Object.values({ ...OCCASIONS[autoStyle as OccasionId][gender], ...OCCASIONS[autoStyle as OccasionId].builds?.[bodyB]?.[gender] }).includes(i.id) : i.styles.includes(autoStyle as Style)), links: [], sub: outfit[s.id] === i.id && i.colors ? [colorOf(i.id, tints[s.id])?.name, i.price].filter(Boolean).join(" · ") : i.sub }} on={outfit[s.id] === i.id}
+                            icon={s.icon} thumb={{ src: u(`/style/layers/${body(gender, bodyB)}/${layerOf(i.id)}.webp`), fit: THUMB[s.id], tint: i.shape ? i.colors?.[0]?.hex : undefined }} onClick={() => wear(s.id, i.id)} />
                         ))}
                       </div>
                     </TabsContent>
@@ -649,8 +721,8 @@ export function StyleEditor({ onPlans, scan = 0, onScan }: { onPlans: (reason?: 
         {pickedClothes.map(({ label, it }) => (
           <div key={it.id} className="flex flex-col gap-2 rounded-2xl bg-black/35 p-4">
             <h3 className="text-lg font-bold text-white"><span className="mr-2 text-sm font-semibold text-(--ollie-cyan)">{label}</span>{it.name}</h3>
-            <p className="text-sm text-white/60">{it.sub}</p>
-            <Links links={[{ label: `View at ${it.brand}`, href: it.url }]} where={`${it.slot}:${it.id}`} />
+            <p className="text-sm text-white/60">{it.colors && outfit[it.slot] === it.id ? [colorOf(it.id, tints[it.slot])?.name, it.price].filter(Boolean).join(" · ") : it.sub}</p>
+            <Links links={[{ label: `View at ${it.brand}`, href: (outfit[it.slot] === it.id && colorOf(it.id, tints[it.slot])?.url) || it.url }]} where={`${it.slot}:${it.id}`} />
           </div>
         ))}
         {pickedFace.map(({ label, c }) => (

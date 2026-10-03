@@ -46,6 +46,12 @@ function getLandmarker(delegate: "GPU" | "CPU" = "GPU") {
 
 class ModelLoadError extends Error {}
 
+// The wasm (jsDelivr) and model (Google Storage) downloads sometimes fail on a flaky connection, a CDN blip or a
+// network that blocks one of them; a reload usually fixed it, so retry once before showing the error.
+const loadLandmarker = (delegate: "GPU" | "CPU" = "GPU") =>
+  getLandmarker(delegate).catch(() => new Promise((r) => setTimeout(r, 1500)).then(() => getLandmarker(delegate)))
+    .catch((e) => { throw new ModelLoadError(e instanceof Error ? e.message : String(e)) })
+
 function loadImg(src: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new window.Image()
@@ -124,13 +130,13 @@ export function SymmetryTest() {
     try {
       // the 1280px copy, not the original: a 12-48 MP phone photo can be bigger than the GPU's largest texture
       const img = await loadImg(photo.data)
-      const lm = await getLandmarker().catch((e) => { throw new ModelLoadError(String(e)) })
+      const lm = await loadLandmarker()
       let res
       try {
         res = lm.detect(img)
       } catch (e) {
         console.warn("symmetry: GPU detect failed, retrying on the CPU", e)
-        res = (await getLandmarker("CPU").catch((e2) => { throw new ModelLoadError(String(e2)) })).detect(img)
+        res = (await loadLandmarker("CPU")).detect(img)
       }
       const pts = res.faceLandmarks[0]
       if (!pts) throw new Error("We couldn't find a face. Try a clear, front-facing photo.")
@@ -147,7 +153,8 @@ export function SymmetryTest() {
       console.error("symmetry test failed", e)
       setError(e instanceof ModelLoadError ? "Something went wrong loading the face model. Check your connection and try again."
         : e instanceof Error ? e.message : "Couldn't analyse that photo. Try another clear, front-facing photo.")
-      track("symmetry_error", { kind: e instanceof ModelLoadError ? "model" : e instanceof Error ? "photo" : "detect" })
+      // `reason`: the real error, so a "model" failure in GA4 says which download or step broke
+      track("symmetry_error", { kind: e instanceof ModelLoadError ? "model" : e instanceof Error ? "photo" : "detect", reason: String(e instanceof Error ? e.message : e).slice(0, 100) })
     } finally {
       setLoading(false)
     }

@@ -23,24 +23,41 @@ export const BUILDS = [ // keep in sync with BUILDS in scripts/style-bases.mjs
 export type Build = (typeof BUILDS)[number]["id"]
 export const body = (g: Gender, b: Build) => `${g}-${b}`
 export const modelPhoto = (g: Gender, b: Build, look: LookId) => `/style/models/${body(g, b)}-${look}.jpg`
+/** The model's own hands, drawn over the clothes so they always sit in front of trousers (scripts/style-layers.mjs). */
+export const handsLayer = (g: Gender, b: Build, look: LookId): Layer => ({ slot: "top", src: modelPhoto(g, b, look), mask: `/style/layers/${body(g, b)}/hands.webp` })
 /** What's been generated: clothes layers and looks per body. */
 export type Assets = { v?: number; layers: Record<string, string[]>; looks: Record<string, string[]> }
 
 // ─── layers ──────────────────────────────────────────────────────────────────
 export const LAYER_ORDER: Slot[] = ["shoes", "bottom", "top", "outer"] // bottom of the stack first
-const HOODED = new Set(ITEMS.filter((i) => /hoodie/i.test(i.name)).map((i) => i.id))
+const HOODED = new Set(ITEMS.filter((i) => /hoodie/i.test(i.name)).map((i) => i.shape ?? i.id))
 // a vest has no sleeves, so the top's sleeves must show in full: no clip mask
-const VESTS = new Set(ITEMS.filter((i) => / vest/i.test(i.name)).map((i) => i.id))
+const VESTS = new Set(ITEMS.filter((i) => / vest/i.test(i.name)).map((i) => i.shape ?? i.id))
 export type Outfit = Partial<Record<Slot, string>>
+/** Chosen colour per slot (a `Color.name` of the item there); unset = the item's first colour. */
+export type Tints = Partial<Record<Slot, string>>
+const byId = new Map(ITEMS.map((i) => [i.id, i]))
+/** The layer an item is drawn with: its own, or the shared shape it reuses. */
+export const layerOf = (id: string) => byId.get(id)?.shape ?? id
+/** The colour shown for an item: the one picked, else its first. */
+export const colorOf = (id: string, name?: string) => { const c = byId.get(id)?.colors; return c?.find((x) => x.name === name) ?? c?.[0] }
+export type Layer = { slot: Slot; src: string; mask?: string; tint?: string }
 /** The layer images for an outfit, bottom first. A jacket over a hoodie uses its "@hood" version; the top under a
- *  jacket gets the jacket's clip mask so its sleeves never poke out at the sides. */
-export function layers(g: Gender, b: Build, outfit: Outfit, have: string[]) {
+ *  jacket gets the jacket's clip mask so its sleeves never poke out at the sides. `tint` = recolour to this hex. */
+export function layers(g: Gender, b: Build, outfit: Outfit, have: string[], tints: Tints = {}): Layer[] {
   const dir = `/style/layers/${body(g, b)}`
-  const outer = outfit.outer && (outfit.top && HOODED.has(outfit.top) && have.includes(`${outfit.outer}@hood`) ? `${outfit.outer}@hood` : outfit.outer)
+  const outerBase = outfit.outer && layerOf(outfit.outer)
+  const hooded = !!outfit.top && HOODED.has(layerOf(outfit.top))
+  const outer = outerBase && (hooded && have.includes(`${outerBase}@hood`) ? `${outerBase}@hood` : outerBase)
   return LAYER_ORDER.flatMap((slot) => {
-    const id = slot === "outer" ? outer : outfit[slot]
-    if (!id || !have.includes(id)) return []
-    return [{ slot, src: `${dir}/${id}.webp`, mask: slot === "top" && outer && !VESTS.has(outfit.outer!) ? `${dir}/${outer}.clip.webp` : undefined }]
+    const id = outfit[slot]
+    if (!id) return []
+    const it = byId.get(id), color = colorOf(id, tints[slot])
+    let name = slot === "outer" ? outer! : layerOf(id), tint: string | undefined
+    if (color?.layer && have.includes(color.layer) && slot !== "outer") name = color.layer // rendered in this colour
+    else if (color && (it?.shape || !color.drawn)) tint = color.hex // recoloured in the browser
+    if (!have.includes(name)) return []
+    return [{ slot, src: `${dir}/${name}.webp`, tint, mask: slot === "top" && outer && !VESTS.has(outerBase!) ? `${dir}/${outer}.clip.webp` : undefined }]
   })
 }
 
@@ -52,7 +69,7 @@ const fits = (i: (typeof ITEMS)[number], budget?: Budget) => !budget || !BUDGETS
 export function chooseOutfit(style: Style, g: Gender, have: string[], b?: Build, budget?: Budget): { outfit: Outfit; notes: string[] } {
   const outfit: Outfit = {}
   for (const slot of LAYER_ORDER) {
-    const all = ITEMS.filter((i) => i.slot === slot && have.includes(i.id) && (!i.for || i.for === g))
+    const all = ITEMS.filter((i) => i.slot === slot && have.includes(layerOf(i.id)) && (!i.for || i.for === g))
     // nothing in budget for this slot: fall back to the cheapest piece rather than leave it empty
     const pool = all.some((i) => fits(i, budget)) ? all.filter((i) => fits(i, budget)) : [...all].sort((x, y) => x.usd - y.usd).slice(0, 1)
     const rank = (i: (typeof pool)[number]) =>
@@ -79,7 +96,7 @@ export function dressFor(id: OccasionId, g: Gender, have: string[], b?: Build, b
   const picks = { ...o[g], ...(b && o.builds?.[b]?.[g]) }
   // a hand-picked piece over budget gives way to Choose for me's in-budget pick for that slot
   for (const [slot, item] of Object.entries(picks) as [Slot, string][])
-    if (have.includes(item) && fits(ITEMS.find((i) => i.id === item)!, budget)) outfit[slot] = item
+    if (have.includes(layerOf(item)) && fits(ITEMS.find((i) => i.id === item)!, budget)) outfit[slot] = item
   return { outfit, notes: [...o.notes, ...fill.notes.slice(1)] }
 }
 

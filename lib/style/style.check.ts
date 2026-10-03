@@ -1,5 +1,5 @@
 // Self-check for the style logic. Run:
-//   npx esbuild lib/style/style.check.ts --bundle --platform=node --outfile=%TEMP%/style-check.cjs && node %TEMP%/style-check.cjs
+//   npx esbuild lib/style/style.check.ts --bundle --platform=node --format=esm --outfile=%TEMP%/style-check.mjs && node %TEMP%/style-check.mjs
 import { chooseOutfit, dressFor, layers } from "./model"
 import { BROW_FOR, FRINGE, GLASSES_FOR, ITEMS, OCCASIONS, OFF_FOREHEAD } from "./catalog"
 import CELEBS from "./celeb-shapes.json"
@@ -7,6 +7,7 @@ import assert from "node:assert/strict"
 import { NORMS, classify, type Ratios, type ShapeResult } from "./face-shape"
 import { grooming, heightClass, rankCuts, shapeLabel, weighted, type Answers } from "./recommend"
 import { cards, instruction, tabsFor } from "./editor"
+import { decodeLook, encodeLook } from "./saved"
 
 const z = (zs: number[]) => zs.map((v, i) => NORMS.mean[i] + v * NORMS.std[i]) as Ratios
 
@@ -121,3 +122,16 @@ console.log("style checks passed")
   assert.notEqual(dress("interview", "male", every, "average", 1).outfit.shoes, "ae-park-avenue", "a $395 shoe gives way on a budget")
   assert.equal(dress("interview", "male", every, "average").outfit.shoes, "ae-park-avenue")
 }
+
+// share links: a look survives the URL, unknown ids are dropped, junk decodes to null
+{
+
+  const look = { gender: "female" as const, build: "slim" as const, lookId: "black" as const, outfit: { top: ITEMS.find((i) => i.slot === "top")!.id, bottom: "nope" }, tints: {}, face: { hair: "bob" } }
+  const back = decodeLook(encodeLook(look, "Brunch fit ☕"))!
+  assert.equal(back.name, "Brunch fit ☕")
+  assert.deepEqual(back.look.outfit, { top: look.outfit.top })
+  assert.equal(back.look.lookId, "black")
+  assert.equal(decodeLook("!!not-base64"), null)
+  assert.equal(decodeLook(""), null)
+}
+console.log("share link ok")

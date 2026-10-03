@@ -7,7 +7,7 @@ import Link from "next/link"
 import { Bookmark, Crown, Download, LogOut, Mail, Shield, TriangleAlert, User } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { authHeaders, usePro } from "@/components/style-plans"
-import { OutfitThumb } from "@/components/outfit-thumb"
+import { OutfitThumb, OutfitTitle } from "@/components/outfit-thumb"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -36,7 +36,6 @@ function Section({ title, sub, children }: { title: string; sub: string; childre
         <h2 className="text-lg font-bold text-white">{title}</h2>
         <p className="mt-0.5 text-sm text-white/60">{sub}</p>
       </div>
-      <div className="h-px w-full bg-white/10" />
       {children}
     </div>
   )
@@ -177,7 +176,7 @@ export function AccountPage() {
           </TabsContent>
 
           <TabsContent value="outfits" className="mt-0">
-            <Section title="Saved outfits" sub="Outfits you saved in the AI Stylist. Open one to keep editing it.">
+            <Section title="Saved outfits" sub="Outfits you saved in the AI Stylist. Rename one here, or open it to change the clothes.">
               {!outfits ? <Skeleton className="h-48 rounded-2xl bg-white/[0.06]" /> : !outfits.length ? (
                 <div className="flex flex-col items-start gap-3 rounded-2xl bg-black/35 p-5">
                   <p className="text-sm text-white/70">No saved outfits yet. Put one together in the AI Stylist and tap Save this outfit.</p>
@@ -189,8 +188,8 @@ export function AccountPage() {
                     <div key={o.id} className="flex flex-col gap-2 rounded-xl bg-black/35 p-2">
                       <Link href={`/ai-stylist?saved=${o.id}`} className="flex flex-col gap-2 rounded-lg focus-visible:outline-2 focus-visible:outline-(--ollie-cyan)">
                         <OutfitThumb look={o.look} />
-                        <span className="px-1 text-sm font-semibold text-white">{o.name}</span>
                       </Link>
+                      <OutfitTitle id={o.id} name={o.name} onRenamed={(name) => setOutfits((l) => l?.map((x) => (x.id === o.id ? { ...x, name } : x)))} />
                       <button type="button" className="min-h-8 px-1 text-left text-xs text-white/50 hover:text-red-300"
                         onClick={() => deleteOutfit(o.id).then(() => setOutfits((l) => l?.filter((x) => x.id !== o.id))).catch(() => {})}>Delete</button>
                     </div>
